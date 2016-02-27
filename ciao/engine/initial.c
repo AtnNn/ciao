@@ -250,6 +250,7 @@ extern bool_t prolog_unix_mktemp PROTO((worker_t *w));
 extern bool_t prolog_unix_access PROTO((worker_t *w));
 extern bool_t prolog_directory_files PROTO((worker_t *w));
 extern bool_t prolog_file_properties PROTO((worker_t *w));
+extern bool_t prolog_touch PROTO((worker_t *w));
 extern bool_t prolog_unix_chmod PROTO((worker_t *w));
 extern bool_t prolog_unix_umask PROTO((worker_t *w));
 extern bool_t prolog_unix_delete PROTO((worker_t *w));
@@ -363,6 +364,12 @@ extern bool_t copyLZ                      PROTO((worker_t *w)); /* OPA */
 extern bool_t cinstance                   PROTO((worker_t *w));
 extern bool_t cground                     PROTO((worker_t *w));
 
+#if defined(USE_OVERFLOW_EXCEPTIONS)
+extern bool_t undo_heap_overflow_excep PROTO((worker_t *w));
+#endif
+extern bool_t heap_limit PROTO((worker_t *w));
+
+
 /* GLOBAL DATA STRUCTURES */
 bool_t stop_on_pred_calls     = FALSE;        /* profile or trace -- Shared */
 bool_t predtrace              = FALSE;   /* trace predicate calls -- Shared */
@@ -408,13 +415,6 @@ instance_clock_t def_clock = 0, use_clock = 0;
 /* char *atom_buffer; */ /* Non shared */
 /* int atom_buffer_length; */ /* Non shared */
 
-stream_node_t *stream_user_input  = NULL;                  /* Shared */
-stream_node_t *stream_user_output = NULL;                  /* Shared */
-stream_node_t *stream_user_error  = NULL;                  /* Shared */
-
-
-stream_node_t *root_stream_ptr;               /* Shared and _locked_ */
-
 sw_on_key_t  *prolog_predicates = NULL;                    /* Shared */
 /*sw_on_key_t *user_predicates = NULL;*/
 sw_on_key_t **predicates_location = &prolog_predicates;    /* Shared */
@@ -451,7 +451,7 @@ bool_t wam_initialized = FALSE;
 /* Event Tracing Flags etc */
 
 #if defined(ANDPARALLEL) || defined(PARBACK)
-volatile int nagents = 1;
+nagents = 1;
 SLOCK nagents_l;
 #endif
 
@@ -469,7 +469,6 @@ SLOCK nrembacktr_top_l;
 SLOCK nrembacktr_trapped_l;
 bool_t measure = TRUE;
 #endif
-
 
 #if defined(ANDPARALLEL) && defined(VISANDOR)
 int nacagents = 1;
@@ -499,9 +498,6 @@ char symbolchar[256];
  tagged_t atom_noshare;           /* "noshare" */
  tagged_t atom_nil;		/* "[]" */
  tagged_t atom_list;		/* "." */
- tagged_t atom_user_input;	/* "user_input" */ 
- tagged_t atom_user_output;	/* "user_output" */
- tagged_t atom_user_error;	/* "user_error" */
  tagged_t atom_read;		/* "read"  */
  tagged_t atom_write;		/* "write" */
  tagged_t atom_append;		/* "append" */
@@ -512,7 +508,6 @@ char symbolchar[256];
  tagged_t atom_fifo;		/* "fifo" */
  tagged_t atom_unknown;		/* "unknown" */
  tagged_t atom_prolog;		/* "prolog"  */
- tagged_t atom_user;		/* "user" */
  tagged_t atom_lessthan;		/* "<" */
  tagged_t atom_greaterthan;	/* ">" */
  tagged_t atom_equal;		/* "=" */
@@ -548,11 +543,14 @@ char symbolchar[256];
  tagged_t atom_self;                   /* "self" */
  tagged_t atom_create;                 /* "create" */
 
-
-
 #if defined(GAUGE)
  tagged_t atom_counter;           /* "counter" */
 #endif
+
+#if defined(USE_OVERFLOW_EXCEPTIONS)
+  tagged_t atom_undo_heap_overflow_excep;
+#endif
+  tagged_t atom_heap_limit;
 
  tagged_t functor_neck;
  tagged_t functor_list;
@@ -607,6 +605,10 @@ char symbolchar[256];
  try_node_t *address_nd_current_stream;
  try_node_t *address_nd_atom_concat;
 
+#if defined(TABLING)
+ try_node_t *address_nd_fake_choicept;
+#endif
+
 #if defined(PARBACK)
  try_node_t *address_nd_suspension_point;
  bcp_t restart_point_insn;
@@ -651,6 +653,7 @@ char symbolchar[256];
 definition_t *address_pending_unifications;
 definition_t *address_uvc;
 definition_t *address_ucc;
+
 
 
  /*-----------------------------------------------------------------
@@ -1082,24 +1085,6 @@ void init_latin1()
 
 /* Initializations that need to be made once only. */
 
-void init_streams()
-{
-  root_stream_ptr = 
-    (stream_node_t *)checkalloc(sizeof(stream_node_t)); 
-  root_stream_ptr->label=ERRORTAG;
-  root_stream_ptr->streamname=ERRORTAG;
-  root_stream_ptr->forward=root_stream_ptr;
-  root_stream_ptr->backward=root_stream_ptr;
-  root_stream_ptr->last_nl_pos = 0;               /* used for tty streams */
-  root_stream_ptr->nl_count = 0;
-  root_stream_ptr->char_count = 0;
-
-  stream_user_input = new_stream(ERRORTAG, "r", stdin);
-  stream_user_output = new_stream(ERRORTAG, "a", stdout);
-  stream_user_error = new_stream(ERRORTAG, "a", stderr);
-}
-
-
 void init_locks(){
 #if defined(THREADS)
   Init_slock(prolog_predicates_l);
@@ -1234,9 +1219,6 @@ void init_once()
 
   atom_share=init_atom_check("share");
   atom_noshare=init_atom_check("noshare");
-  atom_user_input=init_atom_check("user_input");
-  atom_user_output=init_atom_check("user_output");
-  atom_user_error=init_atom_check("user_error");
   atom_read=init_atom_check("read");
   atom_write=init_atom_check("write");
   atom_append=init_atom_check("append");
@@ -1246,7 +1228,6 @@ void init_once()
   atom_directory=init_atom_check("directory");
   atom_fifo=init_atom_check("fifo");
   atom_unknown=init_atom_check("unknown");
-  atom_user=init_atom_check("user");
   atom_prolog=init_atom_check("prolog");
   atom_lessthan=init_atom_check("<");
   atom_greaterthan=init_atom_check(">");
@@ -1291,6 +1272,11 @@ void init_once()
 
   atom_default_lib_dir = init_atom_check(library_directory);
   atom_default_c_headers_dir = init_atom_check(c_headers_directory);
+
+#if defined(USE_OVERFLOW_EXCEPTIONS)
+  atom_undo_heap_overflow_excep = init_atom_check("internals:$undo_heap_overflow_excep");
+#endif
+  atom_heap_limit = init_atom_check("internals:$heap_limit");
 
   current_gcmode = atom_on;
   current_gctrace = atom_off;
@@ -1422,6 +1408,8 @@ void init_once()
   define_c_mod_predicate("atomic_basic","atom_concat",3,prolog_atom_concat);
   define_c_mod_predicate("term_basic","copy_term",2,prolog_copy_term);
   define_c_mod_predicate("term_basic","copy_term_nat",2,prolog_copy_term_nat);
+  define_c_mod_predicate("term_basic","cyclic_term",1,prolog_cyclic_term);
+  define_c_mod_predicate("terms_check","unifiable",3,prolog_unifiable);
 
 				/* indexing.c */
   define_c_mod_predicate("internals","$abolish",1,prolog_abolish); 
@@ -1522,11 +1510,13 @@ void init_once()
   define_c_mod_predicate("system","shell",2,prolog_unix_shell2);
   define_c_mod_predicate("system","system",2,prolog_unix_system2);
   define_c_mod_predicate("internals","$exec",8,prolog_exec);
+  define_c_mod_predicate("system","wait",3,prolog_wait);
   define_c_mod_predicate("internals","$unix_argv",1,prolog_unix_argv);
   define_c_mod_predicate("system","mktemp",2,prolog_unix_mktemp);
   define_c_mod_predicate("system","file_exists",2,prolog_unix_access);
   define_c_mod_predicate("system","directory_files",2,prolog_directory_files);
   define_c_mod_predicate("system","file_properties",6,prolog_file_properties);
+  define_c_mod_predicate("system","touch",1,prolog_touch);
   define_c_mod_predicate("system","chmod",2,prolog_unix_chmod);
   define_c_mod_predicate("system","umask",2,prolog_unix_umask);
   define_c_mod_predicate("system","delete_file",1,prolog_unix_delete);
@@ -1642,12 +1632,20 @@ void init_once()
   define_c_mod_predicate("internals","$reset_counters",2,reset_counters);
 #endif
 
+#if defined(USE_OVERFLOW_EXCEPTIONS)
+  define_c_mod_predicate("internals","$undo_heap_overflow_excep",0,undo_heap_overflow_excep);
+#endif
+  define_c_mod_predicate("internals","$heap_limit",1,heap_limit);
+
   address_nd_repeat = def_retry_c(nd_repeat,0);
   address_nd_current_atom = def_retry_c(nd_current_atom,2);
   address_nd_current_stream = def_retry_c(nd_current_stream,4);
   address_nd_current_predicate = def_retry_c(nd_current_predicate,4);
   address_nd_predicate_property = def_retry_c(nd_predicate_property,5);
   address_nd_atom_concat = def_retry_c(nd_atom_concat,4);
+#if defined(TABLING)
+  address_nd_fake_choicept = def_retry_c(nd_fake_choicept,0);
+#endif
 #if defined(PARBACK)
   address_nd_suspension_point = def_retry_c(nd_suspension_point,1);
   restart_point_insn = (bcp_t) checkalloc(sizeof(insn_t));
@@ -1729,11 +1727,7 @@ void local_init_each_time(Arg)
   b->next_alt = termcode;
 
   b->local_top = Arg->local_top = (frame_t *)Offset(Arg->frame,EToY0);
-#if defined(TABLING)
-  b->global_top = Arg->global_top = HeapOffset(Heap_Start, GLOBALSTKSIZE/2);
-#else
   b->global_top = Arg->global_top = Heap_Start;
-#endif
   b->trail_top = Arg->trail_top = Trail_Start;
   b->term[0] = atom_nil;
 
@@ -1823,7 +1817,12 @@ void reinitialize(Arg)
     Atom_Buffer_Length = STATICMAXATOM;
   }
 
-  Heap_Warn_Soft = Heap_Warn = HeapOffset(Heap_End,-CALLPAD);
+  Heap_Warn_Soft = Heap_Warn = HeapOffset(Heap_End,-DEFAULT_SOFT_HEAPPAD);
+#if defined(USE_OVERFLOW_EXCEPTIONS)
+  SOFT_HEAPPAD = DEFAULT_SOFT_HEAPPAD;
+  Heap_Limit = 0;
+#endif 
+
   Stack_Warn = StackOffset(Stack_End,-STACKPAD);
   
   empty_gcdef_bin(Arg);

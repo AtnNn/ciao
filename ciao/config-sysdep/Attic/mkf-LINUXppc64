@@ -1,0 +1,93 @@
+# -*- mode: Makefile; -*-
+# Misc. options, depending on the SETTINGS file
+
+ifeq ($(DEBUG_LEVEL),profile)
+    DEBUG_FLAGS=-DDEBUG -DATOMGC -DPROFILE
+#    DEBUG_FLAGS=-DPROFILE
+#    PROFILE_LD_FLAGS=-pg
+    OPTIM_LEVEL=debug
+    OPTIM_FLAGS=
+else
+ifeq ($(DEBUG_LEVEL),profile-debug)
+    DEBUG_FLAGS=-g -Wall -DDEBUG -DATOMGC -DGLOBVARS -DINTERNAL_CALLING -DPROFILE
+#   PROFILE_LD_FLAGS=-pg
+    OPTIM_LEVEL=debug
+    OPTIM_FLAGS=
+endif
+endif
+
+
+# Optimizations for LINUX 386
+
+
+ifeq ($(OPTIM_LEVEL),optimized)
+    OPTIM_FLAGS=-O2 -Wall -fno-strict-aliasing -fomit-frame-pointer $(shell $(SYSDEP_FILES)/gcc_m_or_f_options)
+endif
+
+
+# Threads and locks in LINUX
+ifeq ($(USE_THREADS),yes)
+    LD_THREAD_LIB=-lpthread
+    LD_LOCK_LIB=
+ifeq ($(USE_POSIX_LOCKS),yes)
+    THREAD_FLAG=-D_REENTRANT -DTHREADS
+else
+    THREAD_FLAG=-D_REENTRANT -DTHREADS
+endif
+else
+    LD_THREAD_LIB=
+    THREAD_FLAG=
+endif
+
+FOREIGN_FILES_FLAG=-DFOREIGN_FILES
+
+#  Local C compiler
+LCC=$(CC)
+
+# C compiler
+CC=gcc
+
+# Linker
+LD=gcc
+
+# C compiler options for generating shared libraries code
+CCSHARED=-fPIC
+
+# Linker options for shared objects
+LDSHARED=-shared
+
+# Linker options to combine objects
+LDCOMBINE=-r
+
+# Include path at compile time
+LDRPATH=-rpath
+
+# Extension of shared libraries
+SOSUFFIX=.so
+
+LIBS=-ldl -lm $(LD_THREAD_LIB) $(LD_LOCK_LIB) $(DEBUG_LIBS)
+
+# LINUX linker specific options
+# "-rdynamic" allows the dynamic libraries symbols to be resolved against
+# those defined in ciaoengine
+
+LINK_FLAGS=-rdynamic $(PROFILE_LD_FLAGS)
+
+ARCHNAME=ppc64
+
+# Architecture-specific flags
+
+ARCHFLAGS=-m32
+
+# Operating system version
+OSNAME=LINUX
+
+# Memory management primitives
+# See engine/configure.c: HAS_MMAP includes USE_OWN_MALLOC
+MEM_MNG_FLAG=-DHAS_MMAP -DANONYMOUS_MMAP
+
+# How to install an make directories
+MKDIR="mkdir -p"
+INSTALL=install
+
+DEFAULTYPE=dyn

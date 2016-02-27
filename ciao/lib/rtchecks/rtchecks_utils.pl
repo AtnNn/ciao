@@ -5,6 +5,7 @@
 :- use_module(library(write), []).
 :- use_module(library(hiordlib)).
 :- use_module(library(lists)).
+:- use_module(library(debugger(debugger_lib))).
 :- use_module(library(rtchecks(compact_list))).
 
 :- doc(author, "Edison Mera").
@@ -17,8 +18,9 @@
 :- regtype rtcheck_error/1 #
 	"Specifies the format of a run-time check exception.".
 
-rtcheck_error(rtcheck(Type, _Pred, _Prop, _Valid, Locs)) :-
+rtcheck_error(rtcheck(Type, _Pred, Dict, _Prop, _Valid, Locs)) :-
 	rtcheck_type(Type),
+	list(Dict),
 	list(Locs).
 
 :- regtype rtcheck_type/1 # "Specifies the type of run-time errors.".
@@ -59,21 +61,31 @@ position_to_message(asrloc(loc(S, Ln0, Ln1)),
 position_to_message(pploc(loc(S, Ln0, Ln1)),
 	    message_lns(S, Ln0, Ln1, error, [])).
 
+:- use_module(library(varnames(apply_dict))).
+:- use_module(library(varnames(complete_dict))).
+:- export(pretty_prop/3).
+pretty_prop(Prop, Dict0, PrettyProp) :-
+	complete_dict(Prop, Dict0, [], EDict),
+	append(Dict0, EDict, Dict),
+	apply_dict(Prop, Dict, yes, PrettyProp).
+
 :- pred rtcheck_to_messages(RTCheck, Messages0, Messages)
 	:: (list(Messages0, message_info), list(Messages, message_info))
 	: rtcheck_error(RTCheck) + is_det # "Converts a run-time error
 	in a message or a list of messages. @var{Messages} is the tail.".
 
-rtcheck_to_messages(rtcheck(Type, Pred, Prop, Valid, Positions),
+rtcheck_to_messages(rtcheck(Type, Pred0, Dict, Prop0, Valid0, Positions0),
 	    Messages0, Messages) :-
+	pretty_prop(t(Pred0, Prop0, Valid0, Positions0), Dict,
+	    t(Pred, Prop, Valid, Positions)),
 	map(Positions, position_to_message, PosMessages0),
 	reverse(PosMessages0, PosMessages),
 	Text = ['Run-time check failure in assertion for:\n\t',
-	    ''(Pred),
+	    ''({Pred}),
 	    '.\nIn *', Type, '*, unsatisfied property: \n\t',
-	    ''(Prop), '.'|Text0],
+	    ''({Prop}), '.'|Text0],
 	( Valid = [] -> Text0 = Text1
-	; Text0 = ['\nBecause: \n\t', ''(Valid), '.'|Text1]
+	; Text0 = ['\nBecause: \n\t', ''({Valid}), '.'|Text1]
 	),
 	(
 	    select(message_lns(S, Ln0, Ln1, MessageType, Text2),
@@ -89,13 +101,18 @@ rtcheck_to_messages(rtcheck(Type, Pred, Prop, Valid, Positions),
 
 :- meta_predicate call_rtc(goal).
 
-:- pred call_rtc/1 : callable # "This predicate calls a goal and if a rtcheck
-	exception is intercepted, an error message is shown and the
-	execution continues.".
+:- pred call_rtc/1 : callable # "This predicate calls a goal and if an
+	rtcheck signal is intercepted, an error message is shown and
+	the execution continues. Alternatively, it is re-raised as an
+	exception depending on the flag rtchecks_abort_on_error
+	value.".
 
 call_rtc(Goal) :-
-	intercept(Goal, rtcheck(Type, Pred, Prop, Valid, Poss),
-	    handle_rtcheck(rtcheck(Type, Pred, Prop, Valid, Poss))).
+	Error = rtcheck(_Type, _Pred, _Dict, _Prop, _Valid, _Poss),
+	( current_prolog_flag(rtchecks_abort_on_error, yes) ->
+	    intercept(Goal, Error, throw(Error)) % rethrow signal as exception
+	; intercept(Goal, Error, (handle_rtcheck(Error), tracertc))
+	).
 
 :- use_module(library(aggregates), [findall/3]).
 
@@ -109,8 +126,8 @@ call_rtc(Goal) :-
 
 save_rtchecks(Goal) :-
 	retractall_fact(rtcheck_db(_)),
-	intercept(Goal, rtcheck(Type, Pred, Prop, Valid, Poss),
-	    assertz_fact(rtcheck_db(rtcheck(Type, Pred, Prop, Valid, Poss)))).
+	RTError = rtcheck(_Type, _Pred, _Dict, _Prop, _Valid, _Poss),
+	intercept(Goal, RTError, assertz_fact(rtcheck_db(RTError))).
 
 :- pred load_rtchecks/1 => list(rtcheck_error) # "retract the
 	rtcheck_db/1 facts and return them in a list.".

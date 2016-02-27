@@ -10,4 +10,4 @@
 % 
 % (Jose F. Morales)
 
-:- use_module(library(component_registry), []).
+:- use_module(library(bundle_registry(bundle_registry_load)), []).

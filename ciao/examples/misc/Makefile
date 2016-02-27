@@ -1,7 +1,7 @@
 # Copyright (C) 1997, UPM-CLIP
 
-include ../../SETTINGS
-include ../../SHARED
+CIAOBUILDDIRtemp=../../../build
+include $(CIAOBUILDDIRtemp)/CONFIG_mkf
 
 suite:
 	$(SETLOCALCIAO) $(CIAOC) suite

@@ -4,10 +4,10 @@
 :- use_module(library(system)).
 :- use_module(library(terms)).
 
-:- load_test_module(library(component_registry), []).
+:- load_test_module(library(bundle_registry(bundle_registry_load)), []).
 
-:- use_module(ciaodesrc(makedir('ConfigValues')), [setlocalciao/1, ciaoc/1]).
-:- use_module(library(make(system_extra)), [do/2]).
+:- use_module(library(lpdist(ciao_config_options)), [setlocalciao/1, ciaoc/1]).
+:- use_module(library(system_extra), [do/2]).
 
 :- data where_command/2 .
 

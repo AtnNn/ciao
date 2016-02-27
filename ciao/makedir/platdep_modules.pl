@@ -1,12 +1,11 @@
-platdep_module('contrib/apll_parback/','apll_parback.pl','contrib/apll_parback/apll_parback.pl').
+platdep_module('contrib/difference_constraints/','difference_constraints_rt.pl','contrib/difference_constraints/difference_constraints_rt.pl').
+platdep_module('contrib/difference_constraints/difference_constraints_tab/','difference_constraints_tab.pl','contrib/difference_constraints/difference_constraints_tab/difference_constraints_tab.pl').
 platdep_module('contrib/hashtable/','hashtable.pl','contrib/hashtable/hashtable.pl').
 platdep_module('contrib/hrtime/','hrtime.pl','contrib/hrtime/hrtime.pl').
 platdep_module('contrib/profiler/','profiler_rt.pl','contrib/profiler/profiler_rt.pl').
 platdep_module('contrib/profiler/','profiler_utils_base.pl','contrib/profiler/profiler_utils_base.pl').
 platdep_module('contrib/profiler/','profiler_utils_native.pl','contrib/profiler/profiler_utils_native.pl').
-platdep_module('contrib/time/','time.pl','contrib/time/time.pl').
-platdep_module('library/apll/','apll.pl','library/apll/apll.pl').
-platdep_module('library/apll/','visandor.pl','library/apll/visandor.pl').
+platdep_module('contrib/tabling/','tabling_rt.pl','contrib/tabling/tabling_rt.pl').
 platdep_module('library/concurrency/','concurrency.pl','library/concurrency/concurrency.pl').
 platdep_module('library/random/','random.pl','library/random/random.pl').
 platdep_module('library/sha1/','sha1.pl','library/sha1/sha1.pl').

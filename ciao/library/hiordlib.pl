@@ -1,8 +1,8 @@
-:- module(hiordlib, [map/3, map/4, foldl/4, minimum/3, split/4],
+:- module(hiordlib, [map/3, map/4, map/5, map/6, foldl/4, minimum/3, split/4],
 	    [assertions, basicmodes, nativeprops, dcg, fsyntax, hiord,
 		unittestdecls]).
 
-:- fun_eval(arith(true)).
+% :- fun_eval(arith(true)).
 
 :- doc(title, "Higher-order predicates").
 
@@ -63,6 +63,16 @@ map([X|Xs], P) := [~P(X) |~map(Xs, P)].
 
 map([],     _) --> [].
 map([X|Xs], P) --> P(X), map(Xs, P).
+
+:- meta_predicate map(?, ?, pred(4), ?, ?).
+
+map([],     [], _) --> [].
+map([X|Xs], [Y|Ys], P) --> P(X, Y), map(Xs, Ys, P).
+
+:- meta_predicate map(?, ?, ?, pred(5), ?, ?).
+
+map([],     [],     [],     _) --> [].
+map([X|Xs], [Y|Ys], [Z|Zs], P) --> P(X, Y, Z), map(Xs, Ys, Zs, P).
 
 :- pred foldl(List, Seed, Op, Result) # "Example of use:
 @begin{verbatim}

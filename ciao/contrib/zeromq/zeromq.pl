@@ -31,6 +31,8 @@
 
 :- use_module(library(lists)).
 
+:- use_module(library(write), [writeq/1]).
+
 :- use_module('./term_ser').
 
 :- use_foreign_library([zmq]).
@@ -40,7 +42,9 @@
 % options to CFLAGS and CXXFLAGS to force compilation of ZMQ into 32
 % bits (with g++ multilib installed).  Therefore, for ciao to link to
 % the code, one has to force 32 bits compilation.
-:- extra_compiler_opts('LINUXi86_64', ['-m32', '-march=i686']).
+%:- extra_compiler_opts('LINUXi86_64', ['-m32', '-march=i686']).
+:- extra_compiler_opts(['-I/Users/idragan/inst/CiaoDE/build/zmq32/include']).
+:- extra_linker_opts(['-L/Users/idragan/inst/CiaoDE/build/zmq32/lib']).
 
 % -- Documentation -------------------------------------------------
 
@@ -51,7 +55,7 @@
 :- comment(author, "Dragan Ivanovic (idragan@@clip.dia.fi.upm.es)").
 
 :- comment(module, "Access to the basic
-   @uref{ZMQ}{http://www.zeromq.org/} functionality from Ciao
+   @href{http://www.zeromq.org/}{ZMQ} functionality from Ciao
    Prolog").
 
 :- comment(summary, "This module provides Ciao Prolog bindings for the
@@ -69,7 +73,7 @@
         reference manuals, user guides, downloads, etc., please refer
         to:
 
-        @uref{www.zeromq.org}
+        @href{http://www.zeromq.org}
 
         The key ZMQ API calls are supported, while some more complex
 	calls (such as for setting or getting socket options), may be
@@ -312,7 +316,7 @@ zmq_send_terms(SocketAtom, Terms, Options):-
 
 uncook([], []).
 uncook([TH|TT], [H|T]):-
-	term_to_ser(TH, H, []),
+	serialize_term(TH, H),
 	uncook(TT, T).
 
 % ..................................................................
@@ -335,7 +339,7 @@ zmq_recv_terms(SocketAtom, Maybe, Terms, Options):-
 
 cook([], []).
 cook([_:H|T], [TH|TT]):-
-	(  ser_to_term(H, TH, _)
+	(  deserialize_term(TH, H)
 	-> true
 	;  TH= ?
 	),
@@ -375,6 +379,13 @@ resp_loop:-
 	   ),
 	   display('['), display(Size), display(']'), tab(1),
 	   display_string(Bytes), nl,
+	   (  Bytes = [ 38 | Bytes0 ],
+	      deserialize_term( T, Bytes0, [])
+	   -> display('--> term: '),
+	      writeq( T),
+	      nl
+	   ; true
+	   ),
 	   zmq_send(responder, 2, "Ok", []),
 	   !,
 	   (  Size>0
@@ -395,9 +406,14 @@ demo_requester(Bytes) :-
 	@var{Endpoint}, then waits for the response, prints it and
 	finishes. ".
 
-demo_requester(Endpoint, Bytes) :-
+demo_requester(Endpoint, Msg) :-
 	zmq_socket(requester, req),
 	zmq_connect(requester, Endpoint),
+	(  Msg = term(T)
+	-> serialize_term( T, Bytes0, []),
+	   Bytes = [ 38 | Bytes0 ]
+	;  Bytes = Msg
+	),
 	zmq_send(requester, -1, Bytes, []),
 	zmq_recv(requester, _, _, Response, []),
 	display_string(Response),

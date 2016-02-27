@@ -1,4 +1,4 @@
-:- module(indexer_doc,[ ],[ assertions, regtypes ]).
+:- module(indexer_doc, [], [assertions, regtypes]).
 
 :- use_module(library(assertions(native_props)), [nonground/1]).
 
@@ -6,40 +6,78 @@
 
 :- doc(author, "Anil Nair (original work)").
 :- doc(author, "Tom Howland"||
-                   " (@uref{http://home.pacbell.net/tomjdnh/pd.html},"||
+                   " (@href{http://home.pacbell.net/tomjdnh/pd.html},"||
                    " derived the original work)").
-:- doc(author, "Francisco Bueno (port to Ciao)").
+:- doc(author, "Francisco Bueno (initial port to Ciao)").
+:- doc(author, "Jose F. Morales (improvements in implementation and
+   documentation)").
 
-:- doc(module,"This package is an extension of the idea of Prolog
-   indexing, usually performed, in a limited way, on the first
-   argument.  This package provides more powerful indexing schemes.
-   It lets you pick different arguments to index on, and provides for
-   different combinations of arguments to index on.  E.g., it will let
-   you index on the first and third argument or the second and the
-   third argument of a predicate.
+:- doc(module,"Indexing (in Prolog) is an optimization technique that
+   reduces the search space of the predicates without altering the
+   Prolog semantics.
 
-   The indexing is based on computing a hash value for the terms to be
-   indexed upon.
-   Note, however, that the current implementation of the package is done
-   at the source level, so it may sometimes not be as fast as expected. 
-   Given this, this version of the package pays off only when the amount of
-   clashing that your original predicate causes without the package
-   superseeds the cost of the hashing function in the package. Such
-   amount of course depends on the number and the form of the facts in
-   your predicate.
+   In the most general case, predicate clauses are tryed on
+   backtracking one after the other, in sequential order. We can call
+   this list of clauses a @em{try-list}. Indexing is based on removing
+   clauses that are known to fail without any observable output (no
+   side-effects) from the try-list. A typical implementation
+   introduces tests before the actual predicate execution to
+   discriminate among a collection of precomputed specialized
+   try-lists. In the best case, this technique can obtain try-lists
+   with 0 or 1 elements for calls.
+
+   Currently, the Ciao engine implements a limited but fast
+   1st-argument-1st-level indexing. The @lib{indexer} package provides
+   more powerful indexing schemes. It lets you pick different
+   combinations of arguments to index on.  E.g., it will let you index
+   on the first and third argument or the second and the third
+   argument of a predicate.
+
+   The selection of the try-list is based on computing a hash value
+   for the terms (or part of them) to be indexed upon. Given this, the
+   optimization pays off only when the amount of clashing that your
+   original predicate causes without indexing superseeds the cost of
+   the hashing function. Such amount of course depends on the number
+   and form of the facts in your predicate, and the calling modes.
+
+   @begin{alert}
+     @bf{Important Note about Performance}
+
+     @begin{itemize}
+     @item The current implementation of the package is done at the
+     source level, so it may sometimes not be as fast as expected.
+
+     @item The complexity of the hashing function currently used is
+     @math{O(n)} with @math{n} the number of characters in the textual
+     representation of the term. Thus, even if the search tree is
+     reduced, performance can be much slower in some cases that the
+     cheaper internal (1st argument, 1st level) indexing used in Ciao.
+     @end{itemize}
+
+     Despite this, the package implements some indexing schemes with
+     @bf{low overhead}.
+     @begin{itemize}
+     @item A single @code{:- index p(+,?,...?)} indexer (1st argument,
+       1st level). Reuses the internal indexing.
+
+     @item A single @code{:- index p(?,...,+,...?)} indexer (one argument,
+       1st level). Reuses the internal indexing by reordering the
+       predicate arguments.
+     @end{itemize}
+   @end{alert}
 ").
 
-/*
-"library(indexer)" generates index tables of the form Nth_arg-1st_arg
-to index on the Nth argument. This means that you could get redundant
-solutions. This package adds an extra unique "clause number" argument
-to each fact to get around this.
+% [original comment]
+% "library(indexer)" generates index tables of the form
+% Nth_arg-1st_arg to index on the Nth argument. This means that you
+% could get redundant solutions. This package adds an extra unique
+% "clause number" argument to each fact to get around this.
 
-"library(indexer)" can be used only for dynamic facts. This directory
-contains files for static rules (indexer.pl), dynamic facts
-(dynamic_indexer.pl), and module-partitioned dynamic facts
-(module_indexer.pl).
-*/
+% [original comment]
+% "library(indexer)" can be used only for dynamic facts. This
+% directory contains files for static rules (indexer.pl), dynamic
+% facts (dynamic_indexer.pl), and module-partitioned dynamic facts
+% (module_indexer.pl).
 
 :- doc(usage,"This facility is used as a package, thus either
    including @lib{indexer} in the package list of the module, or by
@@ -49,8 +87,7 @@ contains files for static rules (indexer.pl), dynamic facts
 
 :- doc(doinclude,index/1).
 :- decl index(IndexSpecs) => indexspecs
-# "Declares an indexing scheme for a predicate. All specs of @var{IndexSpecs}
-   must be terms for the same predicate. Each spec declares an indexing on
+# "Declares an indexing scheme for a predicate. Each spec declares an indexing on
    a combination of the arguments. Indexing will be performed using any of
    the specs in @var{IndexSpecs} (being thus interpreted as an or).
 
@@ -76,8 +113,17 @@ contains files for static rules (indexer.pl), dynamic facts
    ""nonvar"" and implies that the argument will not be used for hashing,
    since only ground terms can effectively be used in hashing. Thus, it
    can not be used in combination with other specifiers within a particular 
-   index specification. It is often the fastest thing to use. 
+   index specification. It is often the fastest thing to use.
 ".
+
+:- doc(bug, "The semantics of cut (!) are not preserved with the
+   'general' indexing scheme (see implementation). Translations should
+   happen after choice idiom / cut idiom are introduced. That is not
+   possible with the current expansion mechanism. Communication with
+   the internal indexing tables could be the easier solution").
+
+:- doc(bug, "Indexing specs must appear before the clauses of the
+   predicate they specify.").
 
 :- regtype indexspecs(IndexSpecs)
    # "@var{IndexSpecs} is an index specification.".

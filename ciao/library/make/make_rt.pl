@@ -710,7 +710,7 @@ get_value_def(Name, DefValue, Value) :-
 # "Executes @var{Pred} as unkown call, in other words, it is useful to
   execute predicates that have been loaded by @var{register_module/1}. 
 
-  Example: get_settings_nvalue(component_options(ciao, A, B)).".
+  Example: @tt{get_settings_nvalue(my_options(ciao, A, B)).}".
 
 get_settings_nvalue(Pred) :-
 	call_unknown(_:Pred).

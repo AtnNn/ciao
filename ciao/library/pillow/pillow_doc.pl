@@ -27,9 +27,9 @@
    understanding the other predicates).  You can find a paper and some
    additional information in the @file{library/pillow/doc} directory
    of the distribution, and in the WWW at
-   @uref{http://clip.dia.fi.upm.es/Software/pillow/pillow.html}. There
+   @href{http://clip.dia.fi.upm.es/Software/pillow/pillow.html}. There
    is also a @index{PiLLoW on-line tutorial} (slides) at
-   @uref{http://clip.dia.fi.upm.es/logalg/slides/C_pillow/C_pillow.html} which
+   @href{http://clip.dia.fi.upm.es/logalg/slides/C_pillow/C_pillow.html} which
    illustrates the basic features and provides a number of examples of
    PiLLoW use.
 

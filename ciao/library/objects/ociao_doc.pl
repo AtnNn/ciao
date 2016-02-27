@@ -58,7 +58,7 @@
         However, they may be enriched with inheritance declarations and other 
         object-oriented constructs. For an overview of the fundamentals
         of O'Ciao, see 
-        @uref{http://www.clip.dia.fi.upm.es/~clip/papers/ociao-tr.ps.gz}.
+        @href{http://www.clip.dia.fi.upm.es/~clip/papers/ociao-tr.ps.gz}.
         However, we will introduce the concepts in a tutorial way via examples.
 
 @section{Early examples}

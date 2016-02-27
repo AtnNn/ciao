@@ -292,6 +292,19 @@ doc_id_type(subsection, single, docstr). % dofail
 @end{verbatim}
      ".
 
+doc_id_type(subsubsection, single, docstr). % dofail
+:- decl doc(CommentType,SubSubSection) => =(subsubsection) * docstring
+
+   # "Insert a @index{program subsubsection} with name
+     @var{SubSubSection} (see @index{program section} command for more
+     details).
+
+     @item @em{Example:}
+@begin{verbatim}
+:- doc(subsubsection,""Auxiliary Definitions"").
+@end{verbatim}
+     ".
+
 doc_id_type(pred(_), single, docstr). % dofail
 :- decl doc(PredName,CommentText) => predname * docstring
 
@@ -326,7 +339,8 @@ doc_id_type(bug, multiple, docstr). % ignore
 @end{verbatim}
      ".
 
-% TODO: missing doc_id_type
+doc_id_type(version(_,_), single, docstr).
+doc_id_type(version(_,_,_), single, docstr).
 :- decl doc(Version,CommentText) => version_descriptor * docstring
 
    # "Provides a means for keeping a @index{log of
@@ -349,7 +363,7 @@ doc_id_type(bug, multiple, docstr). % ignore
 @end{verbatim}
      ".
 
-% TODO: missing doc_id_type
+doc_id_type(version_maintenance, single, docstr).
 :- decl doc(CommentType,VersionMaintenanceType) 
    => =(version_maintenance) * version_maintenance_type
 
@@ -416,7 +430,7 @@ doc_id_type(doinclude, multiple, term). % ignore
    # "A different usage which allows the second argument of @tt{:-
      doc(doinclude,...)} to be a list of predicate names.".
 
-% TODO: missing doc_id_type
+doc_id_type(hide, multiple, term).
 :- decl doc(CommentType,PredName) => =(hide) * predname
 
    # "This is similar to the previous usage but has the opposite
@@ -767,6 +781,10 @@ escapeseq --> "@{"
    @item{@tt{@@subsection@{}@em{text}@tt{@}}} @cindex{@@subsection
    command} starts a @index{subsection} whose title is @em{text}.
 
+   @item{@tt{@@subsubsection@{}@em{text}@tt{@}}}
+   @cindex{@@subsubsection command} starts a @index{subsubsection}
+   whose title is @em{text}.
+
    @item{@tt{@@footnote@{}@em{text}@tt{@}}} @cindex{@@footnote
    command} places @em{text} in a @index{footnote}.
 
@@ -917,12 +935,12 @@ escapeseq --> "@{"
    title}, where @em{section title} must be the exact @em{text} of the
    section title. 
 
-   @item{@tt{@@uref@{@em{URL}@}}} @cindex{@@uref command}
+   @item{@tt{@@href@{@em{URL}@}}} @cindex{@@href command}
    introduces at point a reference to the @index{Universal Resource
    Locator} (i.e., a @index{WWW address} '@index{URL}'.
 
-   @item{@tt{@@uref@{}@em{text}@tt{@}@{}@em{URL}@tt{@}}}
-   @cindex{@@uref command} introduces at point a reference to the
+   @item{@tt{@@href@{}@em{URL}@tt{@}@{}@em{text}@tt{@}}}
+   @cindex{@@href command} introduces at point a reference to the
    @concept{Universal Resource Locator} @concept{URL}, associated to
    the text @em{text}.
 
@@ -1117,10 +1135,11 @@ stringcommand(begin("alert")).
 stringcommand(end("alert")  ).
 stringcommand(section(B)        ) :- string(B).
 stringcommand(subsection(B)     ) :- string(B).
+stringcommand(subsubsection(B)  ) :- string(B).
 stringcommand(footnote(B)       ) :- string(B).
 stringcommand(ref(B)            ) :- string(B).
-stringcommand(uref(B)           ) :- string(B).
-stringcommand(uref(A,B)         ) :- string(A),string(B).
+stringcommand(href(B)           ) :- string(B).
+stringcommand(href(A,B)         ) :- string(A),string(B).
 stringcommand(email(B)          ) :- string(B).
 stringcommand(email(A,B)        ) :- string(A),string(B).
 stringcommand(author(B)         ) :- string(B).

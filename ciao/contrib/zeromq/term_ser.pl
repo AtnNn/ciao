@@ -1,206 +1,308 @@
 :- module(term_ser, []).
 
-:- use_module(term_ser_util, [string/1, string_list/2]).
+% ==================================================================
+% == Term serialization ============================================
+% ==================================================================
 
-:- export(term_to_ser/3).
-:- export(term_to_ser/4).
+% ------------------------------------------------------------------
+:- export(serialize_term / 2).
 
-term_to_ser(V, L, R):-
-        term_to_ser(V, _, L, R).
+serialize_term( Term, Bytes) :-
+        serialize_term( Term, _, Bytes, []).
 
-term_to_ser(V, D, L, R):-
-        term_to_ser_1(V, D, L, [10|R]).        
+% ..................................................................
+:- export( serialize_term / 3).
 
-term_to_ser_1(V, D) -->
-        {var(V)},
+serialize_term( Term, Bytes, Rest) :-
+        serialize_term( Term, _, Bytes, Rest).
+
+% ..................................................................
+:- export( serialize_term / 4).
+
+serialize_term( Term, Dict, Bytes, Rest) :-
+        tdb_( Term, Dict, Bytes, Rest).
+
+% ------------------------------------------------------------------
+
+tdb_( V, D) -->
+        { var( V) },
         !,
-        {find_var_number(V, D, 1, N)},
-        [0'$],
-        {number_codes(N, NC)},
-        prefix(NC).
-term_to_ser_1(V, _) -->
-        {number(V)},
+        { var_index( D, V, Index) },
+        [ 0'_ ],
+        { number_codes( Index, S) },
+        put_string( S).
+
+tdb_( 0.Inf, _) -->
         !,
-        {number_codes(V, C)},
-        prefix(C).
-% term_to_ser_1(S, D) -->
-%         {string(S)},
-%         !,
-%         {string_list(S, C)},
-%         term_to_ser_1(C, D).
-term_to_ser_1([], _) --> 
+        [ 0'+ ].
+
+tdb_( -0.Inf, _) -->
         !,
-        [0'[, 0']].
-term_to_ser_1([H|T], D) -->
-        {proper_list(T)},
+        [ 0'- ].
+
+tdb_( 0.Nan, _) -->
         !,
-        [0'[],
-        term_to_ser_1(H, D),
-        list_to_ser(T, D).
-term_to_ser_1('', _) --> !,
-        [0'(, 0')].
-term_to_ser_1(A, _) -->
-        {atom(A)},
+        [ 0'n ].
+
+tdb_( N, _) -->
+        { number( N) },
         !,
-        {atom_codes(A, [C|Cs])},
-        (  {C>=0'0, C=<0'9}
-        -> [0'\\, C], prefix_atom(Cs)
-        ;  prefix_atom([C|Cs])
+        [ 0'# ],
+        { number_codes( N, S) },
+        put_string( S).
+
+tdb_( S, _) -->
+        { is_string( S) },
+        !,
+        [ 34 ],
+        put_string( S).
+
+tdb_( [H|T], D) -->
+        !,
+        [ 0'[ ],
+        tdb_( H, D),
+        tdb_list( T, D).
+
+tdb_( A, _) -->
+        { atom( A) },
+        !,
+        [ 0'' ],
+        { atom_codes( A, S) },
+        put_string( S).
+
+tdb_( Struct, D) -->
+        [ 0'( ],
+        { Struct =.. [ F | Args ],
+          atom_codes( F, FS) 
+        },
+        put_string( FS),
+        tdb_args( Args, D).
+
+% ..................................................................
+
+tdb_args( [], _) -->
+        [ 0') ].
+tdb_args( [ Arg | Args ], D) -->
+        tdb_( Arg, D),
+        tdb_args( Args, D).
+
+% ..................................................................
+
+tdb_list( L, D) -->
+        (  { nonvar( L), L = [] }
+        -> [ 0'] ]
+        ;  { nonvar( L), L = [H|T] }
+        -> [ 0', ],
+           tdb_( H, D),
+           tdb_list( T, D)
+        ;  [ 0'| ],
+           tdb_( L, D)
         ).
-term_to_ser_1(S, D) -->
-        {S =.. [F|As]},
-        {atom_codes(F, C)},
-        [0'(],
-        prefix_atom(C),
-        args_to_ser(As, D).
 
+% ..................................................................
 
-proper_list(L):-
-        nonvar(L),
-        (  L=[]
+put_string( S) -->
+        put_chars( S).
+% ..................................................................
+
+put_chars( []) -->
+        !,
+        [ 0'| ].
+put_chars( [ 0'% | Chars ]) -->
+        !,
+        [ 0'%, 0'2, 0'5 ],
+        put_chars( Chars).
+put_chars( [ 0'| | Chars ]) -->
+        !,
+        [ 0'%, 0'7, 0'c ],
+        put_chars( Chars).
+put_chars( [ C | Chars ]) -->
+        (  { C >= 32, C =< 127 }
+        -> [ C ]
+        ;  put_hex_byte( C)
+        ),
+        put_chars( Chars).
+
+% ..................................................................
+
+put_hex_byte( C) -->
+        { Nlo is C /\ 15,
+          Nhi is (C >> 4) /\ 15
+        },
+        [ 37 ],
+        put_hex_digit( Nhi),
+        put_hex_digit( Nlo).
+
+put_hex_digit( C) -->
+        {  C < 10 
+        -> D is 48 + C
+        ;  D is 87 + C
+        },
+        [ D ].
+% ..................................................................
+
+var_index( D, V, Index) :-
+        var_index_( D, V, 0, Index).
+
+var_index_( D, V, Z, Index) :-
+        (  var( D)
+        -> Index = Z,
+           D = [ V = Index | _ ]
+        ;  D = [ W = Index | _ ],
+	   V == W
         -> true
-        ;  L=[_|R],
-           proper_list(R)
+        ;  D = [ _ | D1 ]
+        -> Z1 is Z + 1,
+           var_index_( D1, V, Z1, Index)
         ).
 
-list_to_ser([], _) --> 
+index_var( D, Index, V) :-
+	(  var( D)
+	-> D = [ V = Index | _ ]
+	;  D = [ V = Index | _ ]
+	-> true
+	;  D = [ _ | D1 ]
+	-> index_var( D1, Index, V)
+	).
+
+% ==================================================================
+% == Deserializing terms ===========================================
+% ==================================================================
+
+% ..................................................................
+:- export( deserialize_term / 2).
+
+deserialize_term( Term, Bytes) :-
+        bdt_( Term, _, Bytes, []).
+
+% ..................................................................
+:- export( deserialize_term / 3).
+
+deserialize_term( Term, Bytes, Rest) :-
+        bdt_( Term, _, Bytes, Rest).
+
+% ..................................................................
+:- export( deserialize_term / 4).
+
+deserialize_term( Term, Dict, Bytes, Rest) :-
+        bdt_( Term, Dict, Bytes, Rest).
+
+% ..................................................................
+
+bdt_( V, D) -->
+        [ 0'_ ],
         !,
-        [0']].
-list_to_ser([H|T], D) -->
+        get_string( S),
+        { number_codes( Index, S),
+          index_var( D, Index, V) 
+        }.
+
+bdt_( 0.Inf, _) -->
+        [ 0'+ ],
+        !.
+
+bdt_( -0.Inf, _) -->
+        [ 0'- ],
+        !.
+
+bdt_( 0.Nan, _) -->
+        [ 0'n ],
+        !.
+
+bdt_( N, _) -->
+        [ 0'# ],
         !,
-        [32],
-        term_to_ser_1(H, D),
-        list_to_ser(T, D).
+        get_string( S),
+        { number_codes( N, S) }.
 
-args_to_ser([], _) --> 
+bdt_( S, _) -->
+        [ 34 ],
         !,
-        [0')].
-args_to_ser([H|T], D) -->
-        [32],
-        term_to_ser_1(H, D),
-        args_to_ser(T, D).
-                 
-delim(L, L):- L=[C|_], delim_char(C).
+        get_string( S).
 
-delim_char(0')).
-delim_char(0']).
-delim_char(C):- space_char(C).
-
-prefix([]) --> !.
-prefix([A|L]) --> [A], prefix(L).
-
-prefix_atom([]) --> !.
-prefix_atom([C|Cs]) -->
-        prefix_atom_1(C, Cs).
-
-prefix_atom_1(0'\\, Cs) --> !,
-        [0'\\, 0'\\],
-        prefix_atom(Cs).
-prefix_atom_1(C, Cs) --> 
-        {delim_char(C)}, 
+bdt_( A, _) -->
+        [ 0'' ],
         !,
-        [0'\\, C],
-        prefix_atom(Cs).
-prefix_atom_1(C, Cs) -->
-        [C],
-        prefix_atom(Cs).
-           
-find_var_number(V, D, I, I):-
-        var(D), 
+        get_string( S),
+        { atom_codes( A, S) }.
+
+bdt_( [H|T], D) -->
+        [ 0'[ ],
         !,
-        D= [V|_].
-find_var_number(V, [W|R], I, N):-
-        (  V==W
-        -> N=I
-        ;  J is I+1,
-           find_var_number(V, R, J, N)
-        ).
+        bdt_( H, D),
+        bdt_list( T, D).
 
-% -- Read term -----------------------------------------------------
+bdt_( Struct, D) -->
+        [ 0'( ],
+        get_string( FS),
+        { atom_codes( F, FS) },
+        bdt_args( Args, D),
+        { Struct =.. [ F | Args ] }.
 
-:- export(ser_to_term/3).
-:- export(ser_to_term/4).
+% ..................................................................
 
-ser_to_term(S, T, R):-
-        ser_to_term(S, _, T, R).
+bdt_args( [], _) -->
+        [ 0') ],
+        !.
+bdt_args( [ Arg | Args ], D) -->
+        bdt_( Arg, D),
+        bdt_args( Args, D).
 
-ser_to_term(S, D, T, R):-
-	S= C,
-        skip_spaces(C, S1),
-        ser_to_term_1(T, D, S1, R).
+% ..................................................................
 
-collect_to_delim(Cs, L, R):-
-        (  L=[]
-        -> Cs=[], R=L
-        ;  L=[C|T],
-           (  delim_char(C)
-           -> Cs=[],
-              R= L
-           ;  C= 92, T=[D|M] % 0'\\
-           -> Cs=[D|Cs2],
-              collect_to_delim(Cs2, M, R)
-           ;  Cs=[C|Cs2],
-              collect_to_delim(Cs2, T, R)
-           )
-        ).
-           
-ser_to_term_1(T, D) -->
-        skip_spaces,
-        [C],
-        ser_to_term_2(C, T, D).
+bdt_list( [], _) -->
+        [ 0'] ],
+        !.
+bdt_list( [H|T], D) -->
+        [ 0', ],
+        !,
+        bdt_( H, D),
+        bdt_list( T, D).
+bdt_list( T, D) -->
+        [ 0'| ],
+        bdt_( T, D).
 
-ser_to_term_2(0'$, V, D) --> !,
-        collect_to_delim(Cs),
-        {string_list(S, Cs)},
-        {find_var(S, D, V)}.
-ser_to_term_2(0'[, L, D) --> !,
-        collect_list(L, D).
-ser_to_term_2(0'(, S, D) --> !,
-        collect_to_delim(Cs),
-        {atom_codes(F, Cs)},
-        collect_args(As, D),
-        {S =.. [F|As]}.
-ser_to_term_2(C, N, _, L, R):-
-        collect_to_delim(Cs, [C|L], R),
-        (  C>= 0'0, C=<0'9
-        -> number_codes(N, Cs)
-        ;  atom_codes(N, Cs)
-        ).
+% ..................................................................
 
-collect_list(L, D) -->
-        skip_spaces,
-        (  [0']]
-        -> {L=[]}
-        ;  {L=[T|R]},
-           [C],
-           ser_to_term_2(C, T, D),
-           collect_list(R, D)
-        ).
+get_string( Chars) -->
+        get_chars( Chars).
 
-collect_args(L, D) -->
-        skip_spaces,
-        (  [0')]
-        -> {L=[]}
-        ;  {L=[T|R]},
-           [C],
-           ser_to_term_2(C, T, D),
-           collect_args(R, D)
-        ).
+get_chars( []) -->
+        [ 0'| ],
+        !.
+get_chars( [ C | Chars ]) -->
+        [ 0'% ],
+        !,
+        get_hex_digit( Dhi),
+        get_hex_digit( Dlo),
+        { C is (Dhi << 4) \/ Dlo },
+        get_chars( Chars).
+get_chars( [ C | Chars ]) -->
+        [ C ],
+        get_chars( Chars).
 
-find_var(S, D, V):-
-        (  var(D)
-        -> D=[S:V|_]
-        ;  D=[S:V|_]
-        -> true
-        ;  D=[_|R],
-           find_var(S, R, V)
-        ).
 
-skip_spaces --> [C], {space_char(C)}, !, skip_spaces.
-skip_spaces --> [].
+get_hex_digit( D) -->
+        [ C0 ],        
+        { C is C0 /\ 255 },
+        {  C >= 65, C =< 70
+        -> D is C - 55
+        ;  C >= 97, C =< 102
+        -> D is C - 87
+        ;  C >= 48, C =< 57
+        -> D is C - 48
+        }.
 
-space_char(9).
-space_char(32).
-space_char(10).
-space_char(12).
-space_char(13).
+% ..................................................................
+
+is_string( L) :-
+	var( L),
+	!,
+	fail.
+is_string( []) :- 
+	!.
+is_string( [ C | S ]) :-
+	integer( C),
+	C >= 0,
+	C =< 255,
+	is_string( S).

@@ -2,7 +2,7 @@
 
 :- use_module(library(actmods(actmodrt))).
 :- use_module(library(actmods(webbased_common))).
-:- use_module(library(atom2term), [string2term/2]).
+:- use_module(library(read_from_string), [read_from_string_atmvars/2]).
 :- use_module(library(filenames)).
 :- use_module(library(lists), [append/3]).
 :- use_module(library(pillow(http))).
@@ -21,7 +21,7 @@ save_addr_actmod([Address]) :- !,
 	( fetch_url(URL,[],Response), ! ; Response = [] ),
 	( member(content(String),Response), ! ; String = Response ),
 	( append(String0,[_],String), ! ; String0 = String ),
-	( string2term(String0,server(Server,_)), ! ; name(Server,String0) ),
+	( read_from_string_atmvars(String0,server(Server,_)), ! ; name(Server,String0) ),
         ( remote_call(Server,my_module_address(Mod,Address,Pid))
 	; throw(unable_to_connect(Server,module_address(Mod,Address,Pid)))
 	).

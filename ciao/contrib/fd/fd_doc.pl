@@ -8,19 +8,27 @@
 :- doc(author, "Manuel Carro").
 :- doc(copyright,"@include{Copyright.Manuals}").
 
+
+
 :- doc(summary, "An implementation of constraint programming over
  finite domains.").
 
 :- doc(module,  
 
-"This package is a very preliminary implementation of a finite domain
+"
+
+@begin{alert}
+This package is not anymore maintained. Prefer package
+@lib{clpfd} which provides similar features.
+@end{alert}
+
+This package is a very preliminary implementation of a finite domain
 solver. Examples can be found in the source and library directories.
 
 @begin{itemize}
 @item SEND + MORE = MONEY:
 @end{itemize}
 
-@noindent
 @begin{verbatim}
 @includeverbatim{fd/examples/smm.pl}
 @end{verbatim}
@@ -29,7 +37,6 @@ solver. Examples can be found in the source and library directories.
 @item Queens:
 @end{itemize}
 
-@noindent
 @begin{verbatim}
 @includeverbatim{fd/examples/queensfd.pl}
 @end{verbatim}

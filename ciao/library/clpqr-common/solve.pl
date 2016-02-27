@@ -1,6 +1,5 @@
 :- use_module(engine(hiord_rt), ['$meta_call'/1]).
 
-
 % ---------------------------- compiler interface -----------------------------
 
 /*
@@ -436,18 +435,26 @@ var_with_def(Var, Type, K, I, H) :-
 % ----------------------------------  var ops -------------------------------
 
 % for exact arithmetic ...
-%
+
+% This version will unify the resulting values so is straightforward
+% to use such values in procedures not implemented with clpqr -- EMM.
+
 % ground_meta(M, Val) :-
-%   detach_attribute(M),
-%   M = Val.
+% 	detach_attribute(M),
+% 	M = Val.
+
+% This version will show the solutions as restrictions, but only for
+% clpr.  For clpq it have the same effect that the version above
+% because float(Val) fail. To use results outside use as_float/2 --EMM.
 
 ground_meta(M, Val) :-
-  (float(Val) ->
-     update_attribute(M, float(Val))
-  ;
-     detach_attribute(M),
-     M = Val
-  ).
+	(
+	    float(Val) ->
+	    update_attribute(M, float(Val))
+	;
+	    detach_attribute(M),
+	    M = Val
+	).
 
 % eqn_var_new(EqType, Self)
 % Eqs types:       	0 plain equations

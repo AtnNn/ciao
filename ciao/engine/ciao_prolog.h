@@ -334,6 +334,8 @@ ciao_bool ciao_is_address(ciao_state state,
 ciao_term ciao_refer(tagged_t x);
 tagged_t ciao_unrefer(ciao_term term);
 
+void ciao_ensure_heap(ciao_state state, int cells);
+
 
 #ifdef __cplusplus
 } /* extern "C" */

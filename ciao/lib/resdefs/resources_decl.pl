@@ -3,6 +3,7 @@
 :- use_package(assertions).
 :- use_package(nativeprops).
 :- use_package(basicmodes).
+:- use_package(argnames).
 
 :- multifile '$def$ru'/1.
 :- multifile '$def$gru'/1.
@@ -43,13 +44,15 @@
 :- new_declaration(java_measure/2).
 :- op(1170, fx, (java_measure)).
 
+:- argnames litinfo(literal, approx, extra).
+
 %  Directive to load cost predicates
 :- new_declaration(load_resource_module/1).
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % TODO: This add_mod_to_directives/3 is a ugly kludge
 :- load_compilation_module(library(resdefs(resources_tr))).
-:- add_sentence_trans(add_mod_to_directives/3).
+:- add_sentence_trans(add_mod_to_directives/3, 820).
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

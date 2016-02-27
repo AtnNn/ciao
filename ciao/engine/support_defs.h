@@ -1,4 +1,3 @@
-stream_node_t *insert_new_stream(stream_node_t *new_stream);
 bool_t cunify(Argdecl, tagged_t x1, tagged_t x2);
 bool_t cunify_args(Argdecl, int arity, tagged_t *pt1, tagged_t *pt2);
 ENG_FLT get_float(register tagged_t t);
@@ -12,8 +11,6 @@ tagged_t make_integer(Argdecl, ENG_INT i);
 tagged_t make_integer_check(Argdecl, ENG_INT i, bcp_t op);
 tagged_t make_large(Argdecl, register tagged_t *ptr);
 tagged_t make_structure(Argdecl, register tagged_t functor);
-tagged_t ptr_to_stream_noalias(Argdecl, register stream_node_t *n);
-tagged_t ptr_to_stream(Argdecl, register stream_node_t *n);
 definition_t *find_definition(sw_on_key_t **swp, tagged_t term, tagged_t **argl, bool_t insertp);
 definition_t *insert_definition(sw_on_key_t **swp, tagged_t tagpname, int arity, bool_t insertp);
 definition_t *new_functor(tagged_t tagpname, int arity);
@@ -25,8 +22,7 @@ void add_definition(sw_on_key_t **swp, sw_on_key_node_t *node, tagged_t key, def
 void expand_sw_on_key(sw_on_key_t **psw, try_node_t *otherwise, bool_t deletep);
 void failc(char *mesg);
 void numstack_init(Argdecl);
-void update_std_streams(void);
-void update_stream(register stream_node_t *s, FILE *file);
+/* void update_std_streams(void); */
 bool_t prolog_show_nodes(Argdecl);
 bool_t prolog_show_all_nodes(Argdecl);
 bool_t start_node(Argdecl);

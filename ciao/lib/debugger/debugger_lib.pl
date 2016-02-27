@@ -12,7 +12,7 @@
 		debugger_setting/2,
 		display_nv0/3,
 		display_nvs/3,
-		do_once_command/2,
+		do_once_command/3,
 		functor_spec/5,
 		get_attributed_vars/3,
 		get_debugger_state/1,
@@ -51,10 +51,11 @@
 :- use_module(library(hiordlib)).
 :- use_module(library(apply)).
 :- use_module(library(sort)).
-:- use_module(library(read),   [read/2]).
-:- use_module(library(system), [cyg2win/3, using_windows/0]).
+:- use_module(library(read),   [read_term/3, read/2]).
+:- use_module(library(system), [cyg2win/3,   using_windows/0]).
 :- use_module(library(varnames(apply_dict))).
 :- use_module(library(varnames(complete_dict)), [set_undefined_names/3]).
+:- use_module(engine(attributes)).
 
 :- doc(hide, get_debugger_state/1).
 :- doc(hide, what_is_on/1).
@@ -129,7 +130,7 @@ what_is_on(Mode) :-
 
 :- data printopts/4.
 
-printopts(0'p, 10, true, false).
+printopts(0'p, 10, true, true).
 
 printdepth(Depth) :- current_fact(printopts(_, Depth, _, _)).
 
@@ -183,7 +184,7 @@ print_attribute(A, Op, WriteOpts) :-
 	nl,
 	tab(10), % 10 blanks
 	display('['),
-	write_op(A, Op, WriteOpts),
+	write_op(Op, A, WriteOpts),
 	display(']').
 
 % Command options
@@ -228,6 +229,10 @@ instantiated(Name = Value) :- '$VAR'(Name) \== Value.
 sel_instantiated(NameValue) --> {instantiated(NameValue)}, !, [NameValue].
 sel_instantiated(_) --> [].
 
+get_write_options(true, [_|_], D, [max_depth(D), numbervars(true)]) :-
+	!.
+get_write_options(_, _, D, [max_depth(D), numbervars(true), portrayed(true)]).
+
 write_goal2(Op, Goal0, d(_, _, ADict0), AtVars0) :-
 	current_fact(printopts(_, D, A, V)),
 	sort(AtVars0, AtVars1),
@@ -240,10 +245,7 @@ write_goal2(Op, Goal0, d(_, _, ADict0), AtVars0) :-
 	    Goal = Goal0,
 	    AtVars = AtVars1
 	),
-	( A == true, AtVars \== [] ->
-	    WriteOpts = [max_depth(D), numbervars(true)]
-	; WriteOpts = [max_depth(D), numbervars(true), portrayed(true)]
-	),
+	get_write_options(A, AtVars, D, WriteOpts),
 	write_op(Op, Goal, WriteOpts),
 	(V == true -> list(AInst, display_nv(Op, WriteOpts)) ;  true),
 	(A == true -> print_attributes(AtVars, Op, WriteOpts) ; true).
@@ -308,6 +310,7 @@ do_write_goal(T, X, Xs, B, D, Pport, Pred, Src, Ln0, Ln1, Dict, Number,
 
 :- meta_predicate write_goal_v(?, ?, pred(2)).
 write_goal_v(X0, d(UDict0, CDict0, _), GetAttributedVars) :-
+	current_fact(printopts(Op, D, A, _)),
 	append(UDict0, CDict0, Dict0),
 	GetAttributedVars(X0-Dict0, UnsortedAtVars),
 	sort(UnsortedAtVars, AtVars0),
@@ -315,34 +318,27 @@ write_goal_v(X0, d(UDict0, CDict0, _), GetAttributedVars) :-
 	    t(AtVars0, UDict0, CDict0),
 	    Dict0,
 	    t(AtVars, UDict, CDict)),
-	current_fact(printopts(Op, D, _, _)),
-	( AtVars = [_|_] ->
-	    WO = [max_depth(D), numbervars(true)]
-	; WO = [max_depth(D), numbervars(true), portrayed(true)]
-	),
-	show_variable_values(UDict0, UDict, user,     Op, WO),
-	show_variable_values(CDict0, CDict, compiler, Op, WO),
-	(AtVars = [_|_] -> print_attributes(AtVars, Op, WO) ; true).
+	get_write_options(A, AtVars, D, WriteOpts),
+	show_variable_values(UDict0, UDict, user,     Op, WriteOpts),
+	show_variable_values(CDict0, CDict, compiler, Op, WriteOpts),
+	(A == true -> print_attributes(AtVars, Op, WriteOpts) ; true).
 
 :- meta_predicate write_goal_v_name(?, ?, pred(2)).
 write_goal_v_name(SName, d(UDict, CDict, _), GetAttributedVars) :-
+	current_fact(printopts(Op, D, A, _)),
 	append(UDict, CDict, Dict),
 	atom_codes(Name, SName),
 	( member(Name=Value0, Dict) ->
 	    GetAttributedVars(Value0, AtVars0),
 	    apply_dict(Value0-AtVars0, Dict, Value-AtVars),
-	    current_fact(printopts(Op, D, _, _)),
-	    ( AtVars = [_|_] ->
-		WO = [max_depth(D), numbervars(true)]
-	    ; WO = [max_depth(D), numbervars(true), portrayed(true)]
-	    ),
-	    display_var(Name, Value0, Value, Op, WO),
-	    (AtVars = [_|_] -> print_attributes(AtVars, Op, WO) ; true)
+	    get_write_options(A, AtVars, D, WriteOpts),
+	    display_var(Name, Value0, Value, Op, WriteOpts),
+	    (A == true -> print_attributes(AtVars, Op, WriteOpts) ; true)
 	;
 	    format(user, '{~w not defined here}~n', [Name])
 	).
 
-display_var(Name, Value0, Value, Op, WO) :-
+display_var(Name, Value0, Value, Op, WriteOpts) :-
 	display(Name),
 	( var(Value0) ->
 	    display_list([' = ', Value0])
@@ -350,7 +346,7 @@ display_var(Name, Value0, Value, Op, WO) :-
 	),
 	( '$VAR'(Name) == Value -> true
 	; display(' = '),
-	    write_op(Op, Value, WO)
+	    write_op(Op, Value, WriteOpts)
 	).
 
 warn_if_udp(F, _, _) :- '$predicate_property'(F, _, _), !.
@@ -569,9 +565,9 @@ print_srcdbg_info(_,    _,   nil, nil, nil) :- !.
 print_srcdbg_info(Pred, Src, Ln0, Ln1, Number) :-
 	(
 	    using_windows ->
-% Emacs understand slashes instead of backslashes, even on
-% Windows, and this saves problems with escaping
-% backslashes
+	    % Emacs understand slashes instead of backslashes, even on
+	    % Windows, and this saves problems with escaping
+	    % backslashes
 	    atom_codes(Src, SrcCodes),
 	    cyg2win(SrcCodes, ActualSrcCodes, noswap),
 	    atom_codes(ActualSrc, ActualSrcCodes)
@@ -846,20 +842,30 @@ what_maxdepth :-
 	current_fact(debugdepth(M)),
 	format(user, '{Interpreter maxdepth is ~w}~n', [M]).
 
-:- meta_predicate do_once_command(?, pred(1)).
-do_once_command(Prompt, DebugCall) :-
+:- meta_predicate do_once_command(?, pred(1), ?).
+do_once_command(Prompt, DebugCall, d(UDict, CDict, _ADict)) :-
 	'$prompt'(OldPrompt, Prompt),
 	reset_debugger(State),
-	read(user, Command),
+	read_term(user, Command, [variable_names(Dict0)]),
+	append(UDict, CDict, Dict),
+	% Variable Binding between Command and Program:
+	union(Dict, Dict0, _),
 	'$prompt'(_, '|: '),
-	( DebugCall(Command) -> Y=yes
-	; Y=no
-	),
+	catch((DebugCall(Command) -> Y=yes ; Y=no), E, Y=ex),
 	'$prompt'(_, OldPrompt),
-	set_debugger(State),
-	Y=yes, !.
-do_once_command(_, _) :-
-	format(user_error, '{Warning: goal failed}~n', []).
+	(
+	    Y=yes ->
+	    current_fact(printopts(Op, D, A, _)),
+	    get_write_options(A, [], D, WriteOpts),
+	    display_nvs(Dict0, Op, WriteOpts)
+	;
+	    Y=no ->
+	    format(user_error, '{Warning: goal failed}~n', [])
+	;
+	    %Y=ex ->
+	    format(user_error, '{Warning: exception thrown ~w}~n', [E])
+	),
+	set_debugger(State).
 
 :- meta_predicate show_ancestors(?, ?, pred(2)).
 show_ancestors([_], _, _) :- !,
@@ -903,7 +909,7 @@ debug_trace2(X, State, Pred, Src, L0, L1, d(UDict, CDict), Number,
 	; redo_hook(X, B, D, State, Pred, Src, L0, L1, Dict, Number,
 		GetAttributedVars, DebugCall), fail
 	),
-%	Remove choicepoints in deterministic goals to speed up debugging -- EMM
+	% Remove choicepoints in deterministic goals to speed up debugging -- EMM
 	(C0 == C1 -> ! ; true),
 	'$setarg'(5, State, OA, on).
 
@@ -946,16 +952,21 @@ fail_hook(X, B, D, State, Pred, Src, Ln0, Ln1, Dict, Number,
 	debug_port(X, B, D, fail, State, _, Pred, Src, Ln0, Ln1, Dict, Number,
 	    GetAttributedVars, DebugCall).
 
-:- meta_predicate debug_port(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, pred(2), pred(
-		1)).
+:- meta_predicate debug_port(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, pred(2),
+	    pred(1)).
 debug_port(X, B, D, Port, State, Msg, Pred, Src, Ln0, Ln1, Dict, Number,
 	    GetAttributedVars, DebugCall) :-
 	(
 	    '$spypoint'(X, on, on)
 	;
-% Ln0 is free because there is no way to determine where the 
-% clause start, but the end of the clause can be determine exactly.
-	    current_fact(breakpoint(Pred, Src, _Ln0, Ln1, Number))
+%	    % Ln0 is free because there is no way to determine where the 
+%	    % clause starts, but the end of the clause can be determined exactly.
+%	    current_fact(breakpoint(Pred, Src, _Ln0, Ln1, Number))
+	    %
+	    % JFMC: The Ciao emacs mode needs a number here. Since
+	    %   this only affects the output message, it seems that
+	    %   there is no problem in using the breakpoint Ln0.
+	    current_fact(breakpoint(Pred, Src, Ln0, Ln1, Number))
 	),
 	!,
 	defaultopt(Op),
@@ -990,9 +1001,11 @@ prompt_command(T, X, Xs, B, D, Port, State, Msg, Pred, Src, Ln0, Ln1, Dict,
 
 :- meta_predicate do_trace_command(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
 	    pred(2), pred(1)).
-do_trace_command(0'a, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _) :- !, % a(bort)
+do_trace_command(0'a, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _) :- !,
+	% a(bort)
 	abort.
-do_trace_command(0'c, _, _, _, _, _, State, no, _, _, _, _, _, _, _, _) :- !, % c(reep)
+do_trace_command(0'c, _, _, _, _, _, State, no, _, _, _, _, _, _, _, _) :- !,
+	% c(reep)
 	'$setarg'(2, State, trace, true),
 	'$debugger_mode'.
 do_trace_command(0'\n, _, _, _, _, _, State, no, _, _, _, _, _, _, _, _) :-
@@ -1018,18 +1031,20 @@ do_trace_command(0'g, X, Xs, B, D, Port, State, Msg, Pred, Src, Ln0, Ln1, Dict,
 	prompt_command(Op, X, Xs, B, D, Port, State, Msg, Pred, Src, Ln0, Ln1,
 	    Dict, Number, GetAttributedVars, DebugCall).
 do_trace_command([0'g, Arg], X, Xs, B, D, Port, State, Msg, Pred, Src, Ln0,
-	    Ln1, Dict, Number, GetAttributedVars, DebugCall) :- !, % g(ancestors) arg
+	    Ln1, Dict, Number, GetAttributedVars, DebugCall) :- !,
+	% g(ancestors) arg
 	arg(5, State, CA),
 	show_ancestors(CA, Arg, GetAttributedVars),
 	defaultopt(Op),
 	prompt_command(Op, X, Xs, B, D, Port, State, Msg, Pred, Src, Ln0, Ln1,
 	    Dict, Number, GetAttributedVars, DebugCall).
-do_trace_command(0'l, _, _, _, _, _, State, no, _, _, _, _, _, _, _, _) :- !, % l(eap)
+do_trace_command(0'l, _, _, _, _, _, State, no, _, _, _, _, _, _, _, _) :- !,
+	% l(eap)
 	'$setarg'(2, State, debug, true),
 	'$debugger_mode'.
 do_trace_command(0'n, _, _, _, _, _, State, no, _, _, _, _, _, _, _, _) :-
 	!, % n(odebug)
-% 	nodebug.
+	% nodebug.
 	'$setarg'(3, State, 0, true).
 do_trace_command(0'p, X, Xs, B, D, Port, State, Msg, Pred, Src, Ln0, Ln1, Dict,
 	    Number, GetAttributedVars, DebugCall) :- !, % p(rint)
@@ -1110,7 +1125,7 @@ do_trace_command(0'=, X, Xs, B, D, Port, State, Msg, Pred, Src, Ln0, Ln1, Dict,
 do_trace_command(0'@, X, Xs, B, D, Port, State, Msg, Pred, Src, Ln0, Ln1, Dict,
 	    Number, GetAttributedVars, DebugCall) :-
 	!, %@ (command)
-	do_once_command('| ?- ', DebugCall),
+	do_once_command('| ?- ', DebugCall, Dict),
 	defaultopt(Op),
 	prompt_command(Op, X, Xs, B, D, Port, State, Msg, Pred, Src, Ln0, Ln1,
 	    Dict, Number, GetAttributedVars, DebugCall).

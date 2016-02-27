@@ -1,4 +1,5 @@
 :- use_module(engine(hiord_rt), ['$meta_call'/1]).
+:- use_module(engine(attributes)).
 
 :- multifile 
         verify_attribute/2,
@@ -10,7 +11,7 @@ verify_attribute(clpr_frozen(X,System,User), Value) :-
         '$meta_call'(System),
         '$meta_call'(User).
 verify_attribute(float(F), Term) :-
-        arith_zero(F-Term).
+        arith_eval(F=:=Term).
 verify_attribute(term_wrap(Self,T), Const) :-
         normalize(T-Const, _, I, H),
         solve_lin(H, I),
@@ -47,7 +48,7 @@ combine_attributes_frz(term_wrap(X,Term), X1, G1s, G1u) :-
 combine_attributes_frz(eqn_var(X2,_,_,Ref,Ga), X1, G1s, G1u) :-
         combine_attributes_frz_e(X2, Ref, Ga, X1, G1s, G1u).
 %
-combine_attributes_f(float(T2),     T1) :- arith_zero(T2-T1).
+combine_attributes_f(float(T2),     T1) :- arith_eval(T2=:=T1).
 combine_attributes_f(clpr_frozen(X,S,U), F) :-
         combine_attributes_frz_f(F, X, S, U).
 combine_attributes_f(term_wrap(S2,T2), T1) :-

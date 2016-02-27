@@ -37,12 +37,17 @@ statistical_filter([_-TestSummary|TSs], NSuccess0, NFail0, NFailPre0,
 	statistical_filter(TSs, NSuccess1, NFail1, NFailPre1, NAborted1,
 	    NRTCErrors1, NSuccess, NFail, NFailPre, NAborted, NRTCErrors).
 
-is_failed_test(st(RTCErrors, _Error, Result)) :-
-	Result = aborted(_) ; RTCErrors \== [] ; Result = fail(precondition) ;
-	Result = exception(postcondition, _).
+is_failed_test(st([_|_], _, _)) :- !.
+is_failed_test(st(_,     _, Result)) :- is_failed_test_result(Result).
 
-update_summary_each(st(_, _, aborted(_)), NSuccess, NFail, NFailPre, NAborted0,
-	    NRTCErrors, NSuccess, NFail, NFailPre, NAborted, NRTCErrors) :- !,
+is_failed_test_result(aborted(_, _)).
+is_failed_test_result(fail(precondition)).
+is_failed_test_result(exception(precondition, _)).
+is_failed_test_result(exception(postcondition, _)).
+
+update_summary_each(st(_, _, aborted(_, _)), NSuccess, NFail, NFailPre,
+	    NAborted0, NRTCErrors, NSuccess, NFail, NFailPre, NAborted,
+	    NRTCErrors) :- !,
 	NAborted is NAborted0 + 1.
 update_summary_each(st(_, _, fail(precondition)), NSuccess, NFail,
 	    NFailPre0, NAborted, NRTCErrors, NSuccess, NFail,
@@ -81,6 +86,8 @@ statistical_summary(Tag, IdxTestSummaries0) :-
 	statistical_filter(IdxTestSummaries, 0, 0, 0, 0, 0,
 	    NSuccess, NFail, NFailPre, NAborted, NRTCErrors),
 	NTotal is NSuccess+NFail+NFailPre+NAborted,
+	NTotal > 0
+    ->
 	sformat(S, "Passed: ~w (~2f\%) Failed: ~w (~2f\%) " ||
 	    "Precond Failed: ~w (~2f\%) Aborted: ~w (~2f\%) " ||
 	    "Total: ~w Run-Time Errors: ~w~n}~n",
@@ -92,5 +99,7 @@ statistical_summary(Tag, IdxTestSummaries0) :-
 		NTotal,
 		NRTCErrors
 	    ]),
-	    display_list(Tag),
-	    message(note, [$$(S)]).
+	display_list(Tag),
+	message(note, [$$(S)])
+    ;
+	true.

@@ -63,6 +63,9 @@ normalize_structure(+A, K, Inhom, Hom) :-
 normalize_structure(abs(A),   K, Inhom, Hom) :-
   normalize_abs(A, K, Inhom, Hom).
 %
+normalize_structure(sign(A),  K, Inhom, Hom) :-
+  normalize_sign(A, K, Inhom, Hom).
+%
 normalize_structure(min(A,B), K, Inhom, Hom) :-
   normalize_mix(min, A, B, K, Inhom, Hom).
 normalize_structure(max(A,B), K, Inhom, Hom) :-
@@ -70,6 +73,10 @@ normalize_structure(max(A,B), K, Inhom, Hom) :-
 %
 normalize_structure(pow(A,B), K, Inhom, Hom) :-
   normalize_pow(A, B, K, Inhom, Hom).
+normalize_structure(A**B, K, Inhom, Hom) :-
+  normalize_pow(A, B, K, Inhom, Hom).
+normalize_structure(sqrt(A), K, Inhom, Hom) :-
+  normalize_pow(A, 1/2, K, Inhom, Hom).
 %
 normalize_structure(sin(A),   K, Inhom, Hom) :-
   normalize_trig(sin, A, K, Inhom, Hom).
@@ -77,6 +84,12 @@ normalize_structure(cos(A),   K, Inhom, Hom) :-
   normalize_trig(cos, A, K, Inhom, Hom).
 normalize_structure(tan(A),   K, Inhom, Hom) :-
   normalize_trig(tan, A, K, Inhom, Hom).
+normalize_structure(asin(A),   K, Inhom, Hom) :-
+  normalize_trig(asin, A, K, Inhom, Hom).
+normalize_structure(acos(A),   K, Inhom, Hom) :-
+  normalize_trig(acos, A, K, Inhom, Hom).
+normalize_structure(atan(A),   K, Inhom, Hom) :-
+  normalize_trig(atan, A, K, Inhom, Hom).
 
 normalize_meta(clpr_frozen(V,_,_),   1, 0, [X*1]) :- eqn_var_new(v, X), X=V.
 normalize_meta(eqn_var(_,_,Lin,_,_), 1, I, H) :- get_attribute(Lin, I+H).
@@ -260,8 +273,10 @@ add_linear_ff(A, B, [], _, C) :- !,
 add_linear_ff([E*F|D], A, [H*I|G], B, C) :-
         compare(J, H, E),
         (  J= =,
-            arith_eval(A*F+B*I, K),
-            (  arith_zero(K) ->
+	    arith_eval(A*F,K1),
+	    arith_eval(B*I,K2),
+	    arith_eval(K1+K2, K),
+            (  arith_eval(K1=:= -K2) ->
                 C=L
             ;   C=[E*K|L]
             ),
@@ -284,8 +299,10 @@ add_linear_11(A, [], A) :- !.
 add_linear_11([E*F|D], [H*I|G], C) :-
         compare(J, H, E),
         (  J= =,
-            arith_eval(F+I, K),
-            (  arith_zero(K) ->
+	    arith_eval(F, K1),
+	    arith_eval(I, K2),
+            arith_eval(K1+K2, K),
+            (  arith_eval(K1=:= -K2) ->
                 C=L
             ;   C=[E*K|L]
             ),
@@ -306,8 +323,10 @@ add_linear_1f(A, [], _, A) :- !.
 add_linear_1f([E*F|D], [H*I|G], B, C) :-
         compare(J, H, E),
         (  J= =,
-            arith_eval(F+B*I, K),
-            (  arith_zero(K) ->
+            arith_eval(F, K1),
+	    arith_eval(B*I, K2),
+            arith_eval(K1+K2, K),
+            (  arith_eval(K1=:= -K2) ->
                 C=L
             ;   C=[E*K|L]
             ),
@@ -323,7 +342,7 @@ add_linear_1f([E*F|D], [H*I|G], B, C) :-
 
 mult_linear_factor([], _, []).		% quite common
 mult_linear_factor([H|T],  K, L ) :-
-  ( arith_zero(K-1) ->        		% avoid to copy
+  ( arith_eval(K=:=1) ->        		% avoid to copy
        L = [H|T]
   ;
        H = A*Fa,

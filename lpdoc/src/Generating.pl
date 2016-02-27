@@ -294,35 +294,38 @@ the presence of the tools mentioned above, the source files from which
 the manuals are generated and @apl{lpdoc} in order to re generate the
 manuals in the target formats during installation.
 
-@end{itemize}
+@end{itemize}" ||
 
-@section{Installing a generated manual in a public area} 
+% NOTE: This part is obsolete. LPdoc does not generate on-line indices
+%       of applications anymore (see website generation for more
+%       details).
 
-@cindex{installation, of manuals}
-@begin{alert}   
-@bf{Note: This part is obsolete.  It must be
-updated to describe lpdoc version 2.0. -- EMM}
-@end{alert}
-
-Once the manual has been generated in the desired formats, the
-@file{Makefile} provided also allows automatic installation in a
-different area, specified by the @tt{docdir} option in the
-@file{SETTINGS.pl} file. This is done by typing @tt{lpdoc install}.
-
-As mentioned above, @apl{lpdoc} can generate directly brief
-descriptions in html or @apl{Emacs} info formats suitable for
-inclusion in an on-line index of applications. In particular, if the
-@tt{htmlindex} and/or @tt{infoindex} options are selected, @tt{lpdoc
-install} will create the installation directory, place the
-documentation in the desired formats in this directory, and produce
-and place in the same directory suitable @tt{index.html} and/or
-@tt{dir} files. These files will contain some basic info on the manual
-(extracted from the summary and title, respectively) and include
-pointers to the relevant documents which have been installed.  The
-@tt{infodirheadfile} / @tt{infodirtailfile} (default examples, used in
-the CLIP group at UPM, are included with the distribution) should
-point to files which will be used as head and tail templates when
-generating the @tt{dir} files." ||
+% @bf{Note: This part is obsolete.  It must be
+% updated to describe lpdoc version 2.0. -- EMM}
+% @end{alert}
+% "@section{Installing a generated manual in a public area} 
+% 
+% @cindex{installation, of manuals}
+% 
+% Once the manual has been generated in the desired formats, the
+% @file{Makefile} provided also allows automatic installation in a
+% different area, specified by the @tt{docdir} option in the
+% @file{SETTINGS.pl} file. This is done by typing @tt{lpdoc install}.
+% 
+% As mentioned above, @apl{lpdoc} can generate directly brief
+% descriptions in html or @apl{Emacs} info formats suitable for
+% inclusion in an on-line index of applications. In particular, if the
+% @tt{htmlindex} and/or @tt{infoindex} options are selected, @tt{lpdoc
+% install} will create the installation directory, place the
+% documentation in the desired formats in this directory, and produce
+% and place in the same directory suitable @tt{index.html} and/or
+% @tt{dir} files. These files will contain some basic info on the manual
+% (extracted from the summary and title, respectively) and include
+% pointers to the relevant documents which have been installed.  The
+% @tt{infodirheadfile} / @tt{infodirtailfile} (default examples, used in
+% the CLIP group at UPM, are included with the distribution) should
+% point to files which will be used as head and tail templates when
+% generating the @tt{dir} files." ||
 
 % A variable @tt{extrafiles} allows defining a list of additional files
 % which will be copied to the @tt{docdir} installation directory. This
@@ -539,12 +542,11 @@ be easily implemented via existing @tt{.el} packages such as
 @tt{word-help}, written by Jens T. Berger Thielemann
 (@email{jensthi@@ifi.uio.no}). @file{word-help} may already be in your
 @apl{Emacs} distribution, but for convenience the file
-@file{word-help.el} and a @file{word-help-setup.el} file, providing
-suitable initialization are included in the @tt{lpdoc} library.  A
-suitable interface for @file{word-help} is also provided by the
-@tt{ciao.el} @apl{Emacs} file that comes with the @apl{Ciao} system
-distribution (i.e., if @tt{ciao.el} is loaded it is not necessary to
-load or initialize @tt{word-help}).
+@file{word-help.el}, providing suitable initialization are included in
+the @tt{lpdoc} library.  A suitable interface for @file{word-help} is
+also provided by the @tt{ciao.el} @apl{Emacs} file that comes with the
+@apl{Ciao} system distribution (i.e., if @tt{ciao.el} is loaded it is
+not necessary to load or initialize @tt{word-help}).
 
 @subsection{Accessing man manuals} 
 

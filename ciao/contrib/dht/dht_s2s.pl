@@ -28,7 +28,7 @@
            of the Ciao system and is distributed under the GNU Lesser 
            General Public License. See the COPYING file in source package
            of visit the following Internet address: 
-           @uref{http://www.gnu.org/licenses/lgpl.html} for 
+           @href{http://www.gnu.org/licenses/lgpl.html} for 
            the complete text of the license.").
 
 :- doc(summary, "This is just a single module of the whole Ciao DHT 

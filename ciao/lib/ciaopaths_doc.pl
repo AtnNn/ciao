@@ -3,12 +3,12 @@
 
 :- doc(filetype,package).
 
-:- doc(title,"Library Paths for Ciao Components").
+:- doc(title,"Library Paths for Ciao Bundles").
 :- doc(author, "The CLIP Group").
 
 :- doc(module,"
 This package setups the file search path and library aliases to access
-all the available Ciao components.
+all the available Ciao bundles.
 ").
 
 :- doc(bug, "The package is disabled by default for efficiency reasons

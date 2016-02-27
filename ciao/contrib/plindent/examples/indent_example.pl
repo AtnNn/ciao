@@ -11,7 +11,7 @@
 Handler <& :-
 	Handler <&& .
 
-% This term have a bug that needs to be fixed
+% This term have a bug that was fixed
 p(a
 	% LOCATORS
 	, loc_unknown/1).
@@ -29,8 +29,8 @@ getdeg([_de|G],      I1, I2, 3).
 % time:
 ciao_config_entry(
 	    [
-	    depend_of([('INSTYPE', InsType), ('SYSAVAIL', SysAvail)]),
-	    set_value((InsType == 'src', component_src(ciaode, Value)),
+	    depend_on([('INSTYPE', InsType), ('SYSAVAIL', SysAvail)]),
+	    set_value((InsType == 'src', bundle_src(ciaode, Value)),
 		Value),
 	    default(get_prefix(SysAvail, InsType, DefValue), DefValue),
 	    query("Specify the directory to perform the installation",
@@ -39,7 +39,7 @@ ciao_config_entry(
 	    ]).
 ciao_config_entry(
 	    [
-	    depend_of([('INSTYPE', InsType), ('SYSAVAIL', SysAvail)]),
+	    depend_on([('INSTYPE', InsType), ('SYSAVAIL', SysAvail)]),
 	    valid_values(['yes', 'no']),
 	    set_value(\+((InsType == 'src', SysAvail == 'user')), no),
 	    default('no'),
@@ -303,8 +303,8 @@ p :-
 			    ) ) ) ) ) ).
 
 
-:- reexport( inferres( 'top_res/error_res' ), [ error_message/3 ] ).
-:- reexport( inferres( 'top_res/utility_res' ),
+:- reexport( inferres( top_res( error_res ) ), [ error_message/3 ] ).
+:- reexport( inferres( top_res( utility_res ) ),
 	    [
 		add/3,
 		addition/3,

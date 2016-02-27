@@ -1,3 +1,4 @@
+:- package(dynamic_clauses).
 :- new_declaration(dynamic_handling/0).
 :- use_module(library(dynamic_rt)).
 

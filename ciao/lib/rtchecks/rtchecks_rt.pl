@@ -1,25 +1,31 @@
 :- module(rtchecks_rt, [
 		condition/1,
 		checkif_comp/4,
-		checkc/6,
 		checkc/4,
-		checkif/8,
-		rtcheck/7,
-		rtcheck/3,
-		send_prop_rtcheck/5,
-		disj_prop/5,
+		checkc/2,
+		checkif/7,
+		rtcheck/6,
+		rtcheck/4,
 		disj_prop/3,
-		comploc_stack/3,
+		disj_prop/1,
+		add_info_rtsignal/4,
 		call_stack/2,
 		non_inst/2,
 		non_compat/2,
+		% non_prop_check/3,
+		% compat/1,
+		% inst/1,
+		% succeeds/1,
 		attach_cut_fail/2,
 		select_defined/3
 	    ],
 	    [assertions, nortchecks, hiord]).
 
+:- use_module(engine(attributes)).
 :- use_module(library(terms_vars)).
 :- use_module(library(freeze)).
+
+:- reexport(library(rtchecks(rtchecks_send))).
 
 :- doc(author, "Edison Mera").
 
@@ -35,11 +41,10 @@
 condition(true).
 condition(fail).
 
-:- meta_predicate comploc_stack(?, goal, ?).
-
-comploc_stack(Pos, Goal, PredName) :-
-	intercept(Goal, rtcheck(comp, _, Prop, Valid, []),
-	    send_signal(rtcheck(comp, PredName, Prop, Valid, Pos))).
+:- meta_predicate add_info_rtsignal(goal, ?, ?, ?).
+add_info_rtsignal(Goal, PredName, Dict, Pos) :-
+	intercept(Goal, rtcheck(comp, _, _, Prop, Valid, []),
+	    send_rtcheck(comp, PredName, Dict, Prop, Valid, Pos)).
 
 :- pred checkif_comp(Condition, CompGoal, CompGoalArg, Head)
 
@@ -69,6 +74,7 @@ partiton(_1,_2,_3,_4) is called.".
 checkif_comp(true, Comp, Goal, Goal) :- call(Comp).
 checkif_comp(fail, _,    _,    Goal) :- call(Goal).
 
+/*
 :- doc(bug, "non_compat/2 and non_inst/2 are incompatible with
 	attributed variables, due to the usage of the freeze/2
 	predicate.").
@@ -80,6 +86,7 @@ selectvars([],    []).
 selectvars([V|L], VL0) :-
 	selectvar(V, VL0, VL),
 	selectvars(L, VL).
+*/
 
 :- meta_predicate non_compat(goal, ?).
 
@@ -92,14 +99,21 @@ non_compat(num(A),     _) :- !, \+ num(A).
 non_compat(Goal,       Args) :-
 	varset(Args, VS),
 	'$metachoice'(C),
+	list(VS, cond_detach_attribute),
 	list(VS, freeze('$metacut'(C))),
 	call(Goal),
-	selectvars(Args, VS1),
-	varset(VS1, VS2),
-	list(VS2, detach_attribute),
+	% selectvars(Args, VS1),
+	% varset(VS1, VS2),
+	list(VS, cond_detach_attribute),
 	!,
 	fail.
 non_compat(_, _).
+
+cond_detach_attribute(V) :-
+	get_attribute(V, _) ->
+	detach_attribute(V)
+    ;
+	true.
 
 attach_cut_fail(V, C) :- attach_attribute(V, '$cut_fail'(V, C)).
 
@@ -113,6 +127,7 @@ non_inst(atm(A),    _) :- !, \+ atom(A).
 non_inst(Goal,      Args) :-
 	varset(Args, VS),
 	'$metachoice'(C),
+	list(VS, cond_detach_attribute),
 	list(VS, attach_cut_fail(C)),
 	Goal,
 	list(VS, detach_attribute),
@@ -135,40 +150,30 @@ combine_attributes('$cut_fail'(V1, C), '$cut_fail'(V2, C)) :-
 	'$metacut'(C),
 	fail.
 
-:- meta_predicate disj_prop(list(goal), ?, ?, pred(2), ?).
+:- meta_predicate disj_prop(list(goal), ?, ?).
 
-disj_prop([Prop|Props], [PropArg|PropArgs], [PropName0|PropNames],
-	    Verifier, PropName) :-
-	Verifier(Prop, PropArg),
+disj_prop([CheckProp|CheckProps], [PropName0|PropNames], PropName) :-
+	CheckProp,
 	PropName = PropName0
     ;
-	disj_prop(Props, PropArgs, PropNames, Verifier, PropName).
+	disj_prop(CheckProps, PropNames, PropName).
 
-:- meta_predicate disj_prop(list(goal), ?, pred(2)).
+:- meta_predicate disj_prop(list(goal)).
 
-disj_prop([Prop|Props], [PropArg|PropArgs], Verifier) :-
-	Verifier(Prop, PropArg)
-    ;
-	disj_prop(Props, PropArgs, Verifier).
+disj_prop([CheckProp|CheckProps]) :- CheckProp ; disj_prop(CheckProps).
 
-:- meta_predicate checkc(list(goal), ?, ?, pred(2), ?, ?).
-checkc(Props, PropArgs, PropNames, NegPropType, PropName, Exit) :-
-	disj_prop(Props, PropArgs, PropNames, NegPropType, PropName) ->
-	Exit = fail
-    ;
-	Exit = true.
+:- meta_predicate checkc(list(goal), ?, ?, ?).
+checkc(CheckProps, PropNames, PropName, Exit) :-
+	disj_prop(CheckProps, PropNames, PropName) -> Exit = fail ; Exit = true.
 
-:- meta_predicate checkc(list(goal), ?, pred(2), ?).
-checkc(Props, PropArgs, NegPropType, Exit) :-
-	disj_prop(Props, PropArgs, NegPropType) ->
-	Exit = fail
-    ;
-	Exit = true.
+:- meta_predicate checkc(list(goal), ?).
+checkc(CheckProps, Exit) :-
+	disj_prop(CheckProps) -> Exit = fail ; Exit = true.
 
-:- meta_predicate checkif(?, ?, ?, list(goal), ?, ?, pred(2), ?).
-checkif(fail, _,       _,        _,     _,        _,      _,        _).
-checkif(true, ErrType, PredName, Props, PropArgs, NProps, Verifier, AsrLocs) :-
-	rtcheck(ErrType, PredName, Props, PropArgs, NProps, Verifier, AsrLocs).
+:- meta_predicate checkif(?, ?, ?, ?, list(goal), ?, ?).
+checkif(fail, _,       _,        _,    _,          _,      _).
+checkif(true, ErrType, PredName, Dict, CheckProps, NProps, AsrLocs) :-
+	rtcheck(ErrType, PredName, Dict, CheckProps, NProps, AsrLocs).
 
 select_defined(N=V, SDict0, SDict) :-
 	var(V) ->
@@ -177,40 +182,28 @@ select_defined(N=V, SDict0, SDict) :-
 	SDict0 = [N=V|SDict].
 
 :- use_module(library(hiordlib)).
-:- use_module(library(varnames(apply_dict))).
-:- use_module(library(varnames(complete_dict))).
-
-pretty_prop(Valid, Valid2) :-
-	complete_dict(Valid, Valid, [], EDict),
-	apply_dict(Valid, EDict, Valid1),
-	map(Valid1, select_defined, Valid2, []).
-
-send_prop_rtcheck(ErrType, PredName, PropName, Actual, AsrLocs) :-
-	pretty_prop(Actual, PrettyActual),
-	send_signal(rtcheck(ErrType, PredName, PropName, PrettyActual,
-		AsrLocs)).
-
-:- meta_predicate rtcheck(?, ?, list(goal), ?, ?, pred(2), ?).
-rtcheck(ErrType, PredName, Props, PropArgs, NProps, Verifier, AsrLocs) :-
-	disj_prop(Props, PropArgs, NProps, Verifier, PropName-ActualProp) ->
-	send_prop_rtcheck(ErrType, PredName, PropName, ActualProp, AsrLocs)
+:- meta_predicate rtcheck(?, ?, ?, list(goal), ?, ?).
+rtcheck(ErrType, PredName, Dict, CheckProps, NProps, AsrLocs) :-
+	disj_prop(CheckProps, NProps, PropName-ActualProp) ->
+	map(ActualProp, select_defined, ActualProp1, []),
+	send_rtcheck(ErrType, PredName, Dict, PropName, ActualProp1, AsrLocs)
     ;
 	true.
 
-:- meta_predicate rtcheck(goal, ?, ?).
-rtcheck(Check, PredName, Loc) :-
-	rtcheck_(Check, PredName, Loc),
+:- meta_predicate rtcheck(goal, ?, ?, ?).
+rtcheck(Check, PredName, Dict, Loc) :-
+	rtcheck_(Check, PredName, Dict, Loc),
 	fail.
-rtcheck(_, _, _).
+rtcheck(_, _, _, _).
 
-:- meta_predicate rtcheck_(goal, ?, ?).
-rtcheck_(Check, _, _) :-
+:- meta_predicate rtcheck_(goal, ?, ?, ?).
+rtcheck_(Check, _, _, _) :-
 	call(Check),
 	!.
-rtcheck_(Check, PredName, Loc) :-
-	send_signal(rtcheck(pp_check, PredName, Check, [], [pploc(Loc)])).
+rtcheck_(Check, PredName, Dict, Loc) :-
+	send_rtcheck(pp_check, PredName, Dict, Check, [], [pploc(Loc)]).
 
 :- meta_predicate call_stack(goal, ?).
 call_stack(Goal, Pos) :-
-	intercept(Goal, rtcheck(Type, PredName, PropName, Valid, Poss),
-	    send_signal(rtcheck(Type, PredName, PropName, Valid, [Pos|Poss]))).
+	intercept(Goal, rtcheck(Type, PredName, Dict, PropName, Valid, Poss),
+	    send_rtcheck(Type, PredName, Dict, PropName, Valid, [Pos|Poss])).

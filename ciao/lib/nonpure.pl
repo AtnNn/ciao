@@ -2,7 +2,6 @@
 % These are the modules automatically imported by non-pure modules
 :- use_module(engine(arithmetic)).
 :- use_module(engine(atomic_basic)).
-:- use_module(engine(attributes)).
 :- use_module(engine(basic_props)).
 :- use_module(engine(basiccontrol)).
 :- use_module(engine(data_facts)).

@@ -4,6 +4,7 @@
 %
 
 :- use_module(engine(internals), [term_to_meta/2]).
+
 /*
 arith_ground(X) :- 			% substitute for number(X)
   type(X,Xt), normalize(Xt, X, _, _, H),
@@ -39,7 +40,7 @@ solve_abs( Mux, A, B, Retry) :- var(Mux), !,
           solve_one( B, 0)
       ; arith_ground( B, Bv) ->   			% +a ?b
           Mux = solved,
-          arith_zero( abs(Bv) - Av)
+          arith_eval( abs(Bv) =:= Av)
       ;                                       		% +a -b
           delay_all( Retry, [B], solve_abs(Mux,A,B,yes))
       )
@@ -62,6 +63,43 @@ normalize_abs( B, 1, Inhom, Hom) :-
       delay_all( [VA,VB], solve_abs(_Mux,VA,VB,yes))
   ).
 
+% a = sign(b)
+%
+solve_sign( A, B) :-
+  solve_sign( _Mutex, A, B, no).
+%
+solve_sign( Mux, A, B, Retry) :- var(Mux), !,
+  ( arith_ground( A, Av) ->
+      % arith_eval( A >= 0),
+      ( arith_zero( Av) ->
+          Mux = solved,
+          solve_one( B, 0)
+      ; arith_ground( B, Bv) ->   			% +a ?b
+          Mux = solved,
+          arith_eval( sign(Bv) =:= Av)
+      ;                                       		% +a -b
+          delay_all( Retry, [B], solve_sign(Mux,A,B,yes))
+      )
+  ; arith_ground( B, Bv) ->                   		% -a +b
+      Mux = solved,
+      arith_eval( sign(Bv), Val), solve_one( A, Val)
+  ;                                                 	% -a -b
+      delay_all( Retry, [A,B], solve_sign(Mux,A,B,yes))
+  ).
+solve_sign( _, _, _, _).
+
+normalize_sign( B, 1, Inhom, Hom) :-
+  type(B,Bt), normalize( Bt, B, Kb, Ib, Hb),
+  ( Hb = [] ->                   			% -a +b
+      arith_eval( sign(Kb*Ib), Inhom), Hom = []
+  ;                                                 	% -a -b
+      Inhom = 0, Hom = [VA*1],
+      eqn_var_new( v, VA),
+      var_with_def( VB, v, Kb, Ib, Hb),
+      delay_all( [VA,VB], solve_sign(_Mux,VA,VB,yes))
+  ).
+
+
 % a = {min,max}(b,c)
 %
 solve_mix( MIX, A, B, C) :-
@@ -72,8 +110,8 @@ solve_mix( Mux, MIX, A, B, C, Retry) :- var( Mux), !,
      ( arith_ground( B, Bv) ->
         ( arith_ground( C, Cv) ->   			% +a +b +c
 	    Mux = solved,
- 	    ( MIX = min, arith_zero( Av-min(Bv,Cv))
-            ; MIX = max, arith_zero( Av-max(Bv,Cv))
+ 	    ( MIX = min, arith_eval( Av=:=min(Bv,Cv))
+            ; MIX = max, arith_eval( Av=:=max(Bv,Cv))
             )
         ;                               		% +a +b -c
             delay_all( Retry, [C], solve_mix(Mux,MIX,A,B,C,yes))
@@ -244,21 +282,21 @@ solve_pow( Mux, A, B, C, Retry) :- var(Mux), !,
      ; arith_ground( B, Bv) ->                     		% +a +b ?c
 	Mux = solved,
 	( arith_zero( Bv) ->                fail		% A=0, \+ zero(Va)
-        ; arith_zero( 1-Bv) ->              arith_zero( 1-Av)
+        ; arith_eval( 1=:=Bv) ->            arith_eval( 1=:=Av)
 	; arith_eval( log(Av)/log(Bv), Vc), solve_one( C, Vc)
         )
      ; arith_ground( C, Cv) ->                    		% +a -b +c
 	Mux = solved,
-        ( arith_zero( Cv)   ->        arith_zero( 1-Av)
-        ; arith_zero( 1-Cv) ->        solve_one( B, Av)
-	; arith_eval( exp(Av,1/Cv), Vb), solve_one( B, Vb)
+        ( arith_zero( Cv)   ->          arith_eval( 1=:=Av)
+        ; arith_eval( 1=:=Cv) ->        solve_one( B, Av)
+	; arith_eval( '**'(Av,1/Cv), Vb), solve_one( B, Vb)
         )
      ;                                             		% +a -b -c
        delay_all( Retry, [B,C], solve_pow(Mux,A,B,C,yes))
      )
   ; arith_ground( B, Bv) ->
      ( arith_ground( C, Cv) ->        				% -a +b +c
-        Mux = solved, arith_eval( exp(Bv,Cv), Va), solve_one( A, Va)
+        Mux = solved, arith_eval( '**'(Bv,Cv), Va), solve_one( A, Va)
      ;                                         			% -a +b -c
         delay_all( Retry, [A,C], solve_pow(Mux,A,B,C,yes))
      )
@@ -267,7 +305,7 @@ solve_pow( Mux, A, B, C, Retry) :- var(Mux), !,
         Mux = solved,
 	% nonzero( B),
         solve_one( A, 1)
-     ; arith_zero( 1-Cv) ->
+     ; arith_eval( 1=:=Cv) ->
         Mux = solved, solve_two( A, B, 1)
      ;
         delay_all( Retry, [A,B], solve_pow(Mux,A,B,C,yes))
@@ -282,7 +320,7 @@ normalize_pow( B, C, K, Inhom, Hom) :-
   type(C,Ct), normalize( Ct, C, Kc, Ic, Hc),
   ( Hb = [] ->
      ( Hc = [] ->        					% -a +b +c
-        Mux = solved, K = 1, arith_eval( exp(Kb*Ib,Kc*Ic), Inhom), Hom = []
+        Mux = solved, K = 1, arith_eval( '**'(Kb*Ib,Kc*Ic), Inhom), Hom = []
      ;                                         			% -a +b -c
         K = 1, Inhom = 0, Hom = [VA*1],
         eqn_var_new( v, VA),
@@ -295,7 +333,7 @@ normalize_pow( B, C, K, Inhom, Hom) :-
         Mux = solved,
 	var_with_def( VB, nz, 1, Ib, Hb),  			% nonzero( VB)
         K = 1, Inhom = 1, Hom = []
-     ; arith_zero( 1-Kc*Ic) ->
+     ; arith_eval( 1=:=Kc*Ic) ->
         Mux = solved, K = Kb, Inhom = Ib, Hom = Hb
      ;
         K = 1, Inhom = 0, Hom = [VA*1],
@@ -329,12 +367,18 @@ solve_trig( Mux, Trig, A, B, Retry) :- var( Mux), !,
   ).
 solve_trig( _, _, _, _, _).
 
-trig( sin, x, X, Y) :- arith_eval( sin(X),  Y).
-trig( sin, y, X, Y) :- arith_eval( asin(X), Y).
-trig( cos, x, X, Y) :- arith_eval( cos(X),  Y).
-trig( cos, y, X, Y) :- arith_eval( acos(X), Y).
-trig( tan, x, X, Y) :- arith_eval( tan(X),  Y).
-trig( tan, y, X, Y) :- arith_eval( atan(X), Y).
+trig( sin,  x, X, Y) :- arith_eval( sin(X),  Y).
+trig( sin,  y, X, Y) :- arith_eval( asin(X), Y).
+trig( asin, x, X, Y) :- arith_eval( asin(X), Y).
+trig( asin, y, X, Y) :- arith_eval( sin(X),  Y).
+trig( cos,  x, X, Y) :- arith_eval( cos(X),  Y).
+trig( cos,  y, X, Y) :- arith_eval( acos(X), Y).
+trig( acos, x, X, Y) :- arith_eval( acos(X), Y).
+trig( acos, y, X, Y) :- arith_eval( cos(X),  Y).
+trig( tan,  x, X, Y) :- arith_eval( tan(X),  Y).
+trig( tan,  y, X, Y) :- arith_eval( atan(X), Y).
+trig( atan, x, X, Y) :- arith_eval( atan(X), Y).
+trig( atan, y, X, Y) :- arith_eval( tan(X),  Y).
 
 normalize_trig( Trig, B, 1, Inhom, Hom) :-
   type(B,Bt), normalize( Bt, B, K, Ib, Hb),

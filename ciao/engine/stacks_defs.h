@@ -16,11 +16,13 @@ bool_t trail_usage(Argdecl);
 void explicit_heap_overflow(Argdecl, int pad, int arity);
 
 #if defined(ANDPARALLEL)
-bool_t is_rem_Hterm(CIAO_REGISTER tagged_t term, worker_t *w, worker_t *remote_w);
+//bool_t is_rem_Hterm(CIAO_REGISTER tagged_t term, worker_t *w, worker_t *remote_w);
 void heap_overflow_adjust_wam(worker_t *w, int reloc_factor, tagged_t *newh, bool_t remote_reloc, worker_t *remote_worker);
 #else
 void heap_overflow_adjust_wam(worker_t *w, int reloc_factor, tagged_t *newh);
 #endif
 void stack_overflow_adjust_wam(worker_t *w, int reloc_factor);
 
-
+#if defined(USE_OVERFLOW_EXCEPTION)
+bool_t undo_heap_overflow_excep(Argdecl);
+#endif

@@ -138,21 +138,32 @@ Register assignments (for registers 1 to 3) have been made for i386.
 
 /* Private areas for a thread, related to the overall wam status */
 
+#if defined(TABLING)
+#define StackFReg                       (w->misc->stack_freg)
+#define HeapFReg                        (w->misc->heap_freg)
+#define FirstNodeTR(Node)               ((node_tr_t*)(Node)->local_top)
+#define SetFirstNodeTR(Node,Value)      ((Node)->local_top = (frame_t*)(Value))
+#define LastNodeTR                      (w->misc->last_node_tr)
+#define FrozenChpt(Node)   ((Node)->global_top == (tagged_t*)&(HeapFReg))
+#define NODE_TR_SIZE(NodeTR)            (((node_tr_t*)(NodeTR))->size)
+#define NODE_TR_TRAIL_SG(NodeTR)        (((node_tr_t*)(NodeTR))->trail_sg)
+#define NODE_TR_NEXT(NodeTR)            (((node_tr_t*)(NodeTR))->next)
+#define NODE_TR_CHAIN(NodeTR)           (((node_tr_t*)(NodeTR))->chain)
+#endif
+
 #if defined(ANDPARALLEL)
 #define Goal_List_Start                   (w->misc->goal_list_start)
 #define Goal_List_Top                     (w->misc->goal_list_top)
+#define Goal_Cache                        (w->misc->goal_cache)
+#define Dep_Size                          (w->misc->dep_size_exec)
+#define Dep_Id                            (w->misc->dep_id_exec)
 #define Goal_List_Lock                    (w->misc->goal_list_l)
 #define Event_Queue_Start                 (w->misc->event_queue_start)
 #define Event_Queue_Top                   (w->misc->event_queue_top)
 #define Event_Queue_Lock                  (w->misc->event_queue_l)
 #define Last_Parallel_Exec                (w->misc->last_parallel_exec)
-#define Trail_Top_Global                  (w->misc->trail_top_global)
-#define Node_Top                          (w->misc->node_top)
-#define Cancel_Goal_Exec_Handler          (w->misc->cancel_goal_exec)
+#define Cancel_Goal_Exec                  (w->misc->cancel_goal_exec)
 #define Safe_To_Cancel                    (w->misc->safe_to_cancel)
-#define Current_Init_ChP                  (w->misc->current_init_chp)
-#define Current_Trail_Top                 (w->misc->current_trail_top)
-#define Parallel_Exec_Lock                (w->misc->parallel_exec_l)
 #define Mutex_Lock                        (w->misc->mutex_l)
 #define Mode                              (w->misc->mode)
 #define Waiting_For_Work_Cond_Var         (w->misc->waiting_for_work_cv)
@@ -167,18 +178,16 @@ Register assignments (for registers 1 to 3) have been made for i386.
 
 #define Goal_List_Start_Of(x)             (x->misc->goal_list_start)
 #define Goal_List_Top_Of(x)               (x->misc->goal_list_top)
+#define Goal_Cache_Of(x)                  (x->misc->goal_cache)
+#define Dep_Size_Of(x)                    (x->misc->dep_size_exec)
+#define Dep_Id_Of(x)                      (x->misc->dep_id_exec)
 #define Goal_List_Lock_Of(x)              (x->misc->goal_list_l)
 #define Event_Queue_Start_Of(x)           (x->misc->event_queue_start)
 #define Event_Queue_Top_Of(x)             (x->misc->event_queue_top)
 #define Event_Queue_Lock_Of(x)            (x->misc->event_queue_l)
 #define Last_Parallel_Exec_Of(x)          (x->misc->last_parallel_exec)
-#define Trail_Top_Global_Of(x)            (x->misc->trail_top_global)
-#define Node_Top_Of(x)                    (x->misc->node_top)
 #define Cancel_Goal_Exec_Of(x)            (x->misc->cancel_goal_exec)
 #define Safe_To_Cancel_Of(x)              (x->misc->safe_to_cancel)
-#define Current_Init_ChP_Of(x)            (x->misc->current_init_chp)
-#define Current_Trail_Top_Of(x)           (x->misc->current_trail_top)
-#define Parallel_Exec_Lock_Of(x)          (x->misc->parallel_exec_l)
 #define Mutex_Lock_Of(x)                  (x->misc->mutex_l)
 #define Mode_Of(x)                        (x->misc->mode)
 #define Waiting_For_Work_Cond_Var_Of(x)   (x->misc->waiting_for_work_cv)
@@ -362,11 +371,14 @@ Register assignments (for registers 1 to 3) have been made for i386.
 #define Culprit w->misc->culprit
 
 #if defined(TABLING)
-#define NodeLocalTop(Node)  ((Node)->local_top == (frame_t*)(&stack_freeze)) ? \
-                            stack_freeze : (Node)->local_top
+#define NodeLocalTop(Node)					\
+  (((Node)->global_top != (tagged_t*)(&(HeapFReg))) ?		\
+   (Node)->local_top : StackFReg)
 
-#define NodeGlobalTop(Node) ((Node)->global_top == (tagged_t*)(&heap_freeze)) ? \
-			     heap_freeze : (Node)->global_top
+#define NodeGlobalTop(Node)					\
+  (((Node)->global_top != (tagged_t*)(&(HeapFReg))) ?		\
+   (Node)->global_top : HeapFReg)
+
 #else
 #define NodeLocalTop(Node)  (Node)->local_top
 

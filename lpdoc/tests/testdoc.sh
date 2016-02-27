@@ -23,6 +23,7 @@ old_dir=`pwd`; cd `dirname $0`; self=`pwd`; cd ${old_dir}; old_dir=
 
 # Where CiaoDE is located
 ciaode="${self}/../.."
+CIAOBUILDDIR="${ciaode}/build"
 
 # ---------------------------------------------------------------------------
 # Directory where the saved results go.
@@ -59,12 +60,12 @@ EOF
 # ---------------------------------------------------------------------------
 
 # This is a hack... it has the version number hardwired.
-function get_component_file() {
+function get_bundle_file() {
     case $1 in
-	ciao) echo "ciao-1.13.1" ;;
+	ciao) echo "ciao-1.15.0" ;;
 	ciaopp_ref_man) echo "ciaopp-1.2.0" ;;
 	ciaopp_doc) echo "ciaopp_internals-1.2.0" ;;
-	lpdoc) echo "lpdoc-2.1.0" ;;
+	lpdoc) echo "lpdoc-3.0.0" ;;
 	# for testing
 	ciaotest) echo "ciao" ;;
 	singlelpdoc) echo "singlelpdoc" ;;
@@ -72,7 +73,7 @@ function get_component_file() {
     esac
 }
 
-function get_component_dir() {
+function get_bundle_dir() {
     case $1 in
 	ciao) echo "${ciaode}/ciao" ;;
 	ciaopp_ref_man) echo "${ciaode}/ciaopp" ;;
@@ -85,12 +86,12 @@ function get_component_dir() {
     esac
 }
 
-function get_component_outdir() {
+function get_bundle_outdir() {
     case $1 in
-	ciao) echo "${ciaode}/build/doc" ;;
-	ciaopp_ref_man) echo "${ciaode}/build/doc" ;;
-	ciaopp_doc) echo "${ciaode}/build/doc" ;;
-	lpdoc) echo "${ciaode}/build/doc" ;;
+	ciao) echo "${CIAOBUILDDIR}/doc" ;;
+	ciaopp_ref_man) echo "${CIAOBUILDDIR}/doc" ;;
+	ciaopp_doc) echo "${CIAOBUILDDIR}/doc" ;;
+	lpdoc) echo "${CIAOBUILDDIR}/doc" ;;
 	# for testing
 	ciaotest) echo "${ciaode}/lpdoc/tests/ciaotest" ;;
 	singlelpdoc) echo "${ciaode}/lpdoc/tests/singlelpdoc" ;;
@@ -98,7 +99,7 @@ function get_component_outdir() {
     esac
 }
 
-function get_component_cmd() {
+function get_bundle_cmd() {
     case $1 in
 	ciao) echo "lpmake docs" ;;
 	ciaopp_ref_man) echo "lpmake docs" ;;
@@ -127,11 +128,11 @@ EOF
 
 #SUFFIXES="pdf dvi html manl texi info infoindex"
 
-# Update Lpdoc, rebuild the documentation for ${component}, and compare
+# Update Lpdoc, rebuild the documentation for ${bundle}, and compare
 function full_docs() {
     update_lpdoc
-    mkdir -p "${component_outdir}"
-    cd "${component_outdir}"
+    mkdir -p "${bundle_outdir}"
+    cd "${bundle_outdir}"
     # TODO: use lpdoc realclean, etc.
     rm -f *.texic_gr *.texic_rr *.html_gr *.html_rr *.manl_gr *.manl_rr *.texic_dr *.html_dr *.ascii_dr *.manl_dr *.texic *.texi *.bbl *.blg *.el *.manl *.info *.infoindex
     rm -rf *.html
@@ -144,32 +145,32 @@ function full_docs() {
 
 # Rebuild lpdoc if necessary
 function update_lpdoc() {
-    ${ciaode}/ciaosetup all_lpdoc
+    ${ciaode}/ciaosetup build lpdoc
 }
 
-# Rebuild the documentation for ${component}
+# Rebuild the documentation for ${bundle}
 function rebuild_docs() {
-    cd "${component_dir}"
-    time eval "${component_cmd}"
+    cd "${bundle_dir}"
+    time eval "${bundle_cmd}"
 }
 
 # Just compare the output of the documentation generation
 function compare_docs() {
-    cd "${component_outdir}"
+    cd "${bundle_outdir}"
     echo "Comparing PDF (just size)"
-    ls -la "${component_file}.pdf" "${lpdoc_regression_dir}/${component_file}.pdf-saved"
+    ls -la "${bundle_file}.pdf" "${lpdoc_regression_dir}/${bundle_file}.pdf-saved"
     echo "Comparing DVI (just size)"
-    ls -la "${component_file}.dvi" "${lpdoc_regression_dir}/${component_file}.dvi-saved"
+    ls -la "${bundle_file}.dvi" "${lpdoc_regression_dir}/${bundle_file}.dvi-saved"
     echo "Comparing html"
-    mydiff "${component_file}.html" "${lpdoc_regression_dir}/${component_file}.html-saved"
+    mydiff "${bundle_file}.html" "${lpdoc_regression_dir}/${bundle_file}.html-saved"
     echo "Comparing manl"
-    mydiff "${component_file}.manl" "${lpdoc_regression_dir}/${component_file}.manl-saved"
+    mydiff "${bundle_file}.manl" "${lpdoc_regression_dir}/${bundle_file}.manl-saved"
     echo "Comparing texi"
-    mydiff "${component_file}.texi" "${lpdoc_regression_dir}/${component_file}.texi-saved"
+    mydiff "${bundle_file}.texi" "${lpdoc_regression_dir}/${bundle_file}.texi-saved"
     echo "Comparing info"
-    mydiff "${component_file}.info" "${lpdoc_regression_dir}/${component_file}.info-saved"
+    mydiff "${bundle_file}.info" "${lpdoc_regression_dir}/${bundle_file}.info-saved"
     echo "Comparing infoindex"
-    mydiff "${component_file}.infoindex" "${lpdoc_regression_dir}/${component_file}.infoindex-saved"
+    mydiff "${bundle_file}.infoindex" "${lpdoc_regression_dir}/${bundle_file}.infoindex-saved"
 }
 
 function mydiff() {
@@ -183,21 +184,21 @@ function mydiff() {
 
 # Save the output of the documentation generation
 function save_docs() {
-    cd "${component_outdir}"
+    cd "${bundle_outdir}"
     echo "Saving PDF"
-    cp "${component_file}.pdf" "${lpdoc_regression_dir}/${component_file}.pdf-saved"
+    cp "${bundle_file}.pdf" "${lpdoc_regression_dir}/${bundle_file}.pdf-saved"
     echo "Saving DVI"
-    cp "${component_file}.dvi" "${lpdoc_regression_dir}/${component_file}.dvi-saved"
+    cp "${bundle_file}.dvi" "${lpdoc_regression_dir}/${bundle_file}.dvi-saved"
     echo "Saving html"
-    cp "${component_file}.html" "${lpdoc_regression_dir}/${component_file}.html-saved"
+    cp "${bundle_file}.html" "${lpdoc_regression_dir}/${bundle_file}.html-saved"
     echo "Saving manl"
-    cp "${component_file}.manl" "${lpdoc_regression_dir}/${component_file}.manl-saved"
+    cp "${bundle_file}.manl" "${lpdoc_regression_dir}/${bundle_file}.manl-saved"
     echo "Saving texi"
-    cp "${component_file}.texi" "${lpdoc_regression_dir}/${component_file}.texi-saved"
+    cp "${bundle_file}.texi" "${lpdoc_regression_dir}/${bundle_file}.texi-saved"
     echo "Saving info"
-    cp "${component_file}.info" "${lpdoc_regression_dir}/${component_file}.info-saved"
+    cp "${bundle_file}.info" "${lpdoc_regression_dir}/${bundle_file}.info-saved"
     echo "Saving infoindex"
-    cp "${component_file}.infoindex" "${lpdoc_regression_dir}/${component_file}.infoindex-saved"
+    cp "${bundle_file}.infoindex" "${lpdoc_regression_dir}/${bundle_file}.infoindex-saved"
 }
 
 # -----------------------------------------------------------------
@@ -205,19 +206,19 @@ function save_docs() {
 
 # Open the HTML documentation
 function open_html() {
-    open "${component_outdir}/${component_file}.html/${component}.html"
+    open "${bundle_outdir}/${bundle_file}.html/${bundle}.html"
 }
 
 # Open the HTML documentation
 function open_pdf() {
-    open "${component_outdir}/${component_file}.pdf"
+    open "${bundle_outdir}/${bundle_file}.pdf"
 }
 
 # -----------------------------------------------------------------
 
 do_help() {
     cat <<EOF
-Usage: `basename $0` ACTION COMPONENT
+Usage: `basename $0` ACTION BUNDLE
 
 where ACTION is one of:
 
@@ -243,37 +244,37 @@ EOF
 
 action=$1
 shift
-component=$1
+bundle=$1
 shift
 
-function pick_component() {
-    component_file=`get_component_file "${component}"`
-    if [ x"${component_file}" == x"" ]; then
-	echo "Unrecognized component \`${component}'"
+function pick_bundle() {
+    bundle_file=`get_bundle_file "${bundle}"`
+    if [ x"${bundle_file}" == x"" ]; then
+	echo "Unrecognized bundle \`${bundle}'"
 	do_help
 	exit -1
     fi
-    component_outdir=`get_component_outdir "${component}"`
-    component_dir=`get_component_dir "${component}"`
-    component_cmd=`get_component_cmd "${component}"`
+    bundle_outdir=`get_bundle_outdir "${bundle}"`
+    bundle_dir=`get_bundle_dir "${bundle}"`
+    bundle_cmd=`get_bundle_cmd "${bundle}"`
 }
 
 ensure_regression_dir
 
 case ${action} in
-    full)         pick_component ; full_docs ;;
+    full)         pick_bundle ; full_docs ;;
     #
     update-lpdoc) update_lpdoc ;;
     #
-    rebuild)      pick_component ; rebuild_docs ;;
+    rebuild)      pick_bundle ; rebuild_docs ;;
     #
-    compare)      pick_component ; compare_docs ;;
-    compare-diff) DIFFCMD=diff; pick_component ; compare_docs ;;
-    compare-meld) DIFFCMD=meld; pick_component ; compare_docs ;;
-    save)         pick_component ; save_docs ;;
+    compare)      pick_bundle ; compare_docs ;;
+    compare-diff) DIFFCMD=diff; pick_bundle ; compare_docs ;;
+    compare-meld) DIFFCMD=meld; pick_bundle ; compare_docs ;;
+    save)         pick_bundle ; save_docs ;;
     #
-    open-html)    pick_component ; open_html ;;
-    open-pdf)     pick_component ; open_pdf ;;
+    open-html)    pick_bundle ; open_html ;;
+    open-pdf)     pick_bundle ; open_pdf ;;
     #
     help)         do_help; exit -1 ;;
     *)            do_help; exit -1 ;;

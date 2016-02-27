@@ -19,7 +19,9 @@
 	predicate_property/2,
 	predicate_property/3, % (+1 because of addmodule)
 	%
-        current_atom/1, garbage_collect/0
+        current_atom/1, garbage_collect/0,
+        %
+        set_heap_limit/1, current_heap_limit/1
         ],
         [assertions, isomodes]).
 
@@ -303,9 +305,37 @@ predicate_property(Head, Prop, CallerM) :- nonvar(Head), !,
 	; % TODO: The slow part, reimplement
 	  functor(Head, MF, N),
 	  module_unconcat(MF, EM, F),
+	  % TODO: bug: the resolved predicate only give us the
+	  %       effective module name, so we cannot distinguish
+	  %       between querying the properties of a reexported
+	  %       predicate or a directly exported one. We will give
+	  %       the results of only for the more direct one at this
+	  %       point. (JFMC) Using 'addterm' could partially solve
+	  %       this problem.
+	  %
+	  %       Test case:
+          %         - predicate p imported from mod_a, mod_b
+          %	    - mod_a: defines p
+	  %	    - mod_b: reexports p from a
+	  %	    - mod_c: imports mod_a, imports mod_b
+	  %
+	  %       Then the following queries from mod_c will:
+	  %         - predicate_property(a:p, P): works as expected
+	  %         - predicate_property(b:p, P): works as expected
+	  %         - predicate_property(p, P): may give wrong results
+	  %             
+          %       In the last query, p may refer to 'a:p' or 'b:p'
+	  %       depending on the choice of the module system but
+	  %       predicate_property will always try the directly
+	  %       exported predicate (we must make a choice because
+	  %       meta expansion hides the importing module from us).
+	  %
 	  % obtain the imported module from the effective one
-	  '$imports'(CallerM, IM, F, N, EM),
-	  predicate_property_mod(IM, F, N, Prop)
+	  % TODO: see 'bug' entry above
+	  ( '$imports'(CallerM, EM, F, N, EM) -> IM = EM % try direct import route first
+	  ; '$imports'(CallerM, IM, F, N, EM) -> true % try as a reexport
+	  ),
+	  predicate_property_mod(IM, EM, F, N, Prop)
 	).
 % Note: be careful with this case, non-instantiated meta-arguments may
 %       not behave as expected yet
@@ -323,7 +353,7 @@ predicate_property(Head, Prop, CallerM) :-
 	%
 	( predicate_property_bits(Entry, Bits, Prop)
 	; % TODO: The slow part, reimplement
-	  predicate_property_mod(IM, F, N, Prop)
+	  predicate_property_mod(IM, EM, F, N, Prop)
 	).
 
 predicate_property_bits(Entry, Bits, Prop) :-
@@ -351,12 +381,12 @@ bit_decl(4, (wait)).
 bit_decl(8, (multifile)).
 
 % TODO: Prop=exported cannot be implemented until '$exported' is added
-predicate_property_mod(M, _F, _N, Prop) :-
-	Prop = imported_from(M).
-predicate_property_mod(M, F, N, Prop) :-
+predicate_property_mod(IM, _EM, _F, _N, Prop) :-
+	Prop = imported_from(IM).
+predicate_property_mod(_IM, EM, F, N, Prop) :-
 	functor(G, F, N),
 	% TODO: It repeats solutions!
-	'$meta_args'(M, G),
+	'$meta_args'(EM, G),
 	Prop = meta_predicate(G).
 
 % The reverse of module_concat
@@ -384,3 +414,45 @@ rt20(interpreted).
 rt20(multifile).
 rt20(wait).
 */
+
+
+:- doc(hide, set_heap_limit/1).
+:- doc(hide, current_heap_limit/1).
+
+:- pred set_heap_limit(Limit) : integer(Limit) # "Sets the
+@concept{heap limit} to the largest multiple of word size smaller than
+@var{Limit}.  If more than @concept{heap limit} kilobytes of heap are
+used then throw an exception. This behaviour is disabled if the flag
+is set to a null value.  This limit does not directly influence the
+real size of the heap, but just limits the amount of memory used
+within. Initially @concept{heap limit} is set to 0.".
+
+set_heap_limit(0) :- !,             % Call without heap consumption 
+	'$heap_limit'(0).
+set_heap_limit(Limit):- 
+	integer(Limit), 
+	NewLimit is Limit // 4,     % 4 stands for sizeof(tagged_t)
+	(
+	    try_to_set_heap_limit(NewLimit) ->
+	    true
+	;
+	    garbage_collect, 
+	    try_to_set_heap_limit(NewLimit) ->
+	    true
+	;
+	    throw(error(resource_error(heap), set_heap_limit/1))
+	).
+
+try_to_set_heap_limit(NewLimit):-
+	statistics(global_stack, [GlobalStack, _]), 
+	GlobalStackSize is (GlobalStack + 1) // 4, 
+	GlobalStackSize < NewLimit, 
+	'$heap_limit'(NewLimit).
+
+
+:- pred current_heap_limit(Limit) : true => integer(Limit) # "Unifies 
+@var{Limit} to the current @concept{heap limit}".
+
+current_heap_limit(Limit) :-
+	'$heap_limit'(CurrentLimit), 
+	Limit is CurrentLimit * 4.

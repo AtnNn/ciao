@@ -169,6 +169,7 @@ build_env(Env, EnvBody, EnvR) :-
 % Obtain the name and level of a section command
 section_level(section(T), T, 2).
 section_level(subsection(T), T, 3).
+section_level(subsubsection(T), T, 4).
 
 %% ---------------------------------------------------------------------------
 
@@ -277,12 +278,15 @@ command_body(Struct) -->
 	  % TODO: obtain this from cmd_type!
 	  % commands with several arguments 
 	  % (currently cannot contain other commands)
-	    {( Command = 'uref'
+	    {( Command = 'href'
 	     ; Command = 'email'
 	     ; Command = 'image'
 	     ; Command = 'bibitem'
+	     ; Command = 'pbundle_download'
+	     ; Command = 'pbundle_href'
 	     )},
-	    command_args(BodyList)
+%%	    command_args(BodyList)
+	    command_balanced_args(BodyList)
 	; open,
 	  % TODO: obtain this from cmd_type!
 	  % commands with several arguments 
@@ -292,10 +296,10 @@ command_body(Struct) -->
 	    command_balanced_args(BodyList)
 	; open,
 	  % normal commands: look for closing brace, enter recursively
-	    balanced_braces(1, CommandBody),
-	    % TODO: Recursion (handle_cmd_args) should really be done
-	    %       here instead of individually
-	    {BodyList = [CommandBody]}
+	  balanced_braces(1, CommandBody),
+	  % TODO: Recursion (handle_cmd_args) should really be done
+	  %       here instead of individually
+	  {BodyList = [CommandBody]}
 	),
 	{ Struct =.. [Command|BodyList] }.
 
@@ -310,14 +314,14 @@ command_chars([C|Cs]) -->
 command_chars([]) -->
 	[].
 
-command_args([Arg|RArgs]) -->
-	all_chars(Arg),
-	close,
-%	( spaces, open ->
-	( blanks, open ->
-	    command_args(RArgs)
-	; { RArgs = [] }
-	).
+%% command_args([Arg|RArgs]) -->
+%% 	all_chars(Arg),
+%% 	close,
+%% %	( spaces, open ->
+%% 	( blanks, open ->
+%% 	    command_args(RArgs)
+%% 	; { RArgs = [] }
+%% 	).
 
 % like command_args, but looks for balanced text
 command_balanced_args([Arg|RArgs]) -->

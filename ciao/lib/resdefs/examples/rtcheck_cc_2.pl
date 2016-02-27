@@ -1,7 +1,7 @@
 :- module(rtcheck_cc_2, [qsort/2], [assertions, nativeprops,
-		library(resdefs(rescostcenter)),
-		library(resdefs(resexectime)),
-		profiler]).
+		predefprf(prf_costcenter),
+		predefprf(prf_exectime),
+		profiler, rtchecks, inliner, expander]).
 
 :- doc(author, "Edison Mera").
 :- doc(author, "Teresa Trigo").
@@ -79,7 +79,7 @@ profile_dump
 % 		qsort2/2,
 		res(ticks, call_exit)), 0).
 
-:- cost_center qsort1/2, qsort2/2.
+:- cost_center qsort/2, qsort1/2, qsort2/2.
 
 qsort1(A, B) :- qsort(A, B).
 qsort2(A, B) :- qsort(A, B).

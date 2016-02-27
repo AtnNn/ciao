@@ -1,9 +1,6 @@
 /* Copyright (C) 1988,1989 Swedish Institute of Computer Science and The
    Aerospace Corporation. */
 
-extern frame_t *stack_freeze;
-extern unsigned long int* heap_freeze;
-
 /* In registers.c */
 extern int reg_bank_size;
 extern char **prolog_argv;

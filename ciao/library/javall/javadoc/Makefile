@@ -1,4 +1,6 @@
--include ../../../SETTINGS
+# TODO: Port this Makefile to Prolog
+CIAOBUILDDIRtemp=../../../../build
+-include $(CIAOBUILDDIRtemp)/CONFIG_mkf
 
 all:
 	-javadoc  -sourcepath ../ -d ./ -version -author -overview ../CiaoJava/package.html CiaoJava

@@ -15,7 +15,7 @@
 
 :- doc(section, "Checking or Setting Options").
 
-:- use_module(library(make(system_extra))).
+:- use_module(library(system_extra)).
 :- use_module(library(make(make_rt))).
 
 :- export(lpdoc_option/1).
@@ -80,13 +80,13 @@ get_command_option([C]) :-
 	stop_command_option(V, C),
 	!.
 get_command_option([nofail, silent, show_error_on_error|A]) :-
-	( current_fact(make_option(verbose)) ->
+	( current_fact(make_option('-v')) ->
 	    A = [verbose]
 	; A = []
 	).
 %get_command_option := exception.
 
-:- use_module(library(distutils), [stop_command_option/2]).
+:- use_module(library(lpdist(distutils)), [stop_command_option/2]).
 
 :- export(requested_file_formats/1).
 :- pred requested_file_formats(F) # "@var{F} is a requested file format".
@@ -131,16 +131,39 @@ load_systempath :-
 
 :- use_module(engine(system_info), [get_os/1]).
 
-:- export(viewer/3).
+:- export(viewer/4).
 % The viewer application for a given file format
 % viewer(Suffix, App, Mode):
 %   Mode = fg (call in foreground) or bg (call in background)
-viewer('html', 'open', fg) :- get_os('DARWIN'), !.
-viewer('pdf', 'open', fg) :- get_os('DARWIN'), !.
-viewer('ps', 'open', fg) :- get_os('DARWIN'), !.
-viewer('html', App, bg) :- App = ~htmlview, !.
-viewer('pdf', App, bg) :- App = ~pdfview, !.
-viewer('ps', App, bg) :- App = ~psview, !.
+% -- Default viewer for MacOS X
+viewer('html', 'open "', '"', fg) :- get_os('DARWIN'), !.
+viewer('pdf', 'open "', '"', fg) :- get_os('DARWIN'), !.
+% viewer('pdf', 'emacsclient -n "', '"', fg) :- get_os('DARWIN'), !.
+viewer('ps', 'open "', '"', fg) :- get_os('DARWIN'), !.
+viewer('manl', 'emacsclient -n --eval ''(man "./', '")''', fg) :- get_os('DARWIN'), !.
+% -- Default viewer for Windows
+viewer('html', 'cygstart "', '"', fg) :- get_os('Win32'), !.
+viewer('pdf', 'cygstart "', '"', fg) :- get_os('Win32'), !.
+% viewer('pdf', 'emacsclient -n "', '"', fg) :- get_os('Win32'), !.
+viewer('ps', 'cygstart "', '"', fg) :- get_os('Win32'), !.
+viewer('manl', 'emacsclient -n --eval ''(man "./', '")''', fg) :- get_os('Win32'), !.
+%viewer('html', 'start "', '"', fg) :- get_os('Win32'), !.
+%viewer('pdf', 'start "', '"', fg) :- get_os('Win32'), !.
+%viewer('ps', 'start "', '"', fg) :- get_os('Win32'), !.
+% -- Default viewer for LINUX
+viewer('html', 'xdg-open "', '"', fg) :- get_os('LINUX'), !.
+viewer('pdf', 'xdg-open "', '"', fg) :- get_os('LINUX'), !.
+% viewer('pdf', 'emacsclient -n "', '"', fg) :- get_os('LINUX'), !.
+viewer('ps', 'xdg-open "', '"', fg) :- get_os('LINUX'), !.
+viewer('manl', 'emacsclient -n --eval ''(man "./', '")''', fg) :- get_os('LINUX'), !.
+% -- Viewer for info files (assume emacs for all systems)
+viewer('info', 'emacsclient -n ', '"', fg) :- !.
+% -- Other default viewers (probably, this will not work)
+viewer('html', 'see "', '"', bg) :- !.
+% viewer('pdf', 'see "', '"', bg) :- !.
+viewer('pdf', 'emacsclient -n "', '"', fg) :- get_os('Win32'), !.
+viewer('ps', 'see "', '"', bg) :- !.
+viewer('manl', 'emacsclient -n --eval ''(man "./', '")''', fg) :- !.
 
 % TODO: This seems to be done by the emacs mode...
 % lpsettings <- [] # "Generates default LPSETTINGS.pl in the current directory"
@@ -158,28 +181,6 @@ xdvi := 'xdvi'.
 %% depending on the version of xdvi used.
 :- export(xdvisize/1).
 xdvisize := '8'.
-
-%% The command that views PDF pages in your system
-% TODO: If 'see' is not there, try other ('xdg-open', 'gnome-open', etc.)
-% TODO: 'open' is used ad-hoc in the code in DARWIN, configure here?
-:- export(pdfview/1).
-pdfview := 'see'.
-
-%% The command that views ps files in your system
-:- export(psview/1).
-psview := 'see'.
-
-%% The command that views html pages in your system
-% TODO: If 'see' is not there, try other ('xdg-open', 'gnome-open', 'firefox', etc.)
-% TODO: 'open' is used ad-hoc in the code in DARWIN, configure here?
-:- export(htmlview/1).
-htmlview := 'see'.
-
-% htmlview := '`which xdg-open ',
-%	'|| which firefox ',
-%	'|| which mozilla-firefox ',
-%	'|| which mozilla ',
-%	'|| which x-www-browser`'.
 
 :- doc(subsection, "Bibliography Generation").
 

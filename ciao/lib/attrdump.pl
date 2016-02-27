@@ -7,6 +7,9 @@
         ], [dcg,assertions]).
 
 :- use_module(library(dict), [dic_lookup/4, dictionary/5]).
+:- use_module(library(attr(attr_rt)), [attvar/1, attvars_residuals/3]).
+:- use_module(engine(attributes)).
+
 
  %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  %% Copy is a copy of Term with fresh, non-attributed variables, and
@@ -30,13 +33,28 @@ cp_attr(Term, Copy, Dict) :-
 
 cp_attr_(Var, Copy, _Seen, Dict) :-
         var(Var), !,
-        ( get_attribute(Var, Attrib) ->
+        ( 
+	    attvar(Var) ->
+	    % RH : att_var v2.0 
+	    dic_lookup(Dict, Var, cva2(Copy, L_, T_), Stat),
+	    (
+		Stat = new ->
+		attvars_residuals([Var], L, T), 
+		cp_attr(L, L_, Dict),
+		dic_lookup(Dict, T, v(T_), _)
+	    ;
+		true
+	    )
+	;
+	    get_attribute(Var, Attrib) ->
+	    % RH : att_var v1.0
             dic_lookup(Dict, Var, cva(Copy,Attcopy), Stat),
             ( Stat = new ->
                 cp_attr(Attrib, Attcopy, Dict)
             ; true
             )
-        ; dic_lookup(Dict, Var, v(Copy), _)
+	;
+	    dic_lookup(Dict, Var, v(Copy), _)
         ).
 cp_attr_(Const, Const, _Seen, _Dict) :-
         atomic(Const), !.
@@ -61,17 +79,35 @@ already_seen([(T,C)|_], Term, Copy):-
 already_seen([_|Ps], Term, Copy) :-
         already_seen(Ps, Term, Copy).
 
+
 cp_attr_nc(Term, Copy, Dict) :-
         type(Term, Type),
         cp_attr_nc_t(Type, Term, Copy, Dict).
 
 cp_attr_nc_t(attv,      Cva,    Copy,     Dict) :-
-        dic_lookup(Dict, Cva, cva(Copy,Attcopy), Stat),
-        ( Stat = new ->
-            get_attribute(Cva, Attrib),
-            cp_attr_nc(Attrib, Attcopy, Dict)
-        ; true
-        ).
+	(
+	    attvar(Cva) ->
+	    % RH : att_var v2.0 
+	    dic_lookup(Dict, Cva, cva2(Copy, L_, T_), Stat),
+	    (
+		Stat = new ->
+		attvars_residuals([Cva], L, T), 
+		cp_attr_nc(L, L_, Dict),
+		dic_lookup(Dict, T, v(T_), _)
+	    ;
+		true
+	    )
+	;
+	    % RH : att_var v1.0
+	    dic_lookup(Dict, Cva, cva(Copy,Attcopy), Stat),
+	    ( 
+		Stat = new ->
+		get_attribute(Cva, Attrib),
+		cp_attr_nc(Attrib, Attcopy, Dict)
+	    ;
+		true
+	    )
+	).
 cp_attr_nc_t(var,       V,      Copy,     Dict) :-
         dic_lookup(Dict, V, v(Copy), _).
 cp_attr_nc_t(integer,   I,      I,        _).
@@ -101,6 +137,7 @@ attrlist(Dict) --> {dictionary(Dict,_,Val,L,R)},
 
 attr(cva(Copy,Constr)) --> [attach_attribute(Copy, Constr)].
 attr(v(_)            ) --> [].
+attr(cva2(_, L,T), L, T).
 
 
 reinstall_attributes([]).

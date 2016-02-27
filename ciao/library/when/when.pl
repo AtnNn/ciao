@@ -7,6 +7,8 @@
 :- doc(author, "Manuel Carro").
 :- doc(copyright, "CLIP -- UPM").
 
+:- use_module(engine(attributes)).
+
 :- doc(summary,"This library offers an implementation of
 @pred{when/2}.  It is based on the use of attributed variables
 @cite{holzbaur-plilp92,holzbaur-phd}.").

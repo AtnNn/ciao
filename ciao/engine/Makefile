@@ -1,3 +1,4 @@
+# -*- mode: Makefile; -*-
 # Copyright (C) 1996, UPM-CLIP
 
 # Do NOT use tabs for the commands inside if/endif!
@@ -6,45 +7,52 @@
 #     FOREIGN=foreign.o
 # endif
 
-# todo: put a name to this relative path
-include ../../../makedir/ciaosetup_modules/makefile__common
+# TODO: put a name to this relative path
+CIAOBUILDDIRtemp=../../../build
+include $(CIAOBUILDDIRtemp)/CONFIG_mkf
+
+# (Helper defs for messages)
+BOLD_MESSAGE=$(CIAODESRC)/makedir/mkf_aux bold_message
+NORMAL_MESSAGE=$(NORMAL_MESSAGE_$(SILENT))
+NORMAL_MESSAGE_false=$(CIAODESRC)/makedir/mkf_aux normal_message
+NORMAL_MESSAGE_true=true
 
 SHELL=/bin/sh
 OBJFILES=wam.o format.o inout.o misc.o startgoal.o ciao.o \
 	 nondet.o objareas.o streams.o timing.o wambuiltin.o wamfunction.o \
 	 unix_utils.o attr.o dynlink.o tasks.o locks.o \
-	 own_malloc_bin.o alloc.o heapgc.o indexing.o initial.o \
+	 own_malloc_bin.o own_mmap.o alloc.o heapgc.o indexing.o initial.o \
 	 registers.o stacks.o support.o term_support.o wamsupport.o \
 	 qread.o qget.o builtin.o interrupt.o gauge.o bignum.o \
 	 float_consts.o float_tostr.o \
-	 ciao_prolog.o start.o version.o
+	 ciao_prolog.o start.o version.o 
 
 MAIN_FILE=main.o 
 #MAIN_EXEC=main_exec.o version.o qinsert.o
 
 DATADEFS=datadefs.h version.h configure.h alloc.h registers.h termdefs.h access.h locks.h objareas.h
 SUPPORT=support.h debug.h initial.h compat.h ciao_prolog.h ciao_gluecode.h \
-	threads.h task_areas.h timing_defs.h predtyp.h \
-	profile_defs.h alloc_defs.h support_defs.h builtin_defs.h
+	threads.h task_areas.h timing_defs.h predtyp.h instrdefs.h \
+	profile_defs.h alloc_defs.h support_defs.h builtin_defs.h tabling.h
 
 CCOMPILATIONSUPPORT=term_support_defs.h wam.h wam_defs.h tasks_defs.h \
 	startgoal_defs.h nondet_defs.h start_defs.h stacks_defs.h \
 	startgoal_defs.h streams_defs.h
 
-# todo: put a name to this relative path
-include ../../../ciao/SETTINGS
-# todo: put a name to this relative path
-include ../../../ciao/SHARED
+FIX_SIZE_EXEC:=$(OBJDIR)/fix_size$(EXECSUFFIX)
+
+CIAOLIBBASE:=lib$(MAIN)
+# Name of the standard ciao library
+CIAOLIBNAME:=$(CIAOLIBBASE)$(SOSUFFIX)
 
 .PHONY: cc_message ld_message
-
-#include $(SYSDEP_FILES)/mkf-$(CIAOARCH)
 
 OBJSFORLIB=$(OBJFILES) $(ADDOBJ)
 OBJ=$(OBJSFORLIB) $(MAIN_FILE)
 
 CONFIGURESRC = configure_main.c configure.c \
-	       compat.h termdefs.h own_malloc_defs.h 
+	       compat.h termdefs.h own_malloc_defs.h \
+	       own_mmap.h own_mmap.c
 
 #ifeq ($(OSNAME),Solaris)
 #  LIBSTA=-lsocket
@@ -55,54 +63,18 @@ CONFIGURESRC = configure_main.c configure.c \
 cc_message:
 	@$(NORMAL_MESSAGE) "C compiler flags: $(CFLAGS)"
 ld_message:
-	@$(NORMAL_MESSAGE) "Linker flags: $(CONSOLEFLAG) $(LDFLAG) $(CURRLIBS)"
+	@$(NORMAL_MESSAGE) "Linker flags: $(CONSOLEFLAG) $(LDFLAGS) $(CURRLIBS)"
 
 .c.o:
 	@$(NORMAL_MESSAGE) "Compiling $<"
 	@$(CC) $(CFLAGS) -c -o $@ $<
 
-install: # $(ENGINENAME)
-	@$(BOLD_MESSAGE) "Installing engine $(ENGINENAME)"
-	@-mkdir -p $(BUILD_ROOT)$(ENGINEDIR)
-	@-chmod $(EXECMODE) $(BUILD_ROOT)$(ENGINEDIR)
-	@rm -f $(BUILD_ROOT)$(INSTALLEDENGINEARCH)
-	@rm -f $(BUILD_ROOT)$(INSTALLEDENGINEARCHSTAT)
-	@rm -f $(BUILD_ROOT)$(INSTALLEDENGINESTAT)
-	@rm -f $(BUILD_ROOT)$(INSTALLEDENGINE)
-	@cp $(ENGINENAME) $(BUILD_ROOT)$(INSTALLEDENGINEARCH)
-# 	MH fixed these permissions 
-	@-chmod $(EXECMODE) $(BUILD_ROOT)$(INSTALLEDENGINEARCH)
-	@ln -s $(ENGINEBASE).$(CIAOARCH)$(EXECSUFFIX) $(BUILD_ROOT)$(INSTALLEDENGINE)$(EXECSUFFIX)
-# 	cp $(ENGINENAMESTAT) $(BUILD_ROOT)$(INSTALLEDENGINEARCHSTAT); \
-#	chmod $(EXECMODE) $(BUILD_ROOT)$(INSTALLEDENGINEARCHSTAT); \
-#	ln -s $(ENGINEBASE).$(CIAOARCH).sta$(EXECSUFFIX) $(BUILD_ROOT)$(INSTALLEDENGINESTAT))
-# ifeq ($(OSNAME),Win32)
-# 	-rm -f $(INSTALLEDENGINE)_nc.$(CIAOARCH)
-# 	-rm -f $(INSTALLEDENGINE)_nc.$(CIAOARCH).sta
-# 	-rm -f $(INSTALLEDENGINE)_nc
-# 	-cp $(ENGINENAME)_nc $(INSTALLEDENGINE)_nc.$(CIAOARCH)
-# 	-cp $(ENGINENAME)_nc.sta $(INSTALLEDENGINE)_nc.$(CIAOARCH).sta
-# 	-ln -s $(INSTALLEDENGINE)_nc.$(CIAOARCH) $(INSTALLEDENGINE)_nc
-# 	-ln -s $(INSTALLEDENGINE)_nc.$(CIAOARCH).sta $(INSTALLEDENGINE)_nc.sta
-# # MH these permissions need to looked at
-# 	-chmod $(EXECMODE)_nc $(ENGINEDIR)
-# 	-chmod $(EXECMODE)_nc $(INSTALLEDENGINE)_nc
-# endif
-#	-cp $(DATADEFS) $(SUPPORT) $(INSTALLEDINCLUDEDIR)
-#	-chmod $(DATAMODE) $(INSTALLEDINCLUDEDIR)/*
-
-uninstall:
-	@$(BOLD_MESSAGE) "Uninstalling engine"
-	@-(rm -f $(BUILD_ROOT)$(INSTALLEDENGINESTAT); \
-	rm -f $(BUILD_ROOT)$(INSTALLEDENGINEARCH); \
-	rm -f $(BUILD_ROOT)$(INSTALLEDENGINE)$(EXECSUFFIX); \
-	rm -f $(BUILD_ROOT)$(INSTALLEDENGINEARCHSTAT))
-
-
 ## We produce three files: 
 ### the combined .o file (for static linking),
 ### the .so file (for dynamic linking), and
 ### the executable itself
+
+ENGINE_COMPILATION_FLAGS=$(CIAOSRC)/library/engine_compilation_flags_auto.pl
 
 $(ENGINENAME): configure.h version.h $(ENGINE_COMPILATION_FLAGS) ciaoemulator
 	@true
@@ -192,13 +164,14 @@ $(ENGINE_COMPILATION_FLAGS): compilation_options.c
 	@./compilation_options $(CC) $(CFLAGS) > $(ENGINE_COMPILATION_FLAGS)
 
 doconfigure: $(CONFIGUREOBJ)
-	@$(CC) $(CFLAGS) $(LDFLAGS) -o configure configure.c configure_main.c
+	@$(CC) $(CFLAGS) $(LDFLAGS) -o configure configure.c own_mmap.c configure_main.c
 
 # This is a kludge to allow configure get the correct MallocBase if
 # the engine is in a dynamic library
 doconfiguredyn: $(CONFIGUREOBJ)
 	@$(LD) $(LDSHARED) $(CFLAGS) $(LDFLAGS) -c configure.c
-	@$(LD) $(LDSHARED) -o libconfigure$(SOSUFFIX) configure.o
+	@$(LD) $(LDSHARED) $(CFLAGS) $(LDFLAGS) -c own_mmap.c
+	@$(LD) $(LDSHARED) -o libconfigure$(SOSUFFIX) configure.o own_mmap.o
 	@$(CC) $(CFLAGS) $(LDFLAGS) -L./ -l libconfigure -o configure configure_main.c
 
 configure.o:
@@ -229,6 +202,7 @@ nondet.o: $(DATADEFS) $(SUPPORT) predtyp.h  nondet_defs.h stacks_defs.h
 objareas.o: $(DATADEFS) $(SUPPORT) predtyp.h objareas_defs.h stacks_defs.h indexing_defs.h alloc_defs.h nondet_defs.h
 own_malloc_bin.o: configure.h termdefs.h own_malloc_defs.h
 own_malloc_linear.o: configure.h termdefs.h own_malloc_defs.h
+own_mmap.o : own_mmap.c own_mmap.h
 qget.o: $(DATADEFS) $(SUPPORT) threads.h qget_defs.h qread_defs.h bignum_defs.h
 qinsert.o: $(DATADEFS) $(SUPPORT) qinstrdefs.h threads.h qinsert_defs.h bignum_defs.h stacks_defs.h
 qread.o: $(DATADEFS) $(SUPPORT) qinstrdefs.h qread_defs.h alloc_defs.h qget_defs.h stacks_defs.h

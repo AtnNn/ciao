@@ -4,6 +4,7 @@
 		      simplify/2,
 		      verify_det/3],_).
 
+:- use_module(engine(attributes)).
 :- use_module(library(terms_vars), [varset/2]).
 :- use_module(library(sort), [sort/2]).
 :- use_module(library(sets), 
@@ -13,6 +14,7 @@
             ord_delete/3, 
             ord_intersection_diff/4
         ]).
+
 
 :- data '$read_mode'/1.
 

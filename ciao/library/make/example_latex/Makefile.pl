@@ -1,6 +1,6 @@
 :- module(_,_,[make, fsyntax]).
 
-:- use_module(library(make(system_extra))).
+:- use_module(library(system_extra)).
 :- use_module(library(terms), [atom_concat/2]).
 
 main := paper.

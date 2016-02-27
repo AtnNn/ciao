@@ -17,7 +17,7 @@
    teaching logic programming, for illustrating the expected
    theoretical results that should be expected from the declarative
    semantics (see for example the slides in
-   @uref{http://www.cliplab.org/proglog}).
+   @href{http://www.cliplab.org/proglog}).
 
    It is important to realize, however, that the improved behaviour of
    breadth first execution comes at a high (exponential!) price in

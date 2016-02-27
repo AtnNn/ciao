@@ -8,7 +8,7 @@
 ** Last update Thu Jan  4 14:17:39 2007 Edison Mera
 */
 
-  unsigned long *lx, *ly, *lz;
+  volatile unsigned long *lx, *ly, *lz;
   unsigned long mask;
   unsigned int index;
   unsigned int shift;
@@ -17,9 +17,9 @@
   int orig_size = sizeof(x) / sizeof(mask);
   int size;
 
-  lx = (unsigned long *)&x;
-  ly = (unsigned long *)&y;
-  lz = (unsigned long *)&z;
+  lx = (volatile unsigned long *)&x;
+  ly = (volatile unsigned long *)&y;
+  lz = (volatile unsigned long *)&z;
 
   size = orig_size;
 

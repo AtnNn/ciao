@@ -584,36 +584,11 @@ putn_list(N, [C|Chars]) :-
 	put_code(Char),
 	putn_list(N1, Chars).
 
-%% ---------------------------------------------------------------------------
-
+% ===========================================================================
 
 % :- true comp format_to_string(S,C,A) + native(format_to_string(S,C,A)).
 
-
 % :- true comp sformat(S,C,A) + native(sformat(S,C,A)).
-
-:- initialization(create_temp_files).
-
-:- data sformat_temp_file/1.
-
-%% Can we write in some of the above directories?
-check_writable_dir(FileSpec):-
-	get_tmp_dir(TMP),
-        atom_concat(TMP, 'format_to_string_XXXXXX', FileSpec).
-
-%% Initialization: create a file name in some suitable place (check
-%% several), otherwise put a note that a pipe has to be used.
-create_temp_files :-
-        retractall_fact(sformat_temp_file(_)),  % Remove garbage
-        (
-            check_writable_dir(FileSpec)  ->       % Can write somewhere?
-            mktemp(FileSpec, FileName),         % File created!
-            delete_file(FileName),              % We do not need it now
-            asserta_fact(sformat_temp_file(FileName))
-        ;
-            asserta_fact(sformat_temp_file(pipe)) % Filename != pipe !!
-        ).
-
 
 :- pred format_to_string(Format, Arguments, String) 
    : (format_control(Format), list(Arguments)) => string(String)
@@ -622,48 +597,79 @@ create_temp_files :-
       but the result is stored in a string.".
 
 :- doc(bug, "@pred{format_to_string/3} is extremelly slow in its
-          current implementation. It writes an intermediate file which
-          is immediately removed, if possible.  It is not very fast.
-          In case there are no permissions, writing is attempted
-          through an internal pipe, which may hang if the string is
-          too long (this is O.S. dependant).").
+   current implementation. If possible, it writes the output to an
+   intermediate file, reads the string, and removes the file. This is
+   not very fast. In case there are no permissions, writing is
+   attempted through an internal pipe, which may hang if the string is
+   too long (this is O.S. dependant).
+
+   Until @em{strings as streams} are implemented in Ciao, please
+   consider (the incomplete) @lib{format_to_string}.").
 
 format_to_string(Format, Args, String) :-
-        current_fact(sformat_temp_file(FileName)),
-        (
-            FileName = pipe ->
+	ensure_sformat_temp_filename(FileName),
+        ( FileName = pipe ->
             pipe(Out, In),
             format(In, Format, Args),
             close(In),
             get_codes(Out, String),
             close(Out)
-        ;
-            open(FileName, write, WriteStream),
-            format(WriteStream, Format, Args),
-            close(WriteStream),
-            open(FileName, read, ReadStream),
-            get_codes(ReadStream, String),
-            close(ReadStream),
-            delete_file(FileName)
+        ; open(FileName, write, WriteStream),
+          format(WriteStream, Format, Args),
+          close(WriteStream),
+          open(FileName, read, ReadStream),
+          get_codes(ReadStream, String),
+          close(ReadStream),
+          delete_file(FileName)
         ).
 
 :- pred sformat(String, Format, Arguments) 
     :   format_control(Format) => string(String)
-    # "Same as 
-       @pred{format_to_string(@var{Format}, @var{Arguments}, @var{String})} 
-       (note the different argument order).".
-
+    # "Same as @pred{format_to_string(@var{Format}, @var{Arguments},
+       @var{String})} (note the different argument order).".
 
 sformat(String, Format, Args) :- format_to_string(Format, Args, String).
-
 
 %% Read a string from a stream.
 get_codes(Stream, Cs) :-
 	get_code(Stream, C),
-	( 
-            C = -1 ->
+	( C = -1 ->
 	    Cs = []
-	; 
-            Cs = [C|Cs0],
-            get_codes(Stream, Cs0)
+	; Cs = [C|Cs0],
+          get_codes(Stream, Cs0)
 	).
+
+% ---------------------------------------------------------------------------
+
+% (file name for temporal files)
+
+:- data sformat_temp_filename/1.
+
+:- initialization(clean_sformat_temp_filename).
+
+%% Initialization: create a file name in some suitable place (check
+%% several), otherwise put a note that a pipe has to be used.
+clean_sformat_temp_filename :-
+        retractall_fact(sformat_temp_filename(_)).
+
+% Obtain the name for the temporal file
+ensure_sformat_temp_filename(FileName) :-
+        current_fact(sformat_temp_filename(FileName0)),
+	!,
+	FileName = FileName0.
+ensure_sformat_temp_filename(FileName) :-
+        ( % Check that we can write to a temporal file
+	  get_sformat_temp_filename(FileName0) ->
+	    % File created, remove since we do not need it now
+            delete_file(FileName0)
+        ; FileName0 = pipe
+        ),
+	asserta_fact(sformat_temp_filename(FileName0)),
+	FileName = FileName0.
+
+get_sformat_temp_filename(FileName) :-
+	get_tmp_dir(TMP),
+        atom_concat(TMP, 'format_to_string_XXXXXX', FileSpec),
+	mktemp(FileSpec, FileName).
+
+% ---------------------------------------------------------------------------

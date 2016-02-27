@@ -6,6 +6,7 @@
 	    get_code_and_related_assertions_opts/6,
 	    cleanup_code_and_related_assertions/0, 
 	    check_code_and_assrt_syntax/1,
+	    use_pkg/2,
 	    clause_read/7,
 	    assertion_read/9,
 	    assertion_body/7,
@@ -142,6 +143,7 @@ check_code_and_assrt_syntax(I):-
 
 cleanup_code_and_related_assertions :-
         cleanup_c_itf_data,
+	retractall_fact(use_pkg(_,_)),
 	retractall_fact(clause_read(_,_,_,_,_,_,_)),
 	retractall_fact(assertion_read(_,_,_,_,_,_,_,_,_)).
 
@@ -155,6 +157,7 @@ cleanup_code_and_related_assertions :-
    reader/normalizer}. Reads all declarations and code in @var{I} and
    leaves it asserted in the database, in the format defined in
    @lib{'compiler/c_itf'}. Clauses are stored in @pred{clause_read/7}.
+   Used packages are stored in @pred{use_pkg/2}.
 
    Also, it reads and normalizes @em{all} assertions in this file and
    all related files, leaving them asserted in @pred{assertion_read/9}
@@ -195,7 +198,7 @@ get_code_and_related_assertions_opts(I,Opts,M,Base,Suffix,Dir):-
 	(  ( prolog_flag(verbose_compilation,on,on) ; member('-v',Opts) )
 	-> Verb = verbose
 	;  Verb = quiet ),
-	push_prolog_flag(runtime_checks, no),
+%	push_prolog_flag(runtime_checks, no),
 	push_prolog_flag(read_assertions, no), % Bug: needs better integration
 	push_prolog_flag(unused_pred_warnings, no), % Bug: this needs read_assertions
 	push_prolog_flag(keep_assertions, yes), % Do not clean assertions!
@@ -207,7 +210,7 @@ get_code_and_related_assertions_opts(I,Opts,M,Base,Suffix,Dir):-
 	pop_prolog_flag(keep_assertions), % Do not clean assertions!
 	pop_prolog_flag(unused_pred_warnings),
 	pop_prolog_flag(read_assertions),
-	pop_prolog_flag(runtime_checks),
+%	pop_prolog_flag(runtime_checks),
 	get_file_data(I,Base,M,Suffix,Dir).
 
 get_code_and_norm_assertions(Base,M):-
@@ -236,6 +239,16 @@ substract_pl(F,F,'').
       of @pred{clause_of/7} in @lib{c_itf}".
 
 :- data clause_read/7.
+
+%% ---------------------------------------------------------------------------
+
+:- pred use_pkg(Base, Pkg)
+   => (atm(Base), filename(Pkg))
+   # "After calling @pred{get_assertions_and_code/5} this predicate
+      contains the packages used in the file. The format is the same
+      as that of @pred{package/2} in @lib{c_itf}".
+
+:- data use_pkg/2.
 
 %% ---------------------------------------------------------------------------
 
@@ -346,6 +359,7 @@ process_file_assertions_(Base,Opts):-
         activate_translation(Base,M,add_goal_trans),
         expand_clause(0,0,M,_,_,_), % Translator initialization
 	save_clause_of(Base,M),
+	save_use_pkg(Base,M),
 	%% deactivate translations
 	del_goal_trans(M),
 	del_clause_trans(M).
@@ -358,13 +372,21 @@ save_clause_of(Base,M):-
 	 ; % do the "second expansion"
 %	   io_aux:message(['{Original: ',(Head:-Body)]),
 	   expand_clause(Head,Body,M,VarNames,H,B)
-%	   io_aux:message(['{Expanded: ',(H:-B)])
+%	   ,io_aux:message(['{Expanded: ',(H:-B)])
 	),
 	% one more patch!!
 	( var(VarNames) -> VarNames=[] ; true ),
 	assertz_fact(clause_read(Base,H,B,VarNames,Source,Line0,Line1)),
 	fail.
 save_clause_of(_Base,_M).
+
+save_use_pkg(Base,_M):-
+	( % ( failure-driven loop)
+	  package(Base,Pkg),
+	    assertz_fact(use_pkg(Base,Pkg)),
+	    fail
+	; true
+	).
 
 :- push_prolog_flag(multi_arity_warnings,off).
 
@@ -743,7 +765,7 @@ normalize_assertions_pass_two(M) :-
 */
 
 pass_two_not_required(modedef). %% modedefs already transformed in pass one -- leave as is
-%pass_two_not_required(test).    %% tests do not requires transformation
+%pass_two_not_required(test).    %% tests do not require transformation
 
 normalize_assertions_pass_two_opts(M,Opts) :-
 	( assertion_read(PD,M,AStatus,AType,NAss,Dict,S,LB,LE),
@@ -897,41 +919,40 @@ assrt_format_code(t).
      unnomalized assertion body @var{B}.".
 %% ---------------------------------------------------------------------------
 
-%% MH: Added new assertions for transition. Marked as %N
 %% MH: No comments allowed now in basic assertions (difficult to document).
 
 % ------------ A  B   C  D  E --FormatId--------------------------- %ABCDE
-norm_body((PD::DP:CP=>AP+GP#CO),p,(PD::DP  :CP  =>AP  +GP  #CO)):-!.%11111%N
+norm_body((PD::DP:CP=>AP+GP#CO),p,(PD::DP  :CP  =>AP  +GP  #CO)):-!.%11111
 norm_body((PD::DP:CP=>AP+GP   ),p,(PD::DP  :CP  =>AP  +GP  #"")):-!.%11110
-norm_body((PD::DP:CP=>AP   #CO),p,(PD::DP  :CP  =>AP  +true,CO)):-!.%11101%N%N
+norm_body((PD::DP:CP=>AP   #CO),p,(PD::DP  :CP  =>AP  +true#CO)):-!.%11101
 norm_body((PD::DP:CP=>AP      ),p,(PD::DP  :CP  =>AP  +true#"")):-!.%11100
-norm_body((PD::DP:CP    +GP#CO),p,(PD::DP  :CP  =>true+GP  #CO)):-!.%11011%N
+norm_body((PD::DP:CP    +GP#CO),p,(PD::DP  :CP  =>true+GP  #CO)):-!.%11011
 norm_body((PD::DP:CP    +GP   ),p,(PD::DP  :CP  =>true+GP  #"")):-!.%11010
-norm_body((PD::DP:CP       #CO),p,(PD::DP  :CP  =>true+true#CO)):-!.%11001%N
+norm_body((PD::DP:CP       #CO),p,(PD::DP  :CP  =>true+true#CO)):-!.%11001
 norm_body((PD::DP:CP          ),p,(PD::DP  :CP  =>true+true#"")):-!.%11000
-norm_body((PD::DP   =>AP+GP#CO),p,(PD::DP  :true=>AP  +GP  #CO)):-!.%10111%N
+norm_body((PD::DP   =>AP+GP#CO),p,(PD::DP  :true=>AP  +GP  #CO)):-!.%10111
 norm_body((PD::DP   =>AP+GP   ),p,(PD::DP  :true=>AP  +GP  #"")):-!.%10110
-norm_body((PD::DP   =>AP   #CO),p,(PD::DP  :true=>AP  +true#CO)):-!.%10101%N
+norm_body((PD::DP   =>AP   #CO),p,(PD::DP  :true=>AP  +true#CO)):-!.%10101
 norm_body((PD::DP   =>AP      ),p,(PD::DP  :true=>AP  +true#"")):-!.%10100
-norm_body((PD::DP       +GP#CO),p,(PD::DP  :true=>true+GP  #CO)):-!.%10011%N
+norm_body((PD::DP       +GP#CO),p,(PD::DP  :true=>true+GP  #CO)):-!.%10011
 norm_body((PD::DP       +GP   ),p,(PD::DP  :true=>true+GP  #"")):-!.%10010
-norm_body((PD::DP          #CO),d,(PD::DP  :true=>true+true#CO)):-!.%10001%N
+norm_body((PD::DP          #CO),d,(PD::DP  :true=>true+true#CO)):-!.%10001
 norm_body((PD::DP             ),d,(PD::DP  :true=>true+true#"")):-!.%10000
-norm_body((PD    :CP=>AP+GP#CO),p,(PD::true:CP  =>AP  +GP  #CO)):-!.%01111%N
+norm_body((PD    :CP=>AP+GP#CO),p,(PD::true:CP  =>AP  +GP  #CO)):-!.%01111
 norm_body((PD    :CP=>AP+GP   ),p,(PD::true:CP  =>AP  +GP  #"")):-!.%01110
-norm_body((PD    :CP=>AP   #CO),s,(PD::true:CP  =>AP  +true#CO)):-!.%01101%N
+norm_body((PD    :CP=>AP   #CO),s,(PD::true:CP  =>AP  +true#CO)):-!.%01101
 norm_body((PD    :CP=>AP      ),s,(PD::true:CP  =>AP  +true#"")):-!.%01100
-norm_body((PD    :CP    +GP#CO),g,(PD::true:CP  =>true+GP  #CO)):-!.%01011%N
+norm_body((PD    :CP    +GP#CO),g,(PD::true:CP  =>true+GP  #CO)):-!.%01011
 norm_body((PD    :CP    +GP   ),g,(PD::true:CP  =>true+GP  #"")):-!.%01010
-norm_body((PD    :CP       #CO),c,(PD::true:CP  =>true+true#CO)):-!.%01001%N
+norm_body((PD    :CP       #CO),c,(PD::true:CP  =>true+true#CO)):-!.%01001
 norm_body((PD    :CP          ),c,(PD::true:CP  =>true+true#"")):-!.%01000
-norm_body((PD       =>AP+GP#CO),p,(PD::true:true=>AP  +GP  #CO)):-!.%00111%N
+norm_body((PD       =>AP+GP#CO),p,(PD::true:true=>AP  +GP  #CO)):-!.%00111
 norm_body((PD       =>AP+GP   ),p,(PD::true:true=>AP  +GP  #"")):-!.%00110
-norm_body((PD       =>AP   #CO),s,(PD::true:true=>AP  +true#CO)):-!.%00101%N
+norm_body((PD       =>AP   #CO),s,(PD::true:true=>AP  +true#CO)):-!.%00101
 norm_body((PD       =>AP      ),s,(PD::true:true=>AP  +true#"")):-!.%00100
-norm_body((PD           +GP#CO),g,(PD::true:true=>true+GP  #CO)):-!.%00011%N
+norm_body((PD           +GP#CO),g,(PD::true:true=>true+GP  #CO)):-!.%00011
 norm_body((PD           +GP   ),g,(PD::true:true=>true+GP  #"")):-!.%00010
-norm_body((PD              #CO),p,(PD::true:true=>true+true#CO)):-!.%00001%N
+norm_body((PD              #CO),p,(PD::true:true=>true+true#CO)):-!.%00001
 norm_body((PD                 ),t,(PD::true:true=>true+true#"")):-!.%00000
 % ----------------------------------------------------------------- % ----
 

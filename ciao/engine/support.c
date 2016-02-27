@@ -9,6 +9,7 @@
 
 /* declarations for global functions accessed here */
 
+#include "streams_defs.h"
 #include "bignum_defs.h"
 #include "support_defs.h"
 #include "alloc_defs.h"
@@ -26,7 +27,6 @@
 static bool_t cunify_args_aux(Argdecl, register int arity, register tagged_t *pt1, register tagged_t *pt2, tagged_t *x1, tagged_t *x2);
 static bool_t cunify_aux PROTO((worker_t *w, tagged_t x1, tagged_t x2));
 static bool_t cunify_aux(Argdecl, tagged_t x1, tagged_t x2);
-static int file_is_tty(FILE *file);
 static void numstack_overflow(Argdecl);
 static definition_t **find_subdef_chain(definition_t *f, int clause_no);
 static definition_t *parse_1_definition(tagged_t tagname, tagged_t tagarity);
@@ -534,100 +534,6 @@ tagged_t make_float(Arg,i)
   return Tag(STR, h-4);
 
 }
-
-
-/* --------------------------------------------------------*/
-
-
-/* Protect the creation of streams: several threads might want to create
-   streams at once. */
-
-extern LOCK stream_list_l;
-
-stream_node_t *insert_new_stream(stream_node_t *new_stream){
-
-  Wait_Acquire_lock(stream_list_l);
-  new_stream->forward = root_stream_ptr;
-  new_stream->backward = root_stream_ptr->backward;
-  root_stream_ptr->backward->forward = new_stream;
-  root_stream_ptr->backward = new_stream;
-  Release_lock(stream_list_l);
-
-  return new_stream;
-}
-
-stream_node_t *new_stream(streamname, streammode, streamfile)
-     tagged_t streamname;
-     char *streammode;
-     FILE *streamfile;
-{
-  CIAO_REGISTER stream_node_t *s;
-
-  s = (stream_node_t *)checkalloc(sizeof(stream_node_t));
-  s->streamname = streamname;
-  s->streammode = streammode[0];
-  s->pending_char = -100;
-  s->socket_eof = FALSE;
-  update_stream(s,streamfile);
-
-  return insert_new_stream(s);
-}
-
-
-static int file_is_tty(file)
-     FILE *file;
-{
-  extern int prolog_force_interactive;
-
-  return (isatty(fileno(file)) ||
-          (prolog_force_interactive && fileno(file)<3));
-}
-
-
-void update_stream(s,file)
-     CIAO_REGISTER stream_node_t *s;
-     FILE *file;
-{
-  s->label = MakeSmall(fileno(file));
-  s->streamfile = file;
-  if ((s->isatty = file_is_tty(file)))
-    s = root_stream_ptr;
-  s->last_nl_pos = 0;
-  s->nl_count = 0;
-  s->char_count = 0;		/* less than perfect */
-}
-
-
-#if defined(CREATE_NEW_STREAMS)
-void update_std_streams()		/* called by restore/1 */
-{
-  struct
-    stream_node *streamptr = root_stream_ptr, *next_ptr;
-
-  do {
-    next_ptr = streamptr->forward;
-    if (streamptr->streamname!=ERRORTAG)
-      fclose(streamptr->streamfile);
-    checkdealloc(streamptr);
-    streamptr = next_ptr;
-  } while (streamptr!=root_stream_ptr);
-  init_streams();
-  init_streams_each_time(Arg);
-}
-#else
-void update_std_streams()		/* called by restore/1 */
-{
-  stream_node_t *streamptr = root_stream_ptr->forward;
-
-  while (streamptr!=root_stream_ptr) {         /* close any ghost streams */
-    if (streamptr->streamname!=ERRORTAG)
-      fclose(streamptr->streamfile);
-    else			      /* check if std stream is a tty now */
-      update_stream(streamptr,streamptr->streamfile);
-    streamptr = streamptr->forward;
-  }
-}
-#endif
 
 /*-------------------------------------------------------*/
 
@@ -1389,143 +1295,6 @@ bool_t float_is_finite(t)
   f = f - f;
   if (f == f) return TRUE;
   else return FALSE;
-}
-
-/* '$stream'(<address>,<id>) <-- (stream_node_t *) */
-
-tagged_t ptr_to_stream_noalias(Arg, n)
-     Argdecl;
-     CIAO_REGISTER stream_node_t *n;
-{
-  CIAO_REGISTER tagged_t *pt1 = w->global_top;
-
-  /*
-  printf("(int)n is %ud\n", (int)n);
-  printf("n->label is %ud\n", n->label);
-  */
-
-  HeapPush(pt1,functor_Dstream);
-  HeapPush(pt1,PointerToTerm(n));
-  HeapPush(pt1,n->label);
-  return (w->global_top=pt1, Tag(STR,HeapOffset(pt1,-3)));
-}
-
-
-/* '$stream'(<address>,<id>) <-- (stream_node_t *) */
-/* or */
-/* <stream_alias> <-- (stream_node_t *) */
-tagged_t ptr_to_stream(Arg,n)
-     Argdecl;
-     CIAO_REGISTER stream_node_t *n;
-{
-  if (n==stream_user_input)
-    return atom_user_input;
-  if (n==stream_user_output)
-    return atom_user_output;
-  if (n==stream_user_error)
-    return atom_user_error;
-
-  return ptr_to_stream_noalias(Arg, n);
-}
-
-
-/* '$stream'(<address>,<id>) --> (stream_node_t *)
-                          --> NULL, if invalid
-   'r' - read mode,  streammode=[rs]
-   'w' - write mode, streammode=[was]
-   'x' - any mode,   streammode=[rwas]
-   'y' - any mode but no standard streams  */
-stream_node_t *stream_to_ptr(t, mode)
-     CIAO_REGISTER tagged_t t;
-     int mode;
-{
-  CIAO_REGISTER stream_node_t *n = NULL;
-  CIAO_REGISTER tagged_t x1, x2;
-
-  DerefSwitch(t,x1,;);
-
-  if (TagIsATM(t))
-    {
-      if (mode=='y')
-	n = NULL;
-      else if (t==atom_user)
-	n = (mode=='r' ? stream_user_input : stream_user_output);
-      else if (t==atom_user_input)
-	n = stream_user_input;
-      else if (t==atom_user_output)
-	n = stream_user_output;
-      else if (t==atom_user_error)
-	n = stream_user_error;
-    }
-  else if (TagIsSTR(t) && (TagToHeadfunctor(t) == functor_Dstream))
-    {
-      DerefArg(x1,t,1);
-      DerefArg(x2,t,2);
-      if (!TagIsSmall(x1) || !TagIsSmall(x2) ||
-	  (n=TagToStream(x1), n->label != x2))
-	n = NULL;
-    }
-
-  if (((mode=='r') && (n!=NULL) && (n->streammode=='w'||n->streammode=='a')) ||
-      ((mode=='w') && (n!=NULL) && (n->streammode=='r')))
-    return NULL;
-  else
-    return n;
-}
-
-/* Similar to stream_to_ptr(), but giving an error code */
-
-stream_node_t *stream_to_ptr_check(t, mode, errcode)
-     CIAO_REGISTER tagged_t t;
-     int mode; /* not 'y' */
-     int *errcode;
-{
-  CIAO_REGISTER stream_node_t *n = NULL;
-  CIAO_REGISTER tagged_t x1, x2;
-
-  DerefSwitch(t,x1,{*errcode = INSTANTIATION_ERROR; return NULL;});
-
-  if (TagIsATM(t))
-    {
-      if (t==atom_user)
-	n = (mode=='r' ? stream_user_input : stream_user_output);
-      else if (t==atom_user_input)
-	n = stream_user_input;
-      else if (t==atom_user_output)
-	n = stream_user_output;
-      else if (t==atom_user_error)
-	n = stream_user_error;
-      else {
-            *errcode = DOMAIN_ERROR(STREAM_OR_ALIAS);
-            return NULL;
-      }
-    }
-  else if (TagIsSTR(t) && (TagToHeadfunctor(t) == functor_Dstream)) {
-      DerefArg(x1,t,1);
-      DerefArg(x2,t,2);
-      if (!TagIsSmall(x1) || !TagIsSmall(x2) ||
-	  (n = TagToStream(x1), n->label != x2)) {
-            *errcode = EXISTENCE_ERROR(STREAM);
-            return NULL;
-      }
-    } else {
-        *errcode = DOMAIN_ERROR(STREAM_OR_ALIAS);
-        return NULL;
-    }
-
-  if (mode=='r') {
-    if (n->streammode=='w'||n->streammode=='a') {
-      *errcode = PERMISSION_ERROR(ACCESS,STREAM);  
-      return NULL;
-    }
-  } else if (mode=='w') {
-    if (n->streammode=='r') {
-      *errcode = PERMISSION_ERROR(MODIFY,STREAM); 
-      return NULL;
-    }
-  }
-
-  return n;
 }
 
 bool_t prolog_show_nodes(Arg)

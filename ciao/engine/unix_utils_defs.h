@@ -13,6 +13,7 @@ bool_t prolog_unix_mktemp(Argdecl);
 bool_t prolog_unix_access(Argdecl);
 bool_t prolog_directory_files(Argdecl);
 bool_t prolog_file_properties(Argdecl);
+bool_t prolog_touch(Argdecl);
 bool_t prolog_unix_chmod(Argdecl);
 bool_t prolog_unix_umask(Argdecl);
 bool_t prolog_unix_delete(Argdecl);

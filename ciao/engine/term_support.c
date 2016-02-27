@@ -6,6 +6,7 @@
 
 #include "threads.h"
 #include "datadefs.h"
+#include "gcdatadefs.h"
 #include "support.h"
 #include "instrdefs.h"
 #include "task_areas.h"                 /* For register bank reallocation */
@@ -64,7 +65,7 @@ static void copy_it_nat(Argdecl,
 #define EMIT(I) Last_Insn=P, *P++ = (I)
 
 
-#if defined(ANDPARALLEL) || defined(PARBACK)
+#if defined(ANDPARALLEL)
 #define GCTEST(Pad) \
 { \
   if (HeapDifference(w->global_top,Heap_End) < (Pad)) \
@@ -81,7 +82,6 @@ static void copy_it_nat(Argdecl,
       choice_overflow(Arg,Pad); \
   }
 #endif
-
 
 static void copy_it PROTO((worker_t *w, tagged_t *loc));
 static void copy_it_nat PROTO((worker_t *w, tagged_t *loc));
@@ -587,7 +587,7 @@ instance_t *compile_term_aux(Arg, head, body, new_worker)
  cdr_done:
 
 				/* allow for heapmargin_call insn */
-  if (cells>=CALLPAD)
+  if (cells>=SOFT_HEAPPAD)
     insns += 5;
 
 				/* tidy out void vars */
@@ -633,7 +633,7 @@ instance_t *compile_term_aux(Arg, head, body, new_worker)
   object->pending_x2 = NULL;
   object->pending_x5 = NULL;
 
-  if (cells>=CALLPAD) {
+  if (cells>=SOFT_HEAPPAD) {
     CIAO_REGISTER bcp_t P = current_insn;
 
     ODDOP(HEAPMARGIN_CALL);
@@ -1587,3 +1587,165 @@ tagged_t cross_copy_term(Arg, remote_term)
 #endif
   return X(1);
 }
+
+/* c_cyclic_term checks that the term t is cyclic.
+
+   * Uses gc marks to mark the first argument of the compounds we
+     alreardy seen terms. 
+   * Must be call with a non-marked term (we take care of that for the
+     recursive calls).
+*/
+
+bool_t c_cyclic_term_and_mark(Arg, t)
+     Argdecl;
+     tagged_t t;
+{
+  tagged_t t1;
+  tagged_t * ptr;
+  int i;
+
+ start:
+  switch(TagOf(t)){
+  case SVA:
+  case HVA:
+  case CVA:
+    t1 = CTagToPointer(t);
+    if (t1 == t) return FALSE;
+    t = t1;
+    goto start;
+  case LST: 
+    ptr = TagToLST(t);
+    t = *ptr;
+    if (gc_IsMarked(t)) return TRUE;
+    gc_MarkM(*ptr);
+    if (c_cyclic_term_and_mark(Arg, t)) return TRUE;  /* t is not marked */ 
+    t = *(++ptr);
+    goto start; 
+  case STR:
+    ptr = TagToSTR(t);
+    i = Arity(*(ptr++));
+    t = *ptr;
+    if (gc_IsMarked(t)) return TRUE;
+    gc_MarkM(*ptr);
+    for (; i > 1; i--) {
+      if (c_cyclic_term_and_mark(Arg, t)) return TRUE;  /* t is not marked */ 
+      t = *(++ptr);
+    }
+    goto start;
+  default:
+    return FALSE;
+  }
+}
+
+/* unmark_term removes marks done by c_cyclic_term_and_mark. */ 
+void
+unmark_term(Arg, t)
+     Argdecl;
+     tagged_t t;
+{
+  tagged_t t1;
+  tagged_t * ptr;
+  int i;
+
+ start:
+  switch(TagOf(t)){
+  case SVA:
+  case HVA:
+  case CVA: 
+    t1 = CTagToPointer(t);
+    if (t1 == t) return;
+    t = t1;
+    goto start;
+  case LST: 
+    ptr = TagToLST(t);
+    if (!gc_IsMarked(*ptr)) return;
+    gc_UnmarkM(*ptr);
+    unmark_term(Arg, *(ptr++));  
+    t = *ptr;
+    goto start; 
+  case STR: 
+    ptr = TagToSTR(t);
+    i = Arity(*(ptr++));
+    if (!gc_IsMarked(*ptr)) return;
+    gc_UnmarkM(*ptr);
+    for (; i > 1; i--) {
+      unmark_term(Arg, *(ptr++));
+    }
+    t = *ptr;
+    goto start;
+  default:
+    return;
+  }
+}
+
+bool_t c_cyclic_term(Arg, t) 
+     Argdecl;
+     tagged_t t;
+{
+  bool_t r;
+
+  r = c_cyclic_term_and_mark(Arg, t);
+  unmark_term(Arg, t);
+  return r;
+}
+
+bool_t prolog_cyclic_term(Arg)
+     Argdecl;
+{
+  return c_cyclic_term(Arg, X(0));
+}
+
+
+
+/* unifiable(Term1, Term2, Unifier)
+ *
+ * Algortihm: tries unify Term1 and Term2, then untrail the
+ * unification while saving the unifier into a prolog list which is
+ * eventually unified with Unifier. The function treats attributed 
+ * variable as classical ones.
+ */
+bool_t 
+prolog_unifiable(Arg)
+     Argdecl;
+{
+  tagged_t t, t1;
+  tagged_t * limit, *tr;
+
+  /* Forces trailing of bindings and saves the top of the trail. */
+  push_choicept(Arg,fail_alt);	
+  /* Saves the arguments in case of GC. */
+  push_frame(Arg,3);
+
+  if (!cunify(Arg, X(0), X(1))) return FALSE;  
+
+  /* Makes sure there is enough place in the heap to construct the
+     unfiers list. */
+  GCTEST((w->trail_top - TagToPointer(w->node->trail_top)) * 5);
+
+  t = atom_nil;
+  tr = w->trail_top;
+  limit = TagToPointer(w->node->trail_top);
+   
+  while (TrailYounger(tr, limit)) {
+    t1 = TrailPop(tr);
+
+    HeapPush(w->global_top, SetArity(atom_equal, 2));
+    HeapPush(w->global_top, t1);
+    HeapPush(w->global_top, CTagToPointer(t1));
+    HeapPush(w->global_top, Tag(STR, HeapOffset(w->global_top, -3)));
+    HeapPush(w->global_top, t);
+    t = Tag(LST, HeapOffset(w->global_top, -2));
+
+    CTagToPointer(t1) = t1;
+  }
+
+  /* Ignores possible wakes caused by unification of attributed
+     variables */ 
+  if (TestEvent) Heap_Warn_Soft = Heap_Warn;
+  
+  w->trail_top = limit;
+  pop_frame(Arg);
+  pop_choicept(Arg);	
+
+  return cunify(Arg, X(2), t);
+}  

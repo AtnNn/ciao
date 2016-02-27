@@ -12,146 +12,144 @@
 :- use_module(library(streams)).
 :- use_module(library(messages)).
 :- use_module(library(file_utils)).
-:- use_module(library(terms),      [atom_concat/2]).
-:- use_module(engine(system_info), [get_ciao_ext/1, get_exec_ext/1]).
 
-:- use_module(library(make(system_extra))).
-:- use_module(library(distutils), [component_make/2, lpmake_subdir/3]).
-:- use_module(library(component_registry)). % TODO: Refine
-:- use_module(ciaodesrc(makedir(makedir_aux))).
-:- use_module(ciaodesrc(makedir(makedir_component))).
-:- use_module(ciaodesrc(makedir(makedir_distclean))).
-:- use_module(ciaodesrc(makedir('ConfigMenu'))).
-:- use_module(ciaodesrc(makedir('ConfigValues'))).
-:- use_module(ciaodesrc(makedir('MenuOptions'))).
-:- use_module(library(aggregates)).
+%% :- use_module(library(system_extra)).
+:- use_module(library(bundle_registry(bundle_registry_load))). % TODO: Refine
+:- use_module(library(lpdist(distutils)), [bundle_invoke_lpmake/2, lpmake_subdir/3]).
+%% :- use_module(library(lpdist(makedir_aux))).
+%% :- use_module(library(lpdist(ciao_bundle_db))).
+%% :- use_module(library(lpdist(ciao_configure))).
+%% :- use_module(library(lpdist(ciao_config_options))).
+%% :- use_module(library(aggregates)).
 :- use_module(library(unittest)).
 
-% ---------------------------------------------------------------------------
-% Targets for the distpkg generation
-
-:- use_module(ciaodesrc(makedir(distpkg_gen_win32))).
-:- use_module(ciaodesrc(makedir(distpkg_gen_rpm))).
-:- use_module(ciaodesrc(makedir(distpkg_gen_mac))).
-:- use_module(ciaodesrc(makedir(distpkg_gen_src))).
-:- use_module(ciaodesrc(makedir(distpkg_gen_bin))).
-:- use_module(ciaodesrc(makedir(distpkg_gen_common))).
+% TODO: Disabled, see the source.
+%% :- use_module(library(lpdist(makedir_distclean))).
+% TODO: Do not use lpmake here... just a command line tool
 
 % ---------------------------------------------------------------------------
+% Targets for the pbundle generation
 
-:- use_module(ciaodesrc(makedir('DOCCOMMON')), [docdir/1]).
-
-% bootclean <- realclean + Remove the static lpmake and engine.  Note
-% 	that if you do it, you must execute the ./configure script
-% 	again.
+:- use_module(library(lpdist(pbundle_gen_win32))).
+:- use_module(library(lpdist(pbundle_gen_rpm))).
+:- use_module(library(lpdist(pbundle_gen_mac))).
+:- use_module(library(lpdist(pbundle_gen_src))).
+:- use_module(library(lpdist(pbundle_gen_bin))).
+:- use_module(library(lpdist(pbundle_gen_common))).
 
 % ============================================================================
 
-:- include(ciaodesrc(makedir('makedir_SHARE'))).
-component_id(ciaode).
-component_dname('CiaoDE'). % the whole system...
-component_readme_dir('doc/readmes').
-component_readme(as('README_CIAODE', 'README')).
-component_readme(as('DEVEL_CIAODE', 'DEVEL')).
-component_manual_dir(_) :- fail.
+:- include(library(lpdist('makedir_SHARE'))).
+bundle_id(ciaode).
+bundle_dname('CiaoDE'). % the whole system...
+%
+bundle_readme_dir := ~fsR(bundle_src(ciaode)/'doc'/'readmes').
+bundle_manual_dir := _ :- fail.
+%
+bundle_readme(as('README_CIAODE', 'README')).
+bundle_readme(as('DEVEL_CIAODE', 'DEVEL')).
+%
+bundle_ins_reg :- fail. % TODO: document (register the bundle on ins?)
 
 % ============================================================================
 
-component_all <- [all_ciao, all_chr, all_extra] :- true.
+:- use_module(library(lpdist(ciao_bundle_db)), [gen_bundle_revision/0]).
+% TODO: Used from the Ciao Bot (SHARED file)
+gen_bundle_revision <- [] :- gen_bundle_revision.
 
-'makedir/ciaosetup_modules/ciaosetup.opts' <- 'ciao/makedir/MenuOptions.pl'
-	:: File :-
-	output_to_file(ciaosetup_opts, File).
+% ============================================================================
 
-all_ciao <- :- component_make(ciao, all).
+bundle_build <- [build_ciao, build_chr, build_extra] :- true.
 
-all_chr <- :- component_make(ciao, chr). % TODO: CHR should be a subcomponent of libs or contrib
+% TODO: Invoking this by hand everytime that configuration options
+%       have changed is really unpleasant...
+'makedir/config_opts.txt' <- 'ciao/library/lpdist/ciao_config_options.pl' :: File :-
+	output_to_file(show_config_opts, File).
 
-all_extra <- :-
-	extra_components_make(all).
+build_ciao <- :- bundle_invoke_lpmake(ciao, build).
 
-platdep <- [] :-
-	all_components_make(platdep).
+build_chr <- :- bundle_invoke_lpmake(ciao, build_chr). % TODO: CHR should be a sub-bundle of libs or contrib
 
-% invoke lpmake Target on all extra components
-extra_components_make(Target) :-
+build_extra <- :-
+	extra_bundles_make(build).
+
+build_platdep <- [] :-
+	all_bundles_make(build_platdep).
+
+% invoke lpmake Target on all extra bundles
+extra_bundles_make(Target) :-
 	( % (failure-driven loop)
-          extra_component(P),
-	    component_make(P, Target),
+          extra_bundle(P),
+	    bundle_invoke_lpmake(P, Target),
 	    fail
 	; true
 	).
 
-% invoke lpmake Target on all components
-all_components_make(Target) :-
+% invoke lpmake Target on all registered bundles
+all_bundles_make(Target) :-
 	( % (failure-driven loop)
-	  component(P),
-	    component_make(P, Target),
+	  registered_bundle(P),
+	    bundle_invoke_lpmake(P, Target),
 	    fail
 	; true
 	).
 
-% invoke lpmake Target on all components (reverse order)
-allrev_components_make(Target) :-
+% invoke lpmake Target on all registered bundles, in reverse order
+allrev_bundles_make(Target) :-
 	( % (failure-driven loop)
-	  ( extra_component(P)
-	  ; basic_component(P)
+	  ( extra_bundle(P)
+	  ; basic_bundle(P)
 	  ),
-	    component_make(P, Target),
+	    bundle_invoke_lpmake(P, Target),
 	    fail
 	; true
 	).
 
-allnolibsextra <- :-
-	extra_components_make(allnolibs).
+build_nolibs_extra <- :-
+	extra_bundles_make(build_nolibs).
 
-librariesextra <- :-
-	extra_components_make(libraries).
+build_extra_libraries <- :-
+	extra_bundles_make(build_libraries).
 
-applicationsextra <- :-
-	extra_components_make(applications).
+docs <- [] :-
+ 	prepare_doc_dirs,
+	docs_readmes, % TODO: share code
+	all_bundles_make(docs).
 
-docs <- ['build/doc', docs_readmes] :-
-	all_components_make(docs).
+bundle_register_hook.
+bundle_unregister_hook.
 
-'build/doc' <- :-
-	mkdir_perm('build', ~perms),
-	mkdir_perm('build/doc', ~perms).
-
-component_register <- :- true.
-component_unregister <- :- true.
-
-component_install <- :-
-	component_install.
-component_install :-
-	all_components_make(install).
+bundle_install <- :-
+	bundle_install.
+bundle_install :-
+	all_bundles_make(install).
 
 install_extras <- :-
 	install_extras.
 
 install_extras :-
-	extra_components_make(install).
+	extra_bundles_make(install).
 
-component_uninstall <- :-
-	component_uninstall.
+bundle_uninstall <- :-
+	bundle_uninstall.
 
-component_uninstall :-
+bundle_uninstall :-
 	% (uninstall must be performed in reverse dependency order)
-	allrev_components_make(uninstall).
+	allrev_bundles_make(uninstall).
 
 % ---------------------------------------------------------------------------
 
 % TODO: automatically done by install
-installdoc <- :-
-	installdoc.
-installdoc :-
-	all_components_make(installdoc).
+install_docs <- :-
+	install_docs.
+install_docs :-
+	all_bundles_make(install_docs).
 
 % ---------------------------------------------------------------------------
 
 % TODO: automatically done by install
 register_all <- :-
-	all_components_make(component_register),
+	all_bundles_make(bundle_register),
 	register_message.
 
 % TODO: Is this message shown in normal installations?
@@ -160,7 +158,7 @@ register_message :-
 	bold_message(
 "Your initialization files have been modified for Ciao execution.\n"||
 "You must make sure they are re-read (by, e.g., logging out and\n"||
-"back into your system) before using any Ciao component.").
+"back into your system) before using any Ciao bundle.").
 
 % TODO: automatically done by uninstall
 unregister_all <- :-
@@ -168,23 +166,20 @@ unregister_all <- :-
 
 unregister_all :-
 	% (unregister must be performed in reverse dependency order)
-	allrev_components_make(component_unregister).
+	allrev_bundles_make(bundle_unregister).
 
 % ---------------------------------------------------------------------------
 
-:- use_module(library(component_registry), [show_components/0]).
+:- use_module(library(bundle_registry(bundle_registry_load)), [show_bundles/0]).
 
 % (available from the command line)
-show_components <- :-
-	show_components.
+show_bundles <- :-
+	show_bundles.
 
 % ---------------------------------------------------------------------------
 
-bootclean <- :-
-	do(['rm -rf bin'], fail).
-
 runtests <- [] # "Run CiaoDE tests" :-
-	all_components_make(runtests).
+	all_bundles_make(runtests).
 
 runbenchmarks <- [] # "Run CiaoDE benchmarks" :-
-	all_components_make(runbenchmarks).
+	all_bundles_make(runbenchmarks).

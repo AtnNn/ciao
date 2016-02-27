@@ -1,5 +1,6 @@
 :- module(_, [
         % nl_eval
+	solve_sign/2,
         solve_abs/2,
         solve_mult/3,
         solve_mult/5,
@@ -54,6 +55,9 @@
         ], ['clpq/clpq_src']).
 
 :- set_prolog_flag(multi_arity_warnings, off).
+
+:- use_module(engine(attributes), [get_attribute/2, update_attribute/2,
+		attach_attribute/2, detach_attribute/1]).
 
 :- include('../clpqr-common/nl_eval').
 

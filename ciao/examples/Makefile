@@ -2,9 +2,8 @@
 #------- All customizable options are in the file ../SETTINGS -------
 #------- CAUTION: any change in this directory should be also made in the 
 
-include ../SETTINGS
-include ../SHARED
-
+CIAOBUILDDIRtemp=../../build
+include $(CIAOBUILDDIRtemp)/CONFIG_mkf
 
 EXAMPLESDIR = $(REALLIBDIR)/examples
 ALLFILES = *

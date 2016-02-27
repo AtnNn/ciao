@@ -23,5 +23,6 @@
 
 :- load_compilation_module(library(interface(interface_tr))).
 
-:- add_clause_trans(interface_clause_trans/3).
-:- add_sentence_trans(interface_sentence_trans/3).
+% TODO: uncertain priority: duplicates the compiler logic, not really compatible with other extensions
+:- add_clause_trans(interface_clause_trans/3, 8110).
+:- add_sentence_trans(interface_sentence_trans/3, 8110).

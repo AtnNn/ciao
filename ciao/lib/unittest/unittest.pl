@@ -2,13 +2,16 @@
 	    [
 		run_test_dir/2,
 		run_test_module/1,
+		run_test_module_entry/1,
 		run_test_module/2,
-		run_test_module/3,
+		get_result_test_module/3,
 		show_tests_summaries/1,
 		run_test_related_modules/1,
 		show_untested_preds/1
 	    ],
-	    [assertions, isomodes, nativeprops, dcg, fsyntax, hiord]).
+	    [ciaopaths, assertions, isomodes, nativeprops, dcg, fsyntax,
+		hiord]).
+
 :- use_module(library(unittest(unittest_statistics))).
 :- use_module(library(terms), [atom_concat/2]).
 :- use_module(library(sort)).
@@ -29,17 +32,15 @@
 :- use_module(library(hiordlib)).
 :- use_module(library(compiler(c_itf))).
 :- use_module(library(compiler), [unload/1]).
-:- use_module(library(write)).
 :- use_module(library(pretty_print)).
-:- use_module(library(read)).
 :- use_module(library(lists), [append/3, length/2, select/3, intersection/3,
-		difference/3]).
+		difference/3, union/3]).
 :- use_module(library(llists), [flatten/2]).
-:- use_module(library(make(system_extra))).
+:- use_module(library(system_extra)).
 :- use_module(library(compiler(exemaker)), [make_exec/2]).
 :- use_module(library(unittest(unittest_base))).
-:- use_module(library(distutils(collect_modules)), [current_dir_module/6]).
-:- use_module(library(distutils(skip_settings)), [nocompile_dirs/1,
+:- use_module(library(lpdist(collect_modules)), [current_dir_module/6]).
+:- use_module(library(lpdist(skip_settings)), [nocompile_dirs/1,
 		nocompile_files/1]).
 
 :- doc(title, "Unit test driver").
@@ -49,7 +50,6 @@
 
 :- doc(module, "This module contains the predicates that lets to
 	run the unit tests.").
-
 
 :- push_prolog_flag(write_strings, on).
 
@@ -62,7 +62,7 @@ cleanup_unittest(TmpDir) :-
 	cleanup_global_runners(TmpDir).
 
 cleanup_test_attributes :-
-	retractall_fact(test_attributes_db(_, _, _, _, _, _, _, _)).
+	retractall_fact(test_attributes_db(_, _, _, _, _, _, _, _, _)).
 
 cleanup_global_runners(_TmpDir) :-
 	atom_concat('rm -rf ', _TmpDir, A),
@@ -220,17 +220,35 @@ show_tests_summaries(IdxTestSummaries0) :-
 	pretty_messages(Messages).
 %	statistical_summary(IdxTestSummaries0).
 
-:- pred run_test_module(Alias, Args, TestSummaries) :
+:- pred get_result_test_module(Alias, Args, TestSummaries) :
 	(sourcename(Alias), list(Args)) => list(TestSummaries) # "Run
 	the tests for the specified module.  The option list
-	@var{Args} can contain '-o' or '-e' if you like to show the
-	standard output and standard error of the test execution
-	respectively.  @var{TestSummaries} contains a list of terms
-	with the results of tests.".
+	@var{Args} can contain of the following options:
 
-run_test_module(Alias, Args, IdxTestSummaries) :-
+	@begin{enumerate}
+
+        @item @tt{dump_output}: Shows the standard output of the test
+              execution.
+
+	@item @tt{dump_error}: Shows the standard error of the test
+	      execution.
+
+	@item @tt{load <Module>}: Loads the module <Module> to execute
+	      the test.
+
+	@item @tt{rtc_entry}: Force run-time checking of at least
+	      exported assertions even if the flag runtime_checks has
+	      not been activated (A work around since currently we can
+	      not enable runtime checks in system libraries smoothly).
+
+	@end{enumerate}
+
+	@var{TestSummaries} contains a list of terms with the results
+		of tests.".
+
+get_result_test_module(Alias, Args, IdxResultTest) :-
 	tmp_dir(TmpDir),
-	run_test_module_args(TmpDir, Alias, Args, IdxTestSummaries).
+	run_test_module_args(TmpDir, Alias, Args, IdxResultTest).
 
 :- pred run_test_module(Alias, Args) :
 	(sourcename(Alias), list(Args)) # "Like
@@ -238,36 +256,38 @@ run_test_module(Alias, Args, IdxTestSummaries) :-
 	of tests.".
 
 run_test_module(Alias, Args) :-
-	run_test_module(Alias, Args, IdxTestSummaries),
-	show_tests_summaries(IdxTestSummaries).
+	get_result_test_module(Alias, Args, IdxResultTest),
+	show_tests_summaries(IdxResultTest),
+	statistical_summary(['{In ', Alias, '\n'], IdxResultTest).
 
 :- pred run_test_module(Alias) : sourcename(Alias) # "Like
 	@pred{run_test_module/2}, but using default options.".
 
 run_test_module(Alias) :-
-	run_test_module(Alias, [], IdxTestSummaries),
-	show_tests_summaries(IdxTestSummaries),
-	statistical_summary(['{In ', Alias, '\n'], IdxTestSummaries).
+	run_test_module(Alias, []).
 
-run_test_module_args(TmpDir, Alias, Args, IdxTestSummaries) :-
+run_test_module_entry(Alias) :-
+	run_test_module(Alias, [rtc_entry]).
+
+run_test_module_args(TmpDir, Alias, Args, IdxResultTest) :-
 	cleanup_unittest(TmpDir),
 	get_assertion_info(Alias, Module),
-	run_test_assertions(TmpDir, [Module], Args, IdxTestSummaries).
+	run_test_assertions(TmpDir, [Module], Args, IdxResultTest).
 % 	cleanup_unittest(TmpDir).
 
 :- pred run_test_related_modules(Alias) : sourcename(Alias).
 
 run_test_related_modules(Alias) :-
 	tmp_dir(TmpDir),
-	run_test_related_modules_args(TmpDir, Alias, [], IdxTestSummaries),
-	show_tests_summaries(IdxTestSummaries).
+	run_test_related_modules_args(TmpDir, Alias, [], IdxResultTest),
+	show_tests_summaries(IdxResultTest).
 
-run_test_related_modules_args(TmpDir, Alias, Args, IdxTestSummaries) :-
+run_test_related_modules_args(TmpDir, Alias, Args, IdxResultTest) :-
 	cleanup_unittest(TmpDir),
 	absolute_file_name(Alias, FileName),
 	get_code_and_related_assertions(FileName, _, _, _, _),
 	set_of_modules(Modules),
-	run_test_assertions(TmpDir, Modules, Args, IdxTestSummaries),
+	run_test_assertions(TmpDir, Modules, Args, IdxResultTest),
 	cleanup_unittest(TmpDir),
 	(unload(FileName) -> true ; true).
 
@@ -285,12 +305,12 @@ current_assr_module(Module) :-
 	assertion_read(_A, Module, check, Type, _E, _F, _G, _H, _I),
 	unittest_type(Type).
 
-:- pred create_runner(+atm, +list) + (not_fails, no_choicepoints).
+:- pred create_runner(+atm, +list, +yesno) + (not_fails, no_choicepoints).
 
-create_runner(TmpDir, Modules) :-
+create_runner(TmpDir, Modules, RtcEntry) :-
 	(
 	    Modules \== [] ->
-	    create_global_runner(TmpDir, Modules, RunnerFile),
+	    create_global_runner(TmpDir, Modules, RtcEntry, RunnerFile),
 	    create_loader(TmpDir, RunnerFile)
 	;
 	    true
@@ -304,33 +324,57 @@ create_runner(TmpDir, Modules) :-
 
 create_loader(TmpDir, RunnerFile) :-
 	loader_name(BLoader),
-	atom_concat(TmpDir, BLoader, Loader),
-	make_exec([RunnerFile], Loader).
+	atom_concat(TmpDir, BLoader,    Loader),
+	atom_concat(Loader, '_auto.pl', LoaderPl),
+	create_loader_pl(RunnerFile, LoaderPl),
+	make_exec([LoaderPl], Loader).
+
+% Kludge: Wrong behavior if you link RunnerFile in the executable directly.
+create_loader_pl(RunnerFile, LoaderPo) :-
+	open(LoaderPo, write, IO),
+	unittest_print_clauses(
+	    [
+		(:- module(_, _, [ciaopaths])),
+		(:- use_module(library(compiler), [use_module/1])),
+		(main(Args) :- use_module(RunnerFile), _:main_tests(Args))
+	    ], IO, []),
+	close(IO).
+
+select_command(Command, yes) -->
+	select(Command), !.
+select_command(_, no) --> [].
+
+select_commands(DumpOutput, DumpError, RtcEntry) -->
+	select_command(dump_output, DumpOutput),
+	select_command(dump_error,  DumpError),
+	select_command(rtc_entry,   RtcEntry).
 
 :- pred run_test_assertions(+atm, +list, +list, -list) +
 	(not_fails, no_choicepoints).
 
-run_test_assertions(TmpDir, Modules, Args, IdxTestSummaries) :-
-% 	show_message(note, "Creating test applications"),
+run_test_assertions(TmpDir, Modules, Args0, IdxResultTest) :-
+	% show_message(note, "Creating test applications"),
 	make_dirpath(TmpDir),
 	create_test_input(TmpDir, Modules),
-	( test_attributes_db(_, _, _, _, _, _, _, _) ->
-	    create_runner(TmpDir, Modules),
-% 	    runner_global_file_name(BRunnerFile),
-% 	    atom_concat(TmpDir, BRunnerFile, RunnerFile),
-% 	    show_message(note, "Running tests"),
-	    findall(IdxTestSummary, run_test_assertion(TmpDir, Args,
-		    IdxTestSummary), IdxTestSummaries)
-	; IdxTestSummaries = []
+	( test_attributes_db(_, _, _, _, _, _, _, _, _) ->
+	    select_commands(DumpOutput, DumpError, RtcEntry, Args0, Args),
+	    create_runner(TmpDir, Modules, RtcEntry),
+	    % runner_global_file_name(BRunnerFile),
+	    % atom_concat(TmpDir, BRunnerFile, RunnerFile),
+	    % show_message(note, "Running tests"),
+	    findall(IdxTestSummary, run_test_assertion(TmpDir, DumpOutput,
+		    DumpError, Args, IdxTestSummary), IdxResultTest)
+	; IdxResultTest = []
 	).
 
-run_test_assertion(TmpDir, Args, TestAttributes-TestSummary) :-
+run_test_assertion(TmpDir, DumpOutput, DumpError, Args,
+	    TestAttributes-TestSummary) :-
 	loader_name(BLoader),
 	atom_concat(TmpDir, BLoader, Loader),
-	do_test(TmpDir, Loader, Args, Idx, TestResults),
+	do_test(TmpDir, Loader, DumpOutput, DumpError, Args, Idx, TestResults),
 	group_list(TestResults, [], TestSummary),
-	test_attributes_db(Idx, Module, F, A, Comment, Source, LB, LE),
-	TestAttributes = test_attributes(Module, F, A, Comment,
+	test_attributes_db(Idx, Module, F, A, Dict, Comment, Source, LB, LE),
+	TestAttributes = test_attributes(Module, F, A, Dict, Comment,
 	    Source, LB, LE).
 
 count_text(1, '') :- !.
@@ -346,47 +390,58 @@ comment_text(Comment, [' <<', $$(Comment), '>>']).
 	+ not_fails.
 
 process_runtime_check(TestAttributes-TestSummary) -->
-	{TestAttributes = test_attributes(Module, F, A, Comment,
+	{TestAttributes = test_attributes(Module, F, A, Dict, Comment,
 		Source, LB, LE)},
-	map(TestSummary, process_runtime_check_ta(Module, F, A, Comment,
-		Source, LB, LE)).
+	map(TestSummary, process_runtime_check_ta(Module, F, A, Dict,
+		Comment, Source, LB, LE)).
 
-process_runtime_check_ta(count(ErrorStatus, Count), Module, F, A, Comment,
-	    Source, LB, LE) -->
-	{ErrorStatus = st(RTCErrors, Signals, Result)},
+process_runtime_check_ta(count(ErrorStatus, Count), Module, F, A, Dict,
+	    Comment, Source, LB, LE) -->
+	{ErrorStatus = st(RTCErrors, Signals0, Result0)},
+	{pretty_prop(t(Result0, Signals0), Dict, t(Result, Signals))},
 	{count_text(Count, CountMsg)},
 	{signals_text(Signals, SignalsMsg)},
 	{comment_text(Comment, CommentMsg)},
 	(
 	    {is_failed_test(ErrorStatus)} ->
 	    [message_lns(Source, LB, LE, error, [Module, ':', F, '/', A,
-			' (Result: ', ''(Result), [](CountMsg),
+			' (Result: ', ''({Result}), [](CountMsg),
 			') Failed test', [](CommentMsg), '.', [](SignalsMsg)])
 	    ],
 	    map(RTCErrors, rtcheck_to_messages)
 	;
 	    [message_lns(Source, LB, LE, note, [Module, ':', F,
-			'/', A, ' (Result: ', ''(Result), [](CountMsg),
+			'/', A, ' (Result: ', ''({Result}), [](CountMsg),
 			') Passed test', [](CommentMsg), '.', [](SignalsMsg)])]
 	),
 	!.
 
 :- data test_input_db/2.
 :- data test_output_db/2.
-:- data test_attributes_db/8.
+:- data test_attributes_db/9.
 
 :- meta_predicate assert_file(?, pred(1)).
+
 assert_file(File, AssertMethod) :-
 	open(File, read, SI),
 	repeat,
-	read(SI, Term),
 	(
-	    Term == end_of_file ->
-	    !,
-	    close(SI)
-	;
+	    read_data(SI, Term) ->
 	    AssertMethod(Term),
 	    fail
+	;
+	    !,
+	    close(SI)
+	).
+
+save_remaining_test_inputs(File) :-
+	open(File, write, SI),
+	(
+	    retract_fact(test_input_db(Idx, Module)),
+	    write_data(SI, test_input_db(Idx, Module)),
+	    fail
+	;
+	    close(SI)
 	).
 
 assert_test_input(test_input_db(A, B)) :-
@@ -395,29 +450,30 @@ assert_test_input(test_input_db(A, B)) :-
 assert_test_output(test_output_db(A, B)) :-
 	assertz_fact(test_output_db(A, B)).
 
-select_commands(DisplayStdOut, DisplayStdErr) -->
-	(select('-o') -> {DisplayStdOut = yes} ; {DisplayStdOut = no}),
-	(select('-e') -> {DisplayStdErr = yes} ; {DisplayStdErr = no}).
+dump_output(yes, StrOut) :- display_string(StrOut).
+dump_output(no,  _).
 
-do_test(TmpDir, Loader, Args0, Idx, TestResults) :-
+dump_error(yes, StrErr) :- display_string(StrErr).
+dump_error(no,  _).
+
+do_test(TmpDir, Loader, DumpOutput, DumpError, Args, Idx, TestResults) :-
 	file_test_output(BOutFile),
 	atom_concat(TmpDir, BOutFile, OutFile),
 	file_test_input(BInFile),
 	atom_concat(TmpDir, BInFile, InFile),
 	empty_output(TmpDir),
-	select_commands(DisplayStdOut, DisplayStdErr, Args0, Args),
 	exec(Loader, Args, SExecI, SExecO, SErrO, wait, _PID, _ErrCode),
 	close(SExecI),
 	stream_to_string(SExecO, StrOut),
-	(DisplayStdOut == yes -> display_string(StrOut) ; true),
+	dump_output(DumpOutput, StrOut),
 	stream_to_string(SErrO, StrErr),
-	(DisplayStdErr == yes -> display_string(StrErr) ; true),
+	dump_error(DumpError, StrErr),
 	retractall_fact(test_input_db(_,  _)),
 	retractall_fact(test_output_db(_, _)),
 	assert_file(InFile,  assert_test_input),
 	assert_file(OutFile, assert_test_output),
 	retract_fact(test_input_db(Idx0, _Module)),
-% 	message(note, ['Running test ', Idx, ' for module ', _Module]),
+	% message(note, ['Running test ', Idx, ' for module ', _Module]),
 	findall(TestResult, retract_fact(test_output_db(Idx0, TestResult)),
 	    TestResults0),
 	(
@@ -425,24 +481,15 @@ do_test(TmpDir, Loader, Args0, Idx, TestResults) :-
 	    !,
 	    (
 		Idx = Idx0,
-		TestResults = [st([], [], aborted(StrErr))]
+		TestResults = [st([], [], aborted(StrOut, StrErr))]
 	    ;
 		save_remaining_test_inputs(InFile),
-		do_test(TmpDir, Loader, Args, Idx, TestResults)
+		do_test(TmpDir, Loader, DumpOutput, DumpError, Args, Idx,
+		    TestResults)
 	    )
 	;
 	    Idx = Idx0,
 	    TestResults = TestResults0
-	).
-
-save_remaining_test_inputs(File) :-
-	open(File, write, SI),
-	(
-	    retract_fact(test_input_db(Idx, Module)),
-	    portray_clause(SI, test_input_db(Idx, Module)),
-	    fail
-	;
-	    close(SI)
 	).
 
 % :- pred atom_concat_(+atm,+atm,-atm) + (not_fails, no_choicepoints).
@@ -464,17 +511,20 @@ create_test_input(TmpDir, Modules) :-
 	    assertion_body(_Pred, _, _, _, _, Comment, Body),
 	    functor(Pred, F, A),
 	    ref_atom(Ref, Idx),
-	    assertz_fact(test_attributes_db(Idx, Module, F, A, Comment, Src,
-		    LB, LE)),
-	    unittest_print_clause(test_input_db(Idx, Module), SI, Dict),
+	    assertz_fact(test_attributes_db(Idx, Module, F, A, Dict, Comment,
+		    Src, LB, LE)),
+	    write_data(SI, test_input_db(Idx, Module)),
 	    fail
 	;
 	    close(SI)
-	).
+	),
+	atom_concat(FileTestInput, '.bak', FileTestInput0),
+	copy_file(FileTestInput, FileTestInput0).
 
-:- pred create_global_runner(+atm, +list, ?atm) + (not_fails, no_choicepoints).
+:- pred create_global_runner(+atm, +list, +yesno, ?atm)
+	+ (not_fails, no_choicepoints).
 
-create_global_runner(TmpDir, Modules, RunnerFile) :-
+create_global_runner(TmpDir, Modules, RtcEntry, RunnerFile) :-
 	runner_global_file_name(BRunnerFile),
 	atom_concat(TmpDir, BRunnerFile, RunnerFile),
 	open(RunnerFile, write, IO),
@@ -490,18 +540,14 @@ create_global_runner(TmpDir, Modules, RunnerFile) :-
 		module_src(Module, Src),
 		(
 		    wrapper_file_name(TmpDir, Module, WrapperFile),
-		    create_module_wrapper(TmpDir, Module, Src,
+		    create_module_wrapper(TmpDir, Module, RtcEntry, Src,
 			WrapperFile),
-		    unittest_print_clause(
-			(:- use_module(WrapperFile)), IO, []),
+		    unittest_print_clause((:- use_module(WrapperFile)), IO, []),
 		    module_test_entry(Module, TestEntry, Idx),
-		    unittest_print_clause(
-			( internal_runtest_module(Module, Idx) :-
-			    TestEntry ), IO, [])
-		->
-		    true
-		;
-		    error(['Failure in create_global_runner/3'])
+		    unittest_print_clause(( internal_runtest_module(Module, Idx)
+			    :- TestEntry ), IO, [])
+		-> true
+		; error(['Failure in create_global_runner/4'])
 		),
 		fail
 	    ;
@@ -511,7 +557,7 @@ create_global_runner(TmpDir, Modules, RunnerFile) :-
 	    atom_concat(TmpDir, BFileTestInput, FileTestInput),
 	    unittest_print_clauses(
 		[
-		    ( main(A) :-
+		    ( main_tests(A) :-
 			process_test_args(A),
 			runtests
 		    ),
@@ -526,13 +572,13 @@ create_global_runner(TmpDir, Modules, RunnerFile) :-
 		    )
 		], IO, [])
 	),
-%	fmode(RunnerFile, M0),
-%	M1 is M0 \/ ((M0 >> 2) /\ 0o111), % Copy read permissions to execute
-%	chmod(RunnerFile, M1),
+	% fmode(RunnerFile, M0),
+	% M1 is M0 \/ ((M0 >> 2) /\ 0o111), % Copy read permissions to execute
+	% chmod(RunnerFile, M1),
 	close(IO).
 
-:- use_module(library(rtchecks(rtchecks_basic)),
-	    [list_to_lits/2, get_prop_args/3, get_pretty_names/5]).
+:- use_module(library(rtchecks(rtchecks_basic)), [list_to_lits/2,
+		get_prop_args/3, get_pretty_names/5, get_checkif/9]).
 :- use_module(library(rtchecks(rtchecks_tr)),
 	    [collect_assertions/3, valid_commands/1, generate_rtchecks/7]).
 
@@ -543,21 +589,26 @@ module_test_entry(Module, TestEntry, Idx) :-
 current_test_module(Src, (:- use_module(TestModule))) :-
 	clause_read(Src, 1, load_test_module(TestModule), _, _, _, _).
 current_test_module(Src, (:- use_module(TestModule, Predicates))) :-
-	clause_read(Src, 1, load_test_module(TestModule, Predicates),
-	    _, _, _, _).
+	clause_read(Src, 1, load_test_module(TestModule, Predicates), _, _, _,
+	    _).
 current_test_module(Src, (:- use_package(TestModule))) :-
-	clause_read(Src, 1, load_test_package(TestModule),
-	    _, _, _, _).
+	clause_read(Src, 1, load_test_package(TestModule), _, _, _, _).
 
 collect_test_modules(Src) :=
 	~sort(~findall(TestModule, current_test_module(Src, TestModule))).
 
-create_module_wrapper(TmpDir, Module, Src, WrapperFile) :-
+create_module_wrapper(TmpDir, Module, RtcEntry, Src, WrapperFile) :-
 	open(WrapperFile, write, IO),
+	ReqPackages = [assertions, nativeprops, unittestutils, rtchecks],
+	(
+	    clause_read(Src, 1, module(_, _, SrcPackages), _, _, _, _) ->
+	    union(ReqPackages, SrcPackages, Packages)
+	;
+	    Packages = ReqPackages
+	),
 	unittest_print_clauses(
 	    [
-		( :- module(_, _, [assertions, nativeprops, unittestutils,
-			    rtchecks]) ),
+		(:- module(_, _, Packages)),
 		(:- push_prolog_flag(unused_pred_warnings, no)),
 		(:- use_module(library(unittest(unittest_props)))),
 		(:- pop_prolog_flag(unused_pred_warnings)),
@@ -570,111 +621,104 @@ create_module_wrapper(TmpDir, Module, Src, WrapperFile) :-
 	module_test_entry(Module, TestEntry, ARef),
 	unittest_print_clause((:- push_prolog_flag(single_var_warnings, off)),
 	    IO, []),
-	warning_rtchecks_recompile_required(Src, Module, Messages, Messages0),
-	findall(Message, print_each_test_entry(TmpDir, Module, Src, IO,
-		TestEntry, ARef, Message), Messages0),
+	findall(Message, print_each_test_entry(TmpDir, Module, RtcEntry, Src,
+		IO, TestEntry, ARef, Message), Messages),
 	unittest_print_clause((:- pop_prolog_flag(single_var_warnings)),
 	    IO, []),
 	close(IO),
 	pretty_messages(Messages).
 
-warning_rtchecks_recompile_required(Src, Module, Messages, Messages0) :-
-	clause_read(Src, 1, nortchecked, _, _, _, _) ->
-	Messages = Messages0
-    ;
-	\+ clause_read(Src, 1, rtchecked, _, _, _, _),
-	current_prolog_flag(runtime_checks, yes) ->
-	atom_concat(Src, '.pl', Pl),
-	Messages = [message_lns(Pl, 1, 1, warning,
-		['Run-time checks enabled, but module ', Module,
-		    ' needs to be recompiled'])|Messages0]
-    ;
-	Messages = Messages0.
+:- use_module(library(write), [printq/1]).
+:- multifile portray/1.
+portray('$stream'(Int1, Int2)) :-
+	integer(Int1),
+	integer(Int2),
+	!,
+	printq('$stream'(int, int)).
+portray(attach_attribute(X, float(V))) :-
+	!,
+	printq(X), printq('.=.'), printq(V).
+portray(rat(A, B)) :-
+	integer(A),
+	integer(B),
+	!,
+	printq(A/B).
 
 comp_prop_to_name(C0, C) :- C0 =.. [F, _|A], C =.. [F|A].
 
-print_each_test_entry(TmpDir, Module, Src, IO, TestEntry, ARef, Message) :-
-	if(
-	    (
-		current_fact(assertion_read(_Pred, Module, check, Type,
-			Body, Dict, ASource, AL0, AL1), Ref),
-		unittest_type(Type),
-		ref_atom(Ref, ARef),
-		assertion_body(Pred, Compat, Precond, Success, Comp, _, Body),
-		intersection(Comp, ~valid_commands, CompComm),
-		comps_to_goal(CompComm, Goal0, Goal),
-		difference(Comp, ~valid_commands, CompProp),
-		comps_to_goal(CompProp, Goal10, Goal2),
-		( Type == texec, Goal10 \== Goal2 ->
-		    functor(Pred, F, A),
-		    map(CompProp, comp_prop_to_name, CompNames),
-		    Message = message_lns(ASource, AL0, AL1, warning,
-			['texec assertion for ', F, '/', A,
-			    ' can have only unit test commands, ',
-			    'not comp properties: \n', ''(CompNames),
-			    '\nProcessing it as a test assertion'])
-		; Message = []
-		),
-		current_prolog_flag(rtchecks_namefmt, NameFmt),
-		Term = n(Pred, Compat, Precond, Success, Comp),
-		get_pretty_names(NameFmt, Term, Dict, TermName, _Dict),
-		TermName = n(PredName, _, _, Names, _),
-		functor(Pred, F, A),
-		functor(Head, F, A),
-		current_prolog_flag(rtchecks_asrloc, UseAsrLoc),
-		ALoc = asrloc(loc(ASource, AL0, AL1)),
-		(
-		    clause_read(Src, Head, _, _, PSource, PL0, PL1) ->
-		    PLoc = loc(PSource, PL0, PL1),
-		    PosLoc = [predloc(PredName, PLoc), ALoc],
-		    current_prolog_flag(rtchecks_predloc, UsePredLoc),
-		    UsePosLoc = (UsePredLoc, UseAsrLoc)
-		;
-%		    PLoc = loc(ASource, AL0, AL1),
-		    UsePosLoc = (no, UseAsrLoc),
-		    PosLoc = [ALoc]
-		),
-		( Goal10 == Goal2 -> Goal1 = Goal10
-		; Goal1 = comploc_stack(PosLoc, Goal10, PredName)
-		),
-		Goal2 = Pred,
-		(
-		    Success == [] ->
-		    Goal3 = Goal1
-		;
-		    get_prop_args(Success, Pred, Args),
-		    Goal3 =
-		    (
-			Goal1,
-			catch(rtcheck(success, PredName, Success, Args, Names,
-				non_inst, [ALoc]), Ex,
-			    throw(postcondition(Ex)))
-		    )
-		),
-		(
-		    clause_read(Src, 1, rtchecked, _, _, _, _) ->
-		    RTCheck = Goal3
-		;
-		    current_prolog_flag(runtime_checks, no) ->
-		    RTCheck = Goal3
-		;
-		    collect_assertions(Pred, Module, Assertions),
-		    ( Assertions == [] ->
-			RTCheck = Goal3
-		    ;
-			generate_rtchecks(Assertions, Pred, Dict, PLoc,
-			    UsePosLoc, RTCheck, Goal3)
-		    )
-		),
-		Goal = testing(ARef, TmpDir, ~list_to_lits(Precond), RTCheck),
-		unittest_print_clause((TestEntry :- Goal0), IO, Dict)
-	    ),
-	    true,
-	    (
-		unittest_print_clause((TestEntry :- fail), IO, []),
-		fail
+do_print_each_test_entry(TmpDir, Module, RtcEntry, Src, IO, TestEntry, ARef,
+	    Message) :-
+	current_fact(assertion_read(_Pred, Module, check, Type, Body, Dict0,
+		ASource, AL0, AL1), Ref),
+	unittest_type(Type),
+	ref_atom(Ref, ARef),
+	assertion_body(Pred, Compat, Precond, Success, Comp, _, Body),
+	intersection(Comp, ~valid_commands, CompComm),
+	comps_to_goal(CompComm, Goal0, Goal),
+	difference(Comp, ~valid_commands, CompProp),
+	comps_to_goal(CompProp, Goal10, Goal2),
+	( Type == texec, Goal10 \== Goal2 ->
+	    functor(Pred, F, A),
+	    map(CompProp, comp_prop_to_name, CompNames),
+	    Message = message_lns(ASource, AL0, AL1, warning,
+		['texec assertion for ', F, '/', A,
+		    ' can have only unit test commands, ',
+		    'not comp properties: \n', ''(CompNames),
+		    '\nProcessing it as a test assertion'])
+	; Message = []
+	),
+	current_prolog_flag(rtchecks_namefmt, NameFmt),
+	Term = n(Pred, Compat, Precond, Success, Comp),
+	get_pretty_names(NameFmt, Term, Dict0, TermName, Dict),
+	TermName = n(PredName, _, _, NSuccess, _),
+	functor(Pred, F, A),
+	functor(Head, F, A),
+	current_prolog_flag(rtchecks_asrloc, UseAsrLoc),
+	ALoc = asrloc(loc(ASource, AL0, AL1)),
+	(
+	    clause_read(Src, Head, _, _, PSource, PL0, PL1) ->
+	    PLoc = loc(PSource, PL0, PL1),
+	    PosLoc = [predloc(PredName, PLoc), ALoc],
+	    current_prolog_flag(rtchecks_predloc, UsePredLoc),
+	    UsePosLoc = (UsePredLoc, UseAsrLoc)
+	;
+	    % PLoc = loc(ASource, AL0, AL1),
+	    UsePosLoc = (no, UseAsrLoc),
+	    PosLoc = [ALoc]
+	),
+	( Goal10 == Goal2 -> Goal1 = Goal10
+	; Goal1 = add_info_rtsignal(Goal10, PredName, Dict, PosLoc)
+	),
+	Goal2 = Pred,
+	(
+	    Success == [] ->
+	    Goal3 = Goal1
+	;
+	    get_prop_args(Success, Pred, Args),
+	    get_checkif(success, true, PredName, Dict, Success, Args, NSuccess,
+		[ALoc], CheckSucc),
+	    Goal3 = (Goal1, catch(CheckSucc, Ex, throw(postcondition(Ex))))
+	),
+	(
+	    (clause_read(Src, 1, rtchecked, _, _, _, _) ; RtcEntry == no) ->
+	    RTCheck = Goal3
+	;
+	    collect_assertions(Pred, Module, Assertions),
+	    ( Assertions == [] ->
+		RTCheck = Goal3
+	    ;
+		generate_rtchecks(Assertions, Pred, Dict, PLoc, UsePosLoc,
+		    RTCheck, Goal3)
 	    )
 	),
+	Goal = testing(ARef, TmpDir, ~list_to_lits(Precond), RTCheck),
+	unittest_print_clause((TestEntry :- Goal0), IO, Dict).
+
+print_each_test_entry(TmpDir, Module, RtcEntry, Src, IO, TestEntry, ARef,
+	    Message) :-
+	if(do_print_each_test_entry(TmpDir, Module, RtcEntry, Src, IO,
+		TestEntry, ARef, Message), true,
+	    (unittest_print_clause((TestEntry :- fail), IO, []), fail)),
 	Message \== [].
 
 % show_diff(A, B) :-

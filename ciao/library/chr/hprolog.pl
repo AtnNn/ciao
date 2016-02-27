@@ -97,7 +97,7 @@ append([X|Xs],L) :-
 % nth(Index, List, Element) :-
 % 	nth1(Index, List, Element).
 
-:- reexport( library( lists ) , [nth/3] ).
+:- reexport(library(lists), [nth/3]).
 %% Ciao end
 
 
@@ -121,11 +121,10 @@ substitute(X, [U|Us], Y, [V|Vs]) :-
 %	unification.
 
 memberchk_eq(X, [Y|Ys]) :-
-   (   X == Y
-   ->  true
-   ;   memberchk_eq(X, Ys)
-   ).
-
+	(   X == Y
+	->  true
+	;   memberchk_eq(X, Ys)
+	).
 
 %	list_difference_eq(+List, -Subtract, -Rest)
 %	
@@ -253,10 +252,6 @@ chr_delete([H|T], X, L) :-
             chr_delete(T, X, RT)
         ).
     
-
-
-
-
 %% CiaoStart
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -315,7 +310,7 @@ memberchk(X, [_|L]) :- memberchk(X, L).
 :- multifile(initial_gv_value/2).
 
 b_setval(Name,Value) :-
-	'$global_vars_get'(2 , GV),
+	'$global_vars_get'(10, GV),
 	(
 	    var(GV) 
 	->
@@ -336,7 +331,7 @@ b_setval(Name,Value) :-
 	).
 
 b_getval(Name,Value) :-
-	'$global_vars_get'(2 , GV),
+	'$global_vars_get'(10, GV),
 	(
 	    var(GV) 
 	->
@@ -366,24 +361,24 @@ nb_setval(Name,Value) :-
 	(
 	    b_setval(Name,Value) -> true
 	;
-	    message( error , 
-	             [ 'This should not happen man... Murphy reloaded :(' ,
-	               Name , ' ' , Value ] ),
-	    '$global_vars_get'( 2 , GV ),
-	    message( error , 
-	             [ 'The variable is ' , GV ] )
+	    message(error, 
+	            ['This should not happen man... Murphy reloaded :(' ,
+	             Name, ' ', Value]),
+	    '$global_vars_get'(10, GV),
+	    message(error, 
+	            ['The variable is ', GV])
 	).
 
 nb_getval(Name,Value) :-
 	(
 	    b_getval(Name,Value) -> true
 	;
-	    message( error , 
-	             [ 'This should not happen man... Murphy resurrection :(',
-                       Name, ' ', Value ] ),
-	    '$global_vars_get'( 2 , GV ),
-	    message( error , 
-	             [ 'The variable is ' , GV ] )
+	    message(error , 
+	            ['This should not happen man... Murphy resurrection :(',
+                     Name, ' ', Value]),
+	    '$global_vars_get'(10, GV),
+	    message(error , 
+	            ['The variable is ', GV])
 	).
 
 

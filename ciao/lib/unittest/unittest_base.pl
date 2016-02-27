@@ -10,9 +10,12 @@
 		tmp_dir/1,
 		wrapper_file_name/3,
 		unittest_print_clause/3,
-		unittest_print_clauses/3
+		unittest_print_clauses/3,
+		yesno/1,
+		read_data/2,
+		write_data/2
 	    ],
-	    [assertions, unittestprops]).
+	    [assertions, regtypes, unittestprops]).
 
 :- use_module(library(terms), [atom_concat/2]).
 :- use_module(library(file_utils)).
@@ -36,6 +39,11 @@ group_list([E|L], M0, M) :-
 
 :- test add_to_list(A, B, C) : (A = [count(b, 3), count(a, 1)], B = a)
 	=> (C = [count(b, 3), count(a, 2)]).
+
+:- regtype yesno/1.
+
+yesno(yes).
+yesno(no).
 
 :- export(add_to_list/3).
 
@@ -115,3 +123,17 @@ unittest_print_clauses(Term, S, Dict) :-
 	set_output(S),
 	list(Term, unittest_print_clause(S, Dict)),
 	set_output(CO).
+
+%% The commented out lines can be used to save data in text mode and
+%% facilitate debugging --EMM
+:- use_module(library(fastrw)).
+% :- use_module(library(read)).
+
+read_data(SI, Term) :-
+	% read(SI, Term),
+	% Term \== end_of_file.
+	fast_read(SI, Term).
+
+write_data(SI, Term) :-
+	% portray_clause(SI, Term).
+	fast_write(SI, Term).

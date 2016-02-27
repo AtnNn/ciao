@@ -1,30 +1,47 @@
+;;; java-ciaopp.el --- CiaoPP mode for Java
+;; Copyright (C) 1986-2012 Free Software Foundation, Inc. and
+;; M. Hermenegildo and others (herme@fi.upm.es, UPM-CLIP, Spain).
+
+;; This file is not part of GNU Emacs.
+
+;; This file is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 3, or (at your option)
+;; any later version.
+
+;; This file is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with GNU Emacs; see the file COPYING.  If not, write to the
+;; Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+;; Boston, MA 02111-1307, USA.
+
 ;;---------------------------------------------------------------------------
 ;; Emacs additional support for the CiaoPP preprocessor 
 ;; when working on Java files (complementary to ciao.el).
 ;; (Very preliminary version!) --M. Hermenegildo
 ;;---------------------------------------------------------------------------
 
-;; Setup: add the following lines to your .emacs after the lines
-;; included automatically by the Ciao installation.
-;; ** Remember to edit the load path to suit your location ** 
-
-;; ;; Auto loading of java-ciaopp sub mode.
-;; ;; ** Remember to edit the load path to suit your location ** 
-;; (setq load-path 
-;;       (cons "/home/herme/MySVN/Systems/CiaoDE/emacs-mode" load-path)) 
-;; (defun load-java-ciaopp-mode ()
-;;  (require 'java-ciaopp)
-;;  (java-ciaopp-setup))
-;; (add-hook 'java-mode-hook 'load-java-ciaopp-mode)
-
-;; BUG: Line below should be updated by installation.
-;; "ciao-1.13.0.info" ;; Should be "ciao-<DEVELOPMENT_VERSION>.info" 
+(require 'easymenu)
+(require 'ciao-help) ; ciao-goto-manuals, ciao-help-on-current-symbol
+(require 'ciao-loading) ; ciao-find-last-run-errors,
+			; ciao-unmark-last-run-errors
+(require 'ciao-ciaopp)
+(require 'ciao-help)
 
 ; ---------------------------------------------------------------------------
+; Add a hook in the Java mode to load java-ciaopp.el 
 
-(require 'easymenu)
-(require 'ciao)
-(provide 'java-ciaopp)
+;;;###autoload
+(defun load-java-ciaopp-mode ()
+  ;; 'require' not necessary since this is being autoloaded (JFMC)
+  ;; (require 'java-ciaopp)
+  (java-ciaopp-setup))
+
+;;;###autoload(add-hook 'java-mode-hook 'load-java-ciaopp-mode)
 
 ; ---------------------------------------------------------------------------
 
@@ -35,8 +52,7 @@
     "CiaoPP Mode Menus" ciao-mode-menus-java)
   (easy-menu-add ciao-java-menu-ciaopp)
   ;; toolbar
-  (ciao-java-setup-tool-bar)
- )
+  (ciao-java-setup-tool-bar))
 
 ; ---------------------------------------------------------------------------
 ; Key bindings
@@ -52,7 +68,7 @@
 (define-key java-mode-map "\C-ch"    'ciao-fontify-buffer)
 (define-key java-mode-map "\C-c\C-i" 'ciao-help-on-current-symbol)
 (define-key java-mode-map "\C-c/"    'ciao-complete-current-symbol)
-(define-key java-mode-map "\C-c\C-m" 'ciao-goto-ciao-manuals)
+(define-key java-mode-map "\C-c\C-m" 'ciao-goto-manuals)
 (define-key java-mode-map "\C-ct"    'run-ciao-toplevel)
 (define-key java-mode-map "\C-cl"    'ciao-load-buffer)
 
@@ -83,13 +99,13 @@
      "----"
      ["Go to manual page for symbol under cursor" ciao-help-on-current-symbol]
      ["Complete symbol under cursor"        ciao-complete-current-symbol t]
-     ["Ciao manuals area in info index" ciao-goto-ciao-manuals t]
+     ["Ciao manuals area in info index" ciao-goto-manuals t]
      "----"
      ["(Re)Start Ciao top level"                 run-ciao-toplevel t]
      ["(Re)Load buffer into top level"           ciao-load-buffer  t]
      "----"
      ["Customize all Ciao environment settings" 
-                                       (customize-group 'ciao-environment)] 
+                                       (customize-group 'ciao)] 
      ["Ciao environment (mode) version" ciao-report-mode-version t]
      )
   "Menus for CiaoPP mode.")
@@ -121,7 +137,7 @@
   (ciao-tool-bar-local-item-from-menu 
    'ciao-unmark-last-run-errors "icons/clear" tool-bar-map java-mode-map)
   (tool-bar-add-item "icons/manuals" 
-   'ciao-goto-ciao-manuals 'ciao-goto-ciao-manuals 
+   'ciao-goto-manuals 'ciao-goto-manuals 
    :help "Go to area containing the Ciao system manuals")
   (ciao-tool-bar-local-item-from-menu 
    'ciao-help-on-current-symbol "icons/wordhelp" tool-bar-map java-mode-map)
@@ -137,27 +153,14 @@
 
 ; ---------------------------------------------------------------------------
 
-; Find CiaoPP properties while in Java files
-(setq word-help-mode-alist
- (cons
- '("Java"
-   (
-    ("ciao-1.13.0.info" ;; Should be "ciao-<DEVELOPMENT_VERSION>.info" 
-     "Global Index"
-     "Concept Definition Index" 
-     "Library/Module Definition Index" 
-     "Predicate/Method Definition Index" 
-     "Property Definition Index" 
-     "Regular Type Definition Index" 
-     "Declaration Definition Index" 
-     ) 
-    )
-   (("[A-Za-z_]+" 0)
-    ("[A-Za-z_][A-Za-z0-9_^/]+" 0))
-   nil
-   (("[A-Za-z_]+" 0))
-   )
-  word-help-mode-alist))
+; Find the Ciao documentation (including CiaoPP properties) while in
+; Java mode (i.e., when visiting .java files).
+(ciao-help-add-manual "Java/l" ciao-manuals)
 
-; ---------------------------------------------------------------------------
+
+;; Provide ourselves:
+
+(provide 'java-ciaopp)
+
+;;; java-ciaopp.el ends here
 

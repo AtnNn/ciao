@@ -76,12 +76,12 @@ catch(_, Error, Handler) :-
 :- pred intercept(+callable, ?term, +callable).
 
 :- doc(intercept(Goal, Signal, Handler), "Executes @var{Goal}.  If
-   a signal is send during its execution, @var{Signal} is unified with
+   a signal is sent during its execution, @var{Signal} is unified with
    the exception, and if the unification succeeds, @var{Handler} is
    executed and then the execution resumes after the point where the
    exception was thrown.  To avoid infinite loops if @var{Handler}
    raises an exception which unifies with @var{Error}, the exception
-   handler is deactivated before to execute @var{Handler}.  Note the
+   handler is deactivated before executing @var{Handler}.  Note the
    difference with builtin @pred{catch/3}, given the code 
 @begin{verbatim}
 p(X) :- send_signal(signal), display('---').
@@ -90,13 +90,19 @@ p(X) :- display(X).
    the execution of ""@tt{intercept(p(0), E, display(E)),
    display(.), fail.}"" results in the output ""@tt{error---.0.}"".").
 
+:- test intercept(G, S, H) : ( G=((A=a;A=b), send_signal(c(A))),
+	    S=c(A), H=display(A) ) + (not_fails, non_det)
+# "intercept/3 preserves determinism properties of Goal (even when
+   @var{H} and @var{G} share variables)".
+
 intercept(Goal, Signal, Handler) :-
 	'$metachoice'(Choice),
 	asserta_catching(Choice, Signal, Handler),
+	current_fact(catching(Choice, S, H)), % avoid unifs with Goal
 	'$metachoice'(BeforeChoice),
 	'$meta_call'(Goal),
 	'$metachoice'(AfterChoice),
-	retract_catching(Choice, Signal, Handler),
+	retract_catching(Choice, S, H),
 	( BeforeChoice = AfterChoice -> % no more solutions
 	    ! % remove the unnecessary exception choice point
 	; true
@@ -106,8 +112,9 @@ intercept(Goal, Signal, Handler) :-
 
 :- doc(throw(Ball), "Raises an error, throwing the exception
    @var{Ball}, to be caught by an ancestor @pred{catch/3}.  The
-   closest matching ancestor is chosen.  Exceptions are also thrown by
-   other builtins in case of error.").
+   closest matching ancestor is chosen.  In addition to calls to
+   @pred{throw/2} in user code, exceptions are also thrown by many
+   library predicates in cases of error.").
 
 throw(Error) :-
 	var(Error), !,
@@ -138,10 +145,11 @@ send_signal2(_Signal, false).
 
 :- trust pred send_signal(Term) : nonvar(Term).
 
-:- doc(send_signal(Signal), "Emits a signal, to be intercept by an
+:- doc(send_signal(Signal), "Emits a signal, to be intercepted by an
    ancestor @pred{intercept/3}. The closest matching ancestor is
-   chosen. If the signal is not intercepted, throws the error
-   @pred{error(unintercepted_signal(Signal), send_signal/1-1)}.").
+   chosen. If the signal is not intercepted, the following error is
+   thrown: @tt{error(unintercepted_signal(Signal),
+   send_signal/1-1)}.").
 
 
 send_signal(Signal):-

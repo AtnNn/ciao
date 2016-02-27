@@ -11,7 +11,7 @@
 
 :- load_compilation_module( library( 'contextual/contextual_tr')).
 
-:- add_sentence_trans( contextual_sentence_tr/3).
+:- add_sentence_trans( contextual_sentence_tr/3, 750). % TODO: Right priority?
 
 :- multifile '$_context_method'/5.
 :- discontiguous '$_context_method'/5.

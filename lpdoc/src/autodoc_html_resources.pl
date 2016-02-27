@@ -5,7 +5,7 @@
 
 :- use_module(library(messages)).
 :- use_module(library(file_utils)).
-:- use_module(library(make(system_extra))).
+:- use_module(library(system_extra)).
 
 %:- include(library(pillow(ops))).
 
@@ -18,7 +18,7 @@
 % ---------------------------------------------------------------------------
 % Copy the website skel (images, css, etc.)
 
-:- use_module(library(distutils(dirutils)), 
+:- use_module(library(dirutils), 
    [path_name/2, copy_dir_rec/9, set_owner_rec/2, get_abs_path/2]).
 
 :- export(prepare_web_skel/1).
@@ -40,6 +40,7 @@ prepare_web_skel(SrcDir) :-
 
 :- pred copy_website_skel(SrcDir, DestDir, Perm, Owner, Group)
 # "Copies recursively the web skel directory into @var{DestDir}.".
+% TODO: See makedir_SHARED
 copy_website_skel(SrcDir, DestDir, Perm, Owner, Group) :-
 	copy_dir_rec(SrcDir, DestDir, Perm, '*', '*~', '.svn', '', [],
 	    [overwrite, timestamp]),

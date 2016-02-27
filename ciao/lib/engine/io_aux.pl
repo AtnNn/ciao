@@ -2,7 +2,7 @@
 		message/2, message_lns/4, messages/1,
 		error/1, warning/1, note/1, message/1, debug/1,
 		inform_user/1, display_string/1, display_list/1, display_term/1,
-% regtypes
+		% regtypes
 		message_info/1, message_type/1
 	    ],
 	    [assertions, nativeprops, nortchecks]).
@@ -22,7 +22,7 @@
 
 :- use_module(engine(internals), ['$quiet_flag'/2]).
 
-:- import(write, [write/1, writeq/1]).
+:- import(write, [write/1, writeq/1, print/1, printq/1]).
 
 :- pred message(Type, Message) : ( message_type(Type),
 	    message_text(Message) ) # "Output to standard error @var{Message},
@@ -46,6 +46,13 @@
 
 @item{@tt{~~(Term)}} @tt{Term} is output unquoted.  If the module
    @lib{write} is loaded, the term is output with @pred{write/1}, else
+   with @pred{display/1}.
+
+@item{@tt{''(@{Term@})}} @tt{Term} is output quoted.  If the module
+   @lib{write} is loaded, the term is output with @pred{printq/1}, else
+   with @pred{displayq/1}.
+@item{@tt{@{Term@}}} @tt{Term} is output unquoted.  If the module
+   @lib{write} is loaded, the term is output with @pred{print/1}, else
    with @pred{display/1}.
 
 @item{@tt{[](Term)}} @tt{Term} is recursively output as a message, can
@@ -124,6 +131,8 @@ output_message(M) :-
 
 output_item(V) :- var(V), !, display(V).
 output_item($$(M)) :- !, display_string(M).
+output_item({M}) :- !, (current_module(write) -> print(M) ; display(M)).
+output_item(''({M})) :- !, (current_module(write) -> printq(M) ; displayq(M)).
 output_item(''(M)) :- !, (current_module(write) -> writeq(M) ; displayq(M)).
 output_item(~~(M)) :- !, (current_module(write) -> write(M) ;  display(M)).
 output_item([](M)) :- !, output_message(M).

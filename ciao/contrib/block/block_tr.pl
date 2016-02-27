@@ -1,6 +1,5 @@
-:- module(block_tr, [sentence_tr/3, clause_tr/3, conj2list/2]).
+:- module(block_tr, [sentence_tr/3, clause_tr/3, conj2list/2], []).
 
-:- use_module(library(dynamic)).
 :- use_module(library(aggregates)).
 :- use_module(library(sort)).
 
@@ -8,7 +7,7 @@ conj2list(A, [A]):- var(A), !.
 conj2list((A,B), [A|L]) :- !, conj2list(B, L).
 conj2list(A, [A]).
 
-:- dynamic(declaration/5).
+:- data declaration/5.
 
 % Fail if no '-' are found in the input list
 normalize_declaration([], [], X):- nonvar(X).
@@ -29,11 +28,11 @@ treat_declarations([Decl1|T1], Mod, [F2/A|T2]):-
 	(
 	    normalize_declaration(L1, L2, _) ->
 	    (
-		dynamic:retract(declaration(F1, F2, A, ListDecls1, Mod)) ->
+		retract_fact(declaration(F1, F2, A, ListDecls1, Mod)) ->
 		sort:sort([L2|ListDecls1], ListDecls2),
-		dynamic:assertz(declaration(F1, F2, A, ListDecls2, Mod))
+		assertz_fact(declaration(F1, F2, A, ListDecls2, Mod))
 	    ;
-		dynamic:assertz(declaration(F1, F2, A, [L2], Mod))
+		assertz_fact(declaration(F1, F2, A, [L2], Mod))
 	    ), 
 	    treat_declarations(T1, Mod, T2)
 	;
@@ -69,7 +68,7 @@ generate_clauses([t(F1, F2, A, ListDecls)|T1], [Clause|T2], Mod):-
 	generate_clauses(T1, T2, Mod).
 
 sentence_tr(0, [0], Mod):-!,
-	dynamic:retractall(declaration(_, _, _, _, Mod)).
+	retractall_fact(declaration(_, _, _, _, Mod)).
 sentence_tr((:-block(Arg)), [(:-impl_defined(L3))], Mod):-!,
 	conj2list(Arg, L1),
 	treat_declarations(L1, Mod, L2),
@@ -91,9 +90,3 @@ clause_tr(clause(H1, B), clause(H2, B), Mod):-
 	    H1 = H2
 	).
 	    
-	    
-
-
-
-	    
-

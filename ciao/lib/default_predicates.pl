@@ -9,7 +9,7 @@
    defined by default in normal cases, to provide more or less what
    other prologs define by default.  Here are explicitly listed the
    predicates defined, coming from several libraries.  Apart from those,
-   the features defined in @ref{Definite clause grammars} and
+   the features defined in @ref{Definite Clause Grammars} and
    @ref{Enabling operators at run-time} are also activated.").
 
 :- doc(usage, "No need of explicit loading.  It is included by

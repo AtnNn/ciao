@@ -15,7 +15,7 @@
 :- use_module(library(lists),      [list_concat/2, append/3]).
 :- use_module(library(terms),      [atom_concat/2]).
 :- use_module(library(format),     [format/3]).
-:- use_module(fastformat, [format_to_string/3]).
+:- use_module(library(format_to_string), [format_to_string/3]).
 :- use_module(library(messages)).
 :- use_module(lpdocsrc(src(comments)), [stringcommand/1,
 		version_descriptor/1]).
@@ -106,7 +106,7 @@ rw_command(env_('description', X), _, [infocmd("table", raw("@asis")), X, infocm
 rw_command(env_('cartouche', X),   _, [infocmd("cartouche", []), X, infocmd("end", raw("cartouche"))]) :- !.
 rw_command(env_('alert', X),   _, [infocmd("cartouche", []), X, infocmd("end", raw("cartouche"))]) :- !.
 rw_command(env_('verbatim', X),    _, [infocmd("smallexample", []), X, infocmd("end", raw("smallexample"))]) :- !.
-rw_command(item(S),           _, R) :- !,
+rw_command(item(S), _, R) :- !, % (for lists and descriptions)
 	( doctree_is_empty(S) ->
 	    % TODO: in order to use infocmd properly in this case,
 	    % item_env should be defined (equivalent to the section
@@ -114,15 +114,26 @@ rw_command(item(S),           _, R) :- !,
 	    R = [raw_fc, raw("@item ")]
 	; R = infocmd("item", S)
 	).
+rw_command(item_num(S), _, R) :- !, % (for enumerations)
+	( S = "" ->
+	    % (see comment above about item/1)
+	    R = [raw_fc, raw("@item ")]
+	; % TODO: This is really a hack
+	  % texinfo does not support explicit values, so we emulate them
+	  %% % (in this case, we use itemize_none instead of enumerate)
+	  %% R = infocmd("item", [raw(S), raw(". ")])
+          % (in this case, we use description_env instead of enumerate)
+	   R = [raw_fc, raw("@item @ @ "), raw(S), raw(".")]
+	).
 % TODO: is @today here a tex command? 'infocmd' broke pdf alignment
 rw_command(today(""),       _, [raw("@today"), raw_nl]) :- !.
 %rw_command(today(""),       _, infocmd("today", [])) :- !.
 % rw_command(hfill(""),_,[if(tex, infocmd("hfill", []))]) :- !.
 rw_command(hfill(""), _, infocmd("hfill", [])) :- !.
 rw_command(iso(""),   _, raw("@key{ @bullet{} ISO @bullet{} }")) :- !.
-rw_command(uref(URL), _, NBody) :- !,
+rw_command(href(URL), _, NBody) :- !,
 	NBody = [raw("@uref{"), raw(URL), raw("}")].
-rw_command(uref(Text, URL), _DocSt, NBody) :- !,
+rw_command(href(URL, Text), _DocSt, NBody) :- !,
 	NBody = [raw("@uref{"), raw(URL), raw(","), Text, raw("}")].
 rw_command(email(Address), _, NBody) :- !,
 	NBody = [raw("@email{"), Address, raw("}")].
@@ -201,9 +212,9 @@ rw_command(subsection_title(Xs), _DocSt, R) :- !,
 	R = infoenv("strong", Xs).
 rw_command(twocolumns(X), _DocSt, R) :- !, R = X. % ignore
 rw_command(itemize_none(Xs), _DocSt, R) :- !,
-	R = infoenv("itemize", Xs).
+	R = infoenv("itemize", raw("@w"), Xs).
 rw_command(itemize_plain(Xs), _DocSt, R) :- !,
-	R = infoenv("itemize", Xs).
+	R = infoenv("itemize", raw("@w"), Xs).
 rw_command(itemize_minus(Xs), _DocSt, R) :- !,
 	R = infoenv("itemize", raw("@minus"), Xs).
 rw_command(itemize_bullet(Xs), _DocSt, R) :- !,
@@ -283,6 +294,21 @@ rw_command(defpred(IdxLabel, Type, Text, PN, Body), DocSt, R) :- !,
 	R = [R1,
              backend_idx(Indices, IdxLabel, string_esc(S)),
 	     infoenv("deffn", [raw(Text), raw(" "), string_esc(S), raw(":")], Body)].
+rw_command(defassrt(_Status, _AType, HeaderStr, HeadR, DescR, UsageProps), _DocSt, R) :- !,
+	( HeaderStr = "" -> HeaderR = []
+	; HeaderR = [p(""), bf(string_esc(HeaderStr)), string_esc(" ")]
+	),
+	R = [HeaderR,
+	     HeadR,
+	     p(""), DescR,
+	     UsageProps].
+rw_command(assrtprops(DPR, CPR, APR, NGPR), _DocSt, R) :- !,
+	R = itemize_minus([
+	      DPR,
+	      CPR,
+	      APR,
+	      NGPR
+            ]).
 rw_command(if(Cond, X), _DocSt, R) :- !,
         % TODO: with a real .tex backend some conditional environments could disappear
 	( Cond = tex ->
@@ -291,13 +317,13 @@ rw_command(if(Cond, X), _DocSt, R) :- !,
 	    R = infoenv("ifinfo", X)
 	; Cond = notinfo ->
 	    R = infoenv("ifnotinfo", X)
-	; throw(cannot_rewrite(if(Cond, X)))
+	; throw(error(not_in_domain_if(Cond, X), rw_command/3))
 	).
 rw_command(end_document, _DocSt, R) :- !,
 	R = infocmd("bye").
 rw_command(simple_link(_,_,_,_), _, nop) :- !.
 rw_command(X, _DocSt, _R) :- !,
-	throw(cannot_rewrite(rw_command(X))).
+	throw(error(not_in_domain_rw_command(X), rw_command/3)).
 
 rw_command_body(footnote(Body), "footnote", Body) :- !.
 rw_command_body(bf(Body),       "strong",   Body) :- !.
@@ -552,8 +578,10 @@ fmt_structuring(SecProps, TitleR, R) :-
 	    ( Level = 1 -> Cmd = "chapter"
 	    ; Level = 2 -> Cmd = "section"
 	    ; Level = 3 -> Cmd = "subsection"
+	    ; Level = 4 -> Cmd = "subsubsection"
+	    ; throw(error(bad_level(Level), fmt_structuring/3))
 	    )
-	; throw(missing_level_prop(SecProps))
+	; throw(error(no_level_prop(SecProps), fmt_structuring/3))
 	),
 	R = infocmd(Cmd, TitleR).
 
@@ -680,7 +708,8 @@ finish_texinfo :-
 	setting_value(lpdoclib, LibDir),
  	working_directory(WD,WD),
  	cd(InDir),
-	sh_exec([~emacs_for_ciao, ' -batch',
+	sh_exec(['unset EMACSLOADPATH ; unset EMACSDOC ; ', ~emacs_for_ciao,
+	     ' -batch',
 	     ' -l ', LibDir, 'emacs-library.el',
 	     ' -f update-all-nodes-in-one-file',
 	     ' -file ', InName,
@@ -697,7 +726,7 @@ move_file(In, Out) :-
 
 :- use_module(library(system), [working_directory/2, cd/1]).
 :- use_module(library(make(make_rt)), [get_name/2]).
-:- use_module(ciaodesrc(makedir('ConfigValues')), [emacs_for_ciao/1]).
+:- use_module(library(lpdist(ciao_config_options)), [emacs_for_ciao/1]).
 
 % TODO: Move next to autodoc:fmt_infodir_entry2. Put call there?
 % TODO: Is .infoindex extension really necessary? Can it be something else?
@@ -713,6 +742,8 @@ copy_with_perms(In, Out) :-
 	DataMode = ~setting_value_or_default(perms),
 	-set_perms(Out, DataMode).
 
+% Note: for global installations, this should be done with 'install-info'
+%       (old 'head' and 'tail' files are in the Attic/ directory)
 % updateinfodir <- [] # "Update info directory for all docs in docdir" :-
 % 	working_directory(WD,WD),
 % 	setting_value(docdir,DocDir),
@@ -871,7 +902,7 @@ do_texi_to_rtf(TexiFile, RTFFile, FileBase) :-
 		[default, logbase(~atom_concat(FileBase, '_rtf'))]).
 
 :- use_module(library(file_utils), [file_to_string/2, string_to_file/2]).
-:- use_module(library(make(system_extra)), [(-)/1, copy_file/3, set_perms/2, del_files_nofail/1]).
+:- use_module(library(system_extra), [(-)/1, copy_file/3, set_perms/2, del_files_nofail/1]).
 :- use_module(library(system), [delete_file/1]).
 
 

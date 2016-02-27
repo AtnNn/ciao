@@ -722,6 +722,56 @@ bool_t prolog_file_properties(Arg)
   return TRUE;
 }
 
+/* prolog_touch(+Path) */
+
+bool_t prolog_touch(Arg)
+     Argdecl;
+{
+  ERR__FUNCTOR("system:touch", 1);
+  char file[MAXPATHLEN+1];
+  int status;
+  int fd = -1;
+  int open_errno = 0;
+
+  DEREF(X(0),X(0));
+
+  /* check argument instantiation error */
+  if (IsVar(X(0)))
+    BUILTIN_ERROR(INSTANTIATION_ERROR,X(0),1);
+  /* check type argument */
+  if (!TagIsATM(X(0)))
+    ERROR_IN_ARG(X(0),1,STRICT_ATOM);
+
+  if (!expand_file_name(GetString(X(0)),file))
+    return FALSE;
+
+  /* Try to open the file, create it if necessary. */
+  fd = open(file, O_WRONLY | O_CREAT | O_NONBLOCK | O_NOCTTY,
+	    S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
+  if (fd == -1) open_errno = errno;
+
+  if (fd != -1 && close(fd) < 0) {
+    BUILTIN_ERROR(PERMISSION_ERROR(OPEN,STREAM),X(0),1);
+  }
+
+  /* If we have write access to the file, but do not own it, we will
+     not be able to set the modification time arbitrarily. If we pass
+     NULL, we just update it to the current time (which is allowed) */
+  status = utime(file, NULL);
+
+  if (status) {
+    if (open_errno) {
+      /* TODO: open_errno is not used */
+      BUILTIN_ERROR(PERMISSION_ERROR(ACCESS,STREAM),X(0),1);
+    } else {
+      /* TODO: errno is not used */
+      BUILTIN_ERROR(PERMISSION_ERROR(MODIFY,STREAM),X(0),1);
+    }
+  }
+
+  return TRUE;
+}
+
 bool_t prolog_unix_chmod(Arg)
      Argdecl;
 {
@@ -1757,6 +1807,23 @@ bool_t prolog_get_so_ext(Arg)
 {
   DEREF(X(0),X(0));
   return cunify(Arg, MakeString(so_suffix), X(0));
+}
+
+bool_t prolog_wait(Arg)
+     Argdecl;
+{
+  ERR__FUNCTOR("system:wait", 3);
+  int retcode, status;
+
+  DEREF(X(0), X(0));
+  if (!TagIsSmall(X(0))) {
+    BUILTIN_ERROR(TYPE_ERROR(INTEGER),X(0),1);
+  }
+
+  retcode = waitpid(GetSmall(X(0)), &status, 0);
+
+  return (cunify(Arg, X(1), MakeSmall(retcode)) &&
+	  cunify(Arg, X(2), MakeSmall(status)));
 }
 
 /*

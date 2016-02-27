@@ -20,7 +20,7 @@
 		regression/9,
 		lregression/4,
 		ldiameter/2,
-% regtypes
+		% regtypes
 		pair/1
 	    ], [assertions, isomodes, regtypes]).
 
@@ -203,11 +203,8 @@ lsumstat2(L, N, Sx, Sy, Sx2, Sxy, Sy2) :-
 	* number * number * number * number * number * number # "Same as
    @pred{lsumstat/7} but taken initial values for the returned data.".
 
-lsumstat2_aux([], N, Sx, Sy, Sx2, Sxy, Sy2, N, Sx, Sy, Sx2, Sxy, Sy2
-).
-lsumstat2_aux([L|Ls], N1, Sx1, Sy1, Sx21, Sxy1, Sy21, N, Sx, Sy, Sx2, Sxy, Sy2
-)
-:-
+lsumstat2_aux([], N, Sx, Sy, Sx2, Sxy, Sy2, N, Sx, Sy, Sx2, Sxy, Sy2).
+lsumstat2_aux([L|Ls], N1, Sx1, Sy1, Sx21, Sxy1, Sy21, N, Sx, Sy, Sx2, Sxy, Sy2) :-
 	(X, Y) =L,
 	N_2 is 1+N1,
 	Sx_2 is X+Sx1,

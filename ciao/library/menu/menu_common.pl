@@ -1,9 +1,9 @@
-:- use_package( argnames ).
+:- use_package(argnames).
 
-:- argnames menu_opt( menu , flag , message , guard , pre , post ).
+:- argnames menu_opt(menu, flag, message, guard, pre, post).
 :- multifile menu_default/3.
 :- multifile menu_opt/6.
-:- meta_predicate menu_opt( ? , ? , ? , pred(1) , pred( 0 ) , pred(2) ).
+:- meta_predicate menu_opt(?, ?, ?, pred(1), pred(0), pred(2)).
 
 % HOOKS
 

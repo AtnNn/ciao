@@ -1,8 +1,11 @@
+# TODO: Port this Makefile to Prolog
+CIAOBUILDDIRtemp=../../../../build
+-include $(CIAOBUILDDIRtemp)/CONFIG_mkf
+
 JAVASOURCES=*.java
 JAVACLASSES=*.class
 JAVAC=javac
 JAVAFLAGS=
--include ../../../SETTINGS
 
 all: classes
 

@@ -44,7 +44,9 @@ or if you prefer,
 @tt{:- iterative(p/1,5,(_(X,Y):- Y is X + 10)).}
 
 @cindex{depth limit}
-You can also use a fourth parameter to set a limiting depth. All goals below the given depth limit simply fail. Thus, with the following directive:
+You can also use a fourth parameter to set a limiting depth. All goals
+below the given depth limit simply fail. Thus, with the following
+directive:
 
 @tt{:- iterative(p/1,5,(_(X,Y):- Y is X + 10),100).}
 

@@ -31,5 +31,6 @@
 
 :- load_compilation_module(library(objects(objects_tr))).
 
-:- add_sentence_trans(obj_sentence_trans/3).
-:- add_clause_trans(obj_clause_trans/3).
+% TODO: uncertain priority: duplicates the compiler logic, not really compatible with other extensions
+:- add_sentence_trans(obj_sentence_trans/3, 8110).
+:- add_clause_trans(obj_clause_trans/3, 8110).

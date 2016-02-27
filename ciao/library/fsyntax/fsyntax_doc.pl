@@ -188,6 +188,12 @@ pair(A,B) := ^(A-B).
    factorial example above can be written as follows using the
    @lib{functional} package:
 @begin{verbatim}
+@includeverbatim{fsyntax/examples/factf.pl}
+@end{verbatim}
+
+   @noindent
+   Which is equivalent to:
+@begin{verbatim}
 @includeverbatim{fsyntax/examples/factf_fsyntax.pl}
 @end{verbatim}
 

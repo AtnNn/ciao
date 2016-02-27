@@ -1,6 +1,7 @@
 :- package(optparse).
 :- load_compilation_module(library(optparse(optparse_tr))).
-:- add_sentence_trans(optparse_tr/3).
+% note: priority before fsyntax (similar to menu, make, dcg, etc.)
+:- add_sentence_trans(optparse_tr/3, 350).
 
 :- discontiguous exec_simple_option/4.
 :- discontiguous flag_option/3.

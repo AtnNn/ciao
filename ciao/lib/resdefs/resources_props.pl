@@ -3,7 +3,8 @@
 		cost/8,
 		head_cost/4,
 		literal_cost/4,
-		intervals/3
+		intervals/3,
+		calls/1
 	    ],
 	    [assertions, hiord]).
 
@@ -11,6 +12,7 @@
 :- reexport(library(resdefs(resources_types))).
 :- use_module(library(resdefs(resdefs_rt))).
 :- use_module(engine(internals)).
+:- use_module(library(rtchecks(rtchecks_send))).
 
 
 %----------------------------------------------------------------------------
@@ -19,19 +21,19 @@
 
 :- meta_predicate head_cost(goal, ?, ?, pred(2)).
 
-:- prop head_cost(Head, Approx, Res, Cost_Pred) # "The partial
-        resource spent @var{Res} by any call of the form @var{Head} is
-        given by the execution of the predicate @var{Cost_Pred}.
-        @var{Approx} gives the type approximation: @tt{ub} (upper
-        bound), @tt{lb} (lower bound), or @var{o} (complexity
-        order).".
+:- prop head_cost(Head, Approx, Res, Cost_Pred) + no_rtcheck
+# "The partial resource spent @var{Res} by any call of the form
+   @var{Head} is given by the execution of the predicate
+   @var{Cost_Pred}.  @var{Approx} gives the type approximation:
+   @tt{ub} (upper bound), @tt{lb} (lower bound), or @var{o}
+   (complexity order).".
 
 head_cost(Goal, _, _, _) :- call(Goal).
 
 
 :- meta_predicate literal_cost(goal, ?, ?, pred(2)).
 
-:- prop literal_cost(Head, Approx, Res, Cost_Pred)
+:- prop literal_cost(Head, Approx, Res, Cost_Pred) + no_rtcheck
 # "The partial resource spent @var{Res} by any instantiation of the
    head when @var{Head} is invoked is given by the execution of the
    predicate @var{Cost_Pred}. @var{Approx} gives the type
@@ -53,7 +55,7 @@ can_validate_res(Res, Rel) :-
 
 :- prop cost(Head, Rel, Approx, Type, Res, IF, CostExpr)
 	: callable * rel_t * approx * cost_type
-	* resource * list(callable) * cost_expression
+	* resource * list(callable) * cost_expression + rtcheck(incomplete)
 
 # "The total resource spent of resource @var{Res} when @var{Head} is
    called is given by cost function @var{CostExpr}. @var{Approx} gives
@@ -88,7 +90,7 @@ rel_cost_prop(Ap, Type, Res, T, rel_cost(Ap, Type, Res, T)).
 relativize_res(abs, _,   R,  R).
 relativize_res(rel, Res, R0, R) :-
 	global_resource_usage(Res, GR),
-% 	R = R0 / GR.
+	% R = R0 / GR.
 	R is R0 / GR.
 
 :- meta_predicate calls(list(goal)).
@@ -104,13 +106,13 @@ check_compare(Goal, Rel, Ap, Type, Res, ER0, IF, CostFunction) :-
 		compare_ap(Ap, ER, R) ->
 		cost_prop(Rel, Ap, Type, Res, R,  Prop),
 		cost_prop(Rel, eq, Type, Res, ER, VProp),
-		send_signal(rtcheck(comp, Goal, Prop, VProp, []))
+		send_comp_rtcheck(Goal, Prop, VProp)
 	    ;
 		true
 	    )
 	;
 	    cost_prop(Rel, Ap, Type, Res, R, Prop),
-	    send_signal(rtcheck(comp, Goal, Prop, fails(CostFunction), []))
+	    send_comp_rtcheck(Goal, Prop, fails(CostFunction))
 	).
 
 % Note that T can be 0.Nan
@@ -243,7 +245,7 @@ cost_t(redo, Goal, Rel, Ap, Res, IF, CostFunction, T0) :-
 :- impl_defined(rel_cost/4). % Transformed by resdefs_tr to cost/7.
 
 %[LD]
-:- prop intervals(X, Y) 
+:- prop intervals(X, Y)
 # "Data size @var{X} belongs to some interval in the list of intervals
 @var{Y}. The list of intervals @var{Y} represents union of its elements".
 
@@ -261,7 +263,9 @@ cost_t(redo, Goal, Rel, Ap, Res, IF, CostFunction, T0) :-
 
 intervals(G, _, X, L) :- call(G), in_intervals(X, L), !.
 
-in_interval(X, i(A, B)) :- A =< X, X =< B.
+in_interval(X, i(A, B)) :-
+	(A == neginf -> true ; A == inf -> fail ; A =< X),
+	(B == neginf -> fail ; B == inf -> true ; X =< B).
 
 in_intervals(X, [I|_]) :- in_interval(X, I).
 in_intervals(X, [_|L]) :- in_intervals(X, L).

@@ -1,26 +1,25 @@
 :- module(_, _, [ciaopaths, assertions, regtypes, fsyntax]).
 
-:- include(lpdocsrc(lib('SETTINGS_schema'))).
+:- include(lpdoclib('SETTINGS_schema')).
 % ****************************************************************************
 % This is an LPdoc configuration file. See SETTINGS_schema for documentation *
 % ****************************************************************************
 
 :- use_module(library(system)).
-:- use_module(library(terms),                   [atom_concat/2]).
+:- use_module(library(lpdist(makedir_aux)), [fsR/2]).
 
-:- doc(title, "Configuration File for Document Generation").
+:- doc(title, "Default configuration file for LPdoc").
+:- doc(author, "The CLIP group").
+:- doc(filetype, user).
 
-:- doc(module, "This is a sample configuration file for
-   @apl{lpdoc}. The defaults listed are typically suggestions and/or
-   the ones used for local installation in the CLIP group machines.
-   These settings should be changed to suit your application.").
+:- doc(module, "This is a default configuration file for @apl{lpdoc},
+   typically used in the generation of documentation for single
+   modules. The defaults listed are typically suggestions and/or the
+   ones used for local installation in the CLIP group machines.  These
+   settings should be changed to suit your application.").
 
 :- doc(bug, "Definitions that are overriden by the emacs mode must fit
-   in one line").
-
-:- doc(author, "Your Name Here").
-
-:- doc(filetype, user).
+   in one line. Do not use emacs but LPdoc to generate this file").
 
 filepath := '/home/clip/Systems/lpdoc/doc'|'/home/clip/Systems/ciao/doc/common'.
 
@@ -32,7 +31,7 @@ output_name := 'manual_name'.
 
 doc_structure := 'main_module'.
 
-commonopts := no_bugs|no_patches.
+commonopts := no_patches. % no_bugs|no_patches
 doc_mainopts := ~commonopts.
 doc_compopts := ~commonopts.
 
@@ -62,8 +61,6 @@ mandir := '/home/clip/public_html/Local/lpdoc_docs'.
 datamode(perm(rw, rw, r)).
 execmode(perm(rwx, rwx, rx)).
 
-infodir_headfile := ~atom_concat([~lpdoclib, '/Head_clip.info']).
-infodir_tailfile := ~atom_concat([~lpdoclib, '/Tail_clip.info']).
 % TODO: This is defined automatically by lpdoc, but not accessible here. Fix
 lpdoclib := '/usr/local/lib/lpdoc'.
 

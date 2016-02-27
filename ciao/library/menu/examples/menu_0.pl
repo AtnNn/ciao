@@ -1,4 +1,4 @@
-:- module(_, [menu_demo/0], [menu, assertions, regtypes]).
+:- module(_, [menu_demo/0], [assertions, regtypes, menu]).
 
 % --------------------------------------------------------------------------
 % Entry point for testing:

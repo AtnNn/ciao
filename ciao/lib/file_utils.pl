@@ -11,11 +11,14 @@
 :- use_module(library(streams)).
 :- use_module(library(strings)).
 
-:- doc(title,"File I/O utilities").
+% TODO: Integrate with other stream module?
+:- doc(title,"File/Stream Utilities").
 
 :- doc(author,"The CLIP Group").
 
-:- doc(module,"This module implements the file I/O utilities.").
+:- doc(module,"This module implements a collection of predicates to
+   read/write files (or streams) from/to several sources (lists of
+   terms, strings, predicate output, etc.), in a compact way.").
 
 % (pp) probably redundant
 %:- pred file_terms(@File, ?Terms) : sourcename(File) =>  list(Terms) 

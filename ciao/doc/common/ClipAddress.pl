@@ -6,7 +6,7 @@
 :- doc(address, "The Computational logic, Languages, ").
 :- doc(address, "Implementation, and Parallelism (CLIP) Lab").
 %% :- doc(address, "The CLIP Group").
-:- doc(address, "@uref{http://www.cliplab.org/}").
+:- doc(address, "@href{http://www.cliplab.org/}").
 :- doc(address, "@email{webmaster@@clip.dia.fi.upm.es}").
 %:- doc(address, "School of CS, Technical University of Madrid"). 
 :- doc(address, "School of CS, T. U. of Madrid (UPM)"). 

@@ -38,5 +38,6 @@
 
 :- load_compilation_module(library(class(class_tr))).
 
-:- add_sentence_trans(class_sentence_translation/3).
-:- add_clause_trans(class_clause_translation/3).
+% TODO: uncertain priority: duplicates the compiler logic, not really compatible with other extensions
+:- add_sentence_trans(class_sentence_translation/3, 8110).
+:- add_clause_trans(class_clause_translation/3, 8110).

@@ -1,6 +1,5 @@
--include ../../SETTINGS
-include ../../SHARED
-include $(SYSDEP_FILES)/mkf-$(CIAOARCH)
+CIAOBUILDDIRtemp=../../../build
+-include $(CIAOBUILDDIRtemp)/CONFIG_mkf
 
 PROLOGSOURCES=javasock.pl javart.pl jtopl.pl plserver.pl
 PROLOGSERVER=plserver

@@ -3,8 +3,8 @@
 #  Copyright (C) 1996-2004 CLIP                 #
 #             see file LGPL                     #
 #################################################
-include ../../SETTINGS
-include ../../SHARED
+CIAOBUILDDIRtemp=../../../build
+include $(CIAOBUILDDIRtemp)/CONFIG_mkf
 
 # This Makefile is obsolete, its logic is now in the ciao makedir.pl
 # file, the only part is still here is the distribution of pillow -

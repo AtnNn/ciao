@@ -10,7 +10,7 @@
 
 :- doc(subtitle_extra,"REFERENCE MANUAL").
 :- doc(subtitle_extra,"@bf{The Ciao Documentation Series}").
-:- doc(subtitle_extra,"@uref{http://www.ciaohome.org/}").
+:- doc(subtitle_extra,"@href{http://www.ciaohome.org/}").
 :- doc(subtitle_extra,"@em{Generated/Printed on:} @today{}").
 :- doc(subtitle_extra,"Technical Report CLIP 3/97-@version{}").
 
@@ -19,7 +19,7 @@
 :- doc(credits, "Francisco Bueno").
 % :- doc(credits, "Daniel Cabeza").
 :- doc(credits, "Manuel Carro").
-:- doc(credits, "Remy Haemmerl@'{e}").
+:- doc(credits, "R@'{e}my Haemmerl@'{e}").
 :- doc(credits, "Manuel Hermenegildo").
 :- doc(credits, "Pedro L@'{o}pez").
 :- doc(credits, "Edison Mera").
@@ -136,14 +136,13 @@
 
          @include{ADTs.lpdoc}
 
-      @subsection{PART X - Miscellaneous standalone utilities}
-
-         @include{ciao-utilities.lpdoc}
-
-      @subsection{PART XI - Contributed libraries}
+      @subsection{PART X - Contributed libraries}
 
          @include{Contrib.lpdoc}
 
+      @subsection{PART XI - Contributed standalone utilities}
+
+         @include{ciao-contrib-utilities.lpdoc}
 
       @subsection{PART XII - Appendices}
 
@@ -163,6 +162,15 @@
 
 :- doc(version_maintenance,dir('../../version')).
 
+% For 1.16:
+%   - Ported Tom Schrijvers' Hindley-Milner types
+%     (r10264-unstable) (Jose Morales)
+%   - Check comments in ~clip/Systems/CiaoDE-logs/1.14
+
+% TODO: Include some note in the LPdoc output to indicate that this is
+%       a development version? (comments for backports may be
+%       misleading)
+
 :- doc(version(1*14+2,2011/08/12,18:14*31+'CEST'), "
    Merging r13606 (trunk) into 1.14.
    This backports an optimization for DARWIN platforms (Jose Morales)").
@@ -171,6 +179,9 @@
    Merging r13583 through r13586 (trunk) into 1.14. This fixes
    problems in the Windows version of Ciao (Edison Mera, Jose
    Morales)").
+
+:- doc(version(1*15+0,2011/07/08,11:48*01+'CEST'), "New development
+   version (Jose Morales)").
 
 :- doc(version(1*14+0,2011/07/08,10:51*55+'CEST'), "
    It has been a long while since declaring the last major version
@@ -776,6 +787,29 @@
    @end{itemize}
 ").
 
+% note: approximate release date (r7508)
+:- doc(version(1*10+8,2007/01/28,18:01*27+'CEST'), "
+   Backports and bug fixes to stable 1.10:
+   @begin{itemize}
+   @item Changes to make Ciao 1.10 compile with the latest GCC
+         releases.
+   @item Imported from
+         @tt{CiaoDE/branches/CiaoDE-memory_management-20051016},
+         changes from revisions 4909 to 4910: Changes to make Ciao
+         issue a better message at startup if the allocated memory
+         does not fall within the limits precomputed at compile time
+         (plus some code tidying).
+   @item Port of revisions 5415, 5426, 5431, 5438, 5546, 5547 applied
+         to Ciao 1.13 to Ciao 1.10 in order to make it use @tt{mmap()}
+         when possible and to make it compile on newer Linux kernels.
+         Tested in Ubuntu, Fedora (with older kernel) and MacOSX.
+   @item Configuration files for DARWIN (ppc) and 64-bit platforms
+         (Intel and Sparc, both in 32-bit compatibility mode).
+   @item Force the creation of the module containing the foreign
+         interface compilation options before they are needed.
+   @end{itemize}
+").
+
 :- doc(version(1*13+0,2005/07/03,19:05*53+'CEST'), "New development
    version after 1.12. (Jose Morales)").
 
@@ -794,6 +828,8 @@
 
 % :- doc(version(1*10+1,2003/04/04,18:29*07+'CEST'), "Version
 %    skipped (Jose Morales)").
+
+% TODO: (pre SVN) missing notes from 1.10.0 to 1.10.7
 
 :- doc(version(1*10+0,2004/07/29,16:12*03+'CEST'), "
    @begin{itemize}
@@ -978,6 +1014,8 @@
 
 :- doc(version(1*9+0,2002/05/16,23:17*34+'CEST'), " New
    development version after stable 1.8p0 (MCL, DCG)").
+
+% TODO: (pre SVN) missing notes from 1.8.0 to 1.8.3
 
 :- doc(version(1*8+0,2002/05/16,21:20*27+'CEST'), "
    @begin{itemize}
@@ -1198,7 +1236,7 @@
 %    Hermenegildo)").
 
 % :- doc(version(1*7+87,2001/04/08,15:15*18+'CEST'), "Added @tt{doc}
-%    and @tt{installdoc} targets to top level installation @{Makefile}
+%    and @tt{install_doc} targets to top level installation @{Makefile}
 %    (can be used to regenerate and reinstall documentation if
 %    @apl{lpdoc} is available.  (Manuel Hermenegildo)").
 
@@ -1212,6 +1250,8 @@
 
 :- doc(version(1*7+0,2000/07/12,19:01*20+'CEST'), "Development
    version following even 1.6 distribution.").
+
+% TODO: (pre SVN) missing notes from 1.6.0 to 1.6.3
 
 :- doc(version(1*6+0,2000/07/12,18:55*50+'CEST'), "
    @begin{itemize}
@@ -1273,12 +1313,16 @@
 :- doc(version(1*3+0,1999/06/16,17:05*58+'MEST'), "Development
    version following even 1.2 distribution.").
 
-:- doc(version(1*2+0,1999/06/14,16:54*55+'MEST'), " Temporary
-   version distributed locally for extensive testing of reexportation
-   and other 1.3 features.").
+% TODO: this version does not seem to have been distributed
+
+:- doc(version(1*2+0,1999/06/14,16:54*55+'MEST'), "Temporary version
+   distributed locally for extensive testing of reexportation and
+   other 1.3 features.").
 
 :- doc(version(1*1+0,1999/06/04,13:30*37+'MEST'), "Development
    version following even 1.0 distribution.").
+
+% TODO: (pre SVN) missing notes from 1.0.0 to 1.0.7
 
 :- doc(version(1*0+0,1999/06/04,13:27*42+'MEST'), "
    @begin{itemize}
@@ -1306,6 +1350,9 @@
    @item Test version before 1.0 release. Many bugs fixed.
    @end{itemize}").
 
+% Previously to 0.8, all versions where released as stable.
+% TODO: (pre SVN) missing notes from 0.8.0 to 0.8.44
+
 :- doc(version(0*8+0,1998/10/27,13:12*36+'MET'), "
    @begin{itemize}
    @item Changed compiler so that only one pass is done, eliminated @tt{.dep}
@@ -1319,6 +1366,8 @@
    @item Some bugs fixed.
    @end{itemize}").
 
+% TODO: (pre SVN) missing notes from 0.7.0 to 0.7.28
+
 :- doc(version(0*7+0,1998/09/15,12:12*33+'MEST'), "
    @begin{itemize}
    @item Improved debugger capabilities and made easier to use.
@@ -1326,6 +1375,8 @@
    @item New arithmetic functions added, which complete all ISO functions.
    @item Some bugs fixed.
    @end{itemize}").
+
+% TODO: (pre SVN) missing notes from 0.6.0 to 0.6.18
 
 :- doc(version(0*6+0,1998/07/16,21:12*07+'MET DST'), "
    @begin{itemize}
@@ -1343,6 +1394,8 @@
    @item Some bugs fixed.
    @end{itemize}").
 
+% TODO: (pre SVN) missing notes from 0.5.0 to 0.5.50
+
 :- doc(version(0*5+0,1998/3/23), "
    @begin{itemize}
    @item First Windows version.
@@ -1351,6 +1404,8 @@
    @item Builtins renamed to match ISO-Prolog.
    @item Made ISO the default syntax/package.
    @end{itemize}").
+
+% TODO: (pre SVN) missing notes from 0.4.0 to 0.4.12
 
 :- doc(version(0*4+0,1998/2/24), "
    @begin{itemize}

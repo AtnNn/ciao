@@ -1,6 +1,6 @@
 :- module(_, _, [ciaopaths, assertions, regtypes, fsyntax]).
 
-:- include(lpdocsrc(lib('SETTINGS_schema'))).
+:- include(lpdoclib('SETTINGS_schema')).
 % ****************************************************************************
 % This is an LPdoc configuration file. See SETTINGS_schema for documentation *
 % ****************************************************************************
@@ -18,33 +18,31 @@
 
 % ----------------------------------------------------------------------------
 
-:- use_module(library(terms), [atom_concat/2]).
-:- use_module(library(component_registry), [component_src/2]).
-:- reexport(ciaodesrc(makedir('DOCCOMMON'))).
+:- use_module(library(lpdist(makedir_aux)), [fsR/2]).
+:- reexport(library(lpdist(ciao_config_options)), 
+    [bibfile/1, htmldir/1, docdir/1, infodir/1, mandir/1, lpdoclib/1]).
 datamode(_) :- fail.
 execmode(_) :- fail.
 
-% the component that contains this manual
-% TODO: This could be inferred (looking for a makedir/CONFIG.pl in a parent dir)
-parent_component := 'lpdoc'.
+% the bundle that contains this manual
+% TODO: This could be inferred (looking for a Manifest.pl in a parent dir)
+parent_bundle := 'lpdoc'.
 
-filepath := ~atom_concat([~component_src(lpdoc), '/src']).
-filepath := ~atom_concat([~component_src(lpdoc), '/readmes']).
-filepath := ~atom_concat([~component_src(lpdoc), '/examples']).
-filepath := ~atom_concat([~component_src(ciao),  '/doc/common']).
+filepath := ~fsR(bundle_src(lpdoc)/'src').
+filepath := ~fsR(bundle_src(lpdoc)/'readmes').
+filepath := ~fsR(bundle_src(lpdoc)/'examples').
+filepath := ~fsR(bundle_src(ciao)/'doc'/'common').
 
-systempath := ~atom_concat([~component_src(ciao), ~ciao_path]).
-
-ciao_path := '/lib'|
-	'/lib/assertions'|
-	'/lib/metaprops'|
-	'/lib/regtypes'|
-	'/lib/engine'|
-	'/lib/rtchecks'|
-	'/lib/unittest'|
-	'/library'|
-	'/contrib'|
-        '/doc/common'.
+systempath := ~fsR(bundle_src(ciao)/'lib').
+systempath := ~fsR(bundle_src(ciao)/'lib'/'assertions').
+systempath := ~fsR(bundle_src(ciao)/'lib'/'metaprops').
+systempath := ~fsR(bundle_src(ciao)/'lib'/'regtypes').
+systempath := ~fsR(bundle_src(ciao)/'lib'/'engine').
+systempath := ~fsR(bundle_src(ciao)/'lib'/'rtchecks').
+systempath := ~fsR(bundle_src(ciao)/'lib'/'unittest').
+systempath := ~fsR(bundle_src(ciao)/'library').
+systempath := ~fsR(bundle_src(ciao)/'contrib').
+systempath := ~fsR(bundle_src(ciao)/'doc'/'common').
 
 pathsfile(_) :- fail. 
 
@@ -91,8 +89,7 @@ doc_structure :=
 	    'autodoc_aux',
 	    'autodoc_images'
 % TODO: Compute local modules that are not included in the internal documentation? Emit warning?
-%	    'distpkg_download'
-%	    'fastformat'
+%	    'pbundle_download'
           ]
         ].
 
@@ -107,11 +104,6 @@ startpage := 1.
 papertype := afourpaper.
 
 libtexinfo := 'yes'.
-
-infodir_headfile := ~atom_concat([~component_src(lpdoc),
-		'/lib/Head_clip.info']).
-infodir_tailfile := ~atom_concat([~component_src(lpdoc),
-		'/lib/Tail_clip.info']).
 
 docformat := texi|ps|pdf|manl|info|html.
 

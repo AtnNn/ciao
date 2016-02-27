@@ -55,6 +55,13 @@ collect_singletons([[X]|Xss],[X|Ys]):- !,
 collect_singletons([_|Xss],Ys):-
 	collect_singletons(Xss,Ys).
 
+:- test transpose(X, Y) : (X = [[aaa, bbb, ccc], [ddd, eee, fff]])
+	=> (Y == [[aaa, ddd], [bbb, eee], [ccc, fff]])
+        # "Transpose a non numeric matrix.".
+
+:- test transpose(X, Y) : (X = [[1.0, 2.0]])
+	=> (Y == [[1.0], [2.0]]) # "Transpose a 2x1 matrix.".
+
 :- pred transpose(+list(list), ?list(list))
         # "Transposes a list of lists, that is, viewing it as a matrix
           changes rows by columns.".

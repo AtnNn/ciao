@@ -1,4 +1,4 @@
-:- module(lpdoc, _, [dcg, assertions, regtypes, basicmodes, make, fsyntax]).
+:- module(lpdoc, _, [assertions, regtypes, dcg, basicmodes, make, fsyntax]).
 %:- module(_,[main/0,main/1],[make,fsyntax,assertions]).
 
 :- doc(title, "The lpdoc Documentation Generator").
@@ -8,7 +8,7 @@
 
 :- doc(subtitle_extra, "REFERENCE MANUAL").
 :- doc(subtitle_extra, "@bf{The Ciao Documentation Series}").
-:- doc(subtitle_extra, "@uref{http://www.ciaohome.org/}").
+:- doc(subtitle_extra, "@href{http://www.ciaohome.org/}").
 :- doc(subtitle_extra, "@em{Generated/Printed on:} @today{}").
 :- doc(subtitle_extra, "Technical Report CLIP 5/97.1-@version{}").
 
@@ -61,9 +61,6 @@ cooperation with lpmake
 :- use_module(library(errhandle), [handle_error/2]).
 :- use_module(library(file_utils)).
 
-% :- use_module(library(filenames)).
-:- use_module(library(component_registry), [component_src/2]).
-
 %% LPdoc libraries
 :- use_module(.(autodoc)).
 :- use_module(.(autodoc_state)).
@@ -74,7 +71,7 @@ cooperation with lpmake
 :- use_module(.(autodoc_aux)).
 :- use_module(.(autodoc_texinfo), [infodir_base/2]).
 
-:- use_module(library(distutils(dirutils)), [path_name/2, get_abs_path_no_check/2]).
+:- use_module(library(dirutils), [path_name/2, get_abs_path_no_check/2]).
 :- use_module(library(system), [working_directory/2]).
 
 %% Version information
@@ -130,13 +127,24 @@ start(Targets) :-
 	process_targets(Targets).
 
 % ---------------------------------------------------------------------------
+% Find a correct definition for the lpmake variable lpdoclib 
 
-% Define lpdoclib
-% TODO: Defined also in ./makedir/DOCCOMMON.pl; why?
+% TODO: Defined also in ciao_config_db.pl; why?
 ensure_lpdoclib_defined :-
-	% TODO: use alias path instead? (a similar problem was in ciaopp/ilciao/java_interface.pl)
-	LpDocLibDir = ~atom_concat([~component_src(lpdoc), '/lib/']),
-	add_name_value(lpdoclib, LpDocLibDir).
+	% TODO: a similar problem was in ciaopp/ilciao/java_interface.pl, 
+        %       but it does not use a alias paths 
+	( LpDocLibDir = ~file_search_path(lpdoclib),
+	  file_exists(~atom_concat(LpDocLibDir, '/SETTINGS_schema.pl')) ->
+	    add_name_value(lpdoclib, ~atom_concat(LpDocLibDir,'/'))
+	; bold_message(
+"No valid file search path for 'lpdoclib' alias. It is not defined or it does \n"||
+"not contain proper installation files. The LPdoc build/installation does not \n"||
+"seem to be correct."),
+	  fail
+	).
+
+:- dynamic file_search_path/2.
+:- multifile file_search_path/2.
 
 :- use_module(library(system), [file_exists/1]).
 
@@ -198,7 +206,8 @@ all <- ~requested_file_formats
 # "Generates all documentation files specified by @pred{docformat/1}." :- true.
 
 % Generate one file format (not necessarily requested in SETTINGS.pl)
-~supported_file_format <- ~main_absfile_in_format(~top_suffix(Suffix)) :: Suffix :- true.
+~supported_file_format <- ~main_absfile_in_format(~top_suffix(Suffix)) :: Suffix :-
+	true.
 
 % ---------------------------------------------------------------------------
 
@@ -222,7 +231,7 @@ all <- ~requested_file_formats
 	    [~main_absfile_for_subtarget(F, dr)|~components_target(F, dr)] :-
 	compute_grefs(F).
 
-% 3) Backend-specific temporal result
+% 3) Backend-specific temporary result
 ~absfile_for_subtarget(~get_name(~dupspec(Spec)), ~dupft(F), cr) <-
 	    [~absfile_for_subtarget(~get_name(Spec), F, dr), ~main_absfile_for_subtarget(F, gr)] :-
 	% note: Base here is a modname (not a modspec)
@@ -320,20 +329,16 @@ translate_doctree(Backend, FileBase) :-
 % Default 
 view <- [htmlview] # "Visualize default format (.html)" :- true.
 
-% TODO: May not work; deprecate?
+% TODO: Deprecate the following? 
 dviview <- [] # "Visualize .dvi (with xdvi)" :-
 	main_absfile_in_format('dvi', File),
-	sh_exec([~xdvi, ' -s ', ~xdvisize, ' -expert -geometry 623x879-0-0 ', File], [default, bg]).
-
-% TODO: May not work; deprecate?
+	sh_exec([~xdvi, ' -s ', ~xdvisize, ' -expert -geometry 623x879-0-0 "', File, '"'], [default, bg]).
 svgaview <- [] # "Visualize .dvi (with xdvi) (svga screen)" :-
 	main_absfile_in_format('dvi', File),
-	sh_exec([~xdvi, ' -s 8 -expert -geometry 643x590+1280+0 ', File], [default, bg]).
-
-% TODO: May not work; deprecate?
+	sh_exec([~xdvi, ' -s 8 -expert -geometry 643x590+1280+0 "', File, '"'], [default, bg]).
 xgaview <- [] # "Visualize .dvi (with xdvi) (xga screen)" :-
 	main_absfile_in_format('dvi', File),
-	sh_exec([~xdvi, ' -s 8 -expert -geometry 643x759-0-0 ', File], [default, bg]).
+	sh_exec([~xdvi, ' -s 8 -expert -geometry 643x759-0-0 "', File, '"'], [default, bg]).
 
 % % TODO: May not work
 % psview <- [] # "Visualize .ps (with ghostscript)" :-
@@ -341,23 +346,26 @@ xgaview <- [] # "Visualize .dvi (with xdvi) (xga screen)" :-
 % 	sh_exec([~ghostview, ' -magstep -1 -portrait -geometry +349+10 ',
 % 		OutputBase, '.ps'], [default, bg]).
 
-pdfview <- [] # "Visualize .PDF (with a default viewer)" :-
+% Currently main viewers:
+pdfview <- [] # "Visualize .pdf (with a default viewer)" :-
 	view('pdf').
-
-psview <- [] # "Visualize .PS (with a default viewer)" :-
+psview <- [] # "Visualize .ps (with a default viewer)" :-
 	view('ps').
-
 htmlview <- [] # "Visualize .html (with a default viewer)" :-
 	view('html').
+infoview <- [] # "Visualize .info (with a default viewer)" :-
+	view('info').
+manlview <- [] # "Visualize .manl (with a default viewer)" :-
+	view('manl').
 
 view(Suffix) :-
 	main_absfile_in_format(Suffix, File),
 	view_document(Suffix, File).
 
 view_document(Suffix, File) :-
-	viewer(Suffix, App, Mode),
+	viewer(Suffix, Before, After, Mode),
 	( Mode = fg -> Opts = [] ; Opts = [bg] ),
-	sh_exec([App, ' ', File], [default|Opts]).
+	sh_exec([Before, File, After], [default|Opts]).
 
 %% ===========================================================================
 
@@ -619,8 +627,7 @@ realclean <- [] # "Deletes everything." :-
    @pred{_:htmlindex_tailfile(HT)} changed with
    @pred{get_value(_:htmlindex_tailfile, HT)}.  @pred{libdir/1}
    changed with @pred{_:libdir/1}.  @pred{make_directory/1} changed
-   with @pred{make_dirpath/1}.  @pred{add_prefix/1} changed with
-   @pred{add_preffix/1}.  @pred{docdir/1} changed by
+   with @pred{make_dirpath/1}.  @pred{docdir/1} changed by
    @pred{_:docdir/1}.  @pred{delete_files/1} changed with
    @pred{del_files_nofail/1}. (Edison Mera)").
 

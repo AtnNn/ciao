@@ -1,4 +1,5 @@
 :- use_module(engine(internals), [term_to_meta/2]).
+:- use_module(engine(attributes)).
 
 nonzero(T) :- % = arithm. dif, T=t1-t2
   normalize(T, K, I, H),

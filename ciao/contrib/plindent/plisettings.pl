@@ -4,7 +4,7 @@
 		not_autospace/4,
 		update_indent/3,
 		update_alines/3,
-% 		inc_lines_indent_level/3,
+		% inc_lines_indent_level/3,
 		init_pliconfig/1,
 		is_opener/1,
 		is_end_argument/1,
@@ -14,7 +14,7 @@
 		set_max_length_line/3,
 		set_indentation_style/3,
 		requires_previous_indent_level/2,
-% regtypes
+		% regtypes
 		indentation_style_t/1,
 		pliconfig_t/1,
 		token_type_t/1,
@@ -43,7 +43,7 @@ set_indentation_style(IS,
 :- pred init_pliconfig(?pliconfig_t) # "Get default configuration values".
 
 init_pliconfig(pliconfig${
-		max_length_line => 80,
+		max_length_line => 81,
 		indentation_style => norm_spaced
 	    }).
 
@@ -56,9 +56,9 @@ pliconfig_t(pliconfig${max_length_line => MLL, indentation_style => IS}) :-
 %% used in normspaced:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-remove_currspace(_,    separator, _) :- !.
-remove_currspace(Type, endclause, _) :-
-	Type \== comment1.
+remove_currspace(comment1, _,         _) :- !, fail.
+remove_currspace(_,        separator, _) :- !.
+remove_currspace(_,        endclause, _).
 
 % not_autospace(operator, atom,      ":",  _).
 % not_autospace(operator, atom,      "~",  _).

@@ -1,6 +1,7 @@
 % *** entry ***
 % call after bs, before nonlin
 %
+
 simplex_reconsider( 0, _).
 simplex_reconsider( 1, Eqs) :-
   get_attribute( Eqs, p(_,De,_,_,_)),

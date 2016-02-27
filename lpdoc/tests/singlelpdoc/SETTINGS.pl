@@ -1,6 +1,6 @@
 :- module(_, _, [ciaopaths, regtypes, fsyntax, assertions]).
 
-:- include(lpdocsrc(lib('SETTINGS_schema'))).
+:- include(lpdoclib('SETTINGS_schema')).
 % ****************************************************************************
 % This is an LPdoc configuration file. See SETTINGS_schema for documentation *
 % ****************************************************************************
@@ -9,10 +9,10 @@
 %       ignored unless lpdoc singlelpdoc.texic is put as target.
 
 :- use_module(library(terms), [atom_concat/2]).
-:- use_module(library(component_registry), [component_src/2]).
+:- use_module(library(lpdist(makedir_aux)), [fsR/2]).
 
-% :- use_module(ciaodesrc(makedir('MenuOptions'))).
-% :- use_module(ciaodesrc(makedir('ConfigMenu'))).
+% :- use_module(library(lpdist(ciao_config_options))).
+% :- use_module(library(lpdist(ciao_configure))).
 
 :- reexport(ciaosrc(doc(common('LPDOCCOMMON')))).
 output_name(_) :- fail.
@@ -20,11 +20,9 @@ libtexinfo(_) :- fail.
 datamode(_) :- fail.
 execmode(_) :- fail.
 
-filepath := ~atom_concat(~component_src(ciaode), ~filepathref).
+filepath := ~fsR(bundle_src(ciaode)/lpdoc/tests/singlelpdoc).
 
 htmldir := ''.
-
-filepathref := '/lpdoc/tests/singlelpdoc'.
 
 doc_structure := 'singlelpdoc'.
 

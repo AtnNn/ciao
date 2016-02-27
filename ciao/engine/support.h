@@ -8,6 +8,10 @@
 #include "threads.h"
 #include "locks.h"
 
+#define NULL_TRAIL_ENTRY MakeSmall(0)
+#define IsCanceled(T) (T == NULL_TRAIL_ENTRY)
+#define NullifyTrailEntry(P) *(P) = NULL_TRAIL_ENTRY
+
 /*****************************************************************************/
 /* Worker argument abstraction (from optim_comp) */
 
@@ -146,7 +150,6 @@ extern tagged_t Culprit;
 */
 
 extern bool_t cunify PROTO((worker_t *w, tagged_t u, tagged_t v));
-extern tagged_t ptr_to_stream PROTO((worker_t *w, stream_node_t *n));
 extern tagged_t make_integer_check PROTO((Argdecl, ENG_INT i, bcp_t op));
 extern tagged_t make_float_check PROTO((Argdecl, ENG_FLT i, bcp_t op));
 extern tagged_t make_structure PROTO((Argdecl, tagged_t functor));
@@ -168,6 +171,7 @@ extern stream_node_t *new_stream PROTO((tagged_t name, char *mode, FILE *file));
 extern stream_node_t *stream_to_ptr PROTO((tagged_t t, int mode));
 extern stream_node_t *stream_to_ptr_check PROTO((tagged_t t, int mode, int *errcode));
 extern sw_on_key_t *new_switch_on_key PROTO((int size, try_node_t *otherwise));
+//extern try_node_t *def_retry_c PROTO((bool_t (*proc)(worker_t *w), int arity));
 extern try_node_t *def_retry_c PROTO((bool_t (*proc)(), int arity));
 extern sw_on_key_node_t *incore_gethash PROTO((sw_on_key_t *sw, tagged_t k));
 extern instance_t *current_instance PROTO((worker_t *w));
@@ -363,16 +367,16 @@ void trail_push_check(Argdecl, tagged_t x);
 
 #define WakeCount (TestEvent ? HeapCharDifference(Heap_Warn_Soft,Heap_Start) : 0)
 
+//TODO: nullify fake trail entries with a predicate which makes nothing.
+#define PlainUntrail(TR,Ref,CONT)					\
+  {									\
+    Ref = TrailPop(TR);							\
+    if (!IsVar(Ref))							\
+      {if (!IsCanceled(Ref)) CONT}					\
+    else								\
+      CTagToPointer(Ref) = Ref;						\
+  } 
 
-#define PlainUntrail(TR,Ref,CONT) \
-{ \
-  Ref = TrailPop(TR); \
-  if (!IsVar(Ref)) \
-    CONT \
-  else \
-    CTagToPointer(Ref) = Ref; \
-}
-  
 /* SERIOUS_FAULT - a fault that should not occur- indicating a corruption
                   such as following the STR tag not coming to a FNT tag
 		  this kind of fault may not need to be testing in final
@@ -547,6 +551,7 @@ extern void failc(char *mesg);
 
 /* RESOURCE_ERROR */
 #define R_UNDEFINED    0
+#define R_STACK        1
 
 
 
@@ -596,12 +601,24 @@ extern void failc(char *mesg);
   catch_exception__old_handler = w->misc->errhandler; \
   w->misc->errhandler = &catch_exception__handler; \
   if (SETJMP(catch_exception__handler)) { \
+    /* just in case of a worker expansion */ \
+    w = desc->worker_registers; \
     w->misc->errhandler = catch_exception__old_handler; \
     HANDLER; \
   } else { \
     CODE; \
   } \
 })
+
+#define UNLOCATED_EXCEPTION(Code) {		\
+    ErrCode = Code;				\
+    ErrFuncName = "unknown";			\
+    ErrFuncArity = -1;				\
+    ErrArgNo = 0;				\
+    Culprit = TaggedZero;			\
+    EXCEPTION__THROW;				\
+  }
+
 
 #define EXCEPTION__THROW LONGJMP(*w->misc->errhandler, 1)
 

@@ -1,6 +1,6 @@
 :- module(relcc, _, [assertions, nativeprops,
-		library(resdefs(rescostcenter)),
-		library(resdefs(resexectime)),
+		predefprf(prf_costcenter),
+		predefprf(prf_exectime),
 		profiler]).
 
 :- doc(author, "Edison Mera").

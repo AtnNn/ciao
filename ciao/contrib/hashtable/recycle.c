@@ -84,8 +84,7 @@ char   *purpose;
   char *x = (char *)ht_alloc(len);
   if (!x)
   {
-    fprintf(stderr, "malloc of %d failed for %s\n", 
-	    len, purpose);
+    fprintf(stderr, "malloc of %lu failed for %s\n", (unsigned long)len, purpose);
     exit(SUCCESS);
   }
   return x;

@@ -10,7 +10,9 @@
         this_module/1,
         current_module/1,
 	ciao_c_headers_dir/1,
-        ciao_lib_dir/1],
+        ciao_lib_dir/1,
+	ciaolibdir/1 % DEPRECATED
+	],
         [assertions, nortchecks, isomodes]).
 
 %%---------------------------------------------------------------------
@@ -163,6 +165,12 @@ current_module(Module) :- '$current_module'(Module).
 	header C files (.h), typically used for interfacing Ciao and
 	C.".
 :- impl_defined(ciao_c_headers_dir/1).
+
+:- trust pred ciaolibdir(CiaoPath) => atm(CiaoPath)
+# "Like @pred{ciao_lib_dir/1}, for compatibility for third-party
+  tools (deprecated).".
+
+ciaolibdir(L) :- ciao_lib_dir(L).
 
 %%---------------------------------------------------------------------
 % TODO: This is not the right module to place this predicate

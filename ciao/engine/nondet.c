@@ -29,7 +29,6 @@
 typedef enum {BLOCK, NO_BLOCK} BlockingType;
 
 static unsigned int predicate_property_bits(register definition_t *d);
-static bool_t current_stream_data(Argdecl, stream_node_t *streamptr);
 static instance_t *current_instance_noconc(Argdecl);
 
 static instance_t *current_instance_conc(Argdecl, BlockingType block);
@@ -193,6 +192,14 @@ bool_t nd_atom_concat(Arg)
   return TRUE;
 }
 
+#if defined(TABLING)
+bool_t nd_fake_choicept(Arg)
+     Argdecl;
+{
+  pop_choicept(Arg);
+  return FALSE;
+}
+#endif
 
 
 /* ------------------------------------------------------------------
@@ -294,77 +301,6 @@ bool_t current_clauses(Arg)
   }
 }
 
-
-/* ------------------------------------------------------------------
-   THE BUILTIN C-PREDICATE       CURRENT_STREAM/3
-   -----------------------------------------------------------------------*/
-
-static bool_t current_stream_data(Arg,streamptr)
-     Argdecl;
-     stream_node_t *streamptr;
-{
-  Unify_constant(streamptr->streamname,X(0));
-  switch (streamptr->streammode)
-    {
-    case 'a':
-      Unify_constant(atom_append,X(1));
-      break;
-    case 'r':
-      Unify_constant(atom_read,X(1));
-      break;
-    case 'w':
-      Unify_constant(atom_write,X(1));
-      break;
-    case 's':
-      Unify_constant(atom_socket,X(1));
-      break;
-    }
-  return TRUE;
-}
-
-
-bool_t current_stream(Arg)
-     Argdecl;
-{
-  stream_node_t *streamptr;
-
-  DEREF(X(2),X(2));
-  if (!IsVar(X(2)) && (streamptr=stream_to_ptr(X(2),'y')))
-    return current_stream_data(Arg,streamptr);
-
-  streamptr = root_stream_ptr->forward;
-  while (streamptr!=root_stream_ptr &&
-	 streamptr->streamname==ERRORTAG) /* skip over system streams */
-    streamptr = streamptr->forward;
-  if (streamptr==root_stream_ptr)
-    return FALSE;
-  else if (streamptr->forward!=root_stream_ptr)
-    {
-      X(3) = PointerToTerm(streamptr->forward);
-      push_choicept(Arg,address_nd_current_stream);
-    }
-
-  return (cunify(Arg,ptr_to_stream(Arg,streamptr),X(2)) &&
-	  current_stream_data(Arg,streamptr));
-}
-
-bool_t nd_current_stream(Arg)
-     Argdecl;
-{
-  stream_node_t *streamptr = TagToStream(X(3));
-
-  if (streamptr==root_stream_ptr)
-    {				/* zero alts due to close */
-      pop_choicept(Arg);
-      return FALSE;
-    }
-  else if (streamptr->forward==root_stream_ptr)	/* last alt */
-    pop_choicept(Arg);
-  else
-    w->node->term[3]=PointerToTerm(streamptr->forward);
-  return (cunify(Arg,ptr_to_stream(Arg,streamptr),X(2)) &&
-	  current_stream_data(Arg,streamptr));
-}
 
 /* ------------------------------------------------------------------
    THE BUILTIN C-PREDICATE       REPEAT/0
@@ -762,7 +698,7 @@ bool_t current_key(Arg)
           int ar = LargeArity(hnode->key);
 
           if (HeapDifference(w->global_top,Heap_End)<CONTPAD+ar+3)
-            explicit_heap_overflow(Arg,CALLPAD+ar,5);
+            explicit_heap_overflow(Arg,SOFT_HEAPPAD+ar,5);
 
           MakeLST(X(4),decode_instance_key(inst),X(4));
           inst = ACTIVE_INSTANCE(Arg,inst->next_forward,use_clock,FALSE);
@@ -790,7 +726,7 @@ bool_t current_key(Arg)
     if (!(hnode->key & QMask)){
       if (inst && (hnode->key & mask) == (X(2) & mask)) {
         if (HeapDifference(w->global_top,Heap_End)<CONTPAD+ARITYLIMIT+3)
-          explicit_heap_overflow(Arg,CALLPAD,5);
+          explicit_heap_overflow(Arg,SOFT_HEAPPAD,5);
 
         MakeLST(X(4),make_structure(Arg,hnode->key),X(4));
       }
@@ -801,7 +737,7 @@ bool_t current_key(Arg)
           int ar = LargeArity(hnode->key);
 
           if (HeapDifference(w->global_top,Heap_End)<CONTPAD+ar+3)
-            explicit_heap_overflow(Arg,CALLPAD+ar,5);
+            explicit_heap_overflow(Arg,SOFT_HEAPPAD+ar,5);
 
           MakeLST(X(4),decode_instance_key(inst),X(4));
           inst = ACTIVE_INSTANCE(Arg,inst->next_forward,use_clock,FALSE);

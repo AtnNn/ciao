@@ -13,7 +13,7 @@
 :- use_module(lpdocsrc(src(autodoc_state)), [backend_id/1]).
 
 :- use_module(library(aggregates)).
-:- use_module(library(make(system_extra)), [(-) /1]).
+:- use_module(library(system_extra), [(-) /1]).
 :- use_module(library(terms), [atom_concat/2]).
 
 %% ---------------------------------------------------------------------------
@@ -142,17 +142,15 @@ clean_fs_db :-
 	retractall_fact(computed_cache_dir(_, _)).
 
 :- export(get_output_dir/2).
+
 :- pred get_output_dir(Backend, Dir) # "Obtain the @var{Dir} directory
-where final documentation files will be stored".
+   where the documentation files are generated. Note that this is not
+   the installation directory.".
 
 get_output_dir(Backend, Dir) :-
 	computed_output_dir(Backend, Dir0), !, Dir = Dir0.
 get_output_dir(Backend, Dir) :-
-	( Backend = html, setting_value(htmldir, Dir0), \+ Dir0 = '' ->
-	    path_name(Dir0, Dir1)
-	; % TODO: missing some root dir
-	  Dir1 = ''
-	),
+	Dir1 = '',
 	( output_packed_in_dir(Backend) ->
 	    % Use a directory inside 'htmldir'
 	    main_output_name(Backend, OutBase),
@@ -162,7 +160,7 @@ get_output_dir(Backend, Dir) :-
 	),
 	assertz_fact(computed_output_dir(Backend, Dir)).
 
-:- use_module(library(distutils(dirutils)), [path_name/2]).
+:- use_module(library(dirutils), [path_name/2]).
 
 :- export(get_cache_dir/2).
 :- pred get_cache_dir(Backend, Dir) # "Obtain the @var{Dir} directory
@@ -259,14 +257,15 @@ concat_dir(Dir, FinalBase, FinalAbsBase) :-
 
 % ---------------------------------------------------------------------------
 
-:- use_module(library(component_registry), [component_src/2]).
-:- use_module(lpdocsrc(src(component_versions))).
+% TODO: See makedir_aux:fsR/2
+:- use_module(library(lpdist(makedir_aux)), [fsR/2]).
+:- use_module(library(lpdist(bundle_versions))).
 
 % Note: I cannot obtain the version from version_maintenance at this
 %       point, since main_output_name needs to be calculated before
 %       the mainfile is read.
 % TODO: Generate documentation symlinks automatically?
-% TODO: Reuse this for binaries in component installation (this code
+% TODO: Reuse this for binaries in bundle installation (this code
 %       and the links)
 
 :- export(main_output_name/2).
@@ -283,13 +282,14 @@ main_output_name(Backend, NV) :-
 	    modname_nodoc(InBase, OutputBase1)
 	  )
 	),
+	% TODO: do fsR(bundle_src) on bundle_obtain_version
 	% Include the version (if required)
-	( setting_value(parent_component, Component),
-	  component_src(Component, Dir),
+	( setting_value(parent_bundle, Bundle),
+	  fsR(bundle_src(Bundle), Dir),
 	  \+ setting_value(doc_mainopts, no_versioned_output) ->
-	    % Use the component version for the output name
+	    % Use the bundle version for the output name
 	    atom_concat(Dir, '/', Dir1),
-	    component_obtain_version(Dir1, V),
+	    bundle_obtain_version(Dir1, V),
 	    atom_concat([OutputBase1, '-', V], NV)
 	; % Do not use the version for the output name
 	  NV = OutputBase1
@@ -335,15 +335,14 @@ absfile_to_relfile(A, Backend, B) :-
 % ---------------------------------------------------------------------------
 % Cleaning final and temporary files
 
-:- use_module(library(distutils(dirutils)), [delete_files_and_dirs/1]).
-:- use_module(library(make(system_extra)),
-	    [ % Local to system_extra...
-		(-) /1,
-		ls/2,
-		del_file_nofail/1,
-		delete_files/1,
-		cat/2,
-		del_endings_nofail/2
+:- use_module(library(dirutils), [delete_files_and_dirs/1]).
+:- use_module(library(system_extra),
+	    [ (-) /1,
+	      ls/2,
+	      del_file_nofail/1,
+	      delete_files/1,
+	      cat/2,
+	      del_endings_nofail/2
 	    ]).
 
 :- export(clean_all/0).

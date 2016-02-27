@@ -33,18 +33,18 @@
 @section{An example of persistent predicates (static version)}
 
 @begin{verbatim}
-@includeverbatim{persdb/Examples/example_static.pl}
+@includeverbatim{persdb/examples/example_static.pl}
 @end{verbatim}
 
 @section{An example of persistent predicates (dynamic version)}
 
 @begin{verbatim}
-@includeverbatim{persdb/Examples/example_dynamic.pl}
+@includeverbatim{persdb/examples/example_dynamic.pl}
 @end{verbatim}
 
 @section{A simple application / a persistent queue}
 @begin{verbatim}
-@includeverbatim{persdb/Examples/queue.pl}
+@includeverbatim{persdb/examples/queue.pl}
 @end{verbatim}
 
 ").

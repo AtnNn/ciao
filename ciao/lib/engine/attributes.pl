@@ -5,13 +5,20 @@
         detach_attribute/1],
         [assertions, nortchecks]).
 
-:- doc(title,"Attributed variables").
+:- doc(title,"Attributed variables (deprecated)").
+
 
 :- doc(author,"Christian Holzbaur").
 :- doc(author,"Daniel Cabeza").
 :- doc(author,"Manuel Carro").
 
-:- doc(module, "These predicates allow the manipulation of
+:- doc(module, "
+
+@begin{alert}
+This module is deprecated. Prefer package @lib{attr}.
+@end{alert}
+
+These predicates allow the manipulation of
    @index{attributed variables}. Attributes are special terms 
    which are attached to a (free) variable, and are hidden from
    the normal Prolog computation. They can only be treated by
@@ -28,8 +35,7 @@ University of Vienna
 Freyung 6 
 A-1010 Vienna, Austria").
 
-:- doc(usage, "These predicates are builtin in Ciao, so nothing special
-   has to be done to use them.").
+:- doc(usage, "@tt{:- use_module(engine(attributes))}").
 
 % Compiled inline -- these are hooks for the interpreter.
 

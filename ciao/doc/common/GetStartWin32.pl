@@ -184,8 +184,8 @@ obviously skip them if you have done them already at that time):
       including @tt{postscript} or @tt{pdf}, which are specially
       useful for printing. This can be done using an application such
       as @apl{ghostview} (freely available from
-      @uref{http://www.cs.wisc.edu/~ghost/index.html}) or @apl{acrobat
-      reader} (@uref{http://www.adobe.com}, only
+      @href{http://www.cs.wisc.edu/~ghost/index.html}) or @apl{acrobat
+      reader} (@href{http://www.adobe.com}, only
       @tt{pdf}). @cindex{printing, manual} @cindex{manual, printing}
 
 @section{An introduction to the Ciao emacs environment (Win32)}

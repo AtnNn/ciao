@@ -306,3 +306,40 @@ intexpression(\(X)) :- arithexpression(X).
 intexpression(X#Y) :- arithexpression(X), arithexpression(Y).
 intexpression(gcd(X, Y)) :- intexpression(X), intexpression(Y).
 intexpression([X]) :- intexpression(X).
+
+:- multifile('$internal_error_where_term'/4).
+
+'$internal_error_where_term'('arithmetic:$-', 2, _, 'arithmetic:is'/2-2).
+'$internal_error_where_term'('arithmetic:$+', 2, _, 'arithmetic:is'/2-2).
+'$internal_error_where_term'('arithmetic:$integer', 2, _, 'arithmetic:is'/2-2).
+'$internal_error_where_term'('arithmetic:$float', 2, _, 'arithmetic:is'/2-2).
+'$internal_error_where_term'('arithmetic:$++', 2, _, 'arithmetic:is'/2-2).
+'$internal_error_where_term'('arithmetic:$--', 2, _, 'arithmetic:is'/2-2).
+'$internal_error_where_term'('arithmetic:$+', 3, _, 'arithmetic:is'/2-2).
+'$internal_error_where_term'('arithmetic:$-', 3, _, 'arithmetic:is'/2-2).
+'$internal_error_where_term'('arithmetic:$*', 3, _, 'arithmetic:is'/2-2).
+'$internal_error_where_term'('arithmetic:$/', 3, _, 'arithmetic:is'/2-2).
+'$internal_error_where_term'('arithmetic:$//', 3, _, 'arithmetic:is'/2-2).
+'$internal_error_where_term'('arithmetic:$rem', 3, _, 'arithmetic:is'/2-2).
+'$internal_error_where_term'('arithmetic:$mod', 3, _, 'arithmetic:is'/2-2).
+'$internal_error_where_term'('arithmetic:$abs', 2, _, 'arithmetic:is'/2-2).
+'$internal_error_where_term'('arithmetic:$sign', 2, _, 'arithmetic:is'/2-2).
+'$internal_error_where_term'('arithmetic:$\\', 2, _, 'arithmetic:is'/2-2).
+'$internal_error_where_term'('arithmetic:$#', 3, _, 'arithmetic:is'/2-2).
+'$internal_error_where_term'('arithmetic:$/\\', 3, _, 'arithmetic:is'/2-2).
+'$internal_error_where_term'('arithmetic:$\\/', 3, _, 'arithmetic:is'/2-2).
+'$internal_error_where_term'('arithmetic:$<<', 3, _, 'arithmetic:is'/2-2).
+'$internal_error_where_term'('arithmetic:$>>', 3, _, 'arithmetic:is'/2-2).
+'$internal_error_where_term'('arithmetic:$gcd', 3, _, 'arithmetic:is'/2-2).
+'$internal_error_where_term'('arithmetic:$float_integer_part', 2, _, 'arithmetic:is'/2-2).
+'$internal_error_where_term'('arithmetic:$float_fractional_part', 2, _, 'arithmetic:is'/2-2).
+'$internal_error_where_term'('arithmetic:$floor', 2, _, 'arithmetic:is'/2-2).
+'$internal_error_where_term'('arithmetic:$round', 2, _, 'arithmetic:is'/2-2).
+'$internal_error_where_term'('arithmetic:$ceiling', 2, _, 'arithmetic:is'/2-2).
+'$internal_error_where_term'('arithmetic:$**', 3, _, 'arithmetic:is'/2-2).
+'$internal_error_where_term'('arithmetic:$exp', 2, _, 'arithmetic:is'/2-2).
+'$internal_error_where_term'('arithmetic:$log', 2, _, 'arithmetic:is'/2-2).
+'$internal_error_where_term'('arithmetic:$sqrt', 2, _, 'arithmetic:is'/2-2).
+'$internal_error_where_term'('arithmetic:$sin', 2, _, 'arithmetic:is'/2-2).
+'$internal_error_where_term'('arithmetic:$cos', 2, _, 'arithmetic:is'/2-2).
+'$internal_error_where_term'('arithmetic:$atan', 2, _, 'arithmetic:is'/2-2).

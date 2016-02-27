@@ -1,4 +1,4 @@
-:- module(checkline, _, [assertions, fsyntax]).
+:- module(checkline, [main/1], [assertions, fsyntax]).
 
 :- use_module(library(format)).
 :- use_module(library(file_utils)).

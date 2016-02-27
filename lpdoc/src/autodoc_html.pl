@@ -12,11 +12,11 @@
 :- use_module(library(lists), [append/3, list_concat/2]).
 :- use_module(library(dict)).
 :- use_module(lpdocsrc(src(comments)), [stringcommand/1]).
-:- use_module(fastformat, [format_to_string/3]).
+:- use_module(library(format_to_string), [format_to_string/3]).
 
 % (Web-site extensions)
 :- use_module(lpdocsrc(src(autodoc_html_template))).
-:- use_module(lpdocsrc(src(distpkg_download))).
+:- use_module(lpdocsrc(src(pbundle_download))).
 
 :- doc(title, "HTML Backend").
 :- doc(author, "Jose F. Morales").
@@ -78,9 +78,14 @@ rw_command(env_('description', X), _, htmlenv(dl, X)) :- !.
 rw_command(env_('cartouche', X),   _, cartouche(X)) :- !.
 rw_command(env_('alert', X), _, alert(X)) :- !.
 rw_command(env_('verbatim', X),     _, htmlenv(pre, X)) :- !.
-rw_command(item(S), _,       raw("<LI>")) :- doctree_is_empty(S), !.
-rw_command(item(S),  _DocSt, NewCommand) :- !,
-	NewCommand = [raw("<DT>"), S, raw("<dd>")].
+rw_command(item(S), _DocSt, NBody) :- !, % (items for lists and descriptions)
+	( doctree_is_empty(S) ->
+	    NBody = raw("<LI>")
+	; NBody = [raw("<DT>"), S, raw("<dd>")]
+	).
+rw_command(item_num(S), _,   NBody) :- !, % (items for enumerations)
+	( S = "" -> Props = [] ; Props = [value=S] ),
+	NBody = htmlenv0(li, Props).
 rw_command(footnote(Text), _DocSt, NBody) :- !,
 	NBody = [raw("<P>"), htmlenv(b, raw("Note:")), raw(" "), Text, raw("<P>")].
 rw_command('}',                   _, raw("}")) :- !.
@@ -125,9 +130,9 @@ rw_command(copyright(""),         _, raw("&#169;")) :- !.
 rw_command(iso(""), _, htmlenv(span, [class="iso"], [raw("ISO")])) :- !.
 rw_command(bullet(""), _,       raw("&#186;")) :- !.
 rw_command(result(""), _,       raw("&rArr;")) :- !. % =>
-rw_command(uref(URL), _DocSt, NBody) :- !,
+rw_command(href(URL), _DocSt, NBody) :- !,
 	NBody = htmlenv(a, [href=URL], [raw(URL)]).
-rw_command(uref(Text, URL), _DocSt, NBody) :- !,
+rw_command(href(URL, Text), _DocSt, NBody) :- !,
 	NBody = htmlenv(a, [href=URL], Text).
 rw_command(email(Address), _DocSt, NBody) :- !,
 	NBody = [raw("<A HREF=""mailto:"), Address, raw(""">&lt;"), Address, raw("&gt;</A>")].
@@ -153,9 +158,22 @@ rw_command(html_template(FileC), _DocSt, R) :-
 	fmt_html_template(File, [], R).
 rw_command(html_template_internal(File, Params), _DocSt, R) :-
 	fmt_html_template(File, Params, R).
-rw_command(distpkg_download(WhichC), _DocSt, R) :-
-	atom_codes(Which, WhichC),
-	fmt_distpkg_download(Which, R).
+rw_command(pbundle_download(BranchC, ViewC), _DocSt, R) :-
+	% TODO: Define the language of Branch (it is a the branch name,
+	%       or relative subdirectory in the repository,
+	%       e.g. trunk, branches/1.14, etc.; but it could be
+	%       richer and specify the revision, etc.)
+	atom_codes(Branch, BranchC),
+	atom_codes(View, ViewC),
+	fmt_pbundle_download(Branch, View, R).
+rw_command(pbundle_href(BranchC, Manual, RelC, Text), _DocSt, R) :-
+	% TODO: Define the language of Branch (it is a the branch name,
+	%       or relative subdirectory in the repository,
+	%       e.g. trunk, branches/1.14, etc.; but it could be
+	%       richer and specify the revision, etc.)
+	atom_codes(Branch, BranchC),
+	atom_codes(Rel, RelC),
+	fmt_pbundle_href(Branch, Manual, Rel, Text, R).
 % .......... (icmd) ..........
 % TODO: Share common definitions with autodoc_texinfo
 rw_command(htmlenv(Cmd, Body), _, NewCommand) :- !, % <cmd>BODY</cmd>
@@ -172,6 +190,10 @@ rw_command(htmlenv1(Cmd, Props), DocSt, NewCommand) :- !, % <cmd PROPS/>
 	atom_codes(Cmd, CmdS),
 	fmt_html_props(Props, DocSt, PropsR),
 	NewCommand = [raw("<"), raw(CmdS), raw(" "), PropsR, raw("/>")].
+rw_command(htmlenv0(Cmd, Props), DocSt, NewCommand) :- !, % <cmd PROPS> % TODO: Valid syntax anymore?
+	atom_codes(Cmd, CmdS),
+	fmt_html_props(Props, DocSt, PropsR),
+	NewCommand = [raw("<"), raw(CmdS), raw(" "), PropsR, raw(">")].
 %
 rw_command(htmldecl(C), _, NewCommand) :- !,
         NewCommand = [raw("<!"), raw(C), raw(">")].
@@ -212,10 +234,8 @@ rw_command(bibitem(Label,Ref), _DocSt, R) :- !,
 rw_command(idx_anchor(_Indices, IdxLabel, _Key, OutLink, Text), DocSt, R) :- !,
 	fmt_link(idx_anchor, IdxLabel, OutLink, DocSt, Text, R).
 rw_command(cover_title(TitleR, SubtitleRs), _DocSt, R) :- !,
-        BoxStyle = "padding: 16px; margin: 0px; background:#46a; color:white; text-shadow: 1px 1px 2px #000;",
-        H1Style = "margin-top:0px; margin-bottom:0px;",
-	R = htmlenv(div, [style=BoxStyle], [
-              htmlenv(h1, [style=H1Style], TitleR)
+	R = htmlenv(div, [class="cover_title"], [
+              htmlenv(h1, [class="cover_h1"], TitleR)
               |Rs]),
 	sep_nl(SubtitleRs, Rs).
 rw_command(cover_subtitle_extra(Rs), _DocSt, R) :- !,
@@ -242,7 +262,7 @@ rw_command(defpred(IdxLabel, Type, Text, PN, Body), DocSt, R) :- !,
 	),
 	idx_get_indices(def, Type, Indices),
 	R = [htmlenv(div, [
-               htmlenv(span, [class="on_right"], [raw(Text)]),
+               htmlenv(span, [class="predtag_on_right"], [raw(Text)]),
                htmlenv(div, [class="defname"], [
 		 idx_anchor(Indices, IdxLabel, string_esc(S), OutLink, string_esc(S)),
 %	         string_esc(S),
@@ -252,11 +272,36 @@ rw_command(defpred(IdxLabel, Type, Text, PN, Body), DocSt, R) :- !,
                htmlenv(div, [class="deftext"], [Body])
              ])
             ].
+rw_command(defassrt(Status, AType, HeaderStr, HeadR, DescR, UsageProps), _DocSt, R) :- !,
+	( AType = test -> HeaderStyle = "test_header" % TODO: Status ignored
+	; Status = true -> HeaderStyle = "true_header"
+	; Status = false -> HeaderStyle = "false_header"
+	; Status = check -> HeaderStyle = "check_header"
+	; Status = checked -> HeaderStyle = "checked_header"
+	; Status = trust -> HeaderStyle = "trust_header"
+	; throw(error(unknown_assrt_status(Status), rw_command/3))
+	),
+	( HeaderStr = "" -> HeaderR = []
+	; HeaderR =
+            [p(""),
+	     htmlenv(span, [class=HeaderStyle], [bf(string_esc(HeaderStr))])]
+        ),
+	R = [HeaderR,
+	     htmlenv(span, [class="usagedecl"], HeadR),
+	     htmlenv(p, DescR),
+	     UsageProps].
+rw_command(assrtprops(DPR, CPR, APR, NGPR), _DocSt, R) :- !,
+	R = itemize_minus([
+	       DPR,
+	       CPR,
+	       APR,
+	       NGPR
+            ]).
 %
 rw_command(simple_link(Style, Label, Link, Title), DocSt, R) :- !,
 	fmt_link(Style, Label, Link, DocSt, Title, R).
 rw_command(X, _DocSt, _R) :- !,
-	throw(cannot_rewrite(rw_command(X))).
+	throw(error(not_in_domain_rw_command(X), rw_command/3)).
 
 :- pred fmt_link(Style, IdLabel, Link, DocSt, Text, R) ::
 	atm * doclabel * doclink * docstate * doctree * doctree
@@ -298,7 +343,7 @@ fmt_html_props([P0|Ps0], DocSt, [P, raw(" ")|Ps]) :- !,
 	fmt_html_prop(P0, DocSt, P),
 	fmt_html_props(Ps0, DocSt, Ps).
 fmt_html_props(Ps, _, _) :-
-	throw(bug_bad_html_props(Ps)).
+	throw(error(bad_html_props(Ps), fmt_html_props/3)).
 
 fmt_html_prop(Attr=Val, _DocSt, R) :- !,
 	atom_codes(Attr, AttrS),
@@ -309,7 +354,7 @@ fmt_html_prop(attr(Attr,Val), _DocSt, R) :- !, % TODO: like =/2 but process the 
 	% TODO: Missing escape " in Val
 	R = [raw(AttrS), raw("=\""), Val, raw("\"")].
 fmt_html_prop(P, _, _) :-
-	throw(bug_bad_html_prop(P)).
+	throw(error(bad_html_prop(P), fmt_html_props/3)).
 
 % TODO: refine this code
 fmt_section_env(SecProps, SectLabel, TitleR, BodyR, DocSt, ModR) :-
@@ -322,7 +367,7 @@ fmt_section_env(SecProps, SectLabel, TitleR, BodyR, DocSt, ModR) :-
 	),
 	( docst_gdata_query(DocSt, main_title(MainTitleR)) ->
 	    true
-	; throw(bug_no_main_title)
+	; throw(error(no_main_title, fmt_section_env/6))
 	),
 	( IsCover = yes ->
 	    TitleR2 = MainTitleR
@@ -366,7 +411,7 @@ fmt_section_env(SecProps, SectLabel, TitleR, BodyR, DocSt, ModR) :-
 	  )
 	),
 	%
-	fmt_layout(Layout, SectPathR, PrevNextR, SidebarR2, SectR, R),
+	fmt_layout(Layout, SectPathR, PrevNextR, SidebarR2, SectR, DocSt, R),
 	fmt_headers(MaybeIcon, CssList, TitleR2, R, ModR).
 fmt_section_env(SecProps, SectLabel, TitleR, BodyR, DocSt, R) :-
 	fmt_section(SecProps, SectLabel, TitleR, BodyR, DocSt, R).
@@ -390,10 +435,7 @@ fmt_cover(SecProps, TitleR, BodyR, DocSt, SectR) :-
 	( AddressRs = [] ->
 	    AddressRs2 = []
 	; sep_nl(AddressRs, AddressRs1),
-	  % TODO: add css style for this
-	  AddressRs2 = 
-	    htmlenv(div, [style="float:right; font-size:8pt; background: #d2e3ec; padding: 16px;"],
-	      AddressRs1)
+	  AddressRs2 = htmlenv(div, [class="cover_address"], AddressRs1)
 	),
 	% Document skeleton
 	( docst_gdata_query(DocSt, main_logo(Logo)) ->
@@ -406,12 +448,11 @@ fmt_cover(SecProps, TitleR, BodyR, DocSt, SectR) :-
             linebreak, % add some margin here
 	    MainLogoR,
 	    cover_title(TitleR, SubtitleRs),
-	    % TODO: add css style for this
 	    AddressRs2,
-	    htmlenv(div, [style="padding: 16px; float:right; text-align:right;"], [
+	    htmlenv(div, [class="cover_authors"], [
 	      authors(AuthorRs)
             ]),
-	    htmlenv(div, [style="font-size: 8pt; padding: 16px;"], [
+	    htmlenv(div, [class="cover_subtitle_extra"], [
 	      cover_subtitle_extra(SubtitleExtraRs),
 	      cover_subtitle_extra(GVersShortRs)
             ]),
@@ -422,8 +463,8 @@ fmt_cover(SecProps, TitleR, BodyR, DocSt, SectR) :-
         ].
 
 % Navigation, sidebar, and main contents
-fmt_layout(nav_sidebar_main, SectPathR, PrevNextR, SidebarR, MainR, R) :-
-	colophon(Colophon),
+fmt_layout(nav_sidebar_main, SectPathR, PrevNextR, SidebarR, MainR, DocSt, R) :-
+	colophon(DocSt, Colophon),
 	R = [%htmlenv(div, [class="header"], [
              %  htmlenv(h1, [raw("HEADER")])
              %]),
@@ -444,14 +485,14 @@ fmt_layout(nav_sidebar_main, SectPathR, PrevNextR, SidebarR, MainR, R) :-
 	     % the footer
 	     Colophon
             ].
-fmt_layout(nav_searchbox_menu_main, _SectPathR, _PrevNextR, SidebarR, FrameR, R) :-
+fmt_layout(nav_searchbox_menu_main, _SectPathR, _PrevNextR, SidebarR, FrameR, DocSt, R) :-
 	% TODO: Generalize, this contains many definitions that are only valid
 	%   for the Ciao website. They should be defined externally.
 %	LogoImg = 'ciao2-96-shadow-reduced.png',
 	LogoImg = 'ciao2-small-shadow-reduced.png',
 	img_url(LogoImg, LogoSrc),
 	fmt_html_template('google_search.html', [], SearchBoxR),
-	colophon(Colophon),
+	colophon(DocSt, Colophon),
 	R = [%
 	     htmlenv(div, [class="documentwrapper"], [
 	       htmlenv(div, [class="title"], [
@@ -478,8 +519,11 @@ fmt_layout(nav_searchbox_menu_main, _SectPathR, _PrevNextR, SidebarR, FrameR, R)
 % colophon: "a the brief description of the publication or production
 % notes relevant to the edition"
 % (this is standard also for Web pages)
-colophon(R) :-
-	R = htmlenv(div, [class="footer"], [string_esc("Generated with LPdoc using Ciao")]).
+colophon(DocSt, R) :-
+	(  docst_opt(no_lpdocack, DocSt)
+	-> Ack = ""
+        ;  Ack = "Generated with LPdoc using Ciao" ),
+	R = htmlenv(div, [class="footer"], [string_esc(Ack)]).
 
 fmt_headers(MaybeIcon, CssList, Title, Body, R) :-
 	MetaR = htmlenv1(meta, ['http-equiv'="Content-Type", content="text/html; charset=iso-8859-1"]),
@@ -523,8 +567,9 @@ fmt_structuring(SecProps, TitleR, R) :-
 	    ( Level = 1 -> Cmd = h1
 	    ; Level = 2 -> Cmd = h2
 	    ; Level = 3 -> Cmd = h3
+	    ; Level = 4 -> Cmd = h4
 	    )
-	; throw(missing_level_prop(SecProps))
+	; throw(error(missing_level_prop(SecProps), fmt_structuring/3))
 	),
 	R = htmlenv(Cmd, TitleR).
 
@@ -579,7 +624,7 @@ html_escape([], []).
 fmt_nav(DocSt, PathR, PrevNextR):-
 	( docst_mvar_get(DocSt, nav, Nav) ->
 	    true
-	; throw(bug_no_nav)
+	; throw(error(no_navigation, fmt_nav/3))
 	),
 	Nav = nav(Path, Prev, Next),
 	navpath_links(Path, Path2),

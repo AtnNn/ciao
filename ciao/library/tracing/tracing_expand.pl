@@ -14,6 +14,7 @@ expand_tracing(end_of_file,end_of_file,_M).
 expand_directive(spy(F/A),M,initialization(traces:spy(M:F/A))):- !.
 expand_directive(D,_M,D).
 
+% TODO: It should be a goal translation
 expand_body((A0,B0),F,Ar,(A,B)):- !,
 	expand_body(A0,F,Ar,A),
 	expand_body(B0,F,Ar,B).

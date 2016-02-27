@@ -306,6 +306,26 @@ public abstract class PLTerm extends Object {
   }
 
   /**
+   * Atom test. 
+   *
+   * @return <code>true</code> if this Prolog term is an atom;
+   *         <code>false</code> otherwise.
+   */
+  public boolean isAtom() {
+    return (Type == ATOM);
+  }  
+  
+  /**
+   * Float test. 
+   *
+   * @return <code>true</code> if this Prolog term is a float;
+   *         <code>false</code> otherwise.
+   */
+  public boolean isFloat() {
+    return (Type == FLOAT);
+  }
+  
+  /**
    * String test. 
    *
    * @return <code>true</code> if this Prolog term is a string;

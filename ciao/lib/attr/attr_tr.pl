@@ -23,42 +23,51 @@ sentence(Clause, _, Module):-
 %	    F=attr_unify_hook, N=2 ->
 %	    add_hook(Module, attr_unify_hook)
 %	;
-	    F=portray_attrs, N=2 ->
-	    add_hook(Module, attr_portray_attrs)
+	    F=attr_portray_hook, N=2 ->
+	    add_hook(Module, attr_portray)
 	;
-	    F=attribute_goal, N=2 ->
-	    add_hook(Module, attribute_goal)
+	    F=attribute_goals, N=3 ->
+	    add_hook(Module, attribute_goals)
 	), 
 	fail.
 	    
 sentence(end_of_file, Tail0, Module):-
 	(
-	    Tail0 = [ (:- multifile 'attr_rt:unify_hook'/3), 
+	    Tail0 = [
+		% Deactivated until we find better solution.
+		% (:- doc(hide, 'attr_rt:unify_hook'/3)), 	
+		      (:- multifile 'attr_rt:unify_hook'/3), 
 	              ('attr_rt:unify_hook'(Module, V, Other):- 
 		          attr_unify_hook(V, Other)) |
                       Tail1]
 	),
 	(
-	    retract_fact(found_hook(Module, attr_portray_attrs)) ->
-	    Tail1 = [ (:- multifile 'attr_rt:portray_attrs'/3), 
-	              ('attr_rt:portray_attrs'(Module, V, Other):- 
-		          attr_portray_attrs(V, Other)) |
+	    retract_fact(found_hook(Module, attr_portray)) ->
+	    Tail1 = [ 
+		% Deactivated until we find better solution.
+		% (:- doc(hide, 'attr_rt:portray_hook'/3)), 
+	              (:- multifile 'attr_rt:portray_hook'/3), 
+	              ('attr_rt:portray_hook'(Module, Value, Var):- 
+		          attr_portray_hook(Value, Var)) |
                       Tail2]
 	;
 %	    warning_message("attr_portray_attrs/2 hook not defined", []),
 	    Tail1 = Tail2
 	), 
 	(
-	    retract_fact(found_hook(Module, attribute_goal)) ->
-	    Tail2 = [ (:- multifile 'attr_rt:attribute_goal'/3), 
-	              ('attr_rt:attribute_goal'(Module, V, Other):- 
-		          attribute_goal(V, Other)) |
+	    retract_fact(found_hook(Module, attribute_goals)) ->
+	    Tail2 = [ 
+		% Deactivated until we find better solution.
+		% (:- doc(hide, 'attr_rt:attribute_goals'/4)),
+		      (:- multifile 'attr_rt:attribute_goals'/4), 
+	              ('attr_rt:attribute_goals'(Module, V, L1, L2):- 
+		          attribute_goals(V, L1, L2)) |
                       Tail3]
 	;
-%	    warning_message("attribute_goal/2 hook not defined", []),
+%	    warning_message("attribute_goals/3 hook not defined", []),
 	    Tail2 = Tail3
 	), 
-	Tail3 = end_of_file.
+	Tail3 = [end_of_file].
 	
 	
  

@@ -6,8 +6,6 @@
 % ---------------------------------------------------------------------------
 % State of the translation (private to the module)
 
-% Defined values
-:- data defined/2.
 % Stack of states
 :- data ststack/2.
 
@@ -22,7 +20,8 @@
 
 % Clean all transformation state for this module
 clean(Mod) :-
-        retractall_fact(defined(_,Mod)),
+        retractall_fact(condcomp_def(_,_,Mod)),
+        retractall_fact(condcomp_fact(_,Mod)),
         retractall_fact(ststack(_,Mod)).
 
 % Get top stack value
@@ -60,9 +59,9 @@ condcomp_sentence(_, [], Mod) :-
 	ststack__top(Mod, St),
 	\+ St = enabled,
 	!.
-% If we are here it means that we are inserting
-condcomp_sentence((:- define(Name)), [], Mod) :- !,
-	define(Name, Mod).
+% If we are here it means that we are processing sentences
+condcomp_sentence((:- compilation_fact(Fact)), [], Mod) :- !,
+	add_condcomp(Fact, Mod).
 % Not processed sentences are left untouched
 %condcomp_sentence(_,_,_) :- fail.
 
@@ -128,40 +127,82 @@ alt_state(_, disabled).
 % ---------------------------------------------------------------------------
 % Evaluation of conditions
 
-% Evaluate Cond and obtain true/0, false/0 or unknown/1
+% Evaluate Cond
 cond_value(Cond, Mod, Value) :-
-	catch(cond_value__2(Cond, Mod, Value), cannot_eval(G), bad_cond(G, Mod, Value)).
+	catch(cond_value_(Cond, Mod, Value),
+	      peval_unknown(G),
+	      cannot_eval(G, Mod, Value)).
 
-cond_value__2(Cond, Mod, Value) :-
-	( eval_cond(Cond, Mod) ->
+cond_value_(Cond, Mod, Value) :-
+	( peval_cond(Cond, Mod) ->
 	    Value = true
 	; Value = false
 	).
 
-bad_cond(G, Mod, Value) :-
+cannot_eval(G, Mod, Value) :-
 	Value = false, % consider bad case as false
 	error_message("Cannot evaluate conditional compilation goal `~w' at compile time in module `~w'", [G, Mod]).
 
 % Interpreter of conditions
-eval_cond(X, _Mod) :- var(X), !,
-	throw(cannot_eval(X)).
-eval_cond((X;Y), Mod) :-
-	( eval_cond(X, Mod) -> true ; eval_cond(Y, Mod) ).
-eval_cond((X,Y), Mod) :-
-	eval_cond(X, Mod), eval_cond(Y, Mod).
-eval_cond((\+ X), Mod) :-
-	\+ eval_cond(X, Mod).
-eval_cond(true, _Mod) :- !.
-eval_cond(fail, _Mod) :- !, fail.
-eval_cond(false, _Mod) :- !, fail.
-eval_cond(defined(X), Mod) :- atom(X), !,
-	defined(X, Mod).
-eval_cond(current_prolog_flag(Flag, Value), _Mod) :- !,
-	current_prolog_flag(Flag, Value).
-eval_cond(X, _Mod) :-
-	throw(cannot_eval(X)).
+peval_cond(X, _Mod) :- var(X), !, throw(peval_unknown(X)).
+peval_cond(X, Mod) :- cond__def(X, Mod), !, cond__eval(X, Mod).
+peval_cond((X,Y), Mod) :- !,
+	peval_cond(X, Mod), peval_cond(Y, Mod).
+peval_cond((X;Y), Mod) :- !,
+	( peval_cond(X, Mod) ; peval_cond(Y, Mod) ).
+peval_cond((\+ X), Mod) :-
+	\+ peval_cond(X, Mod).
+peval_cond(true, _Mod) :- !.
+peval_cond(fail, _Mod) :- !, fail.
+peval_cond(false, _Mod) :- !, fail.
+peval_cond(X, _Mod) :-
+	throw(peval_unknown(X)).
 
-define(Name, Mod) :-
-	current_fact(defined(Name, Mod)), !.
-define(Name, Mod) :-
-	asserta_fact(defined(Name, Mod)).
+% Hooks for definition of handlers for conditional goals
+:- discontiguous cond__def/2. % goal defined for condition evaluation
+:- discontiguous cond__eval/2. % evaluate goal
+
+% ---------------------------------------------------------------------------
+
+cond__def(current_prolog_flag(_, _), _Mod) :- !.
+cond__eval(current_prolog_flag(Flag, Value), _Mod) :- !,
+	current_prolog_flag(Flag, Value).
+
+% ---------------------------------------------------------------------------
+
+:- data condcomp_def/3.
+:- data condcomp_fact/2.
+
+cond__def(defined(_), _Mod) :- !.
+cond__eval(defined(NA), Mod) :- nonvar(NA), NA = N/A, atom(N), number(A), !,
+	condcomp_def(N, A, Mod).
+cond__eval(defined(N), Mod) :- atom(N), !,
+	condcomp_def(N, 0, Mod).
+
+cond__def(X, Mod) :- functor(X, F, A), condcomp_def(F, A, Mod), !.
+cond__eval(X, Mod) :-
+	condcomp_fact(X, Mod), !. % TODO: always cut?
+
+% ---------------------------------------------------------------------------
+
+add_condcomp(Fact, _Mod) :- var(Fact), !,
+	error_message("Uninstantiated term as clause of compilation_fact/1 directive", []).
+add_condcomp(Fact, _Mod) :- not_definable(Fact), !,
+	functor(Fact, F, A),
+	error_message("Redefining `~w' in compilation_fact/1 directive is not allowed", [F/A]).
+add_condcomp(Fact, Mod) :-
+	functor(Fact, F, A),
+	( current_fact(condcomp_def(F, A, Mod)) ->
+	    true
+	; assertz_fact(condcomp_def(F, A, Mod))
+	),
+	assertz_fact(condcomp_fact(Fact, Mod)).
+
+not_definable(true).
+not_definable(fail).
+not_definable(false).
+not_definable((_ :- _)).
+not_definable((_, _)).
+not_definable((_ ; _)).
+not_definable((_ -> _)).
+not_definable((\+ _)).

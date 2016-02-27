@@ -6,259 +6,193 @@
 :- doc(module, "This file is part of the CiaoDE installation system.").
 % ===========================================================================
 
-:- use_module(library(compiler(exemaker)), [make_exec/2]).
 :- use_module(library(terms)).
 :- use_module(library(system)).
-:- use_module(library(format), [format/3]).
-:- use_module(library(distutils), [lpmake_subdir/3]).
-:- use_module(library(distutils(dirutils))).
-:- use_module(library(make(system_extra))).
-:- use_module(library(make(make_rt))).
-:- use_module(library(component_registry(component_registry_base))).
-:- use_module(ciaodesrc(makedir('ConfigValues')), [instype/1, build_doc_dir/1,
-		set_configured_flags/0, srcbindir/1, get_lpdoclibdir/1,
-		reallibdir/1, ciaobinroot/1]).
-:- use_module(ciaodesrc(makedir('ConfigValues')), [
-		lpdoclibbasedir/2, ciaolibroot/1, ciaobinroot/1, build_root/1]).
-:- use_module(ciaodesrc(makedir(makedir_component))).
-:- use_module(ciaodesrc(makedir(makedir_aux))).
-:- use_module(library(component_registry), [component_src/2]).
-:- use_module(library(unittest)).
-
-dirs := [src, lib, doc, examples].
-
-basemain := 'lpdoc'.
-
-installedvpmain := ~atom_concat([~build_root, ~ciaobinroot, '/', ~component_name_version(lpdoc),
-		~get_ciao_ext]).
-
-installedmain := ~atom_concat([~build_root, ~ciaobinroot, '/', ~basemain]).
 
 % ============================================================================
 
-:- include(ciaodesrc(makedir('makedir_SHARE'))).
-component_id(lpdoc).
-component_dname('LPdoc').
-component_readme_dir('readmes').
-component_readme(as('INSTALLATION_LPDOC', 'INSTALLATION')).
-component_readme(as('README_LPDOC', 'README')).
-component_manual_dir('doc').
+:- include(library(lpdist('makedir_SHARE'))).
+bundle_id(lpdoc).
+bundle_dname('LPdoc').
+bundle_readme_dir := ~fsR(bundle_src(lpdoc)/'readmes').
+bundle_manual_dir := ~fsR(bundle_src(lpdoc)/'doc').
+%
+bundle_readme(as('INSTALLATION_LPDOC', 'INSTALLATION')).
+bundle_readme(as('README_LPDOC', 'README')).
+%
+bundle_ins_reg. % TODO: document (register the bundle on ins?)
 
 % ============================================================================
 % COMPILATION
 % ============================================================================
 
-default <- [all] :- true.
+% (hook)
+bundle_build <- [] :-
+	prebuild_libraries,
+	bundle_bin.
 
-% (private)
-component_all <- [extra_libraries, createbin] :- true.
+% (invoked from 'makedir', for each bundle)
+build_nolibs <- [] :-
+	prebuild_libraries,
+	bundle_bin.
 
-platdep <- [compiling_message,
-	    createbin,
-	    compilation_done_message] :- true.
+% (invoked from 'makedir', for each bundle)
+build_platdep <- [] :-
+	bundle_bin.
 
-allnolibs <- all :- true.
+% (invoked from 'makedir', for each 'extra' bundle)
+build_applications <- [] :- true.
 
-applications <- all :- true.
+% (invoked from 'makedir', for each bundle)
+build_libraries <- [] :- true.
 
-libraries <- [] :- true.
-
-% Libraries that require customized installation
-% (such as automatically generated code, foreign interfaces, etc.)
-extra_libraries <- ['src/version_auto.pl'] :- true.
+% Prepare the code
+prebuild_libraries <- [] :- prebuild_libraries.
+prebuild_libraries :-
+	make(['src/version_auto.pl']).
 
 %% ---------------------------------------------------------------------------
-'src/version_auto.pl' <- [~atom_concat(~component_src(ciao), '/SETTINGS')]
-	:: File # "Generation of version_auto.pl file" :-
+
+:- use_module(library(format), [format/3]).
+
+'src/version_auto.pl' <- [] :: File # "Generation of version_auto.pl file" :-
 	open(File, write, O),
 	format(O, "%% Do not edit - automatically generated!\n", []),
 	format(O, "version('~w.~w of ~s (compiled with ~w)').\n",
-	    [~component_version(lpdoc), ~component_patch(lpdoc), ~datime_string, ~component_name_version_patch(ciao)]),
+	    [~bundle_version(lpdoc), ~bundle_patch(lpdoc), ~datime_string, ~bundle_name_version_patch(ciao)]),
 	close(O),
 	-set_perms(File, ~perms).
 
-createbin <- [] # "Generation of lpdoc executable." :-
-	dolpdoc.
-
-dolpdoc :-
-	atom_concat([~component_src(lpdoc), '/src/', ~basemain, '.pl'],
-	    AbsSourceFile),
-	set_configured_flags,
-	make_exec([AbsSourceFile], ~srcbinlpdoc),
-	--copy_file(~atom_concat(~component_name_version(lpdoc), ~get_ciao_ext),
-	    ~atom_concat([~srcbindir, '/', ~basemain]), [overwrite,
-		symlink]),
-	-set_perms(~atom_concat([~srcbindir, '/', ~basemain]), ~perms).
-
-%% Command used for compiling lpdoc
-:- use_module(ciaodesrc(makedir('ConfigValues')), [srcbindir/1]).
-srcbinlpdoc := ~atom_concat([~srcbindir, '/', ~basemain, '-', ~component_version(lpdoc),
-		~get_ciao_ext]).
+% TODO: use build_standalone_list/3
+bundle_bin :-
+ 	b_make_exec(lpdoc, bundle_src(lpdoc)/src, 'lpdoc', same_process).
 
 % ============================================================================
-% CREATE DOCUMENTATION
+:- doc(section, "Documentation").
 % ============================================================================
 
 docs <- [] # "Creates all the documentation files." :-
 	docs_readmes,
 	docs_manuals.
 
-:- include(lpdocsrc(makedir('CONFIG'))).
+% =============================================================================
+% REGISTER
+% =============================================================================
 
-component_register <- :-
-	component_register(~instype).
-component_register(src).
-component_register(ins) :-
-	install_alias_paths('lpdoc_ins_auto.pl', ~build_root, ~reallibdir,
-	    ~abs_alias_paths(~ins_alias_paths, ~get_lpdoclibdir)).
-
-component_unregister <- :-
-	component_unregister(~instype).
-component_unregister(src).
-component_unregister(ins) :-
-	uninstall_alias_paths('lpdoc_ins_auto.pl', ~build_root, ~reallibdir).
+bundle_register_hook.
+bundle_unregister_hook.
 
 % =============================================================================
 % INSTALLATION                                                              
 % =============================================================================
 
-component_install <- [] :-
-	component_install(~instype).
+bundle_install <- [] :-
+	bundle_install(~instype).
 
-component_install(src) :-
+bundle_install(local) :-
 	bold_message("Skipping copy of LPdoc files."),
-	installdoc.
-component_install(ins) :-
-	bold_message("Installing lpdoc."),
-	justinstalllib,
-	installbin,
-	installdoc,
+	bundle_install_lib,
+	install_docs.
+bundle_install(global) :-
+	bold_message("Installing LPdoc."),
+	bundle_install_lib,
+	install_bin,
+	install_docs,
 	bold_message("LPdoc installation completed").
 
-component_uninstall <- :-
-	component_uninstall(~instype).
+bundle_uninstall <- :-
+	bundle_uninstall(~instype).
 
-component_uninstall(src) :-
-	bold_message("Skipping deletion of LPdoc files.").
-component_uninstall(ins) :-
+bundle_uninstall(local) :-
+	bold_message("Skipping deletion of LPdoc files."),
+	bundle_uninstall_lib.
+bundle_uninstall(global) :-
 	bold_message("Uninstalling LPdoc"),
-	uninstalldoc,
-	justuninstalllib,
-	uninstallbin,
+	uninstall_docs,
+	bundle_uninstall_lib,
+	uninstall_bin,
 	bold_message("LPdoc uninstallation completed").
 
-installdoc <- :- installdoc.
-installdoc :-
-	component_install_docs(lpdoc).
+install_docs <- :- install_docs.
+install_docs :-
+	bundle_install_docs(lpdoc).
 
-uninstalldoc :-
-	component_uninstall_docs(lpdoc).
+uninstall_docs :-
+	bundle_uninstall_docs(lpdoc).
 
-installbin <- ['src/version_auto.pl'] # "Installation of lpdoc executable."
+install_bin <- ['src/version_auto.pl'] # "Installation of LPdoc executable."
 	:-
-	installbin.
-installbin :-
-	srcbindir(SrcBinDir),
-	ciaobinroot(BinDir),
-	perms(ExecMode),
-	atom_concat(~build_root, BinDir, BuildBinDir),
-	mkdir_perm(BuildBinDir, ExecMode),
+	install_bin.
+install_bin :-
+	b_install_copy_and_link(plexe, lpdoc, 'lpdoc').
 
-	copy_file(~atom_concat([SrcBinDir, '/', ~component_name_version(lpdoc),
-		    ~get_ciao_ext]), BuildBinDir, [overwrite]),
+uninstall_bin :-
+	% TODO: seems to be a problem with links.... (why? JFMC)
+	b_uninstall_copy_and_link(plexe, lpdoc, 'lpdoc').
 
-	copy_file(~atom_concat([~component_name_version(lpdoc), ~get_ciao_ext]),
-	    ~atom_concat([BuildBinDir, '/', ~basemain]),
-	    [symlink, overwrite]),
-%	-- set_exec_perms( ~installedmain, ExecMode ),
-	-- set_exec_perms(~installedvpmain, ExecMode).
+% ===========================================================================
 
-uninstallbin :-
-%% seems to be a problem with links....
-	del_file_nofail(~installedmain),
-	del_file_nofail(~installedvpmain).
+:- use_module(library(unittest), [run_test_dir/2]).
 
 runtests <- [] :-
 	bold_message("Running LPdoc tests."),
-	run_test_dir(~component_src(lpdoc), []).
+	run_test_dir(~fsR(bundle_src(lpdoc)), [rtc_entry]).
 
 runbenchmarks <- [] :- true.
 
 % ===========================================================================
+
+:- use_module(library(lpdist(ciao_config_options)), [perms/1, docdir/1]).
+
+bundle_install_lib :- install_lib_(~instype).
+
+install_lib_(local).
+install_lib_(global) :-
+	b_install_dir(~fsR(bundle_inslib(lpdoc))),
+	% TODO: verify that it is fine (previously it copied just files)
+	b_install_dir_rec(bundle_src(lpdoc)/lib, ~fsR(bundle_inslib(lpdoc))),
+	gen_DOTcshrc,
+	gen_DOTprofile,
+	gen_lpdoc_lib_link.
+%	make([~'word-help-setup.el']).
+
+% (only ins)
+gen_DOTcshrc :-
+	wr_template(inslib(lpdoc), bundle_src(lpdoc)/lib, 'DOTcshrc', [
+	    'binary_directory' = ~ciaobin_dir,
+	    'documentation_directory' = ~docdir
+        ]).
+
+% (only ins)
+gen_DOTprofile :-
+	wr_template(inslib(lpdoc), bundle_src(lpdoc)/lib, 'DOTprofile', [
+	    'binary_directory' = ~ciaobin_dir,
+	    'documentation_directory' = ~docdir
+	]).
+
+% TODO: call directly? (see install_lib/0)
+gen_lpdoc_lib_link :-
+	% TODO: when is this link used? is this link repeated?
+	--copy_file(~fsR(concat_verk(lpdoc, plexe, 'lpdoc')),
+	            ~fsR(rootprefix(concat_k(plexe, ~ciaolib_root/'lpdoc'))),
+%	--copy_file(~bundle_name_version(lpdoc),
+%	            ~fsR(rootprefix((~ciaolib_root)/'lpdoc')),
+		    [overwrite, symlink]).
+
+bundle_uninstall_lib :- uninstall_lib_(~instype).
+uninstall_lib_(local).
+uninstall_lib_(global) :-
+	b_uninstall_dir_rec(~fsR(bundle_insbaselib(lpdoc))).
+
 % ===========================================================================
-% ===========================================================================
+% TODO: Outdated code, move somewhere else?
 
-:- use_module(ciaodesrc(makedir('DOCCOMMON')), [perms/1, docdir/1]).
-
-libfiles := '*.el|*.elc|*.tex|*.bst|*.info|*.html|*.css|SETTINGS_DEFAULT.pl'.
-
-'DOTcshrc' := ~atom_concat([~build_root, ~get_lpdoclibdir, '/', 'DOTcshrc']).
-~'DOTcshrc' <- :-
-	replace_strings_in_file([
-		["binary_directory",        ~atom_codes(~ciaobinroot)],
-		["documentation_directory", ~atom_codes(~docdir)]],
-	    'lib/DOTcshrc.skel', ~'DOTcshrc'),
-	-set_perms(~'DOTcshrc', ~perms).
-
-'DOTprofile' := ~atom_concat([~build_root, ~get_lpdoclibdir, '/', 'DOTprofile']).
-~'DOTprofile' <- :-
-	replace_strings_in_file([
-		["binary_directory",        ~atom_codes(~ciaobinroot)],
-		["documentation_directory", ~atom_codes(~docdir)]],
-	    'lib/DOTprofile.skel', ~'DOTprofile'),
-	-set_perms(~'DOTprofile', ~perms).
-
-'word-help-setup.el' := ~atom_concat([~build_root, ~get_lpdoclibdir,
-		'/word-help-setup.el']).
-~'word-help-setup.el' <- :-
-	build_root(BuildRoot),
-	get_lpdoclibdir(LibDir),
-	atom_concat([BuildRoot, LibDir, '/'], RLibDir),
-	replace_strings_in_file([["library_directory", ~atom_codes(LibDir)
-		]],
-	    'lib/word-help-setup.el', ~'word-help-setup.el'),
-	do(['cd ', RLibDir, '; emacs -batch -f batch-byte-compile `ls *.el`'
-	    ],
-	    nofail),
-	-set_exec_perms(~add_preffix(~ls(LibDir, '*.el|*.elc'), RLibDir),
-	    ~perms).
-
-% TODO: Why?
-rbasemain := ~atom_concat([~build_root, ~ciaolibroot, '/', ~basemain]).
-~rbasemain <- [] :: RBaseMain :-
-	--copy_file(~component_name_version(lpdoc), RBaseMain, [overwrite, symlink]).
-
-justinstalllib :- justinstalllib_(~instype).
-justinstalllib_(src).
-justinstalllib_(ins) :- doinstalllib.
-
-doinstalllib :-
-	get_lpdoclibdir(LibDir),
-	build_root(RpmBuildRoot),
-	atom_concat(RpmBuildRoot, LibDir, BuildLibDir),
-	atom_concat(BuildLibDir,  '/',    RBuildLibDir),
-	mkdir_perm(BuildLibDir, ~perms),
-	ls(~libfiles, LibFiles),
-	copy_files(LibFiles, BuildLibDir, [overwrite]),
-	-set_perms(~add_preffix(LibFiles, RBuildLibDir), ~perms),
-	make([~'DOTcshrc', ~'DOTprofile', ~rbasemain,
-		~'word-help-setup.el']).
-
-justuninstalllib :- justuninstalllib_(~instype).
-
-justuninstalllib_(src).
-justuninstalllib_(ins) :- douninstalllib.
-
-douninstalllib :-
-	delete_dir_rec(~atom_concat(~build_root,
-		~lpdoclibbasedir(~instype))).
-
-% 	get_lpdoclibdir(LibDir),
+% 	LibDir = ~fsR(bundle_inslib(lpdoc)),
 % 	atom_concat(LibDir, '/', RLibDir),
-% 	del_files_nofail(~add_preffix(~ls(LibDir, ~libfiles), RLibDir)),
-% 	del_files_nofail(~add_preffix(['DOTcshrc',
+% 	del_files_nofail(~add_prefix(~ls(LibDir, ~libfiles), RLibDir)),
+% 	del_files_nofail(~add_prefix(['DOTcshrc',
 % 	'DOTprofile'], RLibDir)),
-% 	-(del_file_nofail(~rbasemain)),
+% 	-(del_file_nofail(~rbasemain_dir)),
 % 	(
 % 	    file_exists(LibDir) ->
 % 	    -(delete_directory(LibDir))
@@ -266,3 +200,29 @@ douninstalllib :-
 % 	    true
 % 	).
 
+% < % (only ins)
+% < gen_word_help_setup_el :-
+% < 	% TODO: Is this part of the emacs mode or the other way around?
+% < 	wr_template(inslib(lpdoc), bundle_src(lpdoc)/lib, 'word-help-setup.el',
+% <             ['library_directory' = ~lpdoclib_dir]),
+% < 	%
+% < 	RLibDir = ~fsR(bundle_inslib(lpdoc)),
+% < 	% TODO: find from prolog and execute as a loop
+% < 	emacs_batch_call(~fsR(rootprefix(RLibDir)),
+% < 	                 'emacs_lpdoc', % TODO: right log name?
+% < 	                 '-f batch-byte-compile `ls *.el`'),
+% < 	% TODO: why exec perms on .el and .elc?
+% < 	-set_exec_perms(~add_prefix(~ls(~fsR(rootprefix(RLibDir)), '*.el|*.elc'),
+% < 	                ~atom_concat(RLibDir, '/')),
+% < 			~perms).
+
+% 'word-help-setup.el' := ~atom_concat([~rootprefix, ~fsR(bundle_inslib(lpdoc)), '/word-help-setup.el']).
+% ~'word-help-setup.el' <- :-
+% 	rootprefix(BuildRoot),
+% 	LibDir = ~fsR(bundle_inslib(lpdoc)),
+% 	atom_concat([BuildRoot, LibDir, '/'], RLibDir),
+% 	replace_strings_in_file(
+%            [["library_directory", ~atom_codes(LibDir)]],
+% 	   'lib/word-help-setup.el.skel', ~'word-help-setup.el'),
+% 	do(['cd ', RLibDir, '; emacs -batch -f batch-byte-compile `ls *.el`'], nofail),
+% 	-set_exec_perms(~add_prefix(~ls(LibDir, '*.el|*.elc'), RLibDir), ~perms).

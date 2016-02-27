@@ -3,9 +3,10 @@
         write_option/1,
         write/2, write/1,
         writeq/2, writeq/1,
+	write_list1/1,
         write_canonical/2, write_canonical/1,
-        print/2, print/1, write_list1/1,
-        portray_clause/2, portray_clause/1,
+        print/2, print/1, printq/2, printq/1,
+	portray_clause/2, portray_clause/1,
         numbervars/3, prettyvars/1,
         printable_char/1
         ], 
@@ -14,6 +15,7 @@
 :- use_module(library(operators)).
 :- use_module(library(sort)).
 :- use_module(engine(internals), ['$atom_mode'/2]).
+:- use_module(engine(attributes)).
 
 :- doc(title,"Term output").  
 
@@ -219,6 +221,26 @@ print(Stream, Term) :-
 
 print(Term) :-
         Options = options(false,false,true,true,1000000),
+        write_out(Term, Options, 1200, 0, 0, '(', 2'100, _).
+
+
+:- pred printq(@Stream, ?Term): stream * term
+        # "Behaves like @tt{write_term(Stream, Term,
+           [quoted(true), numbervars(true), portrayed(true)])}.".
+
+printq(Stream, Term) :-
+        current_output(Curr),
+        catch(set_output(Stream),
+              error(ErrT, _), throw(error(ErrT,printq/2-1))),
+        printq(Term),
+        set_output(Curr).
+
+
+:- pred printq(?Term): term
+        # "Behaves like @tt{current_output(S), printq(S,Term)}.".
+
+printq(Term) :-
+        Options = options(true,false,true,true,1000000),
         write_out(Term, Options, 1200, 0, 0, '(', 2'100, _).
 
 

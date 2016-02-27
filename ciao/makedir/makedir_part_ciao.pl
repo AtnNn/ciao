@@ -1,153 +1,427 @@
-:- module(_, _, [ciaopaths, dcg, make, fsyntax, hiord]).
+:- module(_, _, [ciaopaths, dcg, make, fsyntax, hiord, assertions, regtypes, isomodes]).
 
 :- doc(title,  "Ciao Global Compilation/Installation installer").
 :- doc(author, "Edison Mera").
+:- doc(author, "Jose F. Morales").
+
 :- doc(module, "This file is part of the CiaoDE installation system").
 
+% TODO: refine dependencies, move to makedir_SHARED
 :- use_module(library(terms),        [atom_concat/2]).
 :- use_module(library(lists),        [append/3]).
 :- use_module(library(llists),       [flatten/2, append/2]).
-:- use_module(library(compiler),     [use_module/2]).
-:- use_module(library(gen_asr_file), [gpo/1]).
 :- use_module(library(aggregates)).
 :- use_module(library(write)).
 :- use_module(library(streams)).
 :- use_module(library(messages)).
 :- use_module(library(file_utils)).
-:- use_module(library(make(system_extra))).
-:- use_module(library(make(make_rt))).
-:- use_module(library(component_registry), [component_src/2]).
-:- use_module(library(unittest)).
 :- use_module(library(strings)).
-:- use_module(library(distutils), [
-	component_make/2, lpmake_subdir/3,
-	current_dir_module/4, autolibs/2,
-	register_in_script/3, unregister_from_script/2,
-	compile_module_list/3, list_filter_files_rec/7, compile_modules/3]).
-:- use_module(library(distutils(dirutils))).
-:- use_module(library(distutils(skip_settings))).
-:- use_module(ciaodesrc(makedir('ConfigMenu'))).
-:- use_module(ciaodesrc(makedir('ConfigValues'))).
-:- use_module(ciaodesrc(makedir('MenuOptions'))).
-:- use_module(ciaodesrc(makedir('DOCCOMMON'))).
-:- use_module(ciaodesrc(makedir(makedir_component))).
-:- use_module(ciaodesrc(makedir(makedir_aux))).
 
-:- use_module(engine(system_info), [get_ciao_ext/1, get_exec_ext/1]).
-
+% TODO: when is this generated? load like the bundle list?
 :- include(ciaosrc(makedir(platdep_modules))).
 
-% ============================================================================
+% ===========================================================================
+% TODO: generalize for any node in the bundletree
 
-% TODO: Is that necessary? (JFMC)
-defaults <- [] # "Preventing lpmake from being called without target" :- true.
-
-% ============================================================================
-
-:- doc(section, "Invoking the Configuration Menu").
-
-ciaosettings <- [] # "Load initial Ciao Settings" :-
-	initvals.
-
-menuconfig <- [ciaosettings] # "Ciao configuration" :-
-	menuconfig.
-
-silentconfig <- [ciaosettings] # "Ciao configuration (silent)" :-
-	silentconfig.
+install_docs <- :- install_item(docs(ciao)).
 
 % ============================================================================
 
-:- include(ciaodesrc(makedir('makedir_SHARE'))).
-component_id(ciao).
-component_dname('Ciao').
-component_readme_dir('doc/common').
-component_readme('INSTALLATION_CIAO').
-component_readme('INSTALLATION_CIAO_Win32').
-component_readme('README_CIAO').
-component_readme('NewUser'-[libroot = ~ciaolibroot, lpdocdir = ~docdir]).
-component_manual_dir('doc/reference').
+:- doc(section, "Invoking the Configuration").
+
+configure <- [] # "Invoke configuration" :-
+ 	restore_ciao_config, % TODO: Necessary? ciao_config_db contains an initialization directive
+	configure,
+	( \+ silentconfig ->
+	    show_what_is_next
+	; true
+	).
+
+show_what_is_next :-
+	normal_message(
+"Please check that all the values and messages above are correct. If
+not, you can change or customize the configuration using the command
+line or --menu configure option.
+
+To continue, execute:
+   \"./ciaosetup build\"        to compile, then
+   \"./ciaosetup docs\"         to generate the documentation,
+                              (if not in distribution), then
+   \"./ciaosetup install\"      to install the system.", []),
+	!.
+
+% ============================================================================
+% Hooks for operations on @regtype{bundletree/1}
+%
+% OP_hook_delc(X): target @var{X} accepts operation @tt{OP}
+% OP_hook(X,...): implementation of operation @tt{OP} for target @var{X}
+%
+% where OP is one of:
+%
+%   - 'def': definition as a named node in a bundletree (incompatible
+%            with the rest of OP)
+%   - 'prebuild': preparation before build
+%   - 'build': build
+%   - 'install': installation
+%   - 'uninstall': uninstallation
+
+:- discontiguous def_hook_decl/1.
+:- discontiguous def_hook/2. % def_hook(Node, Def)
+
+:- discontiguous prebuild_hook_decl/1.
+:- discontiguous prebuild_hook/1.
+
+:- discontiguous build_hook_decl/1.
+:- discontiguous build_hook/1.
+%build_hook_decl(_) :- fail.
+%build_hook(_) :- fail.
+
+:- discontiguous install_hook_decl/1.
+:- discontiguous install_hook/1.
+
+:- discontiguous uninstall_hook_decl/1.
+:- discontiguous uninstall_hook/1.
+
+% ============================================================================
+% TODO: move to makedir_aux.pl
+% TODO: rename makedir_aux.pl by other name
+% TODO: include 'groups'
+% TODO: add dependencies
+
+:- regtype bundletree(X) # "@var{X} is the symbolic description of the
+   contents of a bundle".
+% bundletree is the input of the generic install/uninstall operations
+bundletree(_).
+
+is_list([]).
+is_list([_|_]). % wrong... but faster
+
+:- pred prebuild_item(+X) :: bundletree # "Build @var{X}".
+prebuild_item(X) :- is_list(X), !, prebuild_list(X).
+prebuild_item(X) :- def_hook_decl(X), !,
+	def_hook(X, Y), prebuild_item(Y).
+prebuild_item(X) :- prebuild_hook_decl(X), !, prebuild_hook(X).
+prebuild_item(group(Name, X)) :-
+	bold_message("Preparing build of ~s", [Name]),
+	prebuild_item(X).
+
+prebuild_list([]).
+prebuild_list([X|Xs]) :- prebuild_item(X), prebuild_list(Xs).
+
+:- pred build_item(+X) :: bundletree # "Build @var{X}".
+build_item(X) :- is_list(X), !, build_list(X).
+build_item(X) :- def_hook_decl(X), !,
+	def_hook(X, Y), build_item(Y).
+build_item(X) :- build_hook_decl(X), !, build_hook(X).
+build_item(group(Name, X)) :-
+	bold_message("Building ~s", [Name]),
+	build_item(X).
+build_item(standalone_list(Bundle, Path, List)) :-
+	build_standalone_list(Bundle, Path, List).
+
+build_list([]).
+build_list([X|Xs]) :- build_item(X), build_list(Xs).
+
+:- pred install_item(+X) :: bundletree # "Install @var{X}".
+install_item(X) :- is_list(X), !, install_list(X).
+install_item(X) :- def_hook_decl(X), !,
+	def_hook(X, Y), install_item(Y).
+install_item(X) :- install_hook_decl(X), !, install_hook(X).
+install_item(only_global_ins(X)) :-
+	% install X only if installation kind is global
+	( ~instype = global ->
+	    install_item(X)
+	; true
+	).
+install_item(small_group(Name, X)) :-
+	normal_message("Installing ~s", [Name]),
+	install_item(X).
+install_item(group(Name, X)) :-
+	bold_message("Installing ~s", [Name]),
+	install_item(X).
+install_item(big_group(Name, X)) :-
+	% like group, but show when the operation has finished
+	bold_message("Installing ~s", [Name]),
+	install_item(X),
+	bold_message("~s installation completed", [Name]).
+install_item(dir(Path)) :- install_item(dir(Path, [])).
+install_item(dir(Path, Props)) :-
+	b_install_dir(~fsR(Path)), % perms?
+	( member(files_from(SrcDir), Props) ->
+	    % copy contents from Dir
+	    b_install_dir_rec(SrcDir, ~fsR(Path))
+	; member(files_from(SrcDir, Pattern), Props) ->
+	    % copy contents from Dir (as specified by Pattern)
+	    ( % (failure-driven loop)
+		member(File, ~ls(~fsR(SrcDir), Pattern)),
+		b_install_file_noexec(~fsR(SrcDir/(File)),
+	                              ~fsR(Path/(File))),
+	        fail
+	    ; true
+	    )
+	; true
+	).
+install_item(lib(L)) :- install_lib(L).
+install_item(src(L)) :- install_src(L).
+install_item(docs(Bundle)) :- % (for instype=global and instype=local)
+	bold_message("Installing documentation for '~w'", [Bundle]),
+	bundle_install_docs(Bundle).
+install_item(standalone_list(Bundle, _, List)) :-
+	install_standalone_list(Bundle, List).
+install_item(lib_file_list(Path, List)) :-
+	install_lib_file_list(List, Path).
+install_item(bin_copy_and_link(K, Bundle, File, Props)) :-
+	b_install_copy_and_link(K, Bundle, File),
+	( member(link_as(Link), Props) ->
+	    b_install_link_as(K, Bundle, File, Link)
+	; true
+	).
+
+install_list([]).
+install_list([X|Xs]) :- install_item(X), install_list(Xs).
+
+install_lib_file_list([], _Path).
+install_lib_file_list([X|Xs], Path) :-
+	install_lib_file_item(X, Path),
+	install_lib_file_list(Xs, Path).
+
+install_lib_file_item(File-Props, Path) :- !,
+	( member(copy_and_link, Props) ->
+	    rl_install_copy_and_link(Path, File)
+	; true
+	),
+	( member(link_as(Link), Props) ->
+	    rl_install_link_as(File, Link)
+	; true
+	),
+	( member(mid(Mid), Props) -> % TODO: why?
+	    % TODO: incompatible with any other prop
+	    r_install_as(Path/File, Mid),
+	    r_abslink_as(Mid, ~lib_dir/(File))
+	; true
+	).
+
+:- pred uninstall_item(+X) :: bundletree # "Uninstall @var{X}".
+uninstall_item(X) :- is_list(X), !, uninstall_list(X).
+uninstall_item(X) :- def_hook_decl(X), !,
+	def_hook(X, Y), uninstall_item(Y).
+uninstall_item(X) :- uninstall_hook_decl(X), !, uninstall_hook(X).
+uninstall_item(only_global_ins(X)) :-
+	% install X only if installation kind is global
+	( ~instype = global ->
+	    uninstall_item(X)
+	; true
+	).
+uninstall_item(small_group(Name, X)) :-
+	normal_message("Uninstalling ~s", [Name]),
+	uninstall_item(X).
+uninstall_item(group(Name, X)) :-
+	bold_message("Uninstalling ~s", [Name]),
+	uninstall_item(X).
+uninstall_item(big_group(Name, X)) :-
+	% like group, but show when the operation has finished
+	bold_message("Uninstalling ~s", [Name]),
+	uninstall_item(X),
+	bold_message("~s uninstallation completed", [Name]).
+uninstall_item(dir(Path)) :-
+	uninstall_item(dir(Path, [])).
+uninstall_item(dir(Path, Props)) :-
+	( member(del_rec, Props) ->
+	    % on uninstall, remove contents recursively
+	    % TODO: remove also the directory?
+	    b_uninstall_dir_rec(~fsR(Path))
+	; member(del_if_empty, Props) ->
+	    % delete if the directory is empty
+	    % TODO: only if it is empty? what dirs should have this prop?
+	    b_uninstall_dir_if_empty(~lib_dir)
+	; member(do_not_del, Props) ->
+	    % do not delete on uninstall
+	    true
+	; b_uninstall_dir(~fsR(Path))
+	).
+uninstall_item(lib(L)) :- uninstall_lib(L).
+uninstall_item(src(L)) :- uninstall_src(L).
+uninstall_item(docs(Bundle)) :- % (for instype=global and instype=local)
+	bold_message("Uninstalling documentation for '~w'", [Bundle]),
+	bundle_uninstall_docs(Bundle).
+uninstall_item(standalone_list(Bundle, _, List)) :-
+	uninstall_standalone_list(Bundle, List).
+uninstall_item(lib_file_list(Path, List)) :-
+	uninstall_lib_file_list(List, Path).
+uninstall_item(file(Path)) :-
+	b_uninstall_file(Path).
+uninstall_item(bin_copy_and_link(K, Bundle, File, Props)) :-
+	( member(link_as(Link), Props) ->
+	    b_uninstall_link(K, Link)
+	; true
+	),
+	b_uninstall_copy_and_link(K, Bundle, File).
+
+% TODO: we would need dependencies here
+uninstall_list(Xs) :-
+	% uninstall is done in reverse order
+	uninstall_list_(~reverse(Xs)).
+
+uninstall_list_([]).
+uninstall_list_([X|Xs]) :- uninstall_item(X), uninstall_list_(Xs).
+
+uninstall_lib_file_list([], _Path).
+uninstall_lib_file_list([X|Xs], Path) :-
+	uninstall_lib_file_item(X, Path),
+	uninstall_lib_file_list(Xs, Path).
+
+uninstall_lib_file_item(File-Props, _Path) :- !,
+	( member(link_as(Link), Props) ->
+	    rl_uninstall_link(Link)
+	; true
+	),
+	( member(copy_and_link, Props) ->
+	    rl_uninstall_copy_and_link(File)
+	; true
+	),
+	( member(mid(Mid), Props) -> % TODO: why?
+	    % TODO: incompatible with any other prop
+	    b_uninstall_file(Mid),
+	    rl_uninstall_copy_and_link(File)
+	; true
+	).
+
+:- use_module(library(lists), [reverse/2]).
 
 % ============================================================================
 
-:- doc(section, "Full System Compilation").
+:- include(library(lpdist('makedir_SHARE'))).
+bundle_id(ciao).
+bundle_dname('Ciao').
+%
+bundle_readme_dir := ~fsR(bundle_src(ciao)/'doc'/'common').
+bundle_manual_dir := ~fsR(bundle_src(ciao)/'doc'/'reference').
+%
+bundle_readme('INSTALLATION_CIAO').
+bundle_readme('INSTALLATION_CIAO_Win32').
+bundle_readme('README_CIAO').
+bundle_readme('NewUser'-[libroot = ~ciaolib_root, lpdocdir = ~docdir]).
+%
+bundle_ins_reg :- fail. % TODO: document (register the bundle on ins?)
+
+% ============================================================================
+
+:- doc(section, "Build").
 % (engine, libraries, and compiler)
 
-% (private)
-component_all <- [allgmake, alletc, optimizing_compiler, libraries, emacs_support, make_header_if_win32] :- true.
+% (hook)
+bundle_build <- [] :-
+	%% # do_boot_scan_bundles # TODO: why repeat that?
+	%% do_build bootstrap_lpmake WHY??? WE ARE ALREADY RUNNING THIS! skip
+	build_item(ciaoc),
+	build_item(shell),
+	build_item(optim_comp),
+	%
+	build_etc,
+	%
+	build_libraries,
+	%
+	build_item(emacs_mode),
+	build_item(header_for_win32).
 
-only_eng_compiler <- [allgmake] :-
-	true.
+build_hook_decl(optim_comp).
+build_hook(optim_comp) :-
+	( optimizing_compiler(yes) ->
+	    bold_message("Building 'optim_comp'", []),
+	    do(['cd ', ~fsR(bundle_src(ciaode)/'optim_comp'), '; ',
+	    './ciaotool build'], [])
+	; bold_message("Not bundling 'optim_comp'", [])
+	).
 
-platdep <- [alletc, ciao_so_libs, emacs_support, make_header_if_win32, platdep_libs] :- true.
+% (invoked from 'makedir', for each bundle)
+build_libraries <- [] :- build_libraries.
+build_libraries :-
+        prebuild_libraries,
+	build_library.
 
-allnolibs <- [extra_libraries, platdep] :- true.
+% (invoked from 'makedir', for each bundle)
+build_nolibs <- [] :-
+	prebuild_libraries,
+	build_platdep.
 
-platdep_libs <- [] :- platdep_libs.
+% Libraries that require customized installation before they are built
+% (such as automatically generated code, foreign interfaces, etc.)
+prebuild_libraries :-
+	prebuild_item([pillow, mathlibs, ppl, persdb_mysql, timingmodel]).
 
-platdep_libs :-
-	compile_platdep_modules(~compiling_options).
+% (invoked from 'makedir', for each bundle)
+build_platdep <- [] :- build_platdep.
+build_platdep :-
+	build_etc,
+	build_tabling, % TODO: in build_library too, why?
+	build_item(emacs_mode),
+	build_item(header_for_win32),
+	build_platdep_libs.
 
-% All except the engine (it is being used)
-allgmake <- :-
-	invoke_gmake('.', platdep).
+build_platdep_libs :-
+	compile_platdep_modules(~compiling_options(ciao)),
+	% BUG: This is fail prone, we update the .so list to ensure the
+	% next time the libraries containing externals are compiled,
+	% if the list has changed -- EMM.
+	update_so_list.
 
-optimizing_compiler <- :-
-	invoke_gmake('.', optimizing_compiler).
+% ============================================================================
+
+% (used only from 'ciaosetup')
+build_ciaoc <- [] :- build_ciaoc.
+build_ciaoc :- build_item(ciaoc).
+
+def_hook_decl(ciaoc).
+def_hook(ciaoc) :=
+        standalone_list(ciao, bundle_src(ciao)/ciaoc, [
+          'ciaoc'-[
+            name="Standalone compiler",
+            plexe,
+	    bootstrap_ciaoc, static
+          ]
+        ]).
+	
+% (used only from 'ciaosetup')
+build_shell <- [] :- build_shell.
+build_shell :- build_item(shell).
+
+def_hook_decl(shell).
+def_hook(shell) :=
+	standalone_list(ciao, bundle_src(ciao)/shell, [
+          'ciaosh'-[plexe, name="Interactive toplevel", ciaoc],
+          'ciao-shell'-[plexe, name="ciao-script runtime", ciaoc, static]
+        ]).
 
 % ===========================================================================
 
 :- doc(section, "Windows-specific").
 
-:- doc(subsection, "Special header for Windows").
-% TODO: merge with exe_header target in ciao/lib/compiler/Makefile?
-
-% Note: This part should be revised: need more integration with common
-% installation process - EMM
-
-% Environment is required by runwin32.bat:
-environment <- [emacs_support, make_header_if_win32] :- true.
-
-make_header_if_win32 <- [] :- make_header_if_win32.
-
-make_header_if_win32 :-
-	( get_os('Win32') ->
-	    make_header_win32
-	; true
-	).
-
-make_header_win32 :-
-	CiaoDEPath = ~component_src(ciaode),
-	get_platform(Platform),
-	get_exec_ext(Ext),
-	Eng = ~atom_concat([CiaoDEPath, '/build/objs/', Platform, '/ciaoengine', Ext]),
-	bold_message("Building header to ~w", [Eng]),
-	atom_concat(CiaoDEPath, '/ciao/lib/compiler/header', HeaderPath),
-	open_output(HeaderPath, Out),
-	display('#!/bin/sh\n'),
-	display_list(['INSTENGINE=\"', Eng, '\"\n']),
-	display('ENGINE=${CIAOENGINE:-${INSTENGINE}}\n'),
-	display('exec "$ENGINE" "$@" -C -b $0\n\^L\n'),
-	close_output(Out).
+% TODO: review, this should not be necessary
+% 'environment' is required by runwin32.bat 
+environment <- [] :-
+	build_item(emacs_mode),
+	build_item(header_for_win32).
 
 :- doc(subsection, "Wrappers for Executables").
 
 % Note: Invoked from makedir/runwin32.bat
-windows_bats <- [] :-
-	windows_bats(~windows_engine).
-
-windows_engine := ~flatten(["""", ~atom_codes(~winpath(~component_src(ciaode))),
-		"\\build\\objs\\", ~atom_codes(~get_platform),
-		"\\ciaoengine.exe"""]).
-
-windows_bats(Engine) :-
-	bold_message("Building .bat files for the top-level and compiler", []),
+windows_bats <- [] :- windows_bats.
+windows_bats :-
+	bold_message("Creating .bat files for the top-level and compiler", []),
 	( % (failure-driven loop)
-	    win_cmd_and_opts(BatCmd, EOpts, Opts, OrigCmd),
-	    bat_name(BatCmd, BatFile),
-	    bat_tail(OrigCmd, EOpts, Opts, Tail),
+	  win_cmd_and_opts(BatCmd, EOpts, Opts, OrigCmd),
+	    bat_file(BatCmd, OrigCmd, EOpts, Opts, BatFile, Tail),
 	    %
 	    open_output(BatFile, Out),
-	    display_string("@"|| Engine),
+	    display('@"'),
+	    % TODO: Automatically transform to Win notation
+	    %       this should be ~local_engine, using win32 notation
+	    %       (try to use winpath/2 on the full path)
+	    display(~winpath(~fsR(bundle_src(ciaode)))), % TODO: is this path correct?
+	    display('\\build\\objs\\'), % TODO: hardwired here
+	    display(~get_platform), % TODO: should this be get_platformdeb?
+	    display('\\ciaoengine.exe'),
+	    display('"'),
 	    ( getenvstr('OS', "Windows_NT") ->
 	        AllArgs = ' %*'
 	    ; AllArgs = ' %1 %2 %3 %4 %5 %6 %7 %8 %9'
@@ -166,56 +440,46 @@ win_cmd_and_opts(ciaosh, '', '-i', ciaosh).
 win_cmd_and_opts(ciaoc, '', '', ciaoc).
 win_cmd_and_opts(ciao, ~codes_atom(~ciao_extra_commands), '-i', ciaosh).
 
-bat_name(BatCmd, BatFile) :-
-	cmdfile(BatCmd, BatFile0),
-	atom_concat(BatFile0, '.bat', BatFile).
-
-bat_tail(OrigCmd, EOpts, Opts, Tail) :-
-	cmdfile(OrigCmd, OrigFile),
+bat_file(BatCmd, OrigCmd, EOpts, Opts, BatFile, Tail) :-
+	BatFile = ~fsR(concat_verk(ciao, ext('.bat'), ~buildbin_dir/(BatCmd))),
+	OrigFile = ~fsR(concat_ver(ciao, ~buildbin_dir/(OrigCmd))),
 	( EOpts = '' -> EOptsS = '' ; EOptsS = ' ' ),
 	( Opts = '' -> OptsS = '' ; OptsS = ' ' ),
 	Tail = ~atom_concat([' ', EOpts, EOptsS,
 	                     '-C ', Opts, OptsS,
 			     '-b \"', OrigFile, '\"']).
-	
-cmdfile(Name, File) :-
-	component_version(ciao, Version), % TODO: 'ciao' or 'ciaode'?
-	File = ~atom_concat([~component_src(ciaode), '/build/bin/', Name, '-', Version]).
 
-% ===========================================================================
+:- doc(subsection, "Special header for Windows").
+% TODO: merge with do_exe_header code?
 
-:- doc(section, "Etc. Libraries").
-% TODO: Find better name
+build_hook_decl(header_for_win32).
+build_hook(header_for_win32) :-
+	( get_os('Win32') ->
+	    make_header_win32
+	; true
+	).
 
-% TODO: (hook)
-alletc <- :-
-	lpmake_subdir(etc, makedir_part_ciao_etc, all). % TODO: Use component_make
-
-% TODO: (hook)
-% (only for instype=ins)
-installetc :-
-	bold_message("Installation of applications in etc"),
-	lpmake_subdir(etc, makedir_part_ciao_etc, install). % TODO: Use component_make
-
-% TODO: (hook)
-% (only for instype=ins)
-uninstalletc :-
-	bold_message("Uninstallation of applications in etc"),
-	lpmake_subdir(etc, makedir_part_ciao_etc, uninstall). % TODO: Use component_make
+make_header_win32 :-
+	% TODO: Why not the installed engine?
+	Eng = ~fsR(concat_k(exec, ~build_dir/'objs'/(~get_platformdeb)/'ciaoengine')),
+	bold_message("Creating executable header for engine ~w", [Eng]),
+	HeaderPath = ~fsR(bundle_src(ciaode)/'ciao'/'lib'/'compiler'/'header'),
+	%
+	open_output(HeaderPath, Out),
+	display('#!/bin/sh\n'),
+	display_list(['INSTENGINE=\"', Eng, '\"\n']),
+	display('ENGINE=${CIAOENGINE:-${INSTENGINE}}\n'),
+	display('exec "$ENGINE" "$@" -C -b $0\n\^L\n'),
+	close_output(Out).
 
 % ===========================================================================
 
 :- doc(section, "Compilation of Libraries").
 
-% Kludge: defaulttype is always dyn, see DEFAULTYPE variable in
-% makefile-sysdep/... - EMM
+% TODO: Kludge: defaulttype is always dyn, see ENGINE_LINK_TYPE variable in
+%       config-sysdep.sh
 
-defaulttype(dyn).
-
-libraries <- [extra_libraries, alllib, ~atom_concat(alllibrary, ~defaulttype),
-	    allcontrib] :-
-	update_so_list.
-
+% TODO: document why it is collected (and when)
 update_so_list :-
 	output_to_file(dump_platdep_modules, 'makedir/platdep_modules.pl').
 
@@ -226,6 +490,9 @@ modulesdir(contrib).
 :- use_module(library(sort)).
 
 dump_platdep_modules :-
+	% Show the platform dependent modules
+	% TODO: kludge?
+	% TODO: why portray?
 	findall(platdep_module(Dir, File, FileName),
 	    (
 		modulesdir(LibDir),
@@ -236,9 +503,10 @@ dump_platdep_modules :-
 	list(PML, portray_clause).
 
 current_platdep_module(BaseDir, Dir, File, FileName) :-
+	% TODO: coupled with the foreign interface...
 	current_dir_module(BaseDir, Dir, File, FileName),
 	atom_concat(FileBase, '.pl', FileName),
-	atom_concat([FileBase, '_', ~get_platform, ~get_so_ext], FileSO),
+	FileSO = ~fsR(concat_k(ext(~get_so_ext), ~atom_concat([FileBase, '_', ~get_platform]))), % TODO: full path?
 	file_exists(FileSO).
 
 :- data platdep_module/3.
@@ -252,177 +520,160 @@ do_platdep_module(Dir, File, FileName) :-
 
 :- meta_predicate proc_if_dir_exists(?, goal).
 proc_if_dir_exists(Dir, Goal) :-
-	atom_concat(Dir, '/NOCOMPILE', NCDir),
+	NCDir = ~fsR(Dir/'NOCOMPILE'), % TODO: full path?
 	( file_exists(Dir), \+ file_exists(NCDir) -> call(Goal)
 	; true
 	).
 
-% Libraries that require customized installation
-% (such as automatically generated code, foreign interfaces, etc.)
-extra_libraries <- :-
-	icon_address_auto,
-	mathlibs,
-	ppl_interface,
-	mysqllibs,
-	miniprolog.
-
-:- meta_predicate compiling_options(list(pred(1))).
-compiling_options(C) :- compiling_options_(C, [gpo]).
-
-:- meta_predicate compiling_options_(list(pred(1)), list(pred(1))).
-compiling_options_ -->
-	{gen_ciao_asr(GCA)},
-	asr_option(GCA).
-
-autolibs(BaseDir) :-
+build_mods(BaseDir) :-
 	set_configured_flags,
-	autolibs(BaseDir, ~compiling_options).
+	build_mods(BaseDir, ~compiling_options(ciao)).
 
-allcontrib <- :-
-	proc_if_dir_exists(~atom_concat(~component_src(ciao), '/contrib/chat80'), makechat80),
-	autolibs('contrib/').
+build_contrib :-
+	proc_if_dir_exists(~fsR(bundle_src(ciao)/'contrib'/'chat80'), makechat80),
+	build_mods('contrib').
 
 makechat80 :-
-	% TODO: Generalize as a mechanism to specify compilation options for subcomponents
-	lpmake_subdir('contrib/chat80', '../Makefile', ''). % TODO: Use component_make
+	% TODO: Generalize as a mechanism to specify compilation options for subbundles
+	lpmake_subdir('contrib/chat80', '../Makefile', ''). % TODO: Use bundle_invoke_lpmake
 
-alllib <- :-
-	autolibs('lib/').
+build_library :-
+	build_mods('lib'),
+	build_tabling, % TODO: in build_platdep too, why?
+	%
+	build_mods('library/clpq'),
+	build_mods('library/clpr'),
+%	build_chr,
+	build_javalibs,
+	%
+	build_mods('library'),
+	%
+	Dir = 'library/toplevel/',
+	FileName = 'library/toplevel/toplevel__scope.pl',
+	compile_module_list([m(_, _, FileName)], Dir, ~compiling_options(ciao)),
+	%
+	build_contrib.
 
-ciao_so_libs <- :-
-	tabling.
+% (called from 'ciaosetup' (for ciaobot))
+build_profiler <- [] :- build_profiler.
+build_profiler :- build_mods('contrib/profiler').
 
-alllibrary <- :-
-	BaseDir = 'library/',
-	autolibs(BaseDir),
-	atom_concat(BaseDir, 'toplevel/',                   Dir),
-	atom_concat(BaseDir, 'toplevel/toplevel__scope.pl', FileName),
-	compile_module_list([m(_, _, FileName)], Dir, ~compiling_options).
+build_chr <- :- build_chr.
+build_chr :-
+	( with_chr(yes) ->
+	    bold_message("Compiling CHR Libraries"),
+	    invoke_customsh('library/chr', 'do_bootstrap')
+%	do(['cd library/chr ; ', ~setlocalciao, ' CIAOSH=\"', ~ciaosh, ' -f \" ./do_bootstrap >> ', ~install_log], ~command_option).
+	; true
+        ).
 
-clplibs <- :-
-	clplibs.
-
-clplibs :-
-	autolibs('library/clpq/'),
-	autolibs('library/clpr/').
-
-profiler <- :- profiler.
-
-profiler :- autolibs('contrib/profiler/').
-
-chr <- :- chr.
-chr :-
-	bold_message("Compiling CHR Libraries"),
-	do(['cd library/chr ; ', ~setlocalciao, ' CIAOSH=\"', ~ciaosh, ' -f \" ./do_bootstrap >> ', ~install_log], ~command_option).
-
-alllibrarydyn <- [ciao_so_libs, ciao_special_libs, alllibrary] :-
-	true.
-alllibrarystat <- [alllibrarydyn] :-
-	true.
-
-ciao_special_libs <- :-
-	clplibs,
-%	chr,
-	javalibs.
-
-javalibs <- :- javalibs.
-
-javalibs :-
+build_javalibs :-
 	( with_java_interface(yes) ->
 	    invoke_gmake('library/javall', all)
 	; true
 	).
 
-tabling <- :- tabling.
-
-tabling :-
+build_tabling :-
 	( % We can not compile this if tabled execution is disabled
 	  tabled_execution(no) ->
 	    true
-	; autolibs('contrib/tabling/')
+	; build_mods('contrib/tabling')
 	).
 
 % ---------------------------------------------------------------------------
 
-:- doc(section, "Extra for miniprolog").
+:- doc(section, "timingmodel bundle").
 
-miniprolog :-
-	MiniprologDir = ~atom_concat(~component_src(ciao), '/contrib/miniprolog'),
-	( file_exists(MiniprologDir) ->
-	    proc_if_dir_exists(MiniprologDir, do_miniprolog)
-	;
-	    true
-	),
- 	% TODO: is this call necessary? (do_miniprolog does it)
+timingmodel_dir := bundle_src(ciao)/contrib/timingmodel.
+
+prebuild_hook_decl(timingmodel).
+prebuild_hook(timingmodel) :-
+	proc_if_dir_exists(~fsR(~timingmodel_dir), do_timingmodel),
+ 	% TODO: is this call necessary? (do_timingmodel does it)
 	copy_mp_auto.
 
-% TODO: Why is this target necessary?
-miniprolog <- :-
-	MiniprologDir = ~atom_concat(~component_src(ciao), '/contrib/miniprolog'),
-	file_exists(MiniprologDir) -> do_miniprolog ; true.
+% (called from 'ciaosetup')
+build_timingmodel <- :- do_timingmodel.
 
-miniprolog_cmd := all|bench|estimate.
+timingmodel_cmd := bench|estimate.
 
-do_miniprolog :-
+do_timingmodel :-
+	% TODO: redundant check?
+	( file_exists(~fsR(~timingmodel_dir)) -> do_timingmodel_ ; true ).
+
+do_timingmodel_ :-
 	bold_message("Compiling mini prolog engine"),
+	invoke_gmake_miniprolog(all),
+	copy_file(~fsR(~timingmodel_dir/'miniprolog'/'bin'/'timingmodel_auto.pl'),
+	          ~fsR(~timingmodel_dir/'timingmodel_pre.pl'),
+		  [overwrite]),
 	%
+	bold_message("Generating timing model for mini prolog"),
 	( % (failure-driven loop)
-	  miniprolog_cmd(Cmd),
-	    invoke_gmake_miniprolog(Cmd),
+	  timingmodel_cmd(Cmd),
+	    invoke_gmake_timingmodel(Cmd),
 	    fail
 	; true
-	),
-	copy_file('contrib/miniprolog/miniprolog/bin/miniprolog_auto.pl',
-	    'contrib/miniprolog/miniprolog_pre.pl', [overwrite]).
+	).
 
 invoke_gmake_miniprolog(Cmd) :-
-	invoke_gmake('contrib/miniprolog/miniprolog', ~atom_concat(['-s -j1 MPARCH=', ~get_platform, ' ', Cmd])).
+	invoke_gmake(~fsR(~timingmodel_dir/'miniprolog'),
+	             ~atom_concat(['-s -j1 ',
+		                   'MPARCH=', ~get_platform, ' ',
+				   Cmd])).
 
-% This extra step is to ensure the generation of miniprolog_auto.pl
+invoke_gmake_timingmodel(Cmd) :-
+	invoke_gmake(~fsR(~timingmodel_dir),
+	             ~atom_concat(['-s -j1 ',
+		                   'MPARCH=', ~get_platform, ' ',
+				   'CIAOC=', ~ciaoc, ' ',
+		                   'CIAODESRC=', ~fsR(bundle_src(ciaode)), ' ',
+				   Cmd])).
+
+% This extra step is to ensure the generation of timingmodel_auto.pl
 % even if miniprolog has not been configured
 copy_mp_auto :-
-	file_exists('contrib/miniprolog/miniprolog_pre.pl') ->
-	copy_file('contrib/miniprolog/miniprolog_pre.pl',
-	    'contrib/miniprolog/miniprolog_auto.pl', [overwrite])
-    ;
-	true.
+	Orig = ~fsR(~timingmodel_dir/'timingmodel_pre.pl'),
+	( file_exists(Orig) ->
+	    copy_file(Orig,
+	              ~fsR(~timingmodel_dir/'timingmodel_auto.pl'),
+		      [overwrite])
+	; true
+	).
 
 % TODO: Document entry point?
 benchmp <- :- benchmp.
 
 benchmp :-
-	bold_message("Running mini prolog benchmarks"),
-	invoke_gmake_miniprolog('bench').
+	bold_message("Running timing model benchmarks"),
+	invoke_gmake_timingmodel('bench').
 
 % TODO: Document entry point?
 estimatemp <- :-
 	estimatemp.
 
 estimatemp :-
-	bold_message("Running mini prolog estimate"),
-	invoke_gmake_miniprolog('estimate').
+	bold_message("Running timing model estimate"),
+	invoke_gmake_timingmodel('estimate').
 
 % ---------------------------------------------------------------------------
 
-:- doc(section, "Extra for MySQL").
+:- doc(section, "MySQL bundle").
 
-mysqllibs <- :- mysqllibs.
-mysqllibs :-
+prebuild_hook_decl(persdb_mysql).
+prebuild_hook(persdb_mysql) :-
 	( with_mysql(yes) ->
 	    bold_message("Configuring MySQL Libraries"),
-	    replace_strings_in_file([["where_mysql_client_lives",
-			~atom_codes(~mysql_client_directory)]],
-		~atom_concat(['library/', ~mysql_directory,
-			'/linker_opts.pl.skel']),
-		~atom_concat(['library/', ~mysql_directory,
-			'/linker_opts_auto.pl'])),
-	    ( file_exists(~atom_concat(['library/', ~mysql_directory_op])) ->
-		replace_strings_in_file([["where_mysql_client_lives",
-			    ~atom_codes(~mysql_client_directory)]],
-		    ~atom_concat(['library/', ~mysql_directory_op,
-			    '/linker_opts.pl.skel']),
-		    ~atom_concat(['library/', ~mysql_directory_op,
-			    '/linker_opts_auto.pl']))
+	    wr_template(origin,
+	        bundle_src(ciao)/'library'/(~mysql_directory),
+	        'linker_opts_auto.pl',
+	        ['where_mysql_client_lives' = ~mysql_client_directory]),
+	    % TODO: why?
+	    ( file_exists(~fsR(bundle_src(ciao)/library/(~mysql_directory_op))) ->
+	        wr_template(origin,
+		    bundle_src(ciao)/'library'/(~mysql_directory_op),
+		    'linker_opts_auto.pl',
+		    ['where_mysql_client_lives' = ~mysql_client_directory])
 	    ; true
 	    )
 	; true
@@ -433,59 +684,64 @@ mysql_directory_op := 'persdb_mysql_op'.
 
 % ---------------------------------------------------------------------------
 
-:- doc(section, "Extra for PiLLoW").
+:- doc(section, "PiLLoW bundle").
+
+pillow_dir := bundle_src(ciao)/'library'/'pillow'.
+
+prebuild_hook_decl(pillow).
+prebuild_hook(pillow) :-
+	icon_address_auto.
 
 icon_address_auto :-
 	try_finally(
-	    open(~atom_concat(~component_src(ciao),
-		    '/library/pillow/icon_address_auto.pl'),
-		write, OS),
+	    open(~fsR(~pillow_dir/'icon_address_auto.pl'), write, OS),
 	    portray_clause(OS, icon_base_address(~webimagesurl)),
 	    close(OS)
 	).
 
-% TODO: (hook)
-% (only for instype=ins)
-installpillow :-
-	webimagespath(WebImagesPath),
-	build_root(BuildRoot),
-	atom_concat(BuildRoot, WebImagesPath, BuildWebImagesPath),
-	bold_message("Installing PiLLoW images in ~w", [WebImagesPath]),
-	mkdir_perm(BuildWebImagesPath, ~perms),
-	copy_dir_rec('library/pillow/images/', BuildWebImagesPath, ~perms,
-	    '*', '*~', '.svn', '', ~noinstall_dirs, [overwrite, timestamp]).
+def_hook_decl(pillow_images).
+def_hook(pillow_images) :=
+  group("PiLLoW images", 
+    dir(~webimagespath, [do_not_del, files_from(~pillow_dir/images)])).
+
+:- doc(bug, "The current installation method do not uninstall the
+   installed PiLLoW images. Fix.").
 
 % ---------------------------------------------------------------------------
 
-:- doc(section, "Extra for GSL").
+:- doc(section, "GSL bundle").
+% TODO: Generalize for other libraries
 
-mathlibs <- :- mathlibs.
-mathlibs :-
+gsl_dir := bundle_src(ciao)/'contrib'/'gsl_imports'.
+
+% TODO: rename by 'gsl' (no mathlibs)?
+prebuild_hook_decl(mathlibs).
+prebuild_hook(mathlibs) :-
 	( with_gsl(yes) ->
-	    bold_message("Configuring Math library (Using GSL)"),
-	    S = ":- use_module(library(math(gsl_imports))).\n",
-	    do_str([~gsl_config_base, ' --cflags'], ~command_option, CompilerOptsN),
-	    append(CompilerOpts, "\n", CompilerOptsN),
-	    do_str([~gsl_config_base, ' --libs'], ~command_option, LinkerOptsN),
-	    append(LinkerOpts0, "\n", LinkerOptsN),
+	    bold_message("Configuring GSL Library"),
+	    S = ":- use_module(library(gsl_imports)).\n",
+ 	    foreign_config_var(gsl, 'cflags', CompilerOpts),
+ 	    foreign_config_var(gsl, 'libs', LinkerOpts0),
 	    fix_linker_opts(LinkerOpts0, LinkerOpts),
 	    T = ~flatten([
 		    ":- extra_compiler_opts(\'"||CompilerOpts, "\').\n"||
 		    ":- extra_linker_opts(\'"||LinkerOpts, "\').\n"]),
-	    string_to_file(T, ~atom_concat(~component_src(ciao),
-		    '/contrib/math/gsl_imports_decl_auto.pl')),
-	    M = ~flatten(["STAT_LIBS="||LinkerOpts, "\n"])
+	    string_to_file(T, ~fsR(~gsl_dir/'gsl_imports_decl_auto.pl')),
+	    % List of static libraries from GSL
+	    % TODO: generalize for any other library
+	    M = ~flatten(["GSL_STAT_LIBS=\'"||LinkerOpts, "\'\n"])
 	;
 	    LinkerOpts = "",
-	    bold_message("Configuring Math library (Ignoring GSL)"),
-	    S = ":- use_module(library(math(gsl_imports_dummy))).\n",
+	    bold_message("Ignoring GSL Library"),
+	    S = ":- use_module(library(gsl_imports(gsl_imports_dummy))).\n",
 	    M = ""
 	),
-	string_to_file(~flatten("STAT_LIBS="||LinkerOpts),
-	    ~atom_concat(~component_src(ciao), '/SETTINGS_GSL')),
-	string_to_file(S,
-	    ~atom_concat(~component_src(ciao),
-		'/contrib/math/gsl_imports_auto.pl')).
+	% TODO: Simplify
+	% TODO: Options of CONFIG_GSL are included in
+        %       the final ~ciao_build_dir/'CONFIG_mkf' file
+        % TODO: Those options are not immediately used, correct?
+	string_to_file(M, ~fsR(sys_dir(build)/'CONFIG_GSL')),
+	string_to_file(S, ~fsR(~gsl_dir/'gsl_imports_auto.pl')).
 
 % Remove the -L option, hack that allows to run in LINUXi86_64 --EMM:
 fix_linker_opts(LinkerOpts0, LinkerOpts) :-
@@ -496,66 +752,57 @@ fix_linker_opts(LinkerOpts, LinkerOpts).
 
 % ---------------------------------------------------------------------------
 
-:- doc(section, "Extra for Parma Polyhedra Library (PPL)").
+:- doc(section, "PPL (Parma Polyhedra Library) bundle").
+% TODO: There is even more code in the makedir_part_ciaopp.pl files!
 
-ppl_interface <- :- ppl_interface.
-ppl_interface :-
+ppl_dir := bundle_src(ciao)/'contrib'/'ppl'.
+
+prebuild_hook_decl(ppl).
+prebuild_hook(ppl) :-
 	( with_ppl(yes) ->
 	    bold_message("Configuring PPL Interface"),
-	    do_str([~ppl_config_base, ' --cflags'], ~command_option, CompilerOptsN1),
-	    append(CompilerOpts1, "\n", CompilerOptsN1),
-	    do_str([~ppl_config_base, ' --cppflags'], ~command_option, CompilerOptsN2),
-	    append(CompilerOpts2, "\n",          CompilerOptsN2),
-	    append(CompilerOpts1, " ",           Tmp),
-	    append(Tmp,           CompilerOpts2, CompilerOpts),
-	    do_str([~ppl_config_base, ' --ldflags'], ~command_option, LinkerOptsN),
-	    append(LinkerOpts, "\n", LinkerOptsN),
+ 	    foreign_config_var(ppl, 'cflags', CompilerOpts1),
+ 	    foreign_config_var(ppl, 'cppflags', CompilerOpts2),
+ 	    foreign_config_var(ppl, 'ldflags', LinkerOpts),
+ 	    append(CompilerOpts1, " ",  Tmp),
+	    append(Tmp, CompilerOpts2, CompilerOpts),
 	    T = ~flatten(["%Do not edit generated automatically\n\n",
 		    ":- extra_compiler_opts('", CompilerOpts, "').\n",
 		    ":- extra_linker_opts('", LinkerOpts, "').\n"]),
-	    string_to_file(T, ~atom_concat(~component_src(ciao),
-		    '/contrib/ppl/ppl_decl_auto.pl')),
+	    % TODO: generalize, share with GSL
+	    string_to_file(T, ~fsR(~ppl_dir/'ppl_decl_auto.pl')),
 	    Version = ~ppl_version,
-	    (
-		Version @< [0, 9] ->
+	    ( Version @< [0, 9] ->
 		fail
-	    ;
-		Version @< [0, 10] ->
+	    ; Version @< [0, 10] ->
 		ppl_interface_version("0_9"),
-		string_to_file("", ~atom_concat(~component_src(ciao),
-			'/contrib/ppl/0_10/NOCOMPILE'))
-	    ;
-		ppl_interface_version("0_10"),
-		string_to_file("", ~atom_concat(~component_src(ciao),
-			'/contrib/ppl/0_9/NOCOMPILE'))
+		string_to_file("", ~fsR(~ppl_dir/'0_10'/'NOCOMPILE'))
+	    ; ppl_interface_version("0_10"),
+	      string_to_file("", ~fsR(~ppl_dir/'0_9'/'NOCOMPILE'))
 	    )
 	;
 	    string_to_file(
 		":- module(ppl_auto, []).\n"||
-		":-initialization(error('PPL library not installed')).",
-		~atom_concat(
-		    ~component_src(ciao), '/contrib/ppl/ppl_auto.pl')),
-	    string_to_file("", ~atom_concat(~component_src(ciao),
-		    '/contrib/ppl/0_9/NOCOMPILE')),
-	    string_to_file("", ~atom_concat(~component_src(ciao),
-		    '/contrib/ppl/0_10/NOCOMPILE'))
+		":- initialization(error('PPL library not installed')).",
+		~fsR(~ppl_dir/'ppl_auto.pl')),
+	    string_to_file("", ~fsR(~ppl_dir/'0_9'/'NOCOMPILE')),
+	    string_to_file("", ~fsR(~ppl_dir/'0_10'/'NOCOMPILE'))
 	).
 
+% This selects one of the two versions
+% TODO: maybe we can use the package 'condcomp' to make this simpler?
 ppl_interface_version(StrVer) :-
 	atom_codes(AtmVer, StrVer),
 	S = ~flatten([
-"%Do not edit generated automatically.\n\n:- module('ppl_auto', _).\n:- reexport(library('ppl/",
-		StrVer, "/ppl_ciao')).\n"]
-	),
-	string_to_file(S, ~atom_concat(~component_src(ciao),
-		'/contrib/ppl/ppl_auto.pl')),
-	del_file_nofail(~atom_concat(~component_src(ciao),
-		~atom_concat('/contrib/ppl/',
-		    ~atom_concat(AtmVer, '/NOCOMPILE')))).
+           "%Do not edit generated automatically.\n\n"||
+           ":- module('ppl_auto', _).\n"||
+           ":- reexport(library('ppl/", StrVer, "/ppl_ciao')).\n"]),
+ 	string_to_file(S, ~fsR(~ppl_dir/'ppl_auto.pl')),
+ 	del_file_nofail(~fsR(~ppl_dir/(AtmVer)/'NOCOMPILE')).
 
 % ============================================================================
 
-:- doc(section, "Generation of Documentation").
+:- doc(section, "Documentation").
 
 docs <- [] # "Creates documentation files" :-
 	docs_emacs, % (generates a .lpdoc with the emacs documentation)
@@ -568,150 +815,106 @@ docs <- [] # "Creates documentation files" :-
 % TODO: Should this be just a subtask in the installation? Users
 %       should not invoke it...
 % TODO: This should be done for each anchor (bash, csh, emacs, etc.)
-%       and each component
+%       and each bundle
 
-component_register <- [] # "Modifies the "||
-	".bashrc/.cshrc/.emacs files to let Ciao run from the installed "||
-	"lib files" :-
+% Modifies the .bashrc/.cshrc/.emacs files to let Ciao run from the
+% installed lib files.
+bundle_register_hook :-
         register_bashrc,
 	register_cshrc,
-	register_emacs,
-	register_xemacs.
+	register_emacs_mode.
 
-component_unregister <- [] #
-	"Leaves the .bashrc/.cshrc/.emacs file in its original state" :-
+% Leaves the .bashrc/.cshrc/.emacs file in its original state.
+bundle_unregister_hook :-
         unregister_bashrc,
 	unregister_cshrc,
-	unregister_emacs,
-	unregister_xemacs.
+	unregister_emacs_mode.
 
 % ============================================================================
 
 :- doc(section, "Installation").
 
-component_install <- [] :-
-	component_install(~instype).
+bundle_install <- [] :-
+	install_item(~ciao_desc).
 
-component_install(src) :-
-	bold_message("Skipping copy of Ciao files"),
-	installdoc.
-component_install(ins) :-
-	bold_message("Installing Ciao"),
-	( mkdir_perm(~buildreallibdir, ~perms)
-	-> true
-	; show_message(error, "Could not create ~w", [~buildreallibdir]),
-	    fail
-	),
-	installeng,
-	installincludes,
-	installciaoc,
-	installshell,
-	installetc,
-	installemacsmode,
-	installdoc,
-	installlib('lib/'),
-	-mkdir_perm(~atom_concat([~build_root, ~reallibdir, '/lib/component_registry/components']), ~perms),
-	installlib('library/'),
-	installpillow,
-	installlib('contrib/'),
-	installsrc('examples/', '*.po|*.itf|*~'),
-	bold_message("Ciao installation completed").
+bundle_uninstall <- :-
+	uninstall_item(~ciao_desc).
 
-component_uninstall <- :-
-	bold_message("Uninstalling Ciao"),
-	component_uninstall(~instype),
-	invoke_gmake('.', uninstalleng), % TODO: why not invoke_gmake_localciao?
-	bold_message("Ciao uninstallation completed").
+ciao_desc := 
+  big_group("Ciao", [
+    only_global_ins([
+      dir(bundle_insbaselib(ciao), [del_if_empty]),
+      dir(bundle_inslib(ciao), [del_rec]), % why not del_if_empty?
+      % TODO: use bundle_registry_base module
+      dir(bundle_inslib(ciao)/lib/bundle_registry/bundles, [do_not_del]),
+      %
+      engine,
+      ciaoc,
+      shell,
+      etc,
+      emacs_mode,
+      %
+      lib('lib'),
+      lib('library'),
+      pillow_images,
+      lib('contrib'),
+      src('examples')
+    ]),
+    docs(ciao)
+  ]).
 
-component_uninstall(src) :-
-	bold_message("Skipping deletion of Ciao files"),
-	uninstalldoc.
-component_uninstall(ins) :-
-	bold_message("Uninstalling Ciao"),
-	uninstalllib('lib/'),
-	uninstalllib('library/'),
-	uninstalllib('contrib/'),
-	uninstalllib('examples/'),
-	uninstallciaoc,
-	uninstallshell,
-	uninstalletc,
-	uninstalldoc,
-	uninstallemacsmode,
-	uninstallincludes,
-	delete_dir_rec(~buildreallibdir),
-	--delete_directory(~atom_concat(~build_root, ~libdir)),
-	bold_message("Ciao uninstallation completed").
+% ===========================================================================
+% Engine installation/uninstallation
 
-% (for instype=ins and instype=src)
-installdoc <- :- installdoc.
-installdoc :-
-	bold_message("Installation of documentation files"),
-	component_install_docs(ciao).
-
-% (for instype=ins and instype=src)
-uninstalldoc :-
-	bold_message("Uninstallation of documentation files"),
-	component_uninstall_docs(ciao).
-
-installlib(LibName) :-
-	installsrc(LibName, '*~').
-
-installsrc(DirName, Exclude) :-
-	build_root(BuildRoot),
-	atom_concat([~reallibdir, '/', DirName], StdLibDir),
-	atom_concat(BuildRoot, StdLibDir, BuildStdLibDir),
-	bold_message("Installing ~w ~w libraries in ~w", [~basemain, DirName, StdLibDir]),
-	copy_dir_rec(DirName, BuildStdLibDir, ~perms, '*', Exclude, '.svn', '', ~noinstall_dirs, [overwrite, timestamp]).
-
-uninstalllib(LibName) :-
-	atom_concat([~buildreallibdir, '/', LibName], BuildStdLibDir),
-	delete_dir_rec(BuildStdLibDir).
+name_ciaoengine := 'ciaoengine'.
+name_ciaoengine_arch := ~atom_concat(['ciaoengine', '.', ~get_platform]).
 
 % TODO: (hook)
-% (only for instype=ins)
-installeng :-
-	invoke_gmake_localciao('.', installeng).
+% (only for instype=global)
+install_hook_decl(engine).
+install_hook(engine) :-
+	bold_message("Installing engine and C header files for ~w", [~get_platform]),
+	%
+	install_item([
+          dir(~fsR(bundle_inslib(ciao))),
+	  dir(~enginedir) % set_perms or set_exec_perms?
+        ]),
+	b_install_file_exec(~fsR(concat_k(exec, ~fsR(~build_dir/'objs'/(~get_platformdeb)/(~name_ciaoengine)))), ~fsR(concat_k(exec, ~enginedir/(~name_ciaoengine_arch)))),
+	b_install_file_link_as(concat_k(exec, (~name_ciaoengine_arch)), ~fsR(concat_k(exec, ~enginedir/(~name_ciaoengine)))),
+	%
+	install_c_headers.
 
-% (only for instype=ins)
-installincludes :-
-	invoke_gmake_localciao('.', installincludes).
+install_c_headers :-
+	b_install_dir(~fsR(bundle_inslib(ciao)/'include')), % perms?
+	SrcDir = ~build_dir/'include'/(~get_platformdeb),
+	install_item([
+          dir(bundle_inslib(ciao)/'include'/(~get_platformdeb), [files_from(SrcDir, '*'), del_rec])
+        ]),
+	% include_root
+	% TODO: This does not allow several versions installed at the same time
+	b_install_dir(~include_root),
+	b_install_file_link_as(~fsR(bundle_inslib(ciao)/'include'/(~get_platformdeb)/'ciao_prolog.h'),
+	                       ~include_root/'ciao_prolog.h').
 
-% (only for instype=ins)
-uninstallincludes :-
-	bold_message("Uninstallation of C include files for ~w",
-	    [~get_platform]),
-	delete_dir_rec(~atom_concat(~build_root, ~installedincludedir)),
-	del_file_nofail(~atom_concat([~build_root, ~includeroot,
-		    '/ciao_prolog.h'])).
-
-% TODO: (hook)
-% (only for instype=ins)
-installciaoc :-
-	bold_message("Installation of the compiler"),
-	invoke_gmake_localciao(ciaoc, install).
-
-% TODO: (hook)
-% (only for instype=ins)
-uninstallciaoc :-
-	bold_message("Uninstallation of the compiler"),
-	invoke_gmake_localciao(ciaoc, uninstall).
-
-% TODO: (hook)
-% (only for instype=ins)
-installshell :-
-	bold_message("Installation of the top level shell"),
-	invoke_gmake_localciao(shell, install).
+	% unused? rm -f ${ROOTPREFIX} ~m_installed_ciaoengine_arch_sta,
+	% unused? rm -f ${ROOTPREFIX} ~m_installed_ciaoengine_sta,
 
 % TODO: (hook)
-% (only for instype=ins)
-uninstallshell :-
-	bold_message("Uninstallation of the top level shell"),
-	invoke_gmake_localciao(shell, uninstall).
+% (only for instype=global)
+uninstall_hook_decl(engine).
+uninstall_hook(engine) :-
+	bold_message("Uninstalling engine and C header files for ~w", [~get_platform]),
+	uninstall_item([
+	  dir(bundle_inslib(ciao)/'include'/(~get_platformdeb), [del_rec]),
+	  file(~include_root/'ciao_prolog.h'),
+	  %
+	  file(~fsR(concat_k(exec, ~enginedir/(~name_ciaoengine_arch)))),
+	  file(~fsR(concat_k(exec, ~enginedir/(~name_ciaoengine))))
+        ]).
+%	rm -f ${ROOTPREFIX} ~m_installed_ciaoengine_sta,
+%	rm -f ${ROOTPREFIX} ~m_installed_ciaoengine_arch_sta.
 
-:- doc(bug, "The current installation method cannot uninstall the
-   installed pillow images").
-
-% ============================================================================
+% ===========================================================================
 
 :- doc(section, "Shell Script Configuration").
 
@@ -743,11 +946,19 @@ unregister_cshrc :-
 	).
 
 bashrc_lines(S) :-
-	ciaolibsrc(LibRoot),
+	ciaolibetcsrc(LibRoot),
 	shell_config_code(bash, LibRoot, S, []).
 cshrc_lines(S) :-
-	ciaolibsrc(LibRoot),
+	ciaolibetcsrc(LibRoot),
 	shell_config_code(csh, LibRoot, S, []).
+
+% TODO: Obtain the path from the code that installs the configuration
+%       files!
+ciaolibetcsrc(LibRoot) :-
+	( instype(local) ->
+	    LibRoot = ~fsR(bundle_src(ciao)/'etc')
+	; LibRoot = ~fsR(~ciaolib_root/'ciao')
+	).
 
 % Configuration code for the shell script interpreters
 shell_config_code(bash, LibRoot) -->
@@ -764,29 +975,26 @@ emit_atom(X, S, S0) :-
 	atom_codes(X, Codes),
 	append(Codes, S0, S).
 
-% TODO: Obtain the path from the code that installs the configuration
-%       files!
-ciaolibsrc(LibRoot) :-
-	( instype(src) ->
-	    atom_concat(~component_src(ciao), '/etc', LibRoot)
-	; atom_concat(~ciaolibroot, '/ciao', LibRoot)
-	).
-
-% ---------------------------------------------------------------------------
+% ===========================================================================
 
 :- doc(section, "Tests and Benchmarks").
+
+% TODO: Isolate this code in other module: it uses dynamic use_module
+% TODO: Launch from a different process (so that interference with other code is minimized)
+
+:- use_module(library(compiler), [use_module/2]).
+:- use_module(library(unittest)).
 
 runtests <- [unittests, isotests, ciaotests] :- true.
 
 unittests <- [] # "Run Ciao unit tests" :-
 	bold_message("Running Ciao tests"),
-	run_test_dir(~atom_concat(~component_src(ciao), '/lib'),     []),
-	run_test_dir(~atom_concat(~component_src(ciao), '/library'), []),
-	run_test_dir(~atom_concat(~component_src(ciao), '/contrib'), []).
+	run_test_dir(~fsR(bundle_src(ciao)/'lib'),     [rtc_entry]),
+	run_test_dir(~fsR(bundle_src(ciao)/'library'), [rtc_entry]),
+	run_test_dir(~fsR(bundle_src(ciao)/'contrib'), [rtc_entry]).
 
 ciaotests <- [] # "Run Ciao tests" :-
-	proc_if_dir_exists(~atom_concat(~component_src(ciao), '/tests'),
-	    do_ciaotests).
+	proc_if_dir_exists(~fsR(bundle_src(ciao)/'tests'), do_ciaotests).
 
 do_ciaotests :-
 	working_directory(ThisDir, ThisDir),
@@ -797,49 +1005,30 @@ do_ciaotests :-
 	working_directory(_, ThisDir).
 
 isotests <- [] # "Run ISO-prolog tests" :-
-	atom_concat(~component_src(ciao), '/contrib/iso_tests', IsoTestsDir),
+	IsoTestsDir = ~fsR(bundle_src(ciao)/'contrib'/'iso_tests'),
 	proc_if_dir_exists(IsoTestsDir, do_isotests(IsoTestsDir)).
 
 do_isotests(IsoTestsDir) :-
 	bold_message("Running ISO-prolog tests"),
-	run_test_dir(IsoTestsDir, []).
+	run_test_dir(IsoTestsDir, [rtc_entry]).
 
 runbenchmarks <- [] # "Run Benchmarks" :-
 	ECRC = 'ecrc',
 	use_module(ciaosrc(library(benchmarks(ECRC))), [main/1]),
 	ECRC:main([]).
+% TODO: also include (or merge) these:
+%   optim_comp/testsuite/multisystemtests/quick_test.sh
+%   ciao/examples/misc/ (see Makefile) -- too small, need at least scaling
 
 % ============================================================================
 
 :- doc(section, "Emacs Mode").
 
-% TODO: (hook)
-emacs_support <- :-
-	( ( install_emacs_support(yes)
-	  ; install_xemacs_support(yes)
-	  ) ->
-	    emacs_mode_compile
-	; note_message("Emacs support will not be installed")
-	).
+emacsmode_dir := bundle_src(ciaode)/'emacs-mode'.
 
-emacs_mode_compile <- [] :-
-	emacs_mode_compile.
-
-emacs_mode_compile :-
-	bold_message("Compiling emacs library files"),
-	do_emacs_mode_compile.
-
-% TODO: wrong name, only for the emacs mode
-% (see also emacs-mode/Makefile)
-ciao_lib_dir_(src) := ~atom_concat(~component_src(ciaode), '/emacs-mode').
-ciao_lib_dir_(ins) := ~libdir.
-
-ins_ciao_lib_dir := ~ciao_lib_dir_(~instype).
-
-ciaoreallibdir_(src) := ~component_src(ciao).
-ciaoreallibdir_(ins) := ~reallibdir.
-
-ciaoreallibdir := ~ciaoreallibdir_(~instype).
+ciaoreallib_dir := ~ciaoreallib_dir_(~instype).
+ciaoreallib_dir_(local) := ~fsR(bundle_src(ciao)).
+ciaoreallib_dir_(global) := ~fsR(bundle_inslib(ciao)).
 
 emacsstylepath('Win32', Dir, Path) :- !,
 	atom_codes(Dir, SDir),
@@ -847,126 +1036,199 @@ emacsstylepath('Win32', Dir, Path) :- !,
 emacsstylepath(_, Dir, Path) :- !,
 	atom_codes(Dir, Path).
 
-
-emacs_path(Emacs) :-
-	name_value(emacs_path, Emacs0),
-	winpath(Emacs, Emacs0),
-	!.
-emacs_path(Emacs) :-
-	% find_emacs(Emacs),
-	emacs_for_ciao(Emacs),
-	!.
-emacs_path(XEmacs) :-
-	% find_xemacs(XEmacs).
-	xemacs_for_ciao(XEmacs).
-
 emacs_type(EmacsType) :-
+	% TODO: emacs_type is set to 'Win32' only from makedir/runwin32.bat
 	name_value(emacs_type, EmacsType),
 	!.
 emacs_type(posix).
 
-script_extension('Win32', ".bat") :- !.
-script_extension(_,       "").
+% TODO: Why? 
+script_extension('Win32', '.bat') :- !.
+script_extension(_,       '').
 
-do_emacs_mode_compile :-
-	emacs_type(EmacsType),
-	get_dir_for_emacs(EmacsType, ins_ciao_lib_dir, CiaoLibDir),
-	get_dir_for_emacs(EmacsType, docdir, DocDir),
-	replace_strings_in_file([
-		["<v>CIAOLIBDIR</v>", CiaoLibDir],
-		["<v>LPDOCDIR</v>", DocDir]],
-	    '../emacs-mode/ciao-mode-init.el.skel',
-	    '../emacs-mode/ciao-mode-init.el'),
-	replace_strings_in_file([["\n", "\n;;"]],
-	    '../emacs-mode/ciao-mode-init.el',
-	    '../emacs-mode/ciao-mode-init.tmp'),
-	replace_strings_in_file([["\n", "\n;;"]],
-	    '../emacs-mode/CiaoMode.pl',
-	    '../emacs-mode/CiaoMode.pl.tmp'),
-	set_perms(['../emacs-mode/ciao-mode-init.el'], ~perms),
-	file_to_string('../emacs-mode/ciao.el.header', String, ";;"|| Tail0),
-	file_to_string('../emacs-mode/ciao-mode-init.tmp', Tail0, Tail1),
-	file_to_string('../emacs-mode/CiaoMode.pl.tmp',    Tail1, Tail2),
-	emacs_type_specific(EmacsType, Tail2, Tail3),
-	% Generation of ciao.el.tmp
-	get_dir_for_emacs(EmacsType, ciaobindir,     CiaoBinDir),
-	get_dir_for_emacs(EmacsType, ciaoreallibdir, CiaoRealLibDir),
-	get_app_for_emacs(EmacsType, "plindent", ciao, ~atom_codes(~get_ciao_ext), PlIndent),
-	script_extension(EmacsType, ScriptExt),
-	get_app_for_emacs(EmacsType, "ciao",   ciao,   ScriptExt, CiaoShell),
-	get_app_for_emacs(EmacsType, "ciaopp", ciaopp, ScriptExt, CiaoPPShell),
-	get_dir_for_emacs(EmacsType, get_lpdoclibdir, LpdocLibDir),
-	replace_strings_in_file([["<v>DEVELOPMENT_VERSION</v>",
-		    ~atom_codes(~component_version_patch(ciaode))],
-		["<v>CIAOBINDIR</v>",     CiaoBinDir],
-		["<v>CIAOREALLIBDIR</v>", CiaoRealLibDir],
-		["<v>LPDOCDIR</v>",       DocDir],
-		["<v>PLINDENT</v>",       PlIndent],
-		["<v>CIAOSHELL</v>",      CiaoShell],
-		["<v>CIAOPPSHELL</v>",    CiaoPPShell],
-		["<v>LPDOCLIBDIR</v>",    LpdocLibDir]],
-	    '../emacs-mode/ciao.el.skel', '../emacs-mode/ciao.el.tmp'),
-	%
-	file_to_string('../emacs-mode/ciao.el.tmp', Tail3, ""),
-	string_to_file(String, '../emacs-mode/ciao.el'),
-	do(['cd ../emacs-mode ; \"', ~emacs_path,
-		'\" -batch -l word-help.el -l ciao.el -f compile-ciao-mode'],
-	    '../emacs-mode/emacs_mode.log', '../emacs-mode/emacs_mode.err',
-	    [show_error_on_error, show_output_on_error, nofail]),
-	del_files_nofail(['../emacs-mode/CiaoMode.pl.tmp',
-		'../emacs-mode/ciao-mode-init.tmp',
-		'../emacs-mode/ciao.el.tmp']),
-	set_perms(['../emacs-mode/ciao.elc', '../emacs-mode/word-help.elc'], ~perms).
+% Here is how this all works: 
+% 
+% - During installation ('ciaosetup build emacs_mode' and 'ciaosetup
+%   install_emacs_mode'):
+%
+%   * The ciao-config.el.skel file is filled with configuration
+%     parameters for the installed system to produce ciao-config.el,
+%     which is installed in the libraries. The current Ciao version is
+%     also included in ciao-config.el at this time.
+%
+%   * All .el files in the libraries are byte-compiled.
+%    
+% - Generating the documentation ('ciaosetup docs'):
+%
+%   * CiaoMode.lpdoc is generated from ciao-documentation.el using
+%     emacs (contains and extracts the documentation for all the elisp
+%     functions). CiaoMode.pl is included as a chapter in the Ciao
+%     manual.
 
-get_dir_for_emacs('Win32', ciaobindir, EmacsDir) :- !,
-	flatten(["\"", ~emacsstylepath('Win32', ~component_src(ciaode)),
-		 "/build/bin\""], EmacsDir).
+% TODO: Move to a specific installation for emacs-mode
+% (used only from 'ciaosetup')
+build_emacs_mode <- :- build_item(emacs_mode).
+install_emacs_mode <- :-
+        install_item(~emacs_mode_desc).
+uninstall_emacs_mode <- :-
+        uninstall_item(~emacs_mode_desc).
+
+emacs_mode_desc := 
+  big_group("Emacs mode for Ciao", [
+    only_global_ins([
+      emacs_mode
+    ])
+  ]).
+
+% TODO: Each bundle should be able to register parts of the CiaoMode
+%       That will solve @bug{lpdoclibdir_emacs_mode}
+build_hook_decl(emacs_mode).
+build_hook(emacs_mode) :-
+	build_emacs_mode.
+
+% ---------------------------------------------------------------------------
+% (in order to share code, make the emacs kind a parameter)
+
+with_emacs_mode_k(emacs) :- with_emacs_mode(yes).
+with_emacs_mode_k(xemacs) :- with_xemacs_mode(yes).
+
+update_dotemacs_k(emacs) :- update_dotemacs(yes).
+update_dotemacs_k(xemacs) :- update_dotxemacs(yes).
+
+dotemacs_k(emacs) := ~dotemacs.
+dotemacs_k(xemacs) := ~dotxemacs.
+
+with_any_emacs_mode :-
+        ( with_emacs_mode_k(emacs) -> true
+	; with_emacs_mode_k(xemacs)
+	).
+
+emacs_site_start_k(emacs) := ~emacs_site_start.
+emacs_site_start_k(xemacs) := ~xemacs_site_start.
+
+% ---------------------------------------------------------------------------
+
+% TODO: I need to change lpdist/skip_settings:skip_raw_files/1 if more
+%       files are added.
+build_emacs_mode :-
+	\+ with_any_emacs_mode,
+	!,
+	note_message("Emacs support will not be installed").
+build_emacs_mode :-
+	% TODO: Use better log names (append them?)
+	bold_message("Building the Emacs mode for Ciao"),
+	% First, generate 'ciao-config.el' from 'ciao-config.el.skel'
+	generate_emacs_config,
+	% Generate autoloads automatically with 'batch-update-autoloads'
+	Dir = ~emacsmode_dir,
+	Init = ~fsR(Dir/'ciao-site-file.el'),
+	emacs_update_autoloads(Dir, 'emacs_mode3', Init),
+	% Compile to elisp bytecode the .el files
+        EL = ~ciao_mode_el_files,
+        ELC = ~ciao_mode_elc_files,
+	emacs_batch_byte_compile(Dir, 'emacs_mode', EL),
+	set_perms(~fsRlist_rel(Dir, ELC), ~perms),
+	bold_message("Emacs mode for Ciao build completed").
+
+% The path of alias 'lpdoclib'
+% TODO: @begin{bug}{lpdoclibdir_emacs_mode}
+%   Duplicated in makedir_part_lpdoc.pl. This should not be necessary if
+%   the emacs mode calls LPdoc, or if the emacs-mode can be extended with
+%   parts from other bundles dynamically.
+% @end{bug}
+my_lpdoclib_dir := ~my_lpdoclib_dir_(~instype).
+my_lpdoclib_dir_(local) := ~fsR(bundle_src(lpdoc)/lib).
+my_lpdoclib_dir_(global) := ~fsR(concat_ver(lpdoc, ~ciaolib_root/lpdoc/('lpdoc'))).
+
+get_bindir_for_emacs(EmacsType, EmacsDir) :-
+	( EmacsType = 'Win32' ->
+	    % TODO: Why?
+	    Dir = ~buildbin_dir
+	; Dir = ~ciaobin_dir
+	),
+	get_dir_for_emacs(EmacsType, Dir, EmacsDir).
+
+% TODO: use ciao-root-dir for all EmacsType?
 get_dir_for_emacs('MacOSBundle', Dir, EmacsDir) :- !,
-	flatten(["(concat ciao-root-dir \"",
-		~atom_codes(~ Dir), "\")"], EmacsDir).
+	flatten(["(concat ciao-root-dir \"", ~atom_codes(Dir), "\")"], EmacsDir).
 get_dir_for_emacs(EmacsType, Dir, EmacsDir) :-
-	flatten(["\"", ~emacsstylepath(EmacsType, ~ Dir), "\""], EmacsDir).
+	flatten(["\"", ~emacsstylepath(EmacsType, Dir), "\""], EmacsDir).
 
-get_app_for_emacs(EmacsType, App, Component, Ext, AppShell) :-
-	component(Component),
-	component_version(Component, Version),
-	get_app_for_emacs_(EmacsType, App, Version, Ext, AppShell),
+get_app_for_emacs(EmacsType, App, Bundle, Kind, AppShell) :-
+	registered_bundle(Bundle),
+	get_app_for_emacs_(EmacsType, App, Bundle, Kind, AppShell),
 	!.
 % Avoid failure if the App is not being installed:
 get_app_for_emacs(_, App, _Version, _, AppShell) :-
-	flatten(["\"", App, "\""], AppShell).
+	flatten(["\"", ~atom_codes(App), "\""], AppShell).
 
-get_app_for_emacs_('Win32', App, Version, Ext, AppShell) :-
-	% TODO: Why this special case? (both clauses look the same)
-	!,
-	flatten(["(concat ciao-bin-dir \"/", App, "-",
-		~atom_codes(Version), Ext, "\")"], AppShell).
-get_app_for_emacs_(_, App, Version, Ext) :=
-	~flatten(["(concat ciao-bin-dir \"/", App,
-		"-", ~atom_codes(Version), Ext, "\")"]).
+get_app_for_emacs_(EmacsType, App, Bundle, Kind, AppShell) :-
+	( Kind = plexe -> K = plexe
+	; Kind = script -> K = ext(~script_extension(EmacsType))
+	),
+	App2 = ~fsR(concat_verk(Bundle, K, App)),
+	AppShell = ~flatten(["(concat ciao-bin-dir \"/", ~atom_codes(App2), "\")"]).
 
+% Avoid failure if the bundle is not there
+get_bundle_name_version_patch_for_emacs(Bundle, NameVersion):-
+	registered_bundle(Bundle),
+	bundle_name_version_patch(Bundle, NameVersion), 
+	!.
+get_bundle_name_version_patch_for_emacs(Bundle, Bundle).
+
+% ---------------------------------------------------------------------------
+% Generate ciao-config.el from ciao-config.el.skel
+
+generate_emacs_config :-
+	emacs_type(EmacsType),
+	EmacsModeDir = ~emacsmode_dir,
+	%
+	% TODO: 'EmacsType' probably should not be necessary
+	emacs_type_specific(EmacsType, String, Tail3),
+	%
+	% TODO: this should not be necessary; the emacs-mode should
+	% call lpdoc to do things such as generation of SETTINGS.pl
+	load_template(EmacsModeDir/'ciao-config.el', [
+            'CIAODE_VERSION' = ~bundle_version_patch(ciaode),
+	    % Paths
+	    'CIAOBINDIR' = ~get_bindir_for_emacs(EmacsType),
+	    'CIAOREALLIBDIR' = ~get_dir_for_emacs(EmacsType, ~ciaoreallib_dir),
+	    'LPDOCDIR' = ~get_dir_for_emacs(EmacsType, ~docdir),
+	    'LPDOCLIBDIR' = ~get_dir_for_emacs(EmacsType, ~my_lpdoclib_dir),
+	    % Manuals
+            'CIAO_NAME_VERSION' = ~get_bundle_name_version_patch_for_emacs('ciao'),
+            'CIAOPP_NAME_VERSION' = ~get_bundle_name_version_patch_for_emacs('ciaopp'),
+            'LPDOC_NAME_VERSION' = ~get_bundle_name_version_patch_for_emacs('lpdoc'),
+	    % Binaries
+	    'PLINDENT' = ~get_app_for_emacs(EmacsType, 'plindent', ciao, plexe),
+	    'CIAOSHELL' = ~get_app_for_emacs(EmacsType, 'ciao', ciao, script),
+	    'CIAOPPSHELL' = ~get_app_for_emacs(EmacsType, 'ciaopp', ciaopp, script),
+	    'LPDOCEXEC' = ~get_app_for_emacs(EmacsType, 'lpdoc', lpdoc, plexe)
+        ], Tail3, ""),
+	%
+	string_to_file(String, ~fsR(EmacsModeDir/'ciao-config.el')).
+
+% TODO: use ciao-root-dir for all EmacsType?
 emacs_type_specific('MacOSBundle', String, Tail) :- !,
-	% TODO: Here are many hardwired paths!
- 	atom_codes(~component_version(ciao), Vers),
+	% TODO: do not use a hardwired value for Root!
+	Root = '/usr/lib/ciao',
+	% TODO: do not use a hardwired value for Engine!
+	Lib = ~fsR(concat_ver(ciao, Root/'ciao')),
+	Engine = ~fsR(Lib/'engine'/'ciaoengine.DARWINi86'),
 	append([
-	    ";; Beginning of the specific to  MacOS Application Bundle\n"||
+	    ";; Beginning of the specific part to MacOS Application Bundle\n"||
 	    "(defvar ciao-root-dir "||
 	    "\"/Applications/Emacs.app/Contents/Resources\"\n"||
 	    "        \"path of Emacs Application Bundle\")\n\n"||
-	    "(setenv \"CIAOENGINE\" (concat ciao-root-dir "||
-	    "\"/usr/lib/ciao/ciao-", Vers, "/engine/ciaoengine.DARWINi86\"))\n"||
+	    "(setenv \"CIAOENGINE\" (concat ciao-root-dir \"", ~atom_codes(Engine), "\"))\n"||
 	    "(setenv \"CIAOLIB\" (concat ciao-root-dir "||
-	    "\"/usr/lib/ciao/ciao-", Vers, "/\"))\n\n"||
-	    ";; End of the specific part to  MacOS Application Bundle\n\n", Tail],
+	    "\"", ~atom_codes(Lib), "/\"))\n\n"||
+	    ";; End of the specific part to MacOS Application Bundle\n\n", Tail],
 	    String).
 emacs_type_specific('Win32', String, Tail) :- !,
 	emacsstylepath('Win32', ~build_doc_dir, SDirS),
-% 	atom_codes(~component_version(ciaode), Vers),
 	append([
 		";; Specific to Windows installation:\n"||
-% 	   ";; Location of Ciao shell\n",
-% 	   "(setq ciao-system (convert-standard-filename \n",
-% 	   "      \"",SDirS,"/build/bin/ciaosh-",Vers,".bat\"))\n"||
 		";; Location of info manuals\n"||
 		"(setq Info-default-directory-list  (cons \n"||
 		"      \""|| SDirS, "\" \n"||
@@ -988,27 +1250,37 @@ emacs_type_specific('Win32', String, Tail) :- !,
 	    String).
 emacs_type_specific(_, T, T).
 
-register_emacs :-
-	( install_emacs_support(yes), update_dotemacs(yes) ->
-	    (-register_in_script(~dotemacs, ";", ~emacs_config))
+% ---------------------------------------------------------------------------
+
+% (called from 'ciaosetup' (for testing))
+register_emacs_mode <- [] :- register_emacs_mode.
+% (called from 'ciaosetup' (for testing))
+unregister_emacs_mode <- [] :- unregister_emacs_mode.
+
+register_emacs_mode :-
+	register_emacs(emacs),
+	register_emacs(xemacs).
+
+register_emacs(EmacsKind) :-
+	( with_emacs_mode_k(EmacsKind) ->
+	    ( emacs_init_file(EmacsKind, InitFile) ->
+	        (-register_in_script(InitFile, ";", ~emacs_config))
+	    ; % Do not register
+	      true
+	    )
 	; true
 	).
 
-register_xemacs :-
-	( install_xemacs_support(yes), update_dotxemacs(yes) ->
-	    (-register_in_script(~dotxemacs, ";", ~emacs_config))
-	; true
-	).
+unregister_emacs_mode :-
+	unregister_emacs(emacs),
+	unregister_emacs(xemacs).
 
-unregister_emacs :-
-	( install_emacs_support(yes), update_dotemacs(yes) ->
-	    (-unregister_from_script(~dotemacs, ";"))
-	; true
-	).
-
-unregister_xemacs :-
-	( install_xemacs_support(yes), update_dotxemacs(yes) ->
-	    (-unregister_from_script(~dotxemacs, ";"))
+unregister_emacs(EmacsKind) :-
+	( with_emacs_mode_k(EmacsKind) ->
+	    ( emacs_init_file(EmacsKind, InitFile) ->
+	        (-unregister_from_script(InitFile, ";"))
+	    ; true
+	    )
 	; true
 	).
 
@@ -1020,49 +1292,373 @@ emacs_config_(Lib) -->
 	"(load-file \"", emit_atom(Lib), "\")\n"||
 	")\n".
 
+% The absolute path for the 'ciao-site-file.el' file
 ciaolibemacs(LibEmacs) :-
-	( instype(src) ->
-	    atom_concat(~component_src(ciaode), '/emacs-mode/ciao-mode-init.el', LibEmacs)
-	; atom_concat([~ciaolibroot, '/ciao/', ~component_name_version(ciao), '/ciao-mode-init.el'], LibEmacs)
+	( instype(local) ->
+	    LibEmacs = ~fsR(~emacsmode_dir/'ciao-site-file.el')
+	; % TODO: Place the version in the right place automatically?
+	  % TODO: Verify that the rest of .el files are in the correct directory.
+	  LibEmacs = ~fsR(concat_ver(ciao, ~ciaolib_root/ciao/('ciao'))/'ciao-site-file.el')
 	).
 
+% ---------------------------------------------------------------------------
+
 % TODO: (hook)
-docs_emacs <- [emacs_mode_compile] # "Creation of emacs documentation files" :-
-	docs_emacs.
+% TODO: docs always must be done after build, not before!
+% Creation of LPdoc documentation files for emacs-mode
+
+% TODO: (temporal hook before emacs mode is separated in its own bundle)
+emacs_mode_docs <- [] :- docs_emacs.
 
 docs_emacs :-
-	invoke_gmake_localciao('../emacs-mode', docs).
+	mkf_emacs_docs.
+
+mkf_emacs_docs :-
+	EmacsModeDir = ~emacsmode_dir,
+	emacs_batch_call(EmacsModeDir, 'emacs_mode2', % TODO: right log name?
+	  ['--eval \'(setq load-path (cons "." load-path))\'',
+	   ' -l ciao-documentation.el',
+	   ' -f ciao-mode-documentation']),
+	%
+	set_perms(~fsR(EmacsModeDir/'CiaoMode.lpdoc'), ~perms),
+	touch(~fsR(EmacsModeDir/'CiaoMode.pl')).
+
+icon_dir := ~fsR(bundle_inslib(ciao)/'icons').
+
+%-----------------------------------------------------------------------------
 
 % TODO: (hook)
-% (only for instype=ins)
-installemacsmode :-
-	bold_message("Installation of graphical env (emacs mode)"),
-	( (install_emacs_support(yes) ; install_xemacs_support(yes)) ->
-	    invoke_gmake_localciao('../emacs-mode', install)
+% (only for instype=global)
+install_hook_decl(emacs_mode).
+install_hook(emacs_mode) :-
+	bold_message("Installing Ciao emacs-mode (Emacs based IDE)"),
+        % (only for global installation)
+	Dir = ~emacsmode_dir,
+	Loader = ~fsR(Dir/'ciao-mode-init.el'),
+        string_to_file(~emacs_config, Loader),
+	( with_any_emacs_mode ->
+	    mkf_emacs_install
 	; true
 	).
 
 % TODO: (hook)
-% (only for instype=ins)
-uninstallemacsmode :-
-	bold_message("Uninstallation of the graphical env (emacs mode)"),
-	invoke_gmake_localciao('../emacs-mode', 'uninstall').
+% (only for instype=global)
+uninstall_hook_decl(emacs_mode).
+uninstall_hook(emacs_mode) :-
+	bold_message("Uninstalling Ciao emacs-mode (Emacs based IDE)"),
+	( with_any_emacs_mode ->
+	     mkf_emacs_uninstall
+	; true
+	).
+
+mkf_emacs_install :-
+	install_item(~mkf_emacs_mode_desc).
+
+mkf_emacs_uninstall :-
+	uninstall_item(~mkf_emacs_mode_desc).
+
+mkf_emacs_mode_desc := [
+	  dir(~fsR(bundle_inslib(ciao)), [do_not_del]),
+	  dir(~icon_dir, [files_from(~emacsmode_dir/icons), del_rec]),
+	  ~ciao_mode_lisp_desc,
+	  ~ciao_mode_init_desc(xemacs),
+	  ~ciao_mode_init_desc(emacs)
+	].
+
+% TODO: Remember to 'update ciao/library/lpdist/win32/CiaoDE.iss.skel'
+%       if the files here are modified. Ideally, that file should not
+%       contain any hardwired list of files.
+
+% TODO: Merge this part with register. Make emacsinitfile a particular
+% case.
+ciao_mode_init_desc(EmacsKind) := Desc :-
+	with_emacs_mode_k(EmacsKind),
+        MidDir = ~emacs_site_start_k(EmacsKind),
+        is_site_start_d(MidDir),
+	!,
+        Mid = MidDir/(~emacsinitfile),
+	Desc = [
+          dir(MidDir, [do_not_del]),
+          lib_file_list(~emacsmode_dir, [
+            'ciao-mode-init.el'-[mid(Mid)] % TODO: why?
+          ])
+        ].
+ciao_mode_init_desc(_) := [].
+
+% Obtain the appropriate configuration file for this system or
+% installation (.emacs or site-start.el). This predicate fails if no
+% change is required, because the mode is installed through the
+% site-start.d/ directory (Debian only?), or because the Ciao Emacs
+% Mode is disabled.
+emacs_init_file(EmacsKind) := InitFile :-
+        ( % Local installation, register in your .emacs file
+	  instype(local), update_dotemacs_k(EmacsKind) ->
+	    InitFile = ~dotemacs_k(EmacsKind)
+	; % Register in the site-start file (just in case that)
+	  % the site-start.d directory was not found; see
+	  % `ciao_mode_init_desc/2`)
+	  Dir = ~emacs_site_start_k(EmacsKind),
+	  \+ is_site_start_d(Dir) ->
+	    InitFile = ~fsR(Dir/'site-start.el')
+	; % No init file has to be modified
+	  fail
+	).
+
+% Check that Dir is a site-start.d directory
+is_site_start_d(Dir) :-
+        atom_concat(_, '/site-start.d', Dir).
+
+ciao_mode_lisp_desc :=
+	lib_file_list(~emacsmode_dir, 
+          ~append(
+            ~addprops(~ciao_mode_el_files, [copy_and_link]),
+            ~addprops(~ciao_mode_elc_files, [copy_and_link]))).
+
+ciao_mode_lisp_files := [
+	'word-help',
+	'ciao-help',
+	'ciao-faces',
+	'ciao-syntax',
+	'ciao-parsing',
+	'ciao-aux',
+	'ciao-font-lock',
+	'ciao-vc',
+	'ciao-scratchpad',
+	'ciao-process',
+	'ciao-compile',
+	'ciao-loading',
+	'ciao-testing',
+	'ciao-debugger',
+	'ciao-lpdoc',
+	'ciao-ciaopp',
+	'java-ciaopp',
+	'ciao-bundle',
+	'ciao-optim-comp',
+	'ciao-org',
+	'ciao-widgets',
+	'ciao-common',
+	'ciao-config',
+	'ciao-splash',
+	'ciao-bindings',
+	'ciao'].
+
+ciao_mode_el_files := ~add_suffix(~ciao_mode_lisp_files, '.el').
+ciao_mode_elc_files := ~add_suffix(~ciao_mode_lisp_files, '.elc').
+
+% ----------------------------------------------------------------------------
+
+clean_emacs_mode <- :- clean_emacs_mode.
+clean_emacs_mode :-
+	bold_message("Cleaning up emacs directory...", []),
+	EmacsModeDir = ~emacsmode_dir,
+	% TODO: necessary? repeated?
+	del_file_nofail(~fsR(EmacsModeDir/'ciao-site-file.el')),
+	% clean log files
+	clean_log(EmacsModeDir, 'emacs_mode'),
+	clean_log(EmacsModeDir, 'emacs_mode2'),
+	clean_log(EmacsModeDir, 'emacs_mode3').
+%	del_file_nofail(~fsR(EmacsModeDir/'*~' pattern?)).
+
+distclean_emacs_mode <- :-
+	clean_emacs_mode,
+	EmacsModeDir = ~emacsmode_dir,
+	% (automatically generated files)
+	del_file_nofail(~fsR(EmacsModeDir/'CiaoMode.lpdoc')),
+	del_file_nofail(~fsR(EmacsModeDir/'ciao-config.el')),
+	del_files_nofail(~add_prefix(~ls(~fsR(EmacsModeDir), '*.itf|*.po|*.asr|*.elc'),
+	                             ~atom_concat(~fsR(EmacsModeDir), '/'))).
+
+% ---------------------------------------------------------------------------
+% Interface to Emacs batch functions
+
+% Invoke the Emacs 'batch-update-autoloads' function to generate the
+% autoload file AutoloadEL.
+emacs_update_autoloads(Dir, Log, AutoloadEL) :-
+	emacs_batch_call(Dir, Log,
+	                 ~atom_concat([
+		           '--eval \'(setq generated-autoload-file "', AutoloadEL, '")\'',
+			   ' -f batch-update-autoloads "."'])).
+
+% Invoke the Emacs 'batch-byte-compile' function to byte compile the
+% specified EL_Files elisp files.
+emacs_batch_byte_compile(Dir, Log, EL_Files) :-
+	emacs_batch_call(Dir, Log,
+	  ['--eval \'(setq load-path (cons "." load-path))\'',
+	   ' -f batch-byte-compile '|
+           (~listsep(EL_Files, ' '))]).
+
+% ---------------------------------------------------------------------------
+% (Auxiliary predicates)
+
+% From [X1,...Xn], get [X1, Sep, ..., Sep, Xn]
+listsep([], _Sep) := [] :- !.
+listsep([X], _Sep) := [X] :- !.
+listsep([X|Xs], Sep) := [X, Sep | ~listsep(Xs, Sep)].
+
+% Add the property list Prop to each of Xs (for bundle description)
+addprops([], _Props) := [].
+addprops([X|Xs], Props) := [X-Props | ~addprops(Xs, Props)].
+
+% Resolve a list of files, relative to Dir
+fsRlist_rel(Dir, Xs) := ~fsRlist_rel_(Xs, Dir).
+
+fsRlist_rel_([], _) := [].
+fsRlist_rel_([X|Xs], Dir) := [Y| ~fsRlist_rel_(Xs, Dir)] :-
+	Y = ~fsR(Dir/X).
 
 % ===========================================================================
+% Enumeration of the standalone utilities in etc/ and etc_contrib/
+% TODO: Generalize and split
 
-:- doc(section, "Miscellaneous").
+:- use_module(library(aggregates), [findall/3]).
+:- use_module(library(terms)).
 
-tags <- [~tags] # "Creation of TAGS for use with the find-tag command "||
-	"(ESC-.) in emacs" :- true.
+etc_dir := bundle_src(ciao)/etc.
+etc_contrib_dir := bundle_src(ciao)/etc_contrib.
 
-tags := ~atom_concat(~component_src(ciao), '/TAGS').
+def_hook_decl(etc_utilities).
+def_hook(etc_utilities) :=
+	group("etc/ standalone utilities",
+          standalone_list(ciao, ~etc_dir, ~etc_utilities)).
 
-~tags <- ['Makefile.pl'] :-
-	tags(Tags),
-	component_src(ciao, Ciaosrc),
-	del_file_nofail(Tags),
-	list_filter_files_rec(Ciaosrc, '*.pl', '', '', '', [], List),
-	etags(List, Tags).
+etc_utilities := ~findall(B-[K], etc_utility(B, K)).
 
-deltags <- [] # "Deletion of TAGS file" :-
-	del_file_nofail(~tags).
+etc_utility(B, K) :-
+	( plutility(B), K = plexe
+	; shscript(B), K = shscript
+	).
+
+plutility :=
+	'fileinfo'|
+	'get_deps'|
+	'pldiff'|
+	'viewpo'|
+	'lpmake'|
+	'plindent'|
+	'show_asr'|
+	'show_deps'|
+	'compiler_output'|
+	'checkline'.
+
+% TODO: strange... enumerated for installation, add a table of exec+kind instead
+shscript :=
+	'ciao_get_arch'|
+        'ciao'.
+
+def_hook_decl(etc_contrib_utilities).
+def_hook(etc_contrib_utilities) :=
+	group("etc_contrib/ standalone utilities",
+	  standalone_list(ciao, ~etc_contrib_dir, ~etc_contrib_utilities)).
+
+etc_contrib_utilities := ~findall(B-[K], etc_contrib_utility(B, K)).
+
+etc_contrib_utility(B, K) :-
+	plutility_contrib(B), K = plexe.
+
+% TODO: distribute those utils?
+plutility_contrib :=
+	'synch_actions'|
+	'cleandirs'.
+
+% ============================================================================
+
+% (hook)
+build_etc :-
+	build_item(dot_shell(csh)),
+	build_item(dot_shell(sh)),
+	build_item(etc_utilities),
+	build_item(etc_contrib_utilities),
+	build_item(ciao_get_arch),
+	build_item(ciaocl).
+
+% Generate shell initialization files
+build_hook_decl(dot_shell(_)).
+build_hook(dot_shell(Sh)) :-
+	normal_message("Creating ~w", [~dot_shell_file(Sh)]),
+	wr_template(origin, ~etc_dir, ~dot_shell_file(Sh), [
+	    'CiaoDocDir' = ~docdir,
+	    'CiaoBinDir' = ~ciaobin_dir,
+	    'ConfigOptimizingCompiler' = ~optimizing_compiler_string(Sh)
+        ]).
+
+dot_shell_file(csh) := 'DOTcshrc'.
+dot_shell_file(sh) := 'DOTprofile'.
+
+:- use_module(library(llists), [flatten/2]).
+
+% TODO: Merge
+optimizing_compiler_string(Shell) :=
+	~optimizing_compiler_string_(Shell, ~optimizing_compiler).
+optimizing_compiler_string_(_, no) := "" :- !.
+optimizing_compiler_string_(csh, yes) :=
+	~flatten(["eval `", ~atom_codes(~ciao_lib_dir), "/optim_comp/ciaotool csh-env`"]).
+optimizing_compiler_string_(sh, yes) :=
+	~flatten(["eval $(", ~atom_codes(~ciao_lib_dir), "/optim_comp/ciaotool bash-env)"]).
+
+% Generate 'ciao' startup script
+build_hook_decl(ciaocl).
+build_hook(ciaocl) :-
+	normal_message("Building '~w' (command line)", ['ciao']),
+	wr_template(kver(shscript, ciao), ~etc_dir, 'ciao', [
+	    'ExtraCommands' = ~ciao_extra_commands,
+	    'CiaoVersion' = ~bundle_version(ciao),
+	    'CiaoSuffix' = ~get_ciao_ext,
+	    'CiaoBinDir' = ~ciaobin_dir
+        ]),
+	b_link(shscript, ciao, 'ciao'),
+ 	( install_prolog_name(yes) ->
+ 	    b_link_as(shscript, ciao, 'ciao', 'prolog')
+ 	; true
+ 	).
+
+build_hook_decl(ciao_get_arch).
+build_hook(ciao_get_arch) :-
+	normal_message("Building '~w' (command line)", ['ciao_get_arch']),
+	% TODO: we build nothing here (just copy) but the user does not want to know
+	b_copy(shscript, ciao, ~etc_dir, 'ciao_get_arch'),
+	b_link(shscript, ciao, 'ciao_get_arch').
+
+% ============================================================================
+
+def_hook_decl(dot_shell_).
+def_hook(dot_shell_) :=
+  small_group("shell initialization scripts",
+    lib_file_list(~etc_dir, [
+      'DOTprofile'-[copy_and_link],
+      'DOTcshrc'-[copy_and_link]
+    ])).
+
+def_hook_decl(ciaocl_).
+def_hook(ciaocl_) := R :-
+	( install_prolog_name(yes) ->
+	    Opts = [link_as('prolog')]
+	; Opts = []
+	),
+	R = small_group("'ciao' (command line)", 
+	      bin_copy_and_link(shscript, ciao, 'ciao', Opts)).
+
+% (only for instype=global)
+install_hook_decl(etc).
+install_hook(etc) :-
+	install_item(~etc_desc).
+
+% (only for instype=global)
+uninstall_hook_decl(etc).
+uninstall_hook(etc) :-
+	uninstall_item(~etc_desc).
+
+etc_desc := [
+	dir(~ciaobin_dir, [do_not_del]),
+	dot_shell_,
+	ciaocl_,
+	etc_utilities,
+	etc_contrib_utilities
+        ].
+
+% TODO: 'NewUser' (like the rest of README files) is not
+%       installed together with the documentation. Is it right?
+%%	b_uninstall_file(~lib_dir/'NewUser'),
+
+
+
+

@@ -1,4 +1,4 @@
-:- module(engine_path, [get_engine/4], [assertions]).
+:- module(engine_path, [], [assertions]).
 
 :- use_module(library(system)).
 
@@ -11,7 +11,30 @@
 % library directory; hence the direct/generic atom in the third
 % argument. 
 
-% Windows engines always same name (at least for now)
+:- doc(bug, "Find a better way to implement this (JFMC)").
+
+:- doc(bug, "Generation of a static engine requires that also the
+	foreign modules be compiled together with the engine.
+	Currently the engine is always dynamic. -- EMM.").
+
+:- export(get_engine_file/2).
+get_engine_file(TargetEng, Engine) :-
+	get_engine_common(TargetEng, Engine, _EngDir).
+
+:- export(get_engine_dir/2).
+% TODO: why not the value stored in the configuration? (see ciao_config_options.pl)
+get_engine_dir(TargetEng, EngDir) :-
+	get_engine_common(TargetEng, _Engine, EngDir).
+
+get_engine_common(TargetEng, Engine, EngDir) :-
+	ciao_lib_dir(LibDir),
+	determine_engine_name(TargetEng, EngName, Where),
+	determine_engine_dir(TargetEng, Where, LibDir, EngDir),
+	atom_concat(EngDir, EngName, Engine),
+	file_exists(Engine),
+	!. % cut here (once we finally found the engine)
+
+% Windows engines always have the same name (at least for now)
 determine_engine_name('Win32i86', 'ciaoengine.exe', direct).
 % Other engines have different names according to placement!
 determine_engine_name(TargetEng, Engine, direct) :- % If in installation
@@ -20,24 +43,23 @@ determine_engine_name(TargetEng, Engine, direct) :- % If in installation
 	stat_extension(Sta),
 	atom_concat(Eng1, Sta, Engine).
 determine_engine_name(TargetEng, Engine, generic) :- % For sources
+	TargetEng \== 'Win32i86',
 	stat_extension(Sta),
-	atom_concat('ciaoengine', Sta, Engine),
-	TargetEng \== 'Win32i86'.
-
-:- doc(bug, "Generation of a static engine requires that also the
-	foreing modules be compiled together the engine.  Currently
-	the engine is always dynamic -- EMM.").
+	atom_concat('ciaoengine', Sta, Engine).
 
 stat_extension('.sta').
 stat_extension('').
 
 % What directory this engine can be in?
+% (nondeterministic)
 determine_engine_dir(TargetEng, Where, LibDir, EngDir) :-
 	intermediate_dir(TargetEng, Where, IntermediateDir),
 	atom_concat(LibDir, IntermediateDir, EngDir),
 	file_exists(EngDir).
 
 % Windows engines can be placed differently from other engines
+% (nondeterministic)
+% TODO: Do we want it to be non-det?
 %intermediate_dir('Win32i86', _, '/bin/Win32i86/').
 %intermediate_dir('Win32alpha', _, '/bin/Win32alpha/').
 intermediate_dir(_Target, direct, '/engine/'). % For unix --- Windows also, later?
@@ -47,9 +69,3 @@ intermediate_dir(Target,  _,      Dir       ) :-
 	atom_concat(Dir1, Ciaodebug, Dir2),
 	atom_concat(Dir2, '/',       Dir ).
 
-get_engine(TargetEng, EngDir, EngName, Engine) :-
-	ciao_lib_dir(LibDir),
-	determine_engine_name(TargetEng, EngName, Where),
-	determine_engine_dir(TargetEng, Where, LibDir, EngDir),
-	atom_concat(EngDir, EngName, Engine),
-	file_exists(Engine).

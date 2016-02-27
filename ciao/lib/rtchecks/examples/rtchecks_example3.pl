@@ -1,4 +1,4 @@
-:- module(_, _, [assertions, regtypes, nativeprops, expander]).
+:- module(_, _, [assertions, regtypes, nativeprops, rtchecks, expander]).
 
 :- pred nullasr(A, B).
 
@@ -26,5 +26,6 @@ family(B) :- atm(B).
 
 :- pred fullasr(A, B) :: atm(A) : (animal(A), atm(A)) => family(B) + not_fails.
 :- pred fullasr(A, B) :: atm(A) : animal(A) => family(B) + is_det.
+:- pred fullasr(A, B) :: int(A) : animal(A) => family(B) + is_det.
 
 fullasr(_, _).

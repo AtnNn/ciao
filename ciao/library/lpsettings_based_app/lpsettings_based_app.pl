@@ -206,7 +206,7 @@ report_usage_text :-
 	common_options_message(Text2),
 	app_options_message(Text3),
 	format(user_error, "~w [OPTIONS] COMMANDS~n", [AppName]),
-	format(user_error, "~nProcesses each command usign the specified options.~n~n", []),
+	format(user_error, "~nProcesses each command using the specified options.~n~n", []),
 	format(user_error, Text2, []),
 	format(user_error, Text3, []).
 

@@ -1,10 +1,13 @@
 /*
   static unsigned int predicate_property_bits(register definition_t *d);
-  static bool_t current_stream_data(Argdecl, stream_node_t *streamptr)
  */
+
 
 typedef enum {X5, X2} WhichChain;
 
+#if defined(TABLING)
+bool_t nd_fake_choicept(Argdecl);
+#endif
 void pop_frame(Argdecl);
 void push_frame(Argdecl, int arity);
 void pop_choicept(Argdecl);
@@ -13,8 +16,6 @@ bool_t nd_atom_concat(Argdecl);
 bool_t current_atom(Argdecl);
 bool_t nd_current_atom(Argdecl);
 bool_t current_clauses(Argdecl);
-bool_t current_stream(Argdecl);
-bool_t nd_current_stream(Argdecl);
 bool_t prolog_repeat(Argdecl);
 bool_t nd_repeat(Argdecl);
 bool_t current_predicate(Argdecl);

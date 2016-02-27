@@ -81,8 +81,8 @@ void find_fp_bits(ENG_INT *t) {
 } 
 
 void get_mask_descr(int size,
-		    unsigned long *lx,
-		    unsigned long *ly,
+		    volatile unsigned long *lx,
+		    volatile unsigned long *ly,
 		    unsigned long *mask,
 		    unsigned int *indx,
 		    unsigned int *shft) {
@@ -106,8 +106,8 @@ void get_mask_descr(int size,
    standard */
 
 void configure_ieee754() {
-  double x, y, z;
-  unsigned long *lx, *ly, *lz;
+  volatile double x, y, z;
+  volatile unsigned long *lx, *ly, *lz;
   unsigned long mask;
   unsigned int index;
   unsigned int shift;
@@ -164,7 +164,7 @@ void configure_ieee754() {
 
 void configure_ieee854_using_754()
 {
-  double x, y, z;
+  volatile double x, y, z;
   unsigned int mantissa0_length=20;
 
 #include "configure_float.h"
@@ -173,7 +173,7 @@ void configure_ieee854_using_754()
 
 void configure_ieee854_using_854()
 {
-  long double x, y, z;
+  volatile long double x, y, z;
   unsigned int mantissa0_length=31;
   printf("#define USE_LONG_DOUBLE\n");
   
@@ -298,9 +298,8 @@ void configure__endianness() {
 
 
 #if defined(HAS_MMAP)
+#include "own_mmap.h"
 # define USE_OWN_MALLOC
-# include <unistd.h>
-# include <sys/mman.h>
 #endif
 
 #define MIN_MEM_BLOCK_CHARS 16384
@@ -333,8 +332,6 @@ void write_mem_settings(tagged_t *base,
 
 #if defined(HAS_MMAP)
 
-#include "mmap_defs.h" 
-
 #define N_TRY_ADDR 9
 unsigned int try_addr[N_TRY_ADDR] = { 
     0x60000000, 0x70000000, 0x80000000, 0x40000000, 0x90000000,
@@ -344,42 +341,22 @@ tagged_t * configure_mmap(void)
 {
   tagged_t * pointer;
   int i = 0;
-  int fd_mmap_file = -1;
-  off_t zero_offset = 0;
 
-  // Chunks of code identical to those in own_malloc_linear.c - keep them in sync!
-#if !defined(ANONYMOUS_MMAP)
-  char *mmap_file = MMAP_FILE;
-
-  if ((fd_mmap_file = open(MMAP_FILE, O_RDWR|O_CREAT)) < 0) {
-    fprintf(stderr, "\n\n**** Error opening map file in configure.c ****\n\n");
-    exit(1);
-  }
-#endif
-
-  while (i <  N_TRY_ADDR) {
-    pointer = (tagged_t *)mmap((char *)try_addr[i], 
-                   AddressableSpace, 
-                   PROT_READ|PROT_WRITE,
-                   MMAP_FLAGS,
-                   fd_mmap_file, 
-                   zero_offset);
-    if (pointer == (tagged_t *)try_addr[i]) 
+  for(i = 0; i <  N_TRY_ADDR; i++){
+    pointer = (tagged_t *) try_addr[i];
+    if (!own_fixed_mmap(pointer, AddressableSpace))
       break;
-    else
-      i = i + 1;
   }
-    munmap((void *)pointer, AddressableSpace);    // Give memory back
-#if !defined(ANONYMOUS_MMAP)
-    close(fd_mmap_file);
-#endif
-    if (i < N_TRY_ADDR) {
-      write_mem_settings(pointer, AddressableSpace, AddressableSpace);
-      return pointer;
-    } else {
-      fprintf(stderr, "After trying mmap: no success!");
+
+  own_fixed_munmap((void *)pointer, AddressableSpace);    // Give memory back
+
+  if (i < N_TRY_ADDR) {
+    write_mem_settings(pointer, AddressableSpace, AddressableSpace);
+    return pointer;
+  } else {
+    fprintf(stderr, "After trying mmap: no success!");
     return NULL;
-    }
+  }
 }
 #endif
 

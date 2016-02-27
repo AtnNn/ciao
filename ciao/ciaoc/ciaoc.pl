@@ -4,7 +4,7 @@
 :- use_module(library(libpaths),        [get_alias_path/0]).
 :- use_module(library(compiler),        [make_po/1, make_wam/1, use_module/3]).
 :- use_module(library(compiler(c_itf)), [opt_suffix/2]).
-:- use_module(library(atom_to_term),    [atom_to_term/2]).
+:- use_module(library(read_from_string), [read_from_atom/2]).
 :- use_module(library(compiler(compile_packages))).
 
 :- use_module(library(compiler(exemaker)),
@@ -30,7 +30,7 @@ when working from the command line. Also, it can be called to compile
 Ciao programs from other tools such as, e.g., @concept{shell scripts},
 @file{Makefile}s, or @concept{project files}. All the capabilities of
 @apl{ciaoc} are also available from the interactive top-level shell,
-which uses the ciaoc modules as its components. 
+which uses the @apl{ciaoc} modules as its components. 
 
 @section{Introduction to building executables}
 
@@ -379,14 +379,14 @@ second will tell them where to look for the libraries.  Thus, it is
 possible to actually use the Ciao system without installing it by
 setting these variables to the following values: @begin{itemize}
 
-@item @tt{CIAOENGINE}:  @tt{$(CIAOSRC)/build/bin/$(CIAOARCH)/ciaoengine}
+@item @tt{CIAOENGINE}:  @tt{CIAOBUILDDIR/$(CIAOARCH)/ciaoengine}
 
-@item @tt{CIAOLIB}:     @tt{$(CIAOSRC)}
+@item @tt{CIAOLIB}:     @tt{CIAOSRC}
 
 @end{itemize} 
 @noindent
 where @tt{$(CIAOARCH)} is the string echoed by the command
-@tt{CIAOSRC/etc/ciao_get_arch} (or @tt{BINROOT/ciao_get_arch}, after
+@tt{CIAOSRC/etc/ciao_get_arch} (or @tt{BINDIR/ciao_get_arch}, after
 installation).
 
    This allows @concept{using alternate engines or libraries}, which
@@ -479,10 +479,10 @@ main(Args) :-
 		force_lazy(Module)),
 	    "force <module> to be loaded lazily,  implies -l",
 	    continue, [Module|Args], Args).
-:- simple_option('-ac',  (atom_to_term(P0, P), add_compile_package(_, P)),
+:- simple_option('-ac',  (read_from_atom(P0, P), add_compile_package(_, P)),
 	    "All the modules will be compiled using <Packages>",
 	    continue, [P0|Args],    Args).
-:- simple_option('-acm', (atom_to_term(P0, P), add_compile_package(M, P)),
+:- simple_option('-acm', (read_from_atom(P0, P), add_compile_package(M, P)),
 	    "<Modules> will be compiled using <Packages>",
 	    continue, [M, P0|Args], Args).
 :- simple_option('-d',   assertz_fact(dynamic_search_path(Path)),

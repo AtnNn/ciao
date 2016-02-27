@@ -25,6 +25,7 @@
 :- discontiguous(foreign_compiler_options/4).
 :- discontiguous(foreign_linker_options/4).
 
+% Automatically generated during installation by invoking config-sysdep.sh
 :- include(library(compile_options_auto)).
 
 :- pred compiler_and_opts(?Compiler, ?Opts) ::

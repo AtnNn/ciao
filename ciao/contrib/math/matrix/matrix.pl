@@ -2,4 +2,3 @@
 
 :- reexport(library(math(matrix(matrix_basic)))).
 :- reexport(library(math(matrix(matrix_stat_basic)))).
-:- reexport(library(math(matrix(matrix_gsl)))).

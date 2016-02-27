@@ -1,8 +1,8 @@
 :- module(unused_pred_warnings, [flat_meta_spec/2, unused_pred_warnings/2,
 		assert_upw_assrt/2, assert_upw_pred/2, assert_upw_decl/4,
 		record_imports_dependencies/2, cleanup_upw_db/1, upw_assrt/2,
-		record_assrt_dependency/6,
-		record_pred_dependency/5, record_pred_dependency/4],
+		record_assrt_dependency/6, record_pred_dependency/5,
+		record_pred_dependency/4],
 	    [assertions, nativeprops, dcg, define_flag]).
 
 :- use_module(library(lists)).
@@ -14,7 +14,7 @@
 %:- use_module(library(formulae)).
 :- use_module(library(engine(meta_inc))).
 :- use_module(library(compiler(c_itf_internal)), [imports_pred/7, exports/5,
-		package/2, base_name/2, defines_module/2, meta_args/2]).
+		base_name/2, defines_module/2, meta_args/2]).
 :- use_module(library(iso_misc), [compound/1]).
 
 :- doc(author, "Edison Mera").
@@ -75,19 +75,6 @@ mark_meta_arg(list(A), Arg) :-
 	list(Vars, '='(list(A))).
 mark_meta_arg(_, _).
 
-record_imports_dependency(Imports, File, Base, Loc) :-
-	loc(Src, _, _) = Loc,
-	atom_concat(BSrc, '.pl', Src),
-	(
-% 	    This condition is to avoid report unused predicates/modules that
-%	    are imported indirectly through packages: -- EMM
-	    package(Base, P),
-	    base_name(P, BSrc0),
-	    BSrc == BSrc0 -> true
-	;
-	    record_imports(Imports, File, Base, Loc)
-	).
-
 record_imports(all, File, _Base, Loc) :-
 	!,
 	base_name(File, BFile),
@@ -95,6 +82,8 @@ record_imports(all, File, _Base, Loc) :-
 	assertz_fact(import_all_location(Module, File, Loc)).
 record_imports(Imports, File, Base, Loc) :-
 	list(Imports, record_import(Base, File, Loc)).
+
+ignore_import(hiord_rt, '$meta_call', 1).
 
 record_import(F/A, Base, File, Loc) :-
 	( imports_pred(Base, File, F, A, _, _, EndFile),
@@ -106,7 +95,13 @@ record_import(F/A, Base, File, Loc) :-
 	\+ ignore_import(Module, F, A),
 	assertz_fact(import_location(Module, F, A, File, Loc)).
 
-ignore_import(hiord_rt, '$meta_call', 1).
+
+record_imports_dependencies(Base, M) :-
+	atom(Base),
+	retract_fact(upw_decl(Imports, File, Base, M, Loc)),
+	record_imports(Imports, File, Base, Loc),
+	fail.
+record_imports_dependencies(_, _).
 
 record_pred_dependency(CRef, M, H, B, Loc) :-
 	atom(M),
@@ -179,19 +174,16 @@ assert_upw_decl(use_module(File, Imports), Base, M, Loc) :-
 	assertz_fact(upw_decl(Imports, File, Base, M, Loc)).
 assert_upw_decl(_, _, _, _).
 
-record_imports_dependencies(Base, M) :-
-	atom(Base),
-	retract_fact(upw_decl(Imports, File, Base, M, Loc)),
-	record_imports_dependency(Imports, File, Base, Loc),
-	fail.
-record_imports_dependencies(_, _).
-
 :- pred record_assrt_dependency/6 + no_choicepoints.
 record_assrt_dependency(M, Type, Defined, Loc, H, Props) :-
 	functor(H, FH, AH),
-	( (Defined == yes ; Type==decl) -> record_head_location(FH, AH, Loc)
+	( (Defined == yes ; Type==decl) ->
+	    record_head_location(FH, AH, Loc)
 	; true ),
-	((Type == decl ; Type == entry) -> record_head_decl(FH, AH) ; true),
+	( ( Type == decl ; Type == entry
+	    ; current_prolog_flag(unused_pred_warnings, yes) ) ->
+	    record_head_decl(FH, AH)
+	; true ),
 	\+ \+ ( (
 		get_meta_pred(M, H, FH, _, AH, Meta),
 		mark_meta_head(Meta, H),
@@ -202,8 +194,8 @@ record_assrt_dependency(M, Type, Defined, Loc, H, Props) :-
 
 unused_pred_warnings(_,    user(_)) :- !.
 unused_pred_warnings(Base, Module) :-
-% 	show_exports,
-% 	show_meta,
+	% show_exports,
+	% show_meta,
 	all_messages(Base, Module, Messages0, []),
 	sort(Messages0, Messages1),
 	reverse(Messages1, Messages),
@@ -409,9 +401,10 @@ current_dup_all_imports(Base, [Message|Messages0]) :-
 	get_dup_all_messages(ML, Loc0, Messages0, Messages1),
 	(Messages0 == Messages1 -> DupAll = no ; DupAll = yes),
 	get_already_imported_messages(Base, ML, File0, Messages1),
-	(Messages1 == [] -> AlrImp = no ; AlrImp = yes),
+	( Messages1 == [] -> AlreadyImplemented = no
+	; AlreadyImplemented = yes ),
 	Messages0 = [_|_],
-	msg_txt(DupAll, AlrImp, Text),
+	msg_txt(DupAll, AlreadyImplemented, Text),
 	dup_all_message_first(Loc0, File0, Text, Message).
 
 get_dup_all_messages(ML, Loc0, Messages0, Messages1) :-
@@ -591,7 +584,8 @@ mark_meta_body_spec(_, A, M) :-
 % The next clauses are not required, but are here to improve performance:
 get_literal(A,                                       _, _,   A) :- var(A), !.
 get_literal('hiord_rt:call'(G, _),                   _, _,   G) :- var(G), !.
-get_literal('hiord_rt:call'('PA'(_, Args, G), Args), M, Loc, C) :- % Warning: this unifies Args
+get_literal('hiord_rt:call'('PA'(_, Args, G), Args), M, Loc, C) :-
+	% Warning: this unifies Args
 	get_literal(G, M, Loc, C).
 get_literal('basiccontrol:,'(A, B), M, Loc, C) :-
 	!,

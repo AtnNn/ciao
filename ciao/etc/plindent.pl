@@ -8,7 +8,7 @@
 
 :- use_module(plindent(autoindent)).
 
-:- doc(title, "Automatic Source Indenter").
+:- doc(title,  "Automatic Source Indenter").
 :- doc(author, "Edison Mera").
 
 :- doc(module, "This module implements a command-line interface to the

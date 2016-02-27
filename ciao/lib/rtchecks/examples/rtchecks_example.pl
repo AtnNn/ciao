@@ -20,8 +20,8 @@
 		test5/2,
 		test_det/2,
 		test_det2/1],
-	    [assertions, rtchecks, basicmodes, isomodes, nativeprops, hiord,
-		regtypes, expander]).
+	    [assertions, basicmodes, isomodes, nativeprops, hiord,
+		regtypes, rtchecks, expander]).
 
 :- use_module(library(aggregates)).
 
@@ -36,8 +36,14 @@
 :- set_prolog_flag(rtchecks_asrloc,  yes).
 
 %:- check pred is_animal(+animal(A)).
-:- check pred is_animal(-Animal) :: animal(Animal) + (not_fails, non_det).
+
+:- check pred is_animal(-Animal) :: animal(Animal) + (not_fails, non_det)
+	# "This is a way to call is_animal/1".
+
 :- check pred is_animal(+Anim) :: animal(Anim) + (not_fails, is_det).
+% :- check pred is_animal(+Anim) :: animal(Anim) + (not_fails).
+
+:- test is_animal(An) : (An = dogg) + not_fails.
 
 is_animal(An) :- animal(An).
 

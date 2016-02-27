@@ -15,7 +15,7 @@
 	    lazy_foldl/4,
  	    zipWith/4
 	],
-	[fsyntax, assertions, basicmodes, regtypes, hiord, lazy]).
+	[regtypes, fsyntax, assertions, basicmodes, hiord, lazy]).
 
 :- doc(title,"Lazy evaluation library").
 :- doc(author, "Amadeo Casas"||

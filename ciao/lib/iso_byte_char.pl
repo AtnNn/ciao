@@ -121,7 +121,10 @@ put_byte(S,B) :- put_code(S,B).
 :- pred get_char(?atm) + iso # "Same as @pred{get_char/2}, but
    use the current input.".
 
-get_char(C)   :- get_code(B), char_code(C,B).
+get_char(C)   :- get_code(B), code_to_char_or_eof(B,C).
+
+code_to_char_or_eof(-1, C) :- !, C = end_of_file.
+code_to_char_or_eof(B, C) :- char_code(C, B).
 
 :- pred get_char(@stream, ?atm) + iso.
 
@@ -129,17 +132,17 @@ get_char(C)   :- get_code(B), char_code(C,B).
    with the next character to be input from the target
    @var{Stream}.").
 
-get_char(S,C) :- get_code(S,B), char_code(C,B).
+get_char(S,C) :- get_code(S,B), code_to_char_or_eof(B,C).
 
 :- pred peek_char(?atm) + iso # "Similar to @pred{peek_code/1},
    but using char instead of code.".
 
-peek_char(C)   :- peek_code(B), char_code(C,B).
+peek_char(C)   :- peek_code(B), code_to_char_or_eof(B,C).
 
 :- pred peek_char(@stream, ?atm) + iso # "Similar to
    @pred{peek_code/2}, but using char instead of code.".
 
-peek_char(S,C) :- peek_code(S,B), char_code(C,B).
+peek_char(S,C) :- peek_code(S,B), code_to_char_or_eof(B,C).
 
 :- pred put_char(+atm) + iso # "Similar to @pred{put_code/1},
    but using char instead of code.".

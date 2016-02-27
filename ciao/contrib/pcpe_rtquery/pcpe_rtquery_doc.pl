@@ -9,27 +9,22 @@
 	solutions provided by PCPE when time efficiency is being
 	measured").
 
-
 :- doc(usage, "Typically, this library is used including the
    'pcpe_rtquery' package into the packages list of the module, or using the
    @decl{use_package/1} declaration:
 @begin{description}
 @item{In a module:}
 @begin{verbatim}
-	:- module(bar, [main/1], []).
+	:- module(bar, [main/1], [pcpe_rtquery]).
 @end{verbatim}
         or
 @begin{verbatim}
         :- module(bar, [main/1]).
-        :- include(library(pcpe_rtquery)).
+        :- use_package(pcpe_rtquery).
 @end{verbatim}
 @item{In a @em{user} file:}
 @begin{verbatim}
-	:- use_package([pcpe_rtquery]).
-@end{verbatim}
-        or
-@begin{verbatim}
-        :- include(library(pcpe_rtquery)).
+	:- use_package(pcpe_rtquery).
 @end{verbatim}
 @end{description}
    This loads the run-time and compile-time versions of the library

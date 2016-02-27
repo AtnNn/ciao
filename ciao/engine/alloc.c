@@ -27,21 +27,6 @@
 #include "registers.h"
 
 /* local declarations */
-
-#if defined(TABLING)
-tagged_t *tabled_top = NULL;
-tagged_t *lider_trail = NULL;
-frame_t *stack_freeze = NULL;
-tagged_t *heap_freeze = NULL;
-#endif
-#if defined(MVV)
-unsigned long int stateMVV = 0;
-unsigned long int stateMVV_top = 0;
-unsigned long int indexMVV = 0;
-unsigned long int stateStack[1001];
-node_t *choiceStack[1001];
-#endif
-
 char * tryalloc_errstring;
 
 #define MEMORY_FAULT(message) {			\
@@ -402,29 +387,23 @@ void create_wam_areas(Arg)
   /* Initializing pointers and locks */
   Goal_List_Start = NULL;
   Goal_List_Top = NULL;
+  Goal_Cache = NULL;
+  Goal_Cache = NULL;
+  Dep_Id = NULL;
+  Dep_Size = 0;
   Event_Queue_Start = NULL;
   Event_Queue_Top = NULL;
   Last_Parallel_Exec = NULL;
-  Trail_Top_Global = NULL;
-  Node_Top = NULL;
-  Current_Init_ChP = NULL;
-  Current_Trail_Top = NULL;
 
   Suspended_Waiting_For_Work = FALSE;
-  Cancel_Goal_Exec_Handler = NULL;
+  Cancel_Goal_Exec = FALSE;
   Safe_To_Cancel = TRUE;
   Suspend = RELEASED;
   Mode = FORWARD_EXEC;
 
-#if defined(Solaris)
-  Total_Suspending_Time = NULL;
-  Suspending_Time_Cont = 0.0;
-#endif
-  
   Init_slock(Goal_List_Lock);
   Init_slock(Event_Queue_Lock);
   Init_slock(Mutex_Lock);
-  Init_slock(Parallel_Exec_Lock);
   Init_lock(Waiting_For_Work_Lock);
   Cond_Var_Init(Waiting_For_Work_Cond_Var);
 
@@ -467,10 +446,12 @@ void create_wam_areas(Arg)
   GETENV(i,cp,"GLOBALSTKSIZE",GLOBALSTKSIZE);
   Heap_Start = checkalloc(i*sizeof(tagged_t));
   Heap_End =  HeapOffset(Heap_Start,i);
-  Heap_Warn_Soft =  Heap_Warn =  HeapOffset(Heap_End,-CALLPAD);
-#if defined(TABLING)
-  tabled_top = Heap_Start;
-#endif
+  Heap_Warn_Soft =  Heap_Warn =  HeapOffset(Heap_End,-DEFAULT_SOFT_HEAPPAD);
+
+#if defined(USE_OVERFLOW_EXCEPTIONS)
+  SOFT_HEAPPAD = DEFAULT_SOFT_HEAPPAD;
+  Heap_Limit = 0;
+#endif 
 
   /* stack pointer is first free cell, grows ++ */
   GETENV(i,cp,"LOCALSTKSIZE",LOCALSTKSIZE);

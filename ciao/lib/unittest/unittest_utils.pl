@@ -5,14 +5,13 @@
 
 :- use_module(library(aggregates)).
 :- use_module(library(compiler), [use_module/1]).
-:- use_module(library(read)).
 :- use_module(library(unittest(unittest_base))).
 :- use_module(library(rtchecks(rtchecks_utils))).
 
 :- doc(author, "Edison Mera").
 
 process_test_args([]).
-process_test_args(['-l', Module|Args]) :-
+process_test_args([load, Module|Args]) :-
 	use_module(Module),
 	process_test_args(Args).
 
@@ -22,14 +21,13 @@ read_file_loop(File, Term) :-
 
 read_stream_loop(SI, Term) :-
 	repeat,
-	read(SI, Term0),
 	(
-	    Term0 == end_of_file ->
+	    read_data(SI, Term) ->
+	    true
+	;
 	    !,
 	    close(SI),
 	    fail
-	;
-	    Term = Term0
 	).
 
 :- meta_predicate testing(?, ?, goal, goal).
@@ -38,8 +36,10 @@ testing(ARef, TmpDir, Precond, Pred) :-
 	atom_concat(TmpDir, BOut, Out),
 	testing_internal(Precond, Pred, Status),
 	open(Out, append, IO),
-	unittest_print_clause(test_output_db(ARef, Status), IO, []),
+	write_data(IO, test_output_db(ARef, Status)),
 	close(IO).
+
+
 
 :- data signals_db/1.
 
@@ -53,19 +53,31 @@ testing_internal(Precond, Pred, st(RTCErrors, Signals, Result)) :-
 
 :- meta_predicate exec_test(goal, goal, ?).
 exec_test(Precond, Pred, Result) :-
-	catch((
-		Precond ->
-		catch(catch(save_rtchecks(
-			    if(
-				Pred,
-				Result = true,
-				Result = fail(predicate)
-			    )
-			),
-			postcondition(PostEx),
-			(Result = exception(postcondition, PostEx))),
-		    PredEx, (Result = exception(predicate, PredEx)))
-	    ;
-		Result = fail(precondition)
-	    ),
-	    PrecEx, (Result = exception(precondition, PrecEx))).
+	test_precondition_exception(
+	    test_precondition(Precond,
+		test_pred_exception(
+		    test_postcondition(
+			save_rtchecks(
+			    test_result(Pred,
+				Result)), Result), Result), Result), Result).
+
+:- meta_predicate test_result(goal, ?).
+test_result(Pred, Result) :-
+	if(Pred, Result = true, Result = fail(predicate)).
+
+:- meta_predicate test_postcondition(goal, ?).
+test_postcondition(Pred, Result) :-
+	catch(Pred, postcondition(PostEx),
+	    (Result = exception(postcondition, PostEx))).
+
+:- meta_predicate test_pred_exception(goal, ?).
+test_pred_exception(Pred, Result) :-
+	catch(Pred, PredEx, (Result = exception(predicate, PredEx))).
+
+:- meta_predicate test_precondition(goal, goal, ?).
+test_precondition(Precond, Pred, Result) :-
+	Precond -> Pred ; Result = fail(precondition).
+
+:- meta_predicate test_precondition_exception(goal, ?).
+test_precondition_exception(Pred, Result) :-
+	catch(Pred, PrecEx, (Result = exception(precondition, PrecEx))).

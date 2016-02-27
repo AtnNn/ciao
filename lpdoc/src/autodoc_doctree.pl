@@ -1,4 +1,4 @@
-:- module(autodoc_doctree, [], [dcg, assertions, regtypes, fsyntax]). 
+:- module(autodoc_doctree, [], [dcg, assertions, regtypes, basicmodes, fsyntax]). 
 
 :- doc(author,"Manuel Hermenegildo (original version)").
 :- doc(author,"Jose F. Morales").
@@ -74,6 +74,7 @@ cmd_type(Command) :-
 % translated during parsing to section_env
 cmd_type(section(d)) :- !.
 cmd_type(subsection(d)) :- !.
+cmd_type(subsubsection(d)) :- !.
 %
 cmd_type(sp(s)) :- !.
 cmd_type(p(s)) :- !.
@@ -100,8 +101,8 @@ cmd_type('..'(s)) :- !.
 cmd_type('"'(s)) :- !.
 cmd_type(^'~'(s)) :- !. % NOTE: Escaped ~ due to fsyntax!
 cmd_type('='(s)) :- !.
-cmd_type(uref(s)) :- !.
-cmd_type(uref(d, s)) :- !.
+cmd_type(href(s)) :- !.
+cmd_type(href(s, d)) :- !.
 cmd_type(email(d)) :- !.
 cmd_type(email(d, d)) :- !.
 cmd_type(author(d)) :- !.
@@ -155,7 +156,8 @@ cmd_type(newblock(s)) :- !.
 %  extension modules similar to compilation modules
 %  (i.e. documentation modules)
 cmd_type(html_template(s)) :- !.
-cmd_type(distpkg_download(s)) :- !.
+cmd_type(pbundle_download(s,s)) :- !. % {branch}{view}
+cmd_type(pbundle_href(s,s,s,d)) :- !. % {branch}{manual}{rel}{text}
 
 % TODO: Refine those commands 
 % Internal commands (cannot be parsed from any docstring, may depend
@@ -192,13 +194,16 @@ icmd_type(htmlenv(t,d)). % html environment
 icmd_type(htmlenv(t,t,d)). % html environment
 icmd_type(htmlenv1(t)). % html environment
 icmd_type(htmlenv1(t,t)). % html environment
+icmd_type(htmlenv0(t,t)). % html environment
 icmd_type(htmldecl(t)). % html decl
 icmd_type(htmlcomment(t)). % html comment
 % ** Commands for 'manl' **
 icmd_type(man_page(td,t,t,t,td,td,td)). % html environment
 % ** Shared internal commands **
 icmd_type(section_env(t,t,td,td)).
-% a link to a component (makes module-scope references available in the references closure) % TODO: we are more specific than just 'references' 
+% a link to a component (makes module-scope references available in
+% the references closure)
+% TODO: we are more specific than just 'references'
 icmd_type(component_link(t)).
 icmd_type(idx_env(t,t,t,d,d)). % index command
 % dependency with a separated section (depending on the backend, it may include
@@ -211,11 +216,12 @@ icmd_type(linebreak). % break the current line (should it be like "@p @noindent"
 % TODO: good idea? use real sections instead?
 icmd_type(subsection_title(d)).
 icmd_type(twocolumns(d)).
-icmd_type(itemize_none(d)).
-icmd_type(itemize_plain(d)).
-icmd_type(itemize_minus(d)).
-icmd_type(itemize_bullet(d)).
+icmd_type(itemize_none(d)).  % no mark
+icmd_type(itemize_plain(d)). % no mark, no left margin
+icmd_type(itemize_minus(d)). % '-' (minus) mark
+icmd_type(itemize_bullet(d)). % '*' (bullet) mark
 icmd_type(description_env(d)).
+icmd_type(item_num(s)). % TODO: for enumerations (avoid, use context info)
 icmd_type(cartouche(d)).
 icmd_type(optional_cartouche(d)).
 icmd_type(alert(d)).
@@ -242,6 +248,8 @@ icmd_type(pred_in_toc(t,t)).
 %  | foo/1          PREDICATE |
 icmd_type(left_and_right(d,d)).
 icmd_type(defpred(t,t,t,t,d)).
+icmd_type(defassrt(t,t,s,d,d,d)).
+icmd_type(assrtprops(d,d,d,d)).
 icmd_type(defauthor(t,t,t)).
 icmd_type(navigation_env(d,d)).
 icmd_type(image_auto(s,t)).
@@ -415,7 +423,7 @@ doctree_restore(RFile, R) :-
 %	            fast_read(ROS, R),
 %		    close(ROS)).
 
-:- use_module(library(make(system_extra)), [try_finally/3]).
+:- use_module(library(system_extra), [try_finally/3]).
 :- use_module(library(write), [writeq/2,write/2]).
 :- use_module(library(read), [read/2]).
 %:- use_module(library(fastrw), [fast_write/2, fast_read/2]).
@@ -445,7 +453,7 @@ doctree_simplify(X, X).
 doctree_putvars(R0, DocSt, PDict, VarDict, R) :-
 	catch(doctree_putvars_(R0, DocSt, PDict, VarDict, [], R),
 	  E,
-	  throw(couldnt_putvars(E, R0, PDict, VarDict))).
+	  throw(error(exception_error(E), doctree_putvars/5))).
 
 doctree_putvars_(A, _DocSt, _PDict, Vs, Vs, A) :- ( var(A) ; primitive_icmd(A) ), !.
 doctree_putvars_(A, DocSt, PDict, Vs, Vs0, B) :- ( A = [] ; A = [_|_] ), !,
@@ -453,7 +461,9 @@ doctree_putvars_(A, DocSt, PDict, Vs, Vs0, B) :- ( A = [] ; A = [_|_] ), !,
 doctree_putvars_(var([string_esc(VarName)]), _DocSt, PDict, Vs, Vs0, B) :- !,
 	atom_codes(VarNameA, VarName),
 	( member(VarNameA=Var, PDict) -> true
-	; throw(var_not_found(VarNameA, PDict))
+	; throw(error(domain_error,
+	              doctree_putvars_/6-env(['VarNameA'=VarNameA,
+		                              'PDict'=PDict])))
 	),
 	% B is left uninstantiated
 	Vs = [B=Var|Vs0].
@@ -462,7 +472,8 @@ doctree_putvars_(Command, DocSt, PDict, Vs, Vs0, NewCommand) :-
 	functor(BT, Cmd, A),
 	( cmd_type(BT) -> true
 	; icmd_type(BT) -> true
-	; throw(wrong_input(doctree_putvars_(Command)))
+	; throw(error(domain_error,
+	              doctree_putvars_/6-env(['Command'=Command])))
 	),
 	Command =.. [_|Xs],
 	BT =.. [_|Ts],
@@ -548,7 +559,7 @@ doctree_scan_refs(Command, DocSt) :-
 	functor(BT, Cmd, A),
 	( cmd_type(BT) -> true
 	; icmd_type(BT) -> true
-	; throw(wrong_input(doctree_scan_refs_(Command)))
+	; throw(error(bad_arg(1, Command), doctree_scan_refs/2))
 	),
 	Command =.. [_|Xs],
 	BT =.. [_|Ts],
@@ -625,7 +636,7 @@ doctree_prepare_docst_translate_and_write(ModR, DocSt, OS) :-
 	clean_current_refs(DocSt),
 	!.
 doctree_prepare_docst_translate_and_write(_ModR, _DocSt, _OS) :-
-	throw(failed_doctree_prepare_docst_translate_and_write).
+	throw(error(unknown, doctree_prepare_docst_translate_and_write/3)).
 
 % ---------------------------------------------------------------------------
 
@@ -641,7 +652,7 @@ doctree_prepare_docst_translate_and_write(_ModR, _DocSt, _OS) :-
 doctree_to_rawtext(X, DocSt, Ys) :-
 	catch(doctree_to_rawtext_(X, DocSt, Ys, []),
 	      E,
-	      throw(bug_in_doctree_to_rawtext(E, X))).
+	      throw(error(exception_error(E), doctree_to_rawtext/3))).
 
 doctree_to_rawtext_(X, _DocSt, "<var>"||Ys, Ys) :- var(X), !.
 doctree_to_rawtext_([], _DocSt, Xs, Xs) :- !.
@@ -659,7 +670,7 @@ doctree_to_rawtext_(X, _DocSt, Ys, Zs) :- plaintext_ignore(X), !,
 doctree_to_rawtext_(X, DocSt, Ys, Zs) :- simple_escaped_command(X), !,
 	atom_codes(X, C),
 	doctree_to_rawtext_(string_esc(C), DocSt, Ys, Zs).
-doctree_to_rawtext_(uref(Xs), DocSt, Ys, Zs) :- !,
+doctree_to_rawtext_(href(Xs), DocSt, Ys, Zs) :- !,
 	doctree_to_rawtext_(raw(Xs), DocSt, Ys, Zs).
 doctree_to_rawtext_(string_esc(Xs), DocSt, Ys, Zs) :- !,
 	% TODO: Do not escape here
@@ -669,6 +680,7 @@ doctree_to_rawtext_(string_verb(Xs), DocSt, Ys, Zs) :- !,
 	% TODO: Do not escape here
 	escape_string(verb, Xs, DocSt, Xs2),
 	append(Xs2, Zs, Ys).
+doctree_to_rawtext_(p(""), _DocSt, Ys, Zs) :- !, Ys = " "||Zs.
 doctree_to_rawtext_(raw_nl, _DocSt, Ys, Zs) :- !,
 	Ys = "\n"||Zs.
 doctree_to_rawtext_(raw_fc, _DocSt, Ys, Zs) :- !,
@@ -681,7 +693,7 @@ doctree_to_rawtext_(X, _DocSt, Ys, Zs) :- accent_cmd(X), !,
 	arg(1, X, Y),
 	append(Y, Zs, Ys).
 doctree_to_rawtext_(X, _, _, _) :-
-	throw(unknown_in_doctree_to_rawtext(X)).
+	throw(error(domain_error(X), doctree_to_rawtext_/4-1)).
 
 accent_cmd('`'(_)).
 accent_cmd(''''(_)).
@@ -738,11 +750,14 @@ plaintext_ignore(email(_)).
 doctree_translate_and_write(X0, DocSt, OS) :-
 	% rewrite all commands until we get a tree of tokens
 	% output the tree of tokens
-	rewrite_command(X0, DocSt, X2),
-	doctokens_write(X2, DocSt, OS),
-	!.
-doctree_translate_and_write(X0, _DocSt, _OS) :-
-	throw(bug_in_doctree_translate_and_write(X0)).
+	( rewrite_command(X0, DocSt, X2) ->
+	    true
+	; throw(error(wrong_arg(1,X0), rewrite_command/1))
+	),
+	( doctokens_write(X2, DocSt, OS) ->
+	    true
+	; throw(error(wrong_arg(1,X2), doctokens_write/3))
+	).
 
 % ---------------------------------------------------------------------------
 
@@ -754,13 +769,29 @@ rewrite_command(env_('verbatim', Body0), DocSt, R) :-
 	remove_first_nl(Body0, Body),
 	!,
 	rewrite_command(env_('verbatim', Body), DocSt, R).
+% TODO: Hack to switch item into item_num for enumerations, solve it
+%       by introducing context.
+rewrite_command(env_('enumerate', Body0), DocSt, R) :-
+	member(item(_), Body0),
+	!,
+	% Use internal item_num for enumerate
+	item_to_item_num(Body0, DocSt, Body),
+	docst_backend(DocSt, Backend),
+	( % A hack, explicit values in items is not supported by
+	  % texinfo, so we fake it.
+	  Backend = texinfo, 
+	  member(item_num(N), Body), \+ N = "" ->
+	    R2 = description_env(Body)
+	; R2 = env_('enumerate', Body)
+	),
+	rewrite_command(R2, DocSt, R).
 rewrite_command(Command, DocSt, NewCommand2) :-
 	functor(Command, Cmd, A),
 	functor(BT, Cmd, A),
 	Command =.. [_|Xs],
 	( cmd_type(BT) -> Kind = cmd
 	; icmd_type(BT) -> Kind = icmd
-	; throw(cannot_rewrite(rewrite_command(Command)))
+	; throw(error(wrong_arg(1,Command), rewrite_command/3))
 	),
 	BT =.. [_|Ts],
 	rewrite_cmd_args(Ts, Xs, DocSt, Ys),
@@ -880,6 +911,19 @@ write_as_subfile(SubSuffix, DocR0, DocSt, SubName) :-
 
 % ---------------------------------------------------------------------------
 
+% Replace all 'item' by 'item_num' (for use in enumerations)
+% TODO: This should not be necessary if we had some context information
+item_to_item_num([], _, []).
+item_to_item_num([A|As], DocSt, [B|Bs]) :-
+	item_to_item_num(A, DocSt, B),
+	item_to_item_num(As, DocSt, Bs).
+item_to_item_num(item(S0), DocSt, B) :- !,
+	B = item_num(S),
+	doctree_to_rawtext(S0, DocSt, S).
+item_to_item_num(A, _, A).
+
+% ---------------------------------------------------------------------------
+
 :- export(escape_string/4).
 :- pred escape_string/4 => atom * string * docstate * string
 
@@ -960,7 +1004,7 @@ doctokens_write_(raw_string(String), _NL, NL, _DocSt, OS) :- !,
 	),
 	format(OS, "~s", [String]).
 doctokens_write_(A, NL, _, _, _) :-
-	throw(cannot_rewrite(doctokens_write_(A, NL))).
+	throw(error(domain_error, doctokens_write_/5-env(['A'=A, 'NL'=NL]))).
 
 doctokens_write_list([], NL, NL, _DocSt, _OS) :- !.
 doctokens_write_list([R|Rs], NL0, NL, DocSt, OS) :-
@@ -1033,7 +1077,7 @@ version_string(Version, Str) :-
 	    format_to_string("(~w)", [Date], Sd)
 	; Time = H:M*S+Z ->
 	    format_to_string("(~w, ~w:~w:~w ~w)", [Date, H, M, S, Z], Sd)
-	; throw(unknown_time(Time))
+	; throw(error(unknown_time(Time), version_string/2))
 	),
 	list_concat([Sv, " ", Sd], Str).
 version_string(Version, Str) :-
@@ -1056,7 +1100,7 @@ fmt_cite(Ref0, DocSt, R) :-
 	    comma_split(Ref, Refs),
 	    resolve_cites(Refs, RefPairs, DocSt, R1),
 	    R = [string_esc("["), R1, string_esc("]")]
-	; throw(bug_no_biblio_pairs)
+	; throw(error(no_biblio_pairs, fmt_cite/3))
 	).
 
 % Split comma-separated string list of strings
@@ -1105,7 +1149,7 @@ fmt_ref(Ref0, DocSt, R) :-
 	( docst_mvar_get(DocSt, full_toc_tree, FullTree) ->
 	    doctree_to_rawtext(Ref0, DocSt, Ref1),
 	    resolve_ref(Ref1, FullTree, R)
-	; throw(bug_no_full_toc_tree)
+	; throw(error(no_full_toc_tree, fmt_ref/3))
 	).
 
 resolve_ref(Ref, FullTree, R) :-
@@ -1164,7 +1208,7 @@ fmt_toc(toc_view(Sidebar), DocSt, R) :- !,
         ; SubpartsInMaintext = yes, Sidebar = no ->
 	    fmt_toc(global, DocSt, R2),
 	    doctree_simplify([R2], R)
-	; throw(bug_toc_view(SubpartsInMaintext, Sidebar))
+	; throw(error(not_in_domain_toc_view(SubpartsInMaintext, Sidebar), fmt_toc/3))
 	).
 fmt_toc(global_links, DocSt, R) :- !,
         Title = string_esc("Global Links"),
@@ -1174,7 +1218,7 @@ fmt_toc(TOCKind, DocSt, R) :- TOCKind = single(Kind), !,
         % TODO: This is a ugly and slow hack; copy nav implementation
 	( docst_mvar_lookup(DocSt, full_toc_tree, Tree0) ->
 	    true
-	; throw(menu_not_computed)
+	; throw(error(menu_not_computed, fmt_toc/3))
 	),
 	% Remove the root node
 	Tree0 = [toc_node(_,_,_,Tree)],
@@ -1187,10 +1231,16 @@ fmt_toc(TOCKind, DocSt, R) :- TOCKind = single(Kind), !,
 fmt_toc(TOCKind, DocSt, R) :- TOCKind = vertical_menu, !,
 	( docst_mvar_lookup(DocSt, full_toc_tree, Tree0) ->
 	    true
-	; throw(menu_not_computed)
+	; throw(error(menu_not_computed, fmt_toc/3))
 	),
 	% Remove the root node
-	Tree0 = [toc_node(_,_,_,Tree)],
+	Tree0 = [toc_node(_,_,_,Tree1)],
+	% In a website layout, put root node as a separate link
+        ( setting_value(html_layout, 'website_layout') ->
+	    Tree0 = [toc_node(TLink,_,TProps,_)],
+	    Tree = [toc_node(TLink,string_esc("Home"),TProps,[])|Tree1]
+	; Tree = Tree1
+	),
 	%
 	docst_currmod(DocSt, Name),
 	fmt_vertical_menu(Tree, Name, 0, R0),
@@ -1202,7 +1252,7 @@ fmt_toc(TOCKind, DocSt, R) :-
         toc_source(TOCKind, Source),
 	( docst_mvar_lookup(DocSt, Source, Tree0) ->
 	    true
-	; throw(menu_not_computed)
+	; throw(error(menu_not_computed, fmt_toc/3))
 	),
 	( Source = full_toc_tree -> 
 	    % Remove the root node

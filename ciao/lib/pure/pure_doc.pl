@@ -46,7 +46,7 @@
          @ref{Basic file/stream handling}.
    @item @tt{engine(system_info)}
 
-         @ref{Gathering some basic internal info}.
+         @ref{Internal Runtime Information}.
    @item @tt{engine(term_basic)}
 
          @ref{Basic term manipulation}.

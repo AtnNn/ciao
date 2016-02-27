@@ -7,6 +7,7 @@
 		checkif_to_lit/3,
 		get_checkc/5,
 		get_checkc/7,
+		get_checkif/9,
 		get_prop_args/3,
 		insert_posloc/7,
 		is_member_prop/2,
@@ -18,16 +19,18 @@
 		remove_element/3,
 		inliner_decl/4,
 		push_flags/3,
-		pop_flags/3
+		pop_flags/3,
+		compound_check_props/4
 	    ], [assertions, nortchecks, dcg, hiord]).
 
 :- use_module(library(llists)).
 :- use_module(library(terms_vars)).
 :- use_module(library(hiordlib)).
+:- use_module(library(apply)).
 :- use_module(library(varnames(apply_dict))).
 :- use_module(library(varnames(pretty_names))).
 :- use_module(library(varnames(complete_dict))).
-:- use_module(library(lists),               [append/3]).
+:- use_module(library(lists), [append/3]).
 :- use_module(library(rtchecks(term_list))).
 
 :- doc(author, "Edison Mera").
@@ -39,7 +42,7 @@ insert_posloc((UsePredLoc, UseAsrLoc), PredName0, PLoc0, ALoc,
 	(UsePredLoc == yes ; UseAsrLoc == yes) ->
 	push_meta(PredName0, PosLocs, PredName),
 	( UsePredLoc == yes ->
-	    push_term(PLoc0, PosLocs, PLoc),
+	    push_term(PLoc0,                   PosLocs, PLoc),
 	    push_term(predloc(PredName, PLoc), PosLocs, PosPLoc),
 	    PosLoc = [PosPLoc|PosLoc1]
 	;
@@ -62,23 +65,37 @@ get_prop_args(Props, Pred, PropArgs) :-
 
 get_checkc(_, [], _, _, _, true, true) :- !.
 get_checkc(compat, Props, PropArgs, Names, Name, Exit,
-	    checkc(Props, PropArgs, Names, non_compat, Name, Exit)).
-get_checkc(call,   Props, PropArgs, Names, Name, Exit,
-	    checkc(Props, PropArgs, Names, non_inst, Name, Exit)).
+	    checkc(CheckProps, Names, Name, Exit)) :-
+	compound_check_props(non_compat, Props, PropArgs, CheckProps).
+get_checkc(call, Props, PropArgs, Names, Name, Exit,
+	    checkc(CheckProps, Names, Name, Exit)) :-
+	compound_check_props(non_inst, Props, PropArgs, CheckProps).
 
-get_checkc(_, [], _, true, true) :- !.
-get_checkc(compat, Props, PropArgs, Exit,
-	    checkc(Props, PropArgs, non_compat, Exit)).
-get_checkc(call,   Props, PropArgs, Exit,
-	    checkc(Props, PropArgs, non_inst, Exit)).
+compound_check_props(NonCheck, Props, PropArgs, CheckProps) :-
+	maplist(compound_check_prop(NonCheck), Props, PropArgs, CheckProps).
 
-get_checkif(_, _, _, [], _, _, _, true) :- !.
-get_checkif(success,   Exit, PredName, Props, PropArgs, Names, AsrLoc,
-	    checkif(Exit, success, PredName, Props, PropArgs, Names,
-		non_inst, AsrLoc)).
-get_checkif(compatpos, Exit, PredName, Props, PropArgs, Names, AsrLoc,
-	    checkif(Exit, compatpos, PredName, Props, PropArgs, Names,
-		non_compat, AsrLoc)).
+compound_check_prop(compat(Prop), _, Args, non_compat(Prop, Args)) :-
+	!.
+compound_check_prop(instance(Prop), _,        Args, non_inst(Prop, Args)) :- !.
+compound_check_prop(succeeds(Prop), _,        _,    \+(Prop)) :- !.
+compound_check_prop(Prop,           NonCheck, Args, NonCheckProp) :-
+	NonCheckProp =.. [NonCheck, Prop, Args].
+
+get_checkc(_,      [],    _,        true, true) :- !.
+get_checkc(compat, Props, PropArgs, Exit, checkc(CheckProps, Exit)) :-
+	compound_check_props(non_compat, Props, PropArgs, CheckProps).
+get_checkc(call, Props, PropArgs, Exit, checkc(CheckProps, Exit)) :-
+	compound_check_props(non_inst, Props, PropArgs, CheckProps).
+
+get_checkif(_, _, _, _, [], _, _, _, true) :- !.
+get_checkif(success, Exit, PredName, Dict, Props, PropArgs, Names, AsrLoc,
+	    checkif(Exit, success, PredName, Dict, CheckProps, Names,
+		AsrLoc)) :-
+	compound_check_props(non_inst, Props, PropArgs, CheckProps).
+get_checkif(compatpos, Exit, PredName, Dict, Props, PropArgs, Names, AsrLoc,
+	    checkif(Exit, compatpos, PredName, Dict, CheckProps, Names,
+		AsrLoc)) :-
+	compound_check_props(non_compat, Props, PropArgs, CheckProps).
 
 get_predname(short, _, Pred, F/A) :-
 	functor(Pred, F, A).
@@ -87,23 +104,27 @@ get_predname(long, Dict, Pred, PredName) :-
 
 get_propnames(Prop, Prop).
 
+short_prop_name(Prop, Name-[]) :-
+	callable(Prop),
+	arg(1, Prop, Arg),
+	var(Arg),
+	Prop =.. [FName, _|Args],
+	gnd(Args) ->
+	Name =.. [FName|Args]
+    ;
+	Name = Prop.
+
 short_prop_names(Props, Names) :-
-	map(Props,
-	    ( _(Prop, Name-[]) :-
-		callable(Prop),
-		arg(1, Prop, Arg),
-		var(Arg),
-		Prop =.. [FName, _|Args],
-		gnd(Args) ->
-		Name =.. [FName|Args]
-	    ;
-		Name = Prop
-	    ), Names).
+	map(Props, short_prop_name, Names).
+
+propname_name(Name, Name-_).
+
+propdict_name(PropDict, _-PropDict).
 
 long_prop_names(Props, PropNames, Dict, Names) :-
-	map(Props,     select_applicable(Dict),           PropDicts),
-	map(PropNames, (_(Name, Name-_) :- true),         Names),
-	map(PropDicts, (_(PropDict, _-PropDict) :- true), Names).
+	map(Props,     select_applicable(Dict), PropDicts),
+	map(PropNames, propname_name,           Names),
+	map(PropDicts, propdict_name,           Names).
 
 % in this predicate, PredName and the name of each property must be ground
 % to avoid undesired unifications.
@@ -131,13 +152,16 @@ get_pretty_names(long, Term, Dict0, TermName, Dict) :-
 % note that the following predicates make partial unification, and comparison
 % over the given term: cui(Compare, Unify, Ignore)
 
-diff_props([],     _L, []).
-diff_props([H|L1], L2, L3) :-
+diff_props(L,      [], L) :- !. % Minor optimization
+diff_props(L1, [H|L2], L3) :- diff_props_2(L1, [H|L2], L3).
+
+diff_props_2([],     _,  []).
+diff_props_2([H|L1], L2, L3) :-
 	is_member_prop(L2, H),
 	!,
 	diff_props(L1, L2, L3).
-diff_props([H|L1], L2, [H|L3]) :-
-	diff_props(L1, L2, L3).
+diff_props_2([H|L1], L2, [H|L3]) :-
+	diff_props_2(L1, L2, L3).
 
 is_member_prop([T0|_], T1) :-
 	is_same_prop(T0, T1),
@@ -148,8 +172,8 @@ is_same_prop(T0, T1) :-
 	T0 = cui(C0, U0, _),
 	T1 = cui(C1, U1, _),
 	C0 == C1,
-%       The unification should be done After the comparison, to avoid
-%       problems if [U0,U1] share variables with [C0,C1]:
+	% The unification should be done After the comparison, to avoid
+	% problems if [U0,U1] share variables with [C0,C1]:
 	U0 = U1.
 
 collapse_prop(T0, T1, Es, Es) :-
@@ -196,10 +220,10 @@ lists_to_disj(A0, L) :-
 
 checkif_to_lit(CheckPosL, Params, CheckPos) :-
 	Params = pos(Pred, PType),
-	CheckPosL = i(AsrLoc, PredName, Compat, CompatNames, Exit),
+	CheckPosL = i(AsrLoc, PredName, Dict, Compat, CompatNames, Exit),
 	get_prop_args(Compat, Pred, Args),
-	get_checkif(PType, Exit, PredName, Compat, Args, CompatNames, AsrLoc,
-	    CheckPos).
+	get_checkif(PType, Exit, PredName, Dict, Compat, Args, CompatNames,
+	    AsrLoc, CheckPos).
 
 push_flags(inline) --> [].
 push_flags(yes) --> [(:- push_prolog_flag(single_var_warnings, off))].

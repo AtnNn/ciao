@@ -1,6 +1,6 @@
-include /home/clip/Systems/ciao/SETTINGS
-include $(CIAOSRC)/SHARED
-include $(SYSDEP_FILES)/mkf-$(CIAOARCH)
+# TODO: outdated; recover
+CIAOBUILDDIRtemp=../../../build
+include $(CIAOBUILDDIRtemp)/CONFIG_mkf
 
 # Known suffixes.  This allos make to take care of time dependencies.
 .SUFFIXES: .java .class

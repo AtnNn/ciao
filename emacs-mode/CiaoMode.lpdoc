@@ -1,0 +1,1565 @@
+@comment{** Do not edit--generated automatically **}
+
+The Ciao @concept{emacs interface} (or @em{mode} @cindex{emacs
+mode} in @apl{emacs} terms) provides a rich, integrated user
+interface to the Ciao @index{program development environment}
+components, including the @apl{ciaosh} interactive top level, the
+@apl{lpdoc} documentation generator, the testing system, and the
+@apl{ciaopp} preprocessor.  Most features of these Ciao
+development environment components are available from the command
+line of the top-level shell and the preprocessor and as
+standalone tools. However, using Ciao from inside @apl{emacs} is
+highly recommended. The facilities that this mode provides
+include:
+
+@begin{itemize}
+
+@item @index{Syntax-based highlighting} (coloring), @cindex{coloring,
+syntax} @index{auto-indentation}, @index{auto-fill}, etc. of code. This
+includes the assertions used by the preprocessor and the documentation
+strings used by the Ciao auto-documenter, @apl{lpdoc}.
+
+@item Providing automatic access to @concept{on-line help} for all
+predicates by accessing the Ciao system manuals in @apl{info} format.
+
+@item Starting and communicating with the @index{Ciao top-level}, running
+in its own @concept{sub-shell}. This facilitates loading programs, checking
+the @em{syntax} of programs (and of @index{assertions} within programs),
+marking and unmarking modules for interactive debugging, @index{tracing the
+source code} @cindex{source-level debugging} @cindex{debugging,
+source-level} during debugging, making stand-alone executables, compiling
+modules to dynamically linkable Ciao objects, compiling modules to active
+objects, etc.
+
+@item Starting and communicating with @apl{lpdoc}, the @index{Ciao
+auto-documenter}, running in its own @concept{sub-shell}. This allows
+generating in a very convenient way manuals for any file(s) being
+edited, in a variety of output formats, and is very useful for quickly
+checking how the auto-generated documentation will look.
+
+@item Running unit tests on files or applications.
+
+@item Starting and communicating with @apl{ciaopp}, the @index{Ciao
+preprocessor}, running in its own @concept{sub-shell}. This allows easily
+performing certain kinds of @index{static checks} (useful for finding
+errors in programs before running them), program analysis tasks, and
+@index{program transformations} on source programs.
+
+@item Syntax highlighting and coloring of the error and warning
+messages produced by the top level, unit testing, preprocessor,
+or any other tool using the same message format (such as the
+@apl{lpdoc} auto-documenter), and @em{locating automatically the
+points in the source files where such errors occur}.
+
+@item This mode also includes a very simple automatic
+@index{version control} system which allows keeping a
+@index{changelog} for individual files or for whole
+applications. This is done by automatically including changelog
+entries in source files, which can then be processed by the
+@apl{lpdoc} auto-documenter. This is useful for smaller projects
+that are not stored in a repository and can also be used for
+maintaining changelogs even for projects that are
+repository-based.
+
+@end{itemize}
+
+This chapter explains how to use the Ciao @apl{emacs} interface (and
+how to set up your @apl{emacs} environment for correct operation, even
+though this is normally done automatically by the installation
+process).  The Ciao @apl{emacs} interface can also be used to work
+with traditional Prolog or CLP systems.
+
+@section{Conventions for writing Ciao programs under Emacs}
+@cindex{formatting conventions, for emacs} 
+
+There are currently a number of syntactic conventions for Ciao
+programs which greatly help operation of the Emacs development
+environment.  These conventions are particularly important for the
+@concept{source-level debugger} and the @concept{syntax-based
+coloring} capabilities.  The need for such conventions comes from the
+fact that it would be unrealistic to write a complete Ciao parser in
+Emacs lisp. These conventions are the following, more or less in order
+of importance:
+
+@begin{itemize}
+
+@item Clauses should begin on the first column (this is used to recognize
+      the beginning of a clause). 
+
+@item C style comments should not be used in a clause, but can be used
+      outside any clause.
+
+@end{itemize}
+
+@noindent The following suggestions are not strictly necessary
+but can improve operation. In particular, they allow much greater
+precision in the location of program points during source-level
+debugging (for line by line tracing, when marking breakpoints,
+etc.):
+
+@begin{itemize}
+
+@item Body literals should be indented. 
+
+@item There should be no more than one literal per line.
+
+@end{itemize}
+
+Other issues:
+
+@begin{itemize}
+
+@item Comments which start with @tt{%}s are indented to the right
+if indentation is requested.
+
+@item For syntax-based highlighting to be performed, font-lock
+must be available and not disabled (the Ciao mode enables it but
+it may be disabled elsewhere in, e.g., the @file{.emacs} file).
+
+@end{itemize}
+
+@section{Checking the installation}
+
+Typically, a complete pre-installation of the Ciao @apl{emacs}
+interface is performed during Ciao installation. To check that
+installation was completed sucessfully, open a file with a @tt{.pl}
+ending. You should see that @apl{emacs} enters Ciao mode: the
+mode is identified in the @concept{status bar} below the
+@concept{buffer} and, if the @concept{emacs menu bar} is enabled, you
+should see the Ciao menus. You should be able from the
+menu-bar, for example, to go to the Ciao manuals in the info or load
+the @tt{.pl} file that you just opened into a Ciao top level.
+
+If things don't work properly, see the section @ref{Installation of the
+Ciao emacs interface} later in this chapter.
+
+@section{Functionality and associated key sequences (bindings)}
+
+The following sections summarize the capabilities of the Ciao emacs
+interface and the (default) @index{key sequences} used to access those
+capabilities.  Note however that most of these functions are also
+accessible from the menu bar, so learning these key combinations
+is not necessary: the list is provided mainly for illustration of the
+capabilities available, as well as completeness and documentation.
+
+@section{Syntax coloring and syntax-based editing}
+
+Syntax-based highlighting (coloring) of code is provided
+automatically when opening Ciao files.  This includes also the
+assertions used by the preprocessor and the documentation strings used
+by the Ciao auto-documenter, @apl{lpdoc}.  The mode should be set to
+Ciao and the Ciao mode menus should appear on the menu bar. The
+colors and fonts used can be changed through the @index{customize}
+options in the help menu (see @ref{Customization}).
+
+During editing this coloring may be refreshed by calling the
+appropriate function (see below).
+
+Limited syntax-based auto-indentation and auto-fill of code and
+comments is also provided. Syntax highlighting and coloring is also
+available for the error and warning messages produced by the top
+level, preprocessor, and auto-documenter, and, in general, for the
+output produced by these tools.
+
+@noindent
+Commands:
+  
+@begin{description}
+
+@item{@key{C-c} @key{h} } Undate (recompute) syntax-based highlighting (coloring).
+@end{description} @p 
+@begin{description}
+
+@item{@key{TAB} } Indent current line as Ciao code.
+With argument, indent any additional lines of the same clause
+rigidly along with this one.
+@end{description} @p 
+@section{Getting on-line help}
+
+The following commands are useful for getting on-line help. This
+is done by accessing the @apl{info} version of the Ciao manuals or the
+@apl{emacs} built-in help strings. Note also that the @apl{info}
+standard @tt{search} command (generally bound to @key{s}) can be used
+inside @apl{info} buffers to search for a given string.
+   
+@begin{description}
+
+@item{@key{C-c} @key{TAB} } Find help for the symbol (e.g., predicate, directive, declaration,
+property, type, etc.) that is currently under the cursor. Opens
+a (hopefully) relevant part of the Ciao manuals in @apl{info}
+mode. Requires that the Ciao manuals in @apl{info} format be
+installed and accessible to @apl{emacs} (i.e., they should appear
+somewhere in the info directory when typing @tt{M-x info}). It
+also requires @file{word-help.el}, which is provided with
+Ciao. Refer to the installation instructions if this is not the
+case.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{/} } Find a completion for the symbol (e.g., predicate, directive,
+declaration, type, etc.) that is currently under the cursor. Uses for
+completion the contents of the indices of the Ciao manuals. Same
+requirements as for finding help for the symbol.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{RET} } Go to the part of the info directory containing the Ciao manuals.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-h} @key{m} } Show a short description of the Ciao emacs mode, including all key
+bindings.
+@end{description} @p 
+@section{Loading and compiling programs}
+
+These commands allow @index{loading programs}, @index{creating
+executables}, etc. by issuing the appropriate commands to a Ciao top
+level shell, running in its own buffer as a subprocess. See @ref{The
+interactive top-level shell} for details. The following commands
+implement the communication with the Ciao top level:
+   
+@begin{description}
+
+@item{@key{C-c} @key{t} } Ensure that an inferior Ciao top-level process is running. 
+
+   This opens a top-level window (if one did not exist already)
+where queries can be input directly. Programs can be loaded into
+this top level by typing the corresponding commands in this
+window (such as use_module, etc.), or, more typically, by opening
+the file to be loaded in an emacs window (where it can be edited)
+and issuing a load command (such as 
+C-c l or C-c L) directly
+from there (see the loading commands of this mode and their
+bindings).
+
+   Note that many useful commands (e.g., to repeat and edit previous
+commands, interrupt jobs, locate errors, automatic completions, etc.)
+are available in this top-level window (see @ref{Commands available in
+toplevel and preprocessor buffers}).
+
+   Often, it is not necessary to use this function since
+execution of any of the other functions related to the top
+level (e.g., loading buffers into the top level) ensures that a
+top level is started (starting one if required).
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{l} } Load the current buffer (and any auxiliary files it may use) into the
+top level. 
+
+The type of compilation performed (@index{compiling} or
+@index{interpreting}) is selected automatically depending on whether the
+buffer has been marked for debugging or not -- see below. In case you try
+to load a file while in the middle of the debugging process the debugger is
+first aborted and then the buffer is loaded. Also, if there is a defined
+query, the user is asked whether it should be called.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{f} } Load CiaoPP and then the current buffer (and any auxiliary files it
+may use) into the top level. Use CiaoPP auto_check_assrt predicate to
+check current buffer assertions and then load the buffer if there was
+no error.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{x} } Make an executable from the code in the current buffer. The buffer
+must contain a @pred{main/0} or @pred{main/1} predicate. Note that
+compiler options can be set to determine whether the libraries and
+auxiliary files used by the executable will be statically linked,
+dynamically linked, auto-loaded, etc.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{o} } Make a Ciao object (.po) file from the code in the current
+buffer.  This is useful for example while debugging during development
+of a very large application which is compiled into an excutable, and
+only one or a few files are modified. If the application executable is
+dynamically linked, i.e., the component .po files are loaded
+dynamically during startup of the application, then this command can
+be used to recompile only the file or files which have changed, and
+the correct version will be loaded dynamically the next time the
+application is started. However, note that this must be done with care
+since it only works if the inter-module interfaces have not changed.
+The recommended, much safer way is to generate the executable again,
+letting the Ciao compiler, which is inherently incremental, determine
+what needs to be recompiled.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{a} } Make an active module executable from the code in the current
+buffer. An active module is a remote procedure call server (see the
+@lib{activemod} library documentation for details).
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{s} } Set the current buffer as the principal file in a multiple module
+programming environment.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{L} } Load the module designated as @index{main module} (and all related files
+that it uses) into the top level. If no main module is defined it will load
+the current buffer. 
+
+The type of compilation performed (@index{compiling} or
+@index{interpreting}) is selected automatically depending on whether
+the buffer has been marked for debugging or not -- see below. In case
+you try to load a file while in the middle of the debugging process
+the debugger is first aborted and then the buffer is loaded. Also, if
+there is a defined query, the user is asked whether it should be 
+called.
+@end{description} @p 
+@section{Commands available in toplevel and preprocessor buffers}
+
+The interactive top level and the preprocessor both are typically
+run in an iteractive buffer, in which it is possible to communicate
+with them in the same way as if they had been started from a standard
+shell. These interactive buffers run in the so-called @em{Ciao
+inferior mode}. This is a particular version of the standard emacs
+shell package (comint) and thus all the commands typically available
+when running shells inside emacs also work in these buffers.  In
+addition, many of the commands and key bindings available in buffers
+containing Ciao source code are also available in these interactive
+buffers, when applicable.  The Ciao-specific commands available
+include:
+    
+@begin{description}
+
+@item{@key{C-c} @key{TAB} } Find help for the symbol (e.g., predicate, directive, declaration,
+property, type, etc.) that is currently under the cursor. Opens
+a (hopefully) relevant part of the Ciao manuals in @apl{info}
+mode. Requires that the Ciao manuals in @apl{info} format be
+installed and accessible to @apl{emacs} (i.e., they should appear
+somewhere in the info directory when typing @tt{M-x info}). It
+also requires @file{word-help.el}, which is provided with
+Ciao. Refer to the installation instructions if this is not the
+case.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{/} } Find a completion for the symbol (e.g., predicate, directive,
+declaration, type, etc.) that is currently under the cursor. Uses for
+completion the contents of the indices of the Ciao manuals. Same
+requirements as for finding help for the symbol.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{`} } Go to the location in the source file containing the next
+error reported by the last Ciao subprocess (preprocessor or
+toplevel) which was run.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{e} } Remove error marks from last run (and also debugging marks if
+present). This finish the error finding session.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{q} } Set a default query. This may be useful specially during debugging
+sessions. However, as mentioned elsewhere, note that commands that
+repeat previous queries are also available. 
+
+This query can be recalled at any time using 
+C-c Q.  It is also possible to set things up so
+that this query will be issued automatically any time a program
+is (re)loaded. The functionality is available in the major
+mode (i.e., from a buffer containing a source file) and in the
+inferior mode (i.e., from the buffer running the top-level
+shell). When called from the major mode (i.e., from window
+containing a source file) then the user is prompted in the
+minibuffer for the query. When called from the inferior
+mode (i.e., from a top-level window) then the query on the
+current line, following the Ciao prompt, is taken as the default
+query.
+
+To clear the default query use  M-x ciao-clear-query
+or simply set it to an empty query: i.e., in a source buffer select
+C-c q and enter an empty query. In an inferior mode
+simply select C-c q on a line that contains only the
+system prompt.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{Q} } Issue predefined query.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{C-v} } Show last output file produced by Ciao preprocessor. The preprocessor
+works by producing a file which is a transformed and/or adorned (with
+assertions) version of the input file. This command is often used after
+running the preprocessor in order to visit the output file and see the
+results from running the preprocessor.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{v} } Report the version of the emacs Ciao mode.
+@end{description} @p 
+
+
+@noindent The following are some of
+the commands from the comint shell package which may be specially
+useful (type  @tt{<f1> m} while in a
+Ciao interactive buffer for a complete list of commands):
+
+@begin{description}
+
+@item{@key{M-p} } Cycle backwards through input history, saving input.
+@end{description} @p 
+@begin{description}
+
+@item{@key{M-n} } Cycle forwards through input history.
+@end{description} @p 
+@begin{description}
+
+@item{@key{M-r} } Search for a regular expression backward in input history using Isearch.
+@end{description} @p 
+@begin{description}
+
+@item{@key{TAB} } Dynamically find completion of the item at
+point. Note that this completion command refers generally to filenames
+ (rather than, e.g., predicate names, as in the previous functions).
+@end{description} @p 
+@begin{description}
+
+@item{@key{M-?} } List all (filename) completions of the
+item at point.
+@end{description} @p 
+@begin{description}
+
+@item{@key{RET} } Return at any point of the a line at the
+end of a buffer sends that line as input. Return not at end copies the
+rest of the current line to the end of the buffer and sends it as
+input.
+@end{description} @p 
+@begin{description}
+
+@item{@key{^D} } Delete ARG characters forward or send an EOF to subprocess.
+Sends an EOF only if point is at the end of the buffer and there is no input.
+@end{description} @p 
+@begin{description}
+
+@item{@key{^C} @key{^U} } Kill all text from last stuff output by interpreter to point.
+@end{description} @p 
+@begin{description}
+
+@item{@key{^C} @key{^W} } Kill characters backward until encountering the beginning of a word.
+With argument ARG, do this that many times.
+@end{description} @p 
+@begin{description}
+
+@item{@key{^C} @key{^C} } Interrupt the current subjob.
+This command also kills the pending input
+between the process mark and point.
+@end{description} @p 
+@begin{description}
+
+@item{@key{^C} @key{^Z} } Stop the current subjob.
+This command also kills the pending input
+between the process mark and point.
+
+WARNING: if there is no current subjob, you can end up suspending
+the top-level process running in the buffer.  If you accidentally do
+this, use M-x comint-continue-subjob to resume the process.  (This
+is not a problem with most shells, since they ignore this signal.)
+@end{description} @p 
+@begin{description}
+
+@item{@key{^C} @key{^\} } Send quit signal to the current subjob.
+This command also kills the pending input
+between the process mark and point.
+@end{description} @p 
+@section{Locating errors and checking the syntax of assertions}
+
+These commands allow locating quickly the point in the source code
+corresponding to errors flagged by the compiler or preprocessor as
+well as performing several syntactic checks of assertions:
+@cindex{locating errors} 
+   
+@begin{description}
+
+@item{@key{C-c} @key{`} } Go to the location in the source file containing the next
+error reported by the last Ciao subprocess (preprocessor or
+toplevel) which was run.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{e} } Remove error marks from last run (and also debugging marks if
+present). This finish the error finding session.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{E} } Check the @em{syntax} of the code and assertions in the current
+buffer, as well as imports and exports.  This uses the standard top
+level (i.e., does not call the preprocessor and thus does not require
+the preprocessor to be installed). Note that full (semantic) assertion
+checking must be done with the preprocessor.
+@end{description} @p 
+@section{Commands which help typing in programs}
+
+The following commands are intended to help in the process of
+writing programs: @cindex{script header, inserting automatically}
+   
+@begin{description}
+
+@item{@key{C-c} @key{I} @key{S} } Insert a (Unix) header at the top of the current buffer so that the
+Ciao script interpreter will be called on this file if @em{run} from
+the command line. It also makes the file ``executable'' (e.g.,
+'@tt{chmod +x <file>}' in Unix). See @ref{The script interpreter} for
+details.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{i} } Indent a Ciao or Prolog file using `plindent'.
+@end{description} @p 
+@section{Debugging programs}
+
+These commands allow marking modules for @index{debugging} by
+issuing the appropiate commands to a Ciao top level shell, running in
+its own buffer as a subprocess. There are two differents types of
+debugging: traditional debugging (using the @concept{byrd-box model}
+and @concept{spy-points}) and @index{source-level debugging} (same as
+traditional debugging plus source tracing and
+@concept{breakpoints}). @cindex{debugging, source-level} In order to
+use @index{breakpoints}, source debugging must be on. The following
+commands implement comunication with the Ciao top level:
+   
+@begin{description}
+
+@item{@key{C-c} @key{d} } Debug (or stop debugging) buffer source. This is a shortcut which
+is particularly useful when using the source debugger on a single
+module. It corresponds to several lower-level actions.  Those
+lower-level actions depend on how the module was selected for
+debugging. In case the module was not marked for source-level
+debugging, it marks the module corresponding to the current buffer for
+source-level debugging, reloads it to make sure that it is loaded in
+the correct way for debugging (same as 
+C-c l), and sets the debugger in trace mode (i.e.,
+issues the @tt{trace.} command to the top-level shell). Conversely, if
+the module was already marked for source-level debugging then it will
+take the opposite actions, i.e., it unmarks the module for
+source-level debugging, reloads it, and sets the debugger to non-debug
+mode.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{m} } Mark, or unmark, the current buffer for debugging (traditional
+debugging or source debugging). Note that if the buffer has already been
+loaded while it was unmarked for debugging (and has therefore been loaded
+in ``compile'' mode) it has to be loaded again. The minibuffer shows how
+the module is loaded now and allows selecting another mode for it. There
+are three posibilities: N for no debug, S for source debug and D for
+traditional debug.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{M-m} } Visits all Ciao files which are currently open in a buffer
+allowing selecting for each of them whether to debug them or not and
+the type of debugging performed. When working on a multiple module
+program, it is possible to have many modules open at a time. In this
+case, you will navigate through all open Ciao files and select
+the debug mode for each of them (same as doing 
+C-c m for each).
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{S} @key{b} } Set a breakpoint on the current literal (goal). This can be done at any
+time (while debugging or not). The cursor must be @em{on the predicate
+symbol of the literal}. Breakpoints are only useful when using source-level
+debugging.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{S} @key{v} } Remove a breakpoint from the current literal (goal). This can be done
+at any time (while debugging or not). The cursor must be @em{on the predicate
+symbol of the literal}.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{S} @key{n} } Remove all breakpoints. This can be done at any time (while debugging
+or not).
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{S} @key{l} } Redisplay breakpoints in all Ciao buffers. This ensures that the marks
+in the source files and the Ciao toplevel are synchronized.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{S} @key{r} } Remove breakpoint coloring in all Ciao files.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{S} @key{t} } Set the debugger to the trace state. In this state, the program is
+executed step by step.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{S} @key{d} } Set the debugger to the debug state. In this state, the program will
+only stop in breakpoints and spypoints. Breakpoints are specially supported
+in @apl{emacs} and using source debug.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{r} } Load the current region (between the cursor and a previous mark)
+into the top level. Since loading a region of a file is typically done
+for debugging and/or testing purposes, this command always loads the
+region in debugging mode (interpreted).
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{p} } Load the predicate around the cursor into the top level. Since loading a 
+single predicate is typically done for debugging and/or testing purposes,
+this command always loads the predicate in debugging mode (interpreted).
+@end{description} @p 
+@section{Testing programs}
+
+These commands allow testing predicates and modules, based on
+   interactively defined queryies or more sophisticated tests
+   specified within the source code.
+@begin{description}
+
+@item{@key{C-c} @key{q} } Set a default query. This may be useful specially during debugging
+sessions. However, as mentioned elsewhere, note that commands that
+repeat previous queries are also available. 
+
+This query can be recalled at any time using 
+C-c Q.  It is also possible to set things up so
+that this query will be issued automatically any time a program
+is (re)loaded. The functionality is available in the major
+mode (i.e., from a buffer containing a source file) and in the
+inferior mode (i.e., from the buffer running the top-level
+shell). When called from the major mode (i.e., from window
+containing a source file) then the user is prompted in the
+minibuffer for the query. When called from the inferior
+mode (i.e., from a top-level window) then the query on the
+current line, following the Ciao prompt, is taken as the default
+query.
+
+To clear the default query use  M-x ciao-clear-query
+or simply set it to an empty query: i.e., in a source buffer select
+C-c q and enter an empty query. In an inferior mode
+simply select C-c q on a line that contains only the
+system prompt.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{Q} } Issue predefined query.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{u} } Run the test over the current buffer.
+
+The test should be specified using a test assertion in the module.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{U} } Run the test over the current buffer and the assertions of exported predicates.
+
+The test should be specified using a test assertion in the module.
+@end{description} @p 
+@section{Preprocessing programs}
+
+These commands allow @index{preprocessing programs} with
+@apl{ciaopp}, the @index{Ciao preprocessor}.
+
+@include{README_CIAOPP.lpdoc}
+
+See the preprocessor manual for details. The following commands
+implement the communication with the Ciao preprocessor:
+  
+@begin{description}
+
+@item{@key{C-c} @key{A} } Call the preprocessor to perform a number of pre-selected analyses
+on the current buffer (and related modules).
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{T} } Call the preprocessor to perform compile-time checking of the
+assertions (types, modes, determinacy, nonfailure, cost, ...) in the
+current buffer (and against those in related modules).
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{O} } Uses the preprocessor to perform optimizations (partial evaluation,
+abstract specialization, parallelization, ...) on the current
+buffer (and related modules).
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{M} } Browse and select (using the preprocessor menus) the actions to be
+performed by the preprocessor when performing analisys used by
+ M-x ciao- C-c A,
+C-c T, C-c O, and the
+corresponding toolbar buttons.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{C-v} } Show last output file produced by Ciao preprocessor. The preprocessor
+works by producing a file which is a transformed and/or adorned (with
+assertions) version of the input file. This command is often used after
+running the preprocessor in order to visit the output file and see the
+results from running the preprocessor.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{C-r} } Ensure that an inferior Ciao preprocessor process is running. 
+
+   This opens a preprocessor top-level window (if one did not exist
+already) where preprocessing commands and preprocessing menu options
+can be input directly. Programs can be preprocessed by typing commands
+in this window, or, more typically, by opening the file to be
+preprocessed in an emacs window (where it can be edited) and issuing a
+command (such as  C-c A,
+C-c T, C-c O, or
+C-c M) directly from there (see the
+preprocessing commands of this mode and their bindings).
+
+   Note that many useful commands (e.g., to repeat and edit previous
+commands, interrupt jobs, locate errors, automatic completions, etc.)
+are available in this top-level window (see @ref{Commands available in
+toplevel and preprocessor buffers}).
+
+   Often, it is not necessary to use this function since
+execution of any of the other functions related to the top
+level (e.g., loading buffers into the top level) ensures that a
+top level is started (starting one if required).
+@end{description} @p 
+@section{Version control}
+
+The following commands can be used to carry out a simple but
+effective form of @concept{version control} by keeping a @concept{log
+of changes} on a file or a group of related files. Interestingly, this
+log is kept in a format that is understood by @apl{lpdoc}, the Ciao
+documenter @cite{lpdoc-tr}. As a result, if these version comments are
+present, then @apl{lpdoc} will be able to automatically assign up to
+date version numbers to the manuals that it generates. This way it is
+always possible to identify to which version of the software a manual
+corresponds. Also, @apl{lpdoc} can create automatically sections
+describing the changes made since previous versions, which are
+extracted from the comments in the changelog entries.
+
+The main effect of these commands is to automatically associate the
+following information to a set of changes performed in the file and/or
+in a set of related files:
+
+@begin{itemize}
+
+@item a @index{version number} (such as, e.g., @tt{1.2}, where @tt{1}
+is the @concept{major version number} and @tt{2} is the @concept{minor
+version number}),
+
+@item a @concept{patch number} (such as, e.g., the @tt{4} in
+@tt{1.2#4}), 
+
+@item a @concept{time stamp} (such as, e.g.,
+@tt{1998/12/14,17:20*28+MET}),
+
+@item the author of the change, @cindex{change, author} and
+
+@item a comment explaining the change. @cindex{change, comment}
+@end{itemize}
+
+The @concept{version numbering} used can be local to a single file or
+common to a number of related files. A simple version numbering policy
+is implemented: when a relevant change is made, the user typically
+inserts a @concept{changelog entry} for it, using the appropriate
+command (or selecting the corresponding option when prompted while
+saving a file). This will cause the @em{patch number} for the file (or
+for the whole system that the file is part of) to be incremented
+automatically and the corresponding machine-readable comment to be
+inserted in the file. Major and minor version numbers can also be
+changed, but this is always invoked by hand (see below).
+
+The changelog entry is written in the form of a @decl{comment/2}
+declaration.  As mentioned before, the advantage of using this kind of
+changelog entries is that these declarations can be processed by the
+@apl{lpdoc} automatic documenter (see the @apl{lpdoc} reference
+manual @cite{lpdoc-tr} or the @lib{assertions} library documentation
+for more details on these declarations). 
+
+Whether the user is asked or not to introduce such changelog entries,
+and how the patch and version numbers should be increased is
+controlled by the presence in the file of a @pred{comment/2}
+declaration of the type:
+
+@tt{:- doc(version_maintenance,<type>).}
+
+@noindent (note that this requires including the @lib{assertions}
+library in the source file).  These declarations themselves are also
+typically introduced automatically when using this mode (see below).
+
+The version maintenance mode can also be set alternatively by
+inserting a comment such as:
+
+@begin{verbatim}
+%% Local Variables: 
+%% mode: ciao
+%% update-version-comments: "off"
+%% End:
+@end{verbatim}
+
+The lines above instruct emacs to put the buffer visiting the file in
+@concept{emacs Ciao mode} and to turn version maintenance off.
+Setting the version maintenance mode in this way has the disadvantage
+that @apl{lpdoc}, the auto-documenter, and other related tools will
+not be aware of the type of version maintenance being performed (the
+lines above are comments for Ciao). However, this can be useful in
+fact for setting the @index{version maintenance mode for packages} and
+other files meant for inclusion in other files, since that way the
+settings will not affect the file in which the package is included.
+
+The following commands implement the version control support:
+   
+@begin{description}
+
+@item{@key{C-c} @key{C-a} } Used to turn on or off version control for the file being visited in
+the current buffer.  The user will be prompted to choose among the
+following options:
+
+   @begin{description} 
+
+   @item{@key{y}} Turn version control on for this file. 
+
+   @item{@key{n}} Turn version control off for this file. A version
+control comment such as:
+
+@tt{:- doc(version_maintenance,off).}
+
+@noindent will be added to the buffer and the file saved. No version
+control will be performed on this file until the line above is removed
+or modified (i.e., from now on  C-x C-s
+simply saves the buffer).
+
+   @item{@key{q}} Turn off prompting for the introduction of changelog
+entries for now. @apl{emacs} will not ask again while the buffer is
+loaded, but it may ask again when saving after the next time you load
+the buffer (if @tt{ciao-ask-for-version-maintenance-type} is set to
+@tt{yes}).
+
+   @end{description}
+
+   If @key{y} is selected, then the system prompts again regarding how
+and where the version and patch number information is to be
+maintained. The following options are available:
+
+   @begin{description}
+
+   @item{@tt{on}} All version control information will be
+contained within this file. When saving a buffer
+ (C-x C-s) emacs will ask if a
+changelog entry should be added to the file before saving. If a
+comment is entered by the user, a new patch number is assigned to
+it and the comment is added to the file. This patch number will
+be the one that follows the most recent changelog entry already
+in the file. This is obviously useful when maintaining version
+numbers individually for each file.
+
+   @item{@tt{<directory_name>}} Global version control will be
+performed coherently on several files. When saving a buffer
+ (C-x C-s) emacs will ask if a changelog
+entry should be added to the file before saving. If a comment is
+given, the global patch number (which will be kept in the file:
+@tt{<directory_name>/GlobalPatch}) is atomically incremented and the
+changelog entry is added to the current file, associated to that patch
+number. Also, a small entry is added to a file
+@tt{<directory_name>/GlobalChangeLog} which points to the current
+file. This allows inspecting all changes sequentially by visiting all
+the files where the changes were made (see  
+C-c C-n). This is obviously useful when
+maintaining a single thread of version and patch numbers for a set of
+files.
+
+   @item{@tt{off}} Turns off version control: C-x C-s then simply
+   saves the file as usual. 
+
+   @end{description}
+
+@bf{Some useful tips:} 
+
+@begin{itemize}
+
+@item If a changelog entry is in fact introduced, the cursor is left
+at the point in the file where the comment was inserted and the mark
+is left at the original file point. This allows inspecting (and
+possibly modifying) the changelog entry, and then returning to the
+original point in the file by simply typing
+C-x C-x.
+
+@item @cindex{moving changelog entries} The first changelog entry is
+entered by default at the end of the buffer. Later, the changelog
+entries can be moved anywhere else in the file. New changelog entries
+are always inserted just above the first changelog entry which appears
+in the file.
+
+@item The comments in changelog entries can be edited at any time. 
+
+@item If a changelog entry is moved to another file, and version
+numbers are shared by several files through a directory, the
+corresponding file pointer in the
+@tt{<directory_name>/GlobalChangeLog} file needs to be changed also,
+for the entry to be locatable later using
+C-c C-n.
+
+@end{itemize}
+
+
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-x} @key{C-s} } This is the standard @apl{emacs} command that saves a buffer by
+writing the contents into the associated @tt{.pl} file.  However, in
+the Ciao mode, if version control is set to on for ths file, then this
+command will ask the user before saving whether to introduce a
+changelog entry documenting the changes performed.
+
+In addition, if: 
+
+@begin{itemize}
+
+@item the buffer does not already contain a comment specifying the
+@concept{type of version control} to be performed,
+
+@item and the customizable variable
+@tt{ciao-ask-for-version-maintenance-type} is set to @tt{yes} (go to
+the Ciao options menu, LPdoc area to change this, which is by default
+set to @tt{no}),
+
+@end{itemize} 
+
+@noindent then, before saving a buffer, the user will be also
+automatically asked to choose which kind of version control is desired
+for the file, as in 
+C-c C-a.
+
+
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{C-s} } Same as  C-x C-s except that it
+forces prompting for inclusion of a changelog entry even if the buffer
+is unmodified.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{n} } Force a move to a new major/minor version number (the user will be
+prompted for the new numbers). Only applicable if using
+directory-based version maintenance. Note that otherwise it suffices
+with introducing a changelog entry in the file and changing its
+version number by hand.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{C-n} } When a unique version numbering is being maintained across several
+files, this command allows inspecting all changes sequentially by
+visiting all the files in which the changes were made:
+
+    @begin{itemize}
+
+    @item If in a source file, find the next changelog entry in the
+source file, open in another window the corresponding
+@file{GlobalChangeLog} file, and position the cursor at the
+corresponding entry. This allows browsing the previous and following
+changes made, which may perhaps reside in other files in the system.
+
+   @item If in a @file{GlobalChangeLog} file, look for the next entry
+in the file, and open in another window the source file in which the
+corresponding comment resides, positioning the corresponding comment
+at the top of the screen. This allows going through a section of the
+@file{GlobalChangeLog} file checking all the corresponding comments in
+the different files in which they occur.
+
+    @end{itemize}
+
+
+@end{description} @p 
+@section{Generating program documentation}
+
+These commands provide some bindings and facilities for generating
+and viewing the documentation corresponding to the current buffer. The
+documentation is generated in a temporary directory, which is created
+automatically.  This is quite useful while modifying the documentation
+for a file, in order to check the output that will be produced,
+whithout having to set up a documentation directory by hand or to
+regenerate a large manual of which the file may be a part. 
+   
+@begin{description}
+
+@item{@key{C-c} @key{D} @key{B} } Generate the documentation for the current buffer in the
+default format. This allows generating a simple document for the
+current buffer. Basically, it creates a simple, default
+@tt{SETTINGS.pl} file, sets @tt{mainfile} in @tt{SETTINGS.pl} to
+the current buffer file and then generates the documentation in a
+temporary directory. This is useful for seeing how the
+documentation of a file will format. Note that for generating
+manuals the best approach is to set up a permanent documentation
+directory with the appropriate @tt{SETTINGS.pl} file (see the
+LPdoc manual).
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{D} @key{F} } Change the default output format used by the LPdoc auto-documenter. It
+is set by default to @tt{html} or to the environment variable
+@tt{LPDOCFORMAT} if it is defined. @cindex{lpdoc default format, setting}
+@cindex{auto-documenter default format, setting}
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{D} @key{S} } Visit, or create, the @tt{SETTINGS.pl} file (which controls
+all auto-documenter options) for the current buffer.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{D} @key{G} } Generate the documentation according to @tt{SETTINGS.pl} in
+the default format. This allows generating complex documents but
+it assumes that @tt{SETTINGS.pl} exists and that the options that
+it contains (main file, component files, paths, etc.) have been
+set properly. Documentation is generated in a temporary
+directory. Note however that for generating complex manuals the
+best approach is to set up a permanent documentation directory
+with the appropriate @tt{SETTINGS.pl} (see the LPdoc manual).
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{D} @key{V} } Start a viewer on the documentation for the current buffer in the
+   default format.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{D} @key{W} } Change the root directory of the scratchpad for temporal source files.
+This is used, e.g., by the LPdoc auto-documenter when generating
+temporal configuration files and documentation for buffers. It is
+set by default to a new dir under @tt{/tmp} or to the environment
+variable @tt{CIAOSCRATCHDIR} if it is defined. @cindex{scratchpad
+directory} @cindex{auto-documenter working dir, setting}
+@end{description} @p 
+@section{Setting top level preprocessor and documenter executables}
+
+These commands allow @index{changing the executables used} when
+starting the top-level, the preprocessor, or the auto-documenter. They
+also allow changing the arguments that these executables take, and
+changing the path where the libraries reside. In the case of the
+top-level and preprocessor, this should be done only by users which
+understand the implications, but it is very useful if several versions
+of Ciao or the preprocessor are available in the system. All these
+settings can be changed through the @index{customize} options in the
+help menu (see @ref{Customization}).
+   
+@begin{description}
+
+@item{@key{C-c} @key{S} @key{A} } 
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{S} @key{C} } Change the Ciao executable used to run the top level. It is set by
+default to @tt{ciao} or, to the environment variable @tt{CIAO} if it
+is defined. @cindex{toplevel command, setting}
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{S} @key{C-c} } Change the arguments passed to the Ciao executable. They are
+set by default to none or, to the environment variable @tt{CIAOARGS} if it
+is defined. @cindex{toplevel command args, setting}
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{S} @key{P} } Change the executable used to run the Ciao Preprocessor
+toplevel. It is set by default to @tt{ciaopp} or, to the environment 
+variable @tt{CIAOPP} if it is defined. @cindex{preprocessor command, setting}
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{S} @key{C-p} } Change the arguments passed to the Ciao preprocessor executable. They are
+set by default to none or to the environment variable @tt{CIAOPPARGS} if it
+is defined. @cindex{preprocessor command args, setting}
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{S} @key{L} } Change the location of the Ciao library paths (changes the
+   environment variable @tt{CIAOLIB}).
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{S} @key{D} } Change the executable used to run the LPdoc auto-documenter. It is
+set by default to @tt{lpdoc} or to the environment  
+variable @tt{LPDOC} if it is defined. @cindex{lpdoc command, setting}
+@cindex{auto-documenter command, setting}
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{S} @key{C-d} } Change the arguments passed to the LPdoc auto-documenter. They are
+set by default to none or to the environment variable @tt{LPDOCARGS} if it
+is defined. @cindex{lpdoc command args, setting}
+@cindex{auto-documenter command args, setting}
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{S} @key{C-l} } Change the path in which the LPdoc library is installed. It is
+set by default to @tt{/home/clip/lib} or to the environment  
+variable @tt{LPDOCLIB} if it is defined. @cindex{lpdoc lib path, setting}
+@cindex{auto-documenter lib path, setting}
+@end{description} @p 
+@section{Other commands}
+
+Some other commands which are active in the Ciao mode:
+   
+@begin{description}
+
+@item{@key{C-c} @key{C-l} } Recenter the most recently used Ciao inferior process
+buffer (e.g., top level, preprocessor, etc.).
+@end{description} @p 
+@section{Traditional Prolog Mode Commands}
+
+These commands provide some bindings and facilities for
+loading programs, which are present in emacs Prolog modes of
+traditional Prolog systems (e.g., SICStus). This is useful mainly
+if the Ciao emacs mode is used with such Prolog systems.  Note
+that these commands (@pred{compile/1} and @pred{consult/1}) are
+deprecated in Ciao (due to the more advanced, separate
+compilation model in Ciao) and their use in the Ciao top-level is
+not recommended.
+   
+@begin{description}
+
+@item{@key{C-c} @key{K} } Compile the entire buffer.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{k} } Compile a given region.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{C-k} } Compile the predicate around point.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{C} } Consult the entire buffer.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{c} } Consult a given region.
+@end{description} @p 
+@begin{description}
+
+@item{@key{C-c} @key{C-c} } Consult the predicate around point.
+@end{description} @p 
+@section{Coexistence with other Prolog-like interfaces}
+
+As mentioned previously, the Ciao @apl{emacs} interface can
+also be used to work with traditional Prolog or CLP systems. Also, the
+Ciao @apl{emacs} interface (@em{mode}) can coexist with other
+Prolog-related @apl{emacs} interfaces (@em{modes}) @cindex{emacs mode,
+loading several} (such as, e.g., the @apl{SICStus} Prolog
+interface). Only one of the interfaces can be active at a time for a
+given buffer (i.e., for each given file opened inside @apl{emacs}). In
+order the change a buffer to a given interface, move the cursor to
+that buffer and type @tt{M-x ...-mode} (e.g., for the Ciao
+mode, @tt{M-x ciao-mode}).
+
+If several Prolog-related @apl{emacs} interfaces are loaded, then
+typically the @em{last} one to be loaded takes precedence, in the
+sense that this will be the interface in which @apl{emacs} will be set
+when opening files which have a @tt{.pl} ending (this depends a bit on
+how things are set up in your @tt{.emacs} file).
+@section{Getting the Ciao mode version}
+
+@cindex{Ciao mode version}
+@begin{description}
+
+@item{@key{C-c} @key{v} } Report the version of the emacs Ciao mode.
+@end{description} @p 
+
+
+@section{Using Ciao mode capabilities in standard shells} 
+
+The capabilities (commands, coloring, error location, ...) which are
+active in the Ciao @em{inferior} mode can also be made
+available in any standard command line shell which is being run within
+emacs. This can be enabled by going to the buffer in which the shell
+is running and typing ``@key{M-x} @tt{ciao-inferior-mode}''.  This is
+very useful for example when running the stand-alone compiler, the
+@apl{lpdoc} auto-documenter, or even certain user applications (those
+that use the standard error message library) in an emacs
+sub-shell. Turning the Ciao inferior mode on on that sub-shell
+will highlight and color the error messages, and automatically find
+and visit the locations in the files in which the errors are reported.
+
+Finally, one the most useful applications of this is when using
+the @concept{embedded debugger} (a version of the debugger which
+can be embedded into executables so that an interactive debugging
+session can be triggered at any time while running that
+executable without needing the top-level shell). If an
+application is run in a shell buffer which has been set with Ciao
+inferior mode (@key{M-x} @tt{ciao-inferior-mode}) and this
+application starts emitting output from the embedded
+debugger (i.e., which contains the embedded debugger and is
+debugging its code) then the Ciao emacs mode will be able to
+follow these messages, for example tracking execution in the
+source level code. This also works if the application is written
+in a combination of languages, provided the parts written in Ciao
+are compiled with the embedded debugger package and is thus a
+covenient way of debugging multi-language applications. The only
+thing needed is to make sure that the output messages appear in a
+shell buffer that is in Ciao inferior mode.
+
+
+
+@section{Customization}
+
+This section explains all variables used in the Ciao emacs mode
+which can be customized by users. Such customization can be
+performed (in later versions of @apl{emacs}) from the @apl{emacs}
+menus (@tt{Help -> Customize -> Top-level Customization Group}),
+or also by adding a @tt{setq} expression in the @tt{.emacs}
+file. Such @tt{setq} expression should be similar to:
+
+@tt{(setq <variable> <new_value>)}
+
+@noindent The following sections list the different variables which can be
+customized for @apl{ciao}, @apl{ciaopp} and @apl{lpdoc}.
+
+@subsection{Ciao general variables}
+@begin{description}
+@item{@tt{ciao-ask-for-version-maintenance-type} (@em{string})}
+If turned to yes the system asks prompts to set version control
+when saving files that do not set a version control system
+explicitly within the file.
+@item{@tt{ciao-create-sample-file-on-startup} (@em{boolean})}
+When starting the Ciao environment using ciao-startup two buffers
+are opened: one with a toplevel and another with a sample file. This
+toggle controls whether the sample file, meant for novice users, is
+created or not. Set by default, non-novice users will probably want to
+turn it off.
+@item{@tt{ciao-first-indent-width} (@em{integer})}
+First level indentation for a new goal.
+@item{@tt{ciao-indent-width} (@em{integer})}
+Indentation for a new goal.
+@item{@tt{ciao-inhibit-toolbar} (@em{boolean})}
+*Non-nil means don't use the specialized Ciao toolbar.
+@item{@tt{ciao-library-path} (@em{string})}
+Path to the Ciao System libraries (reads/sets the CIAOLIB
+environment variable ). Typically left empty, since ciao
+executables know which library to use.
+@item{@tt{ciao-locate-also-note-messages} (@em{boolean})}
+If set, also when errors of type NOTE are detected the
+corresponding file is visited and the location marked. It is set to
+nil by default because sometimes the user prefers not to take any
+action with respect to these messages (for example, many come from the
+documenter, indicating that adding certain declarations the
+documentation would be improved).
+@item{@tt{ciao-locate-errors-after-run} (@em{boolean})}
+If set, location of any errors produced when running Ciao
+tools (loading or preprocessing code, running the documenter,
+etc.) will be initiated automatically. I.e., after running a
+command, the system will automatically highlight any error
+messages and the corresponding areas in source files if
+possible. If set to nil this location will only happen after
+typing  C-c ` or
+accessing the corresponding menu or tool bar button.
+@item{@tt{ciao-os-shell-prompt-pattern} (@em{string})}
+Regular expression used to describe typical shell prompt
+patterns (csh and bash), so that error location works in inferior
+shells. This is useful for example so that errors are located
+when generating documentation, and also when using the embedded
+debugger or any other application in a shell. It is best to be as
+precise as possible when defining this so that the standard Ciao
+error location does not get confused.
+@item{@tt{ciao-scratchpad-root} (@em{directory})}
+Name of root directory of the scratchpad for temporal source
+files and directories.
+@item{@tt{ciao-system} (@em{string})}
+Name of Ciao executable which runs the classical top level.
+@item{@tt{ciao-system-args} (@em{string})}
+Arguments passed to Ciao toplevel executable.
+@item{@tt{ciao-toplevel-buffer-name} (@em{string})}
+Basic name of the buffer running the Ciao toplevel inferior process.
+@item{@tt{ciao-user-directives} (@em{list})}
+List of identifiers of any directives defined by users which you
+would like highlighted (colored). Be careful, since wrong entries may
+affect other syntax highlighting.
+@end{description}
+
+@subsection{CiaoPP variables}
+@begin{description}
+@item{@tt{ciao-ciaopp-buffer-name} (@em{string})}
+Basic name of the buffer running the Ciao preprocessor inferior process.
+@item{@tt{ciao-ciaopp-gmenu-buffer-name} (@em{string})}
+Name of the buffer running the Ciao preprocessor graphical
+menu interface.
+@item{@tt{ciao-ciaopp-system} (@em{string})}
+Name of Ciao preprocessor executable.
+@item{@tt{ciao-ciaopp-system-args} (@em{string})}
+Arguments passed to Ciao preprocessor executable.
+@item{@tt{ciao-ciaopp-use-graphical-menu} (@em{boolean})}
+If set, an interactive graphical menu is used for controlling
+CiaoPP, instead of asking ascii questions in the CiaoPP buffer.
+@end{description}
+
+@subsection{LPdoc variables}
+@begin{description}
+@item{@tt{ciao-lpdoc-buffer-name} (@em{string})}
+Basic name of the buffer running the auto-documenter inferior process.
+@item{@tt{ciao-lpdoc-docformat} (@em{symbol})}
+Name of default output format used by LPdoc.
+@item{@tt{ciao-lpdoc-libpath} (@em{directory})}
+Path in which the LPdoc library is installed.
+@item{@tt{ciao-lpdoc-system} (@em{string})}
+Name of LPdoc auto-documenter executable.
+@item{@tt{ciao-lpdoc-system-args} (@em{string})}
+Arguments passed to LPdoc executable.
+@end{description}
+
+@subsection{Faces used in syntax-based highlighting (coloring)}
+@begin{description}
+@item{@tt{ciao-button-pressed-widget-face} (@em{face})}
+Face used for documentation text.
+@item{@tt{ciao-button-widget-face} (@em{face})}
+Face used for documentation text.
+@item{@tt{ciao-edit-widget-face} (@em{face})}
+Face used for documentation text.
+@item{@tt{ciao-face-answer-val} (@em{face})}
+Face to use for answer values in top level.
+@item{@tt{ciao-face-answer-var} (@em{face})}
+Face to use for answer variables in top level.
+@item{@tt{ciao-face-builtin-directive} (@em{face})}
+Face to use for the standard directives.
+@item{@tt{ciao-face-check-assrt} (@em{face})}
+Face to use for check assertions.
+@item{@tt{ciao-face-checked-assrt} (@em{face})}
+Face to use for checked assertions.
+@item{@tt{ciao-face-ciaopp-option} (@em{face})}
+Face to use for CiaoPP option menus.
+@item{@tt{ciao-face-clauseheadname} (@em{face})}
+Face to use for clause head functors.
+@item{@tt{ciao-face-comment} (@em{face})}
+Face to use for code comments using fixed pitch (double %).
+@item{@tt{ciao-face-comment-variable-pitch} (@em{face})}
+Face to use for code comments using variable pitch (single %).
+@item{@tt{ciao-face-concurrency-op} (@em{face})}
+Face to use for concurrency operators.
+@item{@tt{ciao-face-condcode-directive} (@em{face})}
+Face to use for the conditional code directives.
+@item{@tt{ciao-face-cut} (@em{face})}
+Face to use for cuts.
+@item{@tt{ciao-face-debug-breakpoint} (@em{face})}
+Face to use with breakpoints in source debugger.
+@item{@tt{ciao-face-debug-call} (@em{face})}
+Face to use when at call port in source debugger.
+@item{@tt{ciao-face-debug-exit} (@em{face})}
+Face to use when at exit port in source debugger.
+@item{@tt{ciao-face-debug-expansion} (@em{face})}
+Face to use in source debugger when source literal not located.
+@item{@tt{ciao-face-debug-fail} (@em{face})}
+Face to use when at fail port in source debugger.
+@item{@tt{ciao-face-debug-mess} (@em{face})}
+Face to use for debug messages.
+@item{@tt{ciao-face-debug-redo} (@em{face})}
+Face to use when at redo port in source debugger.
+@item{@tt{ciao-face-entry-assrt} (@em{face})}
+Face to use for entry assertions.
+@item{@tt{ciao-face-error-mess} (@em{face})}
+Face to use for error messages.
+@item{@tt{ciao-face-false-assrt} (@em{face})}
+Face to use for false assertions.
+@item{@tt{ciao-face-fontify-sectioning} (@em{symbol})}
+Whether to fontify sectioning macros with varying height or a color face.
+
+If it is a number, use varying height faces.  The number is used
+for scaling starting from `ciao-face-sectioning-5-face'.  Typically
+values from 1.05 to 1.3 give best results, depending on your font
+setup.  If it is the symbol `color', use `font-lock-type-face'.
+
+Caveats: Customizing the scaling factor applies to all sectioning
+faces unless those face have been saved by customize.  Setting
+this variable directly does not take effect unless you call
+`ciao-face-update-sectioning-faces' or restart Emacs.
+
+Switching from `color' to a number or vice versa does not take
+effect unless you call M-x font-lock-fontify-buffer or restart
+Emacs.
+@item{@tt{ciao-face-funexp-atom} (@em{face})}
+Face to use for atoms in functional notation.
+@item{@tt{ciao-face-highlight-code} (@em{face})}
+Face to use for highlighting code areas (e.g., when locating 
+   the code area that an error message refers to).
+@item{@tt{ciao-face-library-directive} (@em{face})}
+Face to use for directives defined in the library.
+@item{@tt{ciao-face-lpdoc-bug-comment} (@em{face})}
+Face to use for LPdoc bug comments.
+@item{@tt{ciao-face-lpdoc-command} (@em{face})}
+Face to use LPdoc commands inserted in documentation text.
+@item{@tt{ciao-face-lpdoc-comment} (@em{face})}
+Face to use for LPdoc textual comments.
+@item{@tt{ciao-face-lpdoc-comment-variable-pitch} (@em{face})}
+Face to use for LPdoc textual comments in variable pitch.
+@item{@tt{ciao-face-lpdoc-crossref} (@em{face})}
+Face to use for LPdoc cross-references.
+@item{@tt{ciao-face-lpdoc-include} (@em{face})}
+Face to use for LPdoc include commands.
+@item{@tt{ciao-face-lpdoc-verbatim} (@em{face})}
+Face to use for LPdoc verbatim text.
+@item{@tt{ciao-face-lpdoc-version-comment} (@em{face})}
+Face to use for LPdoc version comments.
+@item{@tt{ciao-face-modedef-assrt} (@em{face})}
+Face to use for modedef definitions.
+@item{@tt{ciao-face-module-directive} (@em{face})}
+Face to use for the module-related directives.
+@item{@tt{ciao-face-no-answer} (@em{face})}
+Face to use for no answer in top level.
+@item{@tt{ciao-face-note-mess} (@em{face})}
+Face to use for note messages.
+@item{@tt{ciao-face-other-mess} (@em{face})}
+Face to use for other messages.
+@item{@tt{ciao-face-predicate-directive} (@em{face})}
+Face to use for the predicate-related directives.
+@item{@tt{ciao-face-prompt} (@em{face})}
+Face to use for prompts in top-level and shells.
+@item{@tt{ciao-face-prop-assrt} (@em{face})}
+Face to use for property definitions.
+@item{@tt{ciao-face-quoted-atom} (@em{face})}
+Face to use for quoted atoms.
+@item{@tt{ciao-face-script-header} (@em{face})}
+Face to use for script headers.
+@item{@tt{ciao-face-sectioning-0-face} (@em{face})}
+Face for sectioning commands at level 0.
+
+Probably you don't want to customize this face directly.  Better
+change the base face `ciao-face-sectioning-5-face' or customize the
+variable `ciao-face-fontify-sectioning'.
+@item{@tt{ciao-face-sectioning-1-face} (@em{face})}
+Face for sectioning commands at level 1.
+
+Probably you don't want to customize this face directly.  Better
+change the base face `ciao-face-sectioning-5-face' or customize the
+variable `ciao-face-fontify-sectioning'.
+@item{@tt{ciao-face-sectioning-2-face} (@em{face})}
+Face for sectioning commands at level 2.
+
+Probably you don't want to customize this face directly.  Better
+change the base face `ciao-face-sectioning-5-face' or customize the
+variable `ciao-face-fontify-sectioning'.
+@item{@tt{ciao-face-sectioning-3-face} (@em{face})}
+Face for sectioning commands at level 3.
+
+Probably you don't want to customize this face directly.  Better
+change the base face `ciao-face-sectioning-5-face' or customize the
+variable `ciao-face-fontify-sectioning'.
+@item{@tt{ciao-face-sectioning-4-face} (@em{face})}
+Face for sectioning commands at level 4.
+
+Probably you don't want to customize this face directly.  Better
+change the base face `ciao-face-sectioning-5-face' or customize the
+variable `ciao-face-fontify-sectioning'.
+@item{@tt{ciao-face-sectioning-5-face} (@em{face})}
+Face for sectioning commands at level 5.
+@item{@tt{ciao-face-startup-message} (@em{face})}
+Face to use for system splash message.
+@item{@tt{ciao-face-string} (@em{face})}
+Face to use for strings.
+@item{@tt{ciao-face-test-assrt} (@em{face})}
+Face to use for test assertions.
+@item{@tt{ciao-face-texec-assrt} (@em{face})}
+Face to use for texec assertions.
+@item{@tt{ciao-face-true-assrt} (@em{face})}
+Face to use for true assertions.
+@item{@tt{ciao-face-trust-assrt} (@em{face})}
+Face to use for trust assertions.
+@item{@tt{ciao-face-type-assrt} (@em{face})}
+Face to use for type definitions.
+@item{@tt{ciao-face-user-directive} (@em{face})}
+Face to use for directives defined by the user (see
+   ciao-user-directives custom variable to add new ones).
+@item{@tt{ciao-face-variable} (@em{face})}
+Face to use for variables.
+@item{@tt{ciao-face-warning-mess} (@em{face})}
+Face to use for warning messages.
+@item{@tt{ciao-face-yes-answer} (@em{face})}
+Face to use for yes answer in top level.
+@item{@tt{ciao-faces-use-variable-pitch-in-comments} (@em{boolean})}
+Controls whether variable pitch fonts are used when highlighting
+comments. Unset by default. After changing this you must exit and
+reinitialize for the change to take effect.
+@item{@tt{ciao-menu-error-widget-face} (@em{face})}
+Face used for menu error representation in graphical interface.
+@item{@tt{ciao-menu-note-widget-face} (@em{face})}
+Face used for menu note representation in graphical interface.
+@item{@tt{ciao-mouse-widget-face} (@em{face})}
+Face used for documentation text.
+@item{@tt{ciao-text-widget-face} (@em{face})}
+Face used for documentation text.
+@item{@tt{ciao-title-widget-face} (@em{face})}
+Face to use for interactive menu title.
+@end{description}
+
+
+@section{Installation of the Ciao emacs interface}
+
+If opening a file ending with @tt{.pl} puts emacs in another
+mode (such as @apl{perl} mode, which is the --arguably
+incorrect-- default setting in some @apl{emacs} distributions),
+then either the emacs mode was not installed or the installation
+settings are being overwritten by other settings in your
+@tt{.emacs} file or in some library.  In any case, you can set
+things manually so that the Ciao mode is loaded by default in
+your system. This can be done by including in your @file{.emacs}
+file a line such as:
+
+@tt{(load <CIAOLIBDIR>/ciao-mode-init)}
+
+@noindent This loads the above mentioned file from the Ciao library, which
+contains the following lines (except that the paths are changed during
+installation to appropriate values for your system):
+
+@begin{verbatim}
+@includeverbatim{ciao-config.el.skel}
+@end{verbatim}
+
+If you would like to configure things in a different way, you can also
+copy the contents of this file to your @file{.emacs} file and make the
+appropriate changes.  For example, if you do not want @tt{.pl} files
+to be put automatically in Ciao mode, then comment out (or
+remove) the line:
+
+@tt{(setq auto-mode-alist} ... @tt{)}
+
+@noindent You will then need to switch manually to Ciao mode by
+typing @tt{M-x ciao-mode} after opening a Ciao file.
+
+If you are able to open the Ciao menu but the Ciao manuals are
+not found or the @apl{ciao} command (the top-level) is not found
+when loading @tt{.pl} files, the probable cause is that you do
+not have the Ciao paths in the @tt{INFOPATH} and @tt{MANPATH}
+@index{environment variables} (whether these variables are set
+automatically or not for users depends on how the Ciao system was
+installed). Under Un*x, you can add these paths easily by
+including the line:
+
+@tt{source <CIAOLIBDIR>/DOTcshrc}
+
+@noindent in your @tt{.login} or @tt{.cshrc} files if you are using
+@apl{csh} (or @apl{tcsh}, etc.), or, alternatively, the line:
+
+@tt{. <CIAOLIBDIR>/DOTprofile}
+
+@noindent in your @tt{.login} or @tt{.profile} files if you are
+using @apl{sh} (or @apl{bash}, etc.). See the Ciao installation
+instructions (@ref{Installing Ciao from the source distribution}
+or @ref{Installing Ciao from a Win32 binary distribution}) for
+details.
+
+@section{Emacs version compatibility} This mode is currently being developed within @apl{GNU emacs}
+version 24.1. It should also (hopefully) work with all other
+23.XX, 22.XX, 21.XX, 20.XX, and later 19.XX versions. We also try
+our best to keep things working under @apl{xemacs} and under some
+emacs native ports for the mac.
+
+@section{Acknowledgments (ciao.el)}
+
+This code is derived from the 1993 version of the emacs interface for
+@concept{&-Prolog} by @author{Manuel Hermenegildo}, itself derived
+from the original @file{prolog.el} by @index{Masanobu Umeda} with
+changes by @index{Johan Andersson}, @index{Peter Olin}, @index{Mats
+Carlsson}, and @index{Johan Bevemyr} of @index{SICS}, Sweden. Other
+changes also by @author{Daniel Cabeza}, @author{Manuel C. Rodriguez},
+@author{David Trallero}, and @author{Jose Morales}. See the changelogs
+for details. 

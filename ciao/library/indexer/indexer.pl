@@ -4,6 +4,8 @@
 :- new_declaration(index/1,off).
 
 :- load_compilation_module(library(indexer(indexer_tr))).
-:- add_sentence_trans(expand_index/3).
+:- add_sentence_trans(expand_index_sent/3, 750). % TODO: Right priority?
+:- add_goal_trans(expand_index_goal/3, 750). % TODO: Right priority?
 
-:- use_module(library(indexer(hash))).
+% Optionally included by the translation
+% :- use_module(library(indexer(hash))).

@@ -16,7 +16,7 @@
 :- discontiguous dependency_precond/3.
 
 :- load_compilation_module(library(make(make_tr))).
-:- add_sentence_trans(defdep/3).
+:- add_sentence_trans(defdep/3, 320).
 
 :- use_module(library(make(make_rt))).
 %               [make/1,verbose_message/2,make_option/1,

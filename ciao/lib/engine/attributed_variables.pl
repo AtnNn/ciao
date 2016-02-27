@@ -1,21 +1,24 @@
+% ===========================================================================
+% :- doc(title, "Internal hooks for attributed variables.").
+% 
+% Those internal hooks are called from the engine, and provide an
+% interface with user-level hooks for attributed variables.
+% ===========================================================================
+
 %:- use_module(library(term_basic), [functor/3]).
 
-:- trust pred verify_attribute(A,B).
+:- multifile verify_attribute/2.
+:- multifile combine_attributes/2.
+:- multifile '$check_attr'/3.
+:- multifile '$combine_attr'/4.
 
-:- trust pred combine_attributes(A,B).
-:- multifile 
-        verify_attribute/2,
-        combine_attributes/2,
-	%
-	'$check_attr'/3,
-        '$combine_attr'/4.
-
-:- use_module(library(attr(attr_rt)), ['$verify_attributes_loop'/2]).
+% :- use_module(library(attr(attr_rt)), ['$verify_attributes_loop'/2]).
+:- multifile '$verify_attributes_loop'/2. % (avoids a dependency to attr_rt)
+:- use_module(engine(attributes)).
 
 % called from the emulator
 % if there is just one single pending unification
 %
-:- entry uvc/2.
 uvc(A, B) :- 
 %D	display(['DEBUG: uvc: vars: ', A, B]),nl,
 	get_attribute(A, AT),
@@ -24,12 +27,11 @@ uvc(A, B) :-
             %%% NEW VERSION
 	    detach_attribute(A),
 	    A = B,
-	    attr_rt:'$verify_attributes_loop'(As, B)
+	    '$verify_attributes_loop'(As, B)
 	; %%% OLD VERSION
 	  verify_attribute(AT, B)
 	).
 
-:- entry ucc/2.
 ucc(A, B) :-
 %D	display(['DEBUG: ucc: vars: ', A, B]),nl,
 	get_attribute(A, AT),
@@ -37,7 +39,7 @@ ucc(A, B) :-
 	    %%% NEW VERSION
 	    detach_attribute(A),
 	    A = B,
-	    attr_rt:'$verify_attributes_loop'(As, B)
+	    '$verify_attributes_loop'(As, B)
 	; %%% OLD VERSION
 	  get_attribute(B, BT),
 	  combine_attributes(AT, BT)
@@ -45,7 +47,6 @@ ucc(A, B) :-
 
 % there are more pending unifications (relatively rare)
 %
-:- entry pending_unifications/1.
 pending_unifications([]).
 pending_unifications([[V1|V2]|Cs]) :-
 	pending_unification(V1, V2),

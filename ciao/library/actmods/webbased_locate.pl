@@ -3,7 +3,7 @@
 
 :- use_module(library(actmods(actmodrt))).
 :- use_module(library(actmods(webbased_common))).
-:- use_module(library(atom2term), [string2term/2]).
+:- use_module(library(read_from_string), [read_from_string_atmvars/2]).
 :- use_module(library(lists), [append/3]).
 :- use_module(library(pillow(http))).
 
@@ -26,7 +26,7 @@ server_address(Address):-
 	( fetch_url(URL,[],Response), ! ; Response = [] ),
 	( member(content(String),Response), ! ; String = Response ),
 	( append(String0,[_],String), ! ; String0 = String ),
-	( string2term(String0,server(Address,Pid))
+	( read_from_string_atmvars(String0,server(Address,Pid))
 	-> asserta_fact(server(Address,Pid))
 	 ; name(Address,String0),
 	   throw(unable_to_connect(Address,webserver))

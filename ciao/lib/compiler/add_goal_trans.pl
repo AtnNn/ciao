@@ -1,6 +1,6 @@
 % Good priority for a translation
-% TODO: reduce to just a number, default_priority is temporal
-check_priority(default_priority) :- !.
+% TODO: allow symbolic priorities?
+%check_priority(default_priority) :- !.
 check_priority(Prior) :- number(Prior), !.
 
 :- use_module(library(aggregates), [findall/3]).
@@ -34,8 +34,9 @@ add_all_goal_trans([Prior-Tr|KVs], M) :-
 :- use_module(library(sort), [keysort/2]).
 
 % Insert in order
-pqueue_insert(A, K0, V, B) :-
-	( K0 = default_priority -> K = 500 ; K = K0 ),
+pqueue_insert(A, K, V, B) :-
+	% TODO: allow symbolic priorities?
+%	( K0 = default_priority -> K = 500 ; K = K0 ),
 %	display(user_error, pi0(A, K, V)), nl(user_error),
 	pqueue_insert0(A, K, V, B).
 %	display(user_error, pi1(B)), nl(user_error).

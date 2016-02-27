@@ -21,6 +21,7 @@ public class example1 extends Frame {
    * Start method. 
    **/
   public static void main(String argv[]) {
+    System.err.println("Starting connection");
     try {
 	if (argv.length == 0)
 	    plServer = new PLConnection();
@@ -31,16 +32,18 @@ public class example1 extends Frame {
       e.printStackTrace();
       System.exit(1);
     }
+    System.err.println("Started connection");
 
     example1 q = new example1();
     q.show();
+    q.call_prolog();
   }
 
   /**
    * Frame constructor. 
    **/
   public example1() {
-
+      super("Example 1");
     btnExit.addActionListener(new btnExitAction());
     setLayout(new GridLayout(4,1));
     add(lblQuery);
@@ -48,20 +51,23 @@ public class example1 extends Frame {
     add(lblResult2);
     add(btnExit);
     setSize(300,300);
+  }
 
+  void call_prolog() {
     PLTerm[] list = {new PLAtom("a"), new PLAtom("b")};
     PLList plList = null;
 
     try {
 	plList = new PLList(list);
     } catch (PLException e) {}
+
     PLVariable plX = new PLVariable();
     PLVariable plY = new PLVariable();
     PLTerm[] args = {plX, plY, plList};
     PLStructure strGoal = new PLStructure("append", args);
-
     PLGoal goal = new PLGoal(plServer,strGoal);
     try {
+      goal.useModule("library(lists)"); // for lists:append/3
       lblQuery.setText("Query: " + strGoal);
       goal.query();
       goal.nextSolution();
@@ -72,7 +78,6 @@ public class example1 extends Frame {
       System.err.println("Problems launching goal: " + e);
       System.exit(1);
     }
-
   }
 
   /**

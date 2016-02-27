@@ -809,7 +809,7 @@ add_ciaolib_if_required(L, L).
 
 add_ciaolib(L, ['-L', EngDir, '-l', 'libciao' | L ]) :-
 	get_platform(TargetEng),
-	get_engine(TargetEng, EngDir, _, _).
+	get_engine_dir(TargetEng, EngDir).
 
 link_foreign(Dir, Decls, ExtraOpts, Libs0, OFiles, SOFile) :-
 	( member(OFile, OFiles), 

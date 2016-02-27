@@ -7,6 +7,19 @@
 % Note: This file is not auto indented, use the auto indenter over this file
 % to test it and to generate indent_example_pa.pl
 
+% Bug: space between <&& and . must be preserved
+Handler <& :-
+	Handler <&&.
+
+% This term have a bug that was fixed
+p(a
+	    % LOCATORS
+	    , loc_unknown/1).
+
+% A bug discovered recently, in the iso_tests.pl:
+p(0''').
+oo('hola').
+
 % A nasty bug that took me a lot of time to find:
 getdeg([node(__)|_], 1,  2,  3).
 getdeg([_de|G],      I1, I2, 3).
@@ -16,8 +29,8 @@ getdeg([_de|G],      I1, I2, 3).
 % time:
 ciao_config_entry(
 	    [
-		depend_of([('INSTYPE', InsType), ('SYSAVAIL', SysAvail)]),
-		set_value((InsType == 'src', component_src(ciaode, Value)),
+		depend_on([('INSTYPE', InsType), ('SYSAVAIL', SysAvail)]),
+		set_value((InsType == 'src', bundle_src(ciaode, Value)),
 		    Value),
 		default(get_prefix(SysAvail, InsType, DefValue), DefValue),
 		query("Specify the directory to perform the installation",
@@ -26,7 +39,7 @@ ciao_config_entry(
 	    ]).
 ciao_config_entry(
 	    [
-		depend_of([('INSTYPE', InsType), ('SYSAVAIL', SysAvail)]),
+		depend_on([('INSTYPE', InsType), ('SYSAVAIL', SysAvail)]),
 		valid_values(['yes', 'no']),
 		set_value(\+((InsType == 'src', SysAvail == 'user')), no),
 		default('no'),
@@ -74,8 +87,7 @@ a(patata, patata).
 
 b :-
 	(
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaagnd
-%
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaagnd %
 	).
 
 :- a
@@ -125,15 +137,15 @@ r :-
 bench_file :=
 	eight_queen
 	|fib
-%	    | lfib
+	%	    | lfib
 	|hanoi
-%            | insert_stores
-%            | perm
-%            | file
-%            | qsort
+	%            | insert_stores
+	%            | perm
+	%            | file
+	%            | qsort
 	|send_files
-%            | subst_exp
-%            | zebra
+	%            | subst_exp
+	%            | zebra
 	.
 
 a(b,  c).

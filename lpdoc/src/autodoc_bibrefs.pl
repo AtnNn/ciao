@@ -1,5 +1,7 @@
 :- module(autodoc_bibrefs,
-	[resolve_bibliography/1],
+	[resolve_bibliography/1, 
+         parse_commands/3 % TODO: a hack
+	 ],
 	[dcg, assertions, regtypes]). 
 
 :- doc(title, "Resolution of Bibliographical References").
@@ -23,7 +25,7 @@ dependency.").
 :- use_module(library(format)).
 
 :- use_module(library(make(make_rt)), [verbose_message/1, verbose_message/2]).
-:- use_module(library(make(system_extra)), [(-) /1, do/4, try_finally/3]).
+:- use_module(library(system_extra), [(-) /1, do/4, try_finally/3]).
 
 :- use_module(lpdocsrc(src(autodoc_state))).
 :- use_module(lpdocsrc(src(autodoc_doctree))).
@@ -132,6 +134,8 @@ bibtex_config(LibDir, BibFiles) :-
 % ---------------------------------------------------------------------------
 :- doc(section, "Special parser for our custom BBL output").
 
+% TODO: This is not a parser, but a translator from BBL output (a
+%       subset of LaTeX) to a docstring (that can be parsed later).
 parse_commands([]) --> [].
 %% Some special commands, handled directly
 parse_commands(" " || Tail) --> "~", !,
@@ -146,6 +150,8 @@ parse_commands("&" || Tail) --> start, "&", !,
 	parse_commands(Tail).
 %% Some accents without braces (e.g. \'a ===> \'{a})
 parse_commands(NCommand) -->
+	( open ; [] ), % a kludge to void entering the 'alt syntax' clause
+	               % (otherwise, it cannot parse {\'e}) 
 	start,
 	command_char(Accent),
 	{ accent(Accent) },
@@ -271,6 +277,7 @@ accented_char_(0'i).
 accented_char_(0'o).
 accented_char_(0'u).
 
+
 normal_char(X) --> [X], {X \== 0'\\, X \== 0'@, X \== 0'{, X \== 0'}}.
 command_char(X) --> [X], {X \== 0'\\, X \== 0'@, X \== 0'{, X \== 0'},
 	    X \== 0' , X \== 0'\n, X \== 0'\t}.
@@ -325,7 +332,7 @@ handle_command(Command, Body, NCommand, Tail) :-
 handle_command_2b("htmladdnormallink", Body1, Body2, NewCommand, Tail) :- !,
 	parse_commands(NBody1, Body1, []),
 	parse_commands(NBody2, Body2, []),
-	append(NBody1, " (@uref{", T1),
+	append(NBody1, " (@href{", T1),
 	append(T1, NBody2, T2),
 	append(T2, "})" || Tail, NewCommand).
 handle_command_2b(Command, Body1, Body2, NewCommand, Tail) :- !,
@@ -353,6 +360,7 @@ new_command([A],      "\\j", [A|"{j}"], nsp) :- accent(A), !.
 new_command([A],      [X],   [A,0'{,X,0'}],  nsp) :- accent(A), !.
 new_command("tt",     Body,  "tt", Body) :- !.
 new_command("texttt", Body,  "tt", Body) :- !.
+new_command("emph",   Body,  "em", Body) :- !.
 new_command("em",     Body,  "em", Body) :- !.
 new_command("sf",     Body,  "bf", Body) :- !. % TODO: This is sans-serif!
 new_command("bf",     Body,  "bf", Body) :- !.

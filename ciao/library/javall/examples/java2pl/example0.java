@@ -36,6 +36,7 @@ public class example0 {
 
 	PLGoal goal = new PLGoal(plServer,strGoal);
 	try {
+	    goal.useModule("library(lists)"); // for lists:append/3
 	    System.out.println("Query: " + strGoal);
 	    goal.query();
 	    

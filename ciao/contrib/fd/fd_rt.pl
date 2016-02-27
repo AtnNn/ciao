@@ -21,6 +21,7 @@
 
 :- use_module(library(fd(fd_bounds))).
 :- use_module(library(lists), [append/3, nocontainsx/2]).
+:- use_module(engine(attributes)).
 
 
 :- multifile verify_attribute/2, combine_attributes/2.

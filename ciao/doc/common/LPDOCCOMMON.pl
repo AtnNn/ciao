@@ -1,39 +1,34 @@
 :- module(_, _, [ciaopaths, fsyntax, assertions]).
 
 :- use_module(library(system)).
-:- use_module(library(terms), [atom_concat/2]).
-:- use_module(library(component_registry), [component_src/2, component_ins/2]).
-:- use_module(ciaodesrc(makedir('ConfigValues'))).
+:- use_module(library(lpdist(makedir_aux)), [fsR/2]).
+:- use_module(library(lpdist(ciao_config_options))). % TODO: used?
 
-:- reexport(ciaodesrc(makedir('DOCCOMMON'))).
+:- reexport(library(lpdist(ciao_config_options)), 
+    [bibfile/1, htmldir/1, docdir/1, infodir/1, mandir/1, lpdoclib/1]).
 
-% the component that contains this manual 
-% TODO: This could be inferred (looking for a makedir/CONFIG.pl in a parent dir)
-:- export(parent_component/1).
-parent_component := 'ciao'.
+% the bundle that contains this manual 
+% TODO: This could be inferred (looking for a Manifest.pl in a parent dir)
+:- export(parent_bundle/1).
+parent_bundle := 'ciao'.
 
 % ----------------------------------------------------------------------------
-% Paths and options for components
+% Paths and options
 
-% filepath   := ~atom_concat(~component_ins(ciao), ~ciaofilepath   ).
-systempath := ~atom_concat(~component_ins(ciao),   ~ciaosystempath).
-systempath := ~atom_concat(~component_ins(ciaopp), '/doc/readmes').
+% filepath := ...
+% TODO: This should be automatic
+systempath := ~fsR(bundle_ins(ciao)/'lib').
+systempath := ~fsR(bundle_ins(ciao)/'library').
+systempath := ~fsR(bundle_ins(ciao)/'contrib').
+systempath := ~fsR(bundle_ins(ciaopp)/'doc'/'readmes').
 
-ciaofilepath_common :=
-	''|
-	'/doc/common'|
-	'/doc/readmes'.
-
-ciaosystempath := '/lib'|'/library'|'/contrib'.
+ciaofilepath_common := ~fsR(bundle_src(ciao)).
+ciaofilepath_common := ~fsR(bundle_src(ciao)/'doc'/'common').
+ciaofilepath_common := ~fsR(bundle_src(ciao)/'doc'/'readmes').
 
 index := concept|lib|pred|prop|regtype|decl|author|global.
 % index := prop.
 % index := modedef.
-
-infodir_headfile := ~atom_concat([~component_ins(ciao),
-		'/doc/common/CiaoHead.info']).
-infodir_tailfile := ~atom_concat([~component_ins(ciao),
-		'/doc/common/CiaoTail.info']).
 
 % commonopts     := verbose.
 % commonopts     := no_bugs.
@@ -47,7 +42,8 @@ commonopts :=
 doc_mainopts := ~commonopts.
 doc_compopts := ~commonopts.
 
-pathsfile := ~atom_concat(~component_ins(ciao), '/doc/common/doc_ops.pl').
+% TODO: Used? why?
+pathsfile := ~fsR(bundle_ins(ciao)/doc/common/'doc_ops.pl').
 
 startpage := 1.
 papertype := afourpaper.

@@ -22,7 +22,7 @@
 
 % TODO: temporary?
 :- use_module(library(make(make_rt)), [verbose_message/1, verbose_message/2]).
-:- use_module(library(make(system_extra)), [(-) /1]).
+:- use_module(library(system_extra), [(-) /1]).
 :- use_module(library(system), [copy_file/3]).
 :- use_module(library(make(make_rt)), [get_name/2]).
 :- use_module(library(errhandle), [error_protect/1]).
@@ -109,7 +109,7 @@ cached_image_convert(SrcBase, SrcExt, TargetBase, TargetFormat, DocSt) :-
 
 %% Names and paths of external commands used by lpdoc and other paths
 %% which get stored in the executable on installation:
-:- use_module(library(make(system_extra)),
+:- use_module(library(system_extra),
 		[del_file_nofail/1,
 		do/2,
 		set_perms/2]).
@@ -139,7 +139,7 @@ image_convert(SrcBase, SrcExt, TargetBase, TargetExt, DocSt) :-
 	    close(O)
         ; % TODO: use other commands?
           sh_exec([~convertc, ' ', Source, ' ', AbsFile], [])
-%	; throw(unknown_target_ext(TargetExt))
+%	; throw(error(unknown_target_ext(TargetExt), image_convert/5))
 	),
 	DataMode = ~setting_value_or_default(perms),
 	-set_perms(AbsFile, DataMode).

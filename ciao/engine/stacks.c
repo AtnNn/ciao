@@ -17,6 +17,7 @@
 #include "locks_defs.h"
 #endif
 
+
 /* local declarations */
 
 static void calculate_segment_node(Argdecl);
@@ -333,29 +334,9 @@ void choice_overflow(Arg,pad)
       if (lpe->end != NULL)
 	lpe->end = (node_t *)((char *)lpe->end+reloc_factor+
                    (newcount-oldcount)*sizeof(tagged_t));
-      if (lpe->wipe != NULL)
-	lpe->wipe = (node_t *)((char *)lpe->wipe+reloc_factor+
-                    (newcount-oldcount)*sizeof(tagged_t));
-      if (lpe->trail_top != NULL)
-	lpe->trail_top = (tagged_t *)((char *)lpe->trail_top+reloc_factor);
       lpe = lpe->prev;
     }
 
-    /* update node_top pointer */
-    if (Node_Top != NULL)
-      Node_Top = (node_t*)((char *)Node_Top+reloc_factor);
-
-    /* update current_init_chp pointer */
-    if (Current_Init_ChP != NULL)
-      Current_Init_ChP = (node_t*)((char *)Current_Init_ChP+reloc_factor);
-
-    /* update trail_top_global pointer */
-    if (Trail_Top_Global != NULL)
-      Trail_Top_Global = (tagged_t *)((char *)Trail_Top_Global+reloc_factor);
-
-    /* update current_trail_top pointer */
-    if (Current_Trail_Top != NULL)
-      Current_Trail_Top = (tagged_t *)((char *)Current_Trail_Top+reloc_factor);
 #endif
 
     while (OffChoicetop(b,Choice_Start)){
@@ -539,13 +520,13 @@ bool_t gc_start(Arg)
      Argdecl;
 {
     gcexplicit = TRUE;
-    heap_overflow(Arg,CALLPAD);
+    heap_overflow(Arg,SOFT_HEAPPAD);
 
     return TRUE;
 }
 
 
-/* Here when w->global_top and Heap_End are within CALLPAD from each other. */
+/* Here when w->global_top and Heap_End are within SOFT_HEAPPAD from each other. */
 void heap_overflow(Arg,pad)
      Argdecl;
      int pad;
@@ -569,7 +550,7 @@ void heap_overflow(Arg,pad)
 #if defined(DEBUG)
   if (debug_threads) {
     printf("\nWAM %x is in heap_overflow!\n",(unsigned int)w);
-    printf("w->global_top and Heap_End are within CALLPAD from each other.\n");
+    printf("w->global_top and Heap_End are within SOFT_HEAPPAD from each other.\n");
     fflush(stdout);
   }
 #endif
@@ -621,10 +602,42 @@ void heap_overflow(Arg,pad)
     mincount = 2*pad - HeapDifference(w->global_top,Heap_End);
     oldcount = HeapDifference(Heap_Start,Heap_End);
     newcount = oldcount + (oldcount<mincount ? mincount : oldcount);
-    
-    newh = checkrealloc(Heap_Start,
+
+
+#if defined(USE_OVERFLOW_EXCEPTIONS)
+    if ( Heap_Warn == HeapOffset(Heap_End,-HARD_HEAPPAD) ){
+      /* Heap overflow exception already raised */
+      SERIOUS_FAULT(tryalloc_errstring);
+    } else if (SOFT_HEAPPAD == DEFAULT_SOFT_HEAPPAD) {
+      /* Heap limit not reached */
+      newh = tryrealloc(Heap_Start,
                         oldcount*sizeof(tagged_t),
                         newcount*sizeof(tagged_t));
+    } else { 
+      /* Heap limit reached */
+      newh = NULL;
+    }
+
+    if (!newh) {
+      /* Raise a heap overflow exception */
+      Int_Heap_Warn = (Int_Heap_Warn==Heap_Warn
+		       ? HeapOffset(Heap_End,-HARD_HEAPPAD)
+		       : Heap_Start);
+      Heap_Warn = HeapOffset(Heap_End,-HARD_HEAPPAD);
+      if ( wake_count < 0)
+	Heap_Warn_Soft = Int_Heap_Warn;
+      else 
+	Heap_Warn_Soft = Heap_Start;
+
+      TrailPush(w->trail_top,atom_undo_heap_overflow_excep);
+      UNLOCATED_EXCEPTION(RESOURCE_ERROR(R_STACK));
+    }
+#else 
+    newh = checkrealloc(Heap_Start,
+		      oldcount*sizeof(tagged_t),
+		      newcount*sizeof(tagged_t));
+#endif
+
 #if defined(DEBUG)
     if (debug_gc)
       printf("Thread %d is reallocing HEAP from %lx to %lx\n", 
@@ -644,13 +657,22 @@ void heap_overflow(Arg,pad)
     heap_overflow_adjust_wam(w,reloc_factor,newh);
 #endif
 
-    /* Final adjustments */
+   /* Final adjustments */
+
+#if defined(USE_OVERFLOW_EXCEPTIONS)
+    
+    if ((Heap_Limit != 0)  &&                             /* Heap limit is on */
+	(Heap_Limit < newcount - DEFAULT_SOFT_HEAPPAD))   /* Heap bigger than Heap limit */
+      SOFT_HEAPPAD = newcount - Heap_Limit;
+
+#endif
+
     Heap_Start = newh; /* new low bound */
     Heap_End = newh+newcount; /* new high bound */
     Int_Heap_Warn = (Int_Heap_Warn==Heap_Warn
-                     ? HeapOffset(Heap_End,-CALLPAD)
+                     ? HeapOffset(Heap_End,-SOFT_HEAPPAD)
                      : Heap_Start);
-    Heap_Warn = HeapOffset(Heap_End,-CALLPAD);
+    Heap_Warn = HeapOffset(Heap_End,-SOFT_HEAPPAD);
     if (wake_count>=0)
       Heap_Warn_Soft = HeapCharOffset(Heap_Start,-wake_count);
     else
@@ -983,3 +1005,62 @@ void trail_gc(Arg)
   b = w->node;
   SetShadowregs(b);
 }
+
+
+#if defined(USE_OVERFLOW_EXCEPTIONS)
+bool_t undo_heap_overflow_excep(Arg)
+     Argdecl;
+{
+  int wake_count = WakeCount;
+
+  Int_Heap_Warn = (Int_Heap_Warn==Heap_Warn
+		   ? HeapOffset(Heap_End,-SOFT_HEAPPAD)
+		   : Heap_Start);
+  Heap_Warn = HeapOffset(Heap_End,-SOFT_HEAPPAD);
+  if (wake_count<0){
+    Heap_Warn_Soft = Int_Heap_Warn;
+  }
+
+  return TRUE;
+}
+
+
+// heap_limit assumes X(0) is either variable or small integer
+bool_t heap_limit(Arg)
+     Argdecl;
+{
+  tagged_t x;
+  int wake_count;
+
+  DEREF(x,X(0)); 
+  if (IsVar(x)) return cunify(Arg, x, MakeSmall(Heap_Limit));
+
+  Heap_Limit = GetSmall(x);
+  wake_count = WakeCount;
+   
+  if ((Heap_Limit == 0)  ||                                             /* Heap limit is off */
+      (Heap_Limit >= HeapDifference(Heap_Start,Heap_End) - DEFAULT_SOFT_HEAPPAD))   /* Heap smaller than Heap limit */
+    SOFT_HEAPPAD = DEFAULT_SOFT_HEAPPAD;
+  else 
+    SOFT_HEAPPAD = HeapDifference(Heap_Start,Heap_End) - Heap_Limit;
+  
+  Int_Heap_Warn = (Int_Heap_Warn==Heap_Warn
+		   ? HeapOffset(Heap_End,-SOFT_HEAPPAD)
+		   : Heap_Start);
+  Heap_Warn = HeapOffset(Heap_End,-SOFT_HEAPPAD);
+  
+  if (wake_count>=0)
+    Heap_Warn_Soft = HeapCharOffset(Heap_Start,-wake_count);
+  else
+    Heap_Warn_Soft = Int_Heap_Warn;
+  
+  return TRUE;
+
+}
+#else 
+bool_t heap_limit(Arg)
+     Argdecl;
+{
+  return cunify(Arg, TaggedZero, X(0));
+}
+#endif

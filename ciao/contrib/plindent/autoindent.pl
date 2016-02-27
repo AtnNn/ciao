@@ -6,9 +6,9 @@
 :- use_module(library(file_utils)).
 :- use_module(library(lists)).
 
-:- use_module(plindent(idtokens), [identify_tokens/6]).
+:- use_module(plindent(idtokens),    [identify_tokens/6]).
 :- use_module(plindent(poslastchar), [pos_last_char/3]).
-:- use_module(plindent(normspaced), [normalize_spaced/3, new_lines/3, 
+:- use_module(plindent(normspaced), [normalize_spaced/3, new_lines/3,
 		num_lines/3]).
 :- use_module(plindent(idfunctors)).
 :- use_module(plindent(plisettings)).
@@ -138,8 +138,11 @@ create_autospace(ALines, ALines, _, PliConfig, 0, 0, _,
 	Col =< MLL,
 	!.
 create_autospace(ALines, ALines, _, _, Lines0, Lines0, _,
-	    token${type => TokenType2}, _, _, _, Spaces) :-
-	member(TokenType2, [comment1, commentn]),
+	    token${type => TokenType2, value => Value}, _, _, _, Spaces) :-
+	% member(TokenType2, [comment1, commentn]),
+	TokenType2 == commentn,
+	num_lines(Value, 0, Lines),
+	Lines > 0,
 	!,
 	(Lines0 == 0 -> Spaces0 = " " ; Spaces0 = ""),
 	new_lines(Lines0, Spaces, Spaces0).
@@ -236,12 +239,12 @@ plindent(Source, SourceS, TargetS) :-
 	push_prolog_flag(write_strings, on),
 	normalize_spaced(Tokens0, PliConfig, Tokens1),
 	identify_functors(Tokens1, Tokens2, PliConfig, [], Argdescs0),
-% 	debug_display(Tokens2, Argdescs0),
+	% debug_display(Tokens2, Argdescs0),
 	auto_space_argdescs(Argdescs0, []),
-%	gnd(Tokens2),
+	% gnd(Tokens2),
 	auto_indent_tokens(Tokens2, PliConfig, [], 0, Tokens, [], pos(0, 1)),
 	tokens_strings(Tokens, TargetS, []),
-%	flatten(TargetS0, TargetS),
+	% flatten(TargetS0, TargetS),
 	pop_prolog_flag(write_strings).
 
 /*

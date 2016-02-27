@@ -3,9 +3,9 @@
     Part of SWI-Prolog
 
     Author:        Jan Wielemaker
-    E-mail:        wielemak@science.uva.nl
+    E-mail:        J.Wielemaker@uva.nl
     WWW:           http://www.swi-prolog.org
-    Copyright (C): 1985-2007, University of Amsterdam
+    Copyright (C): 1985-2008, University of Amsterdam
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -30,12 +30,17 @@
 */
 
 %% Migration to Ciao by Edison Mera 2009-12-26
+%% Backport of recent version by Jose Morales 2011-8-16
 
 :- module(apply,
 	  [ include/3,			% :Pred, +List, -Ok
 	    exclude/3,			% :Pred. +List, -NotOk
 	    partition/4,		% :Pred, +List, -Included, -Excluded
-	    partition/5			% :Pred, +List, ?Less, ?Equal, ?Greater
+	    partition/5,		% :Pred, +List, ?Less, ?Equal, ?Greater
+	    maplist/2,			% :Pred, +List
+	    maplist/3,			% :Pred, ?List, ?List
+	    maplist/4,			% :Pred, ?List, ?List, ?List
+	    maplist/5			% :Pred, ?List, ?List, ?List, ?List
 	  ], [assertions, basicmodes, nativeprops, hiord]).
 % :- use_module(library(error)).
 
@@ -51,28 +56,14 @@ members of a list.
 @tbd	Add include/4, include/5, exclude/4, exclude/5
 */
 
-/*
-:- module_transparent
-	include/3,
-	include_/3,
-	exclude/3,
-	exclude_/3,
-	partition/4,
-	partition_/4,
-	partition/5,
-	partition_/5,
-	partition_/7.
-*/
-
 :- doc(module, "
 <module> Apply predicates on a list
 
 This module defines meta-predicates that apply a predicate on all
 members of a list.
 
-Original code from SWI-Prolog (Multi-threaded, 32 bits, Version
-5.6.64). Migrated to Ciao by Edison Mera.
-
+Original code from SWI-Prolog. Migrated to Ciao by Edison Mera.
+Backport of recent changes by Jose Morales.
 ").
 
 :- pred include(+Goal, +List1, ?List2)
@@ -170,4 +161,78 @@ partition_(>, H, Pred, T, L, E, [H|G]) :- !,
 % partition_(Diff, _, _, _, _, _, _) :-
 % 	must_be(oneof([<.=,>]), Diff).
 
+		 /*******************************
+		 *	    MAPLIST/2...	*
+		 *******************************/
+
+:- pred maplist(+Goal, ?List) ::
+	(callable(Goal), list(List))
+# "
+	True if Goal can succesfully be applied on all elements of List.
+	Arguments are reordered to gain performance as well as to make
+	the predicate deterministic under normal circumstances.
+".
+
+:- meta_predicate maplist(pred(1), ?).
+maplist(Goal, List) :-
+	maplist_(List, Goal).
+
+:- meta_predicate maplist_(?, pred(1)).
+maplist_([], _).
+maplist_([Elem|Tail], Goal) :-
+	call(Goal, Elem),
+	maplist_(Tail, Goal).
+
+:- pred maplist(+Goal, ?List1, ?List2) ::
+	(callable(Goal), list(List1), list(List2))
+# "
+	True if Goal can succesfully be applied to all succesive pairs
+	of elements of List1 and List2.
+".
+
+:- meta_predicate maplist(pred(2), ?, ?).
+maplist(Goal, List1, List2) :-
+	maplist_(List1, List2, Goal).
+
+:- meta_predicate maplist_(?, ?, pred(2)).
+maplist_([], [], _).
+maplist_([Elem1|Tail1], [Elem2|Tail2], Goal) :-
+	call(Goal, Elem1, Elem2),
+	maplist_(Tail1, Tail2, Goal).
+
+:- pred maplist(+Goal, ?List1, ?List2, ?List3) ::
+	(callable(Goal), list(List1), list(List2), list(List3))
+# "
+	True if Goal can succesfully be applied to all succesive triples
+	of elements of List1..List3.
+".
+
+:- meta_predicate maplist(pred(3), ?, ?, ?).
+maplist(Goal, List1, List2, List3) :-
+	maplist_(List1, List2, List3, Goal).
+
+:- meta_predicate maplist_(?, ?, ?, pred(3)).
+maplist_([], [], [], _).
+maplist_([Elem1|Tail1], [Elem2|Tail2], [Elem3|Tail3], Goal) :-
+	call(Goal, Elem1, Elem2, Elem3),
+	maplist_(Tail1, Tail2, Tail3, Goal).
+
+:- pred maplist(+Goal, ?List1, ?List2, ?List3, ?List4) ::
+	(callable(Goal), list(List1), list(List2), list(List3), list(List4))
+# "
+	True if Goal  can  succesfully  be   applied  to  all  succesive
+	quadruples of elements of List1..List4
+".
+
+:- meta_predicate maplist(pred(4), ?, ?, ?, ?).
+maplist(Goal, List1, List2, List3, List4) :-
+	maplist_(List1, List2, List3, List4, Goal).
+
+:- meta_predicate maplist_(?, ?, ?, ?, pred(4)).
+maplist_([], [], [], [], _).
+maplist_([Elem1|Tail1], [Elem2|Tail2], [Elem3|Tail3], [Elem4|Tail4], Goal) :-
+	call(Goal, Elem1, Elem2, Elem3, Elem4),
+	maplist_(Tail1, Tail2, Tail3, Tail4, Goal).
+
 :- pop_prolog_flag(multi_arity_warnings).
+

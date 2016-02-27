@@ -14,7 +14,7 @@
 		adjust_debugger_state/2,
 		debug_mod/2,
 		debug_trace2/10,
-		do_once_command/2,
+		do_once_command/3,
 		get_attributed_vars/3,
 		get_debugger_state/1]).
 :- reexport(library(debugger(debugger_lib)), [
@@ -44,6 +44,7 @@
 		tracertc/0]).
 :- use_module(engine(internals), [term_to_meta/2, '$setarg'/4, module_concat/3]).
 :- use_module(engine(hiord_rt), ['$nodebug_call'/1, '$meta_call'/1]).
+:- use_module(engine(attributes)).
 :- use_module(library(format)).
 :- use_module(library(ttyout)).
 :- use_module(user,           ['$shell_call'/1]).
@@ -196,7 +197,7 @@ already_seen([T|_Ts], Term) :-
 already_seen([_T|Ts], Term) :- already_seen(Ts, Term).
 
 do_interrupt_command(0'@) :- !, % @(command)
-	ttyskipeol, do_once_command('| ?- ', debug_call),
+	ttyskipeol, do_once_command('| ?- ', debug_call, d([], [], [])),
 	do_interrupt_command(0'\n).
 do_interrupt_command(0'a) :- !, % a(bort)
 	ttyskipeol, abort.

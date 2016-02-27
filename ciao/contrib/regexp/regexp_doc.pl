@@ -11,11 +11,11 @@
 
 :- doc(author,"The CLIP Group").
 
-:- op(   200,   fy,   (=~)).   % Like unary '+'
+:- op(200, fy, (=~)).   % Like unary '+'
 
-:- load_compilation_module(library(regexp(regexp_trans))).
-
-:- add_sentence_trans(pattern_unification/2).
+% TODO: not in _doc module
+%:- load_compilation_module(library(regexp(regexp_trans))).
+%:- add_sentence_trans(pattern_unification/2, 640).
 
 :- use_module(library(regexp(regexp_code))).
 
@@ -86,6 +86,5 @@ is equivalent to
   @item{@{...@}} Groups alternatives inside larger @var{regexp_shell}.
   @item{\\} Quotes a special character (including itself).
  @end{description}").
-
 
 

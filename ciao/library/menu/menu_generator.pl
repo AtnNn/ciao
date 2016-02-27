@@ -31,11 +31,12 @@
 % ,guard_included_in_path/3
 % ,join_guard_and_path/3
 		     ], 
-		     [ hiord 
-		     , assertions 
-		     , regtypes
-		     , persdb
-		     , argnames , nortchecks
+		     [ hiord, 
+		       assertions,
+		       regtypes,
+		       argnames,
+		       persdb,
+		       nortchecks
 		     ] ).
 
 :- include( library( 'menu/menu_common' ) ).

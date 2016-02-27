@@ -1,5 +1,4 @@
-:- use_package(iso).
-:- use_package(persdb).
+:- module(example_static,[main/1],[persdb,iso]).
 
 %% Declare the directory associated to the key "db" where the
 %% persistence sets of the persistent predicates are stored:
@@ -10,7 +9,7 @@ persistent_dir(db,'./').
 
 %% Read a term, storing it in a new fact of the persistent predicate
 %% and list all the current facts of that predicate
-main:-
+main :-
  	read(X),
  	assertz_fact(bar(X)),
  	findall(Y,bar(Y),L),

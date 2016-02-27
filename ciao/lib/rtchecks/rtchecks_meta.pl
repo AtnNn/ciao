@@ -9,8 +9,7 @@
 
 :- use_module(library(lists)).
 :- use_module(library(sort)).
-:- use_module(library(hiordlib)).
-
+:- use_module(library(hiordlib), [map/3]).
 :- use_module(library(rtchecks(rtchecks_basic))).
 
 :- doc(author, "Edison Mera").

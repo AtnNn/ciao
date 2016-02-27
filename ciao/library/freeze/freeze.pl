@@ -16,6 +16,7 @@
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 :- use_module(engine(internals)).
+:- use_module(engine(attributes)).
 
 %% :- ensure_loaded(library(attrdecl)).
 

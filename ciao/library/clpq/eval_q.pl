@@ -1,5 +1,6 @@
 :- module(_, [
         arith_eps/1, arith_zero/1, arith_eval/2, arith_eval/1,
+	as_float/2, float_rat/2,
         'arith_zero-1'/1,
         'arith_zero-1'/2,
         'arith_zero-*1'/2,
@@ -25,6 +26,7 @@
         'arith_eval/-11'/2
                 ], []).
 
+:- use_module(library('clpqr-common/arith_extra')).
 % For rationals
 
 % low level arithmetic for clp(r,q,z)
@@ -43,6 +45,7 @@ arith_eval(Exp, Ans) :-
   rat(Exp, N, D),
   ratint(D, N, Ans).
 
+arith_eval( X=:=Y) :- arith_zero(X-Y).
 arith_eval(X >  Y) :- rat(X, An,Ad), rat(Y, Bn,Bd), comq(An,Ad, Bn,Bd, >).
 arith_eval(X =< Y) :- rat(X, An,Ad), rat(Y, Bn,Bd), comQ(An,Ad, Bn,Bd, D), D =<  0.
 arith_eval(X <  Y) :- rat(X, An,Ad), rat(Y, Bn,Bd), comq(An,Ad, Bn,Bd, <).
@@ -95,12 +98,14 @@ rat(**(X,Y), N, D) :- rat(X, An,Ad), rat(Y, Bn,Bd), F is **(An/Ad,Bn/Bd), float_
 % rat(tan(X), N, D)   :- rat(X, An,Ad), F is tan(An/Ad), float_rat(F, App), rat(App, N, D).
 % rat(asin(X), N, D)  :- rat(X, An,Ad), F is asin(An/Ad), float_rat(F, App), rat(App, N, D).
 % rat(acos(X), N, D)  :- rat(X, An,Ad), F is acos(An/Ad), float_rat(F, App), rat(App, N, D).
+rat(tan(X), N, D)   :- rat(X, An,Ad), tan(An/Ad, F), float_rat(F, App), rat(App, N, D).
+rat(asin(X), N, D) :- rat(X, An,Ad), asin(An/Ad, F), float_rat(F, App), rat(App, N, D).
+rat(acos(X), N, D) :- rat(X, An,Ad), acos(An/Ad, F), float_rat(F, App), rat(App, N, D).
 rat(abs(X),  Cn,Cd)   :- rat(X, An,Cd), Cn is abs(An).
 rat(min(X,Y), Cn,Cd)  :- rat(X, An,Ad), rat(Y, Bn,Bd),
   ( comq(An,Ad, Bn,Bd, <) -> Cn=An,Cd=Ad; Cn=Bn,Cd=Bd ).
 rat(max(X,Y), Cn,Cd)  :- rat(X, An,Ad), rat(Y, Bn,Bd),
   ( comq(An,Ad, Bn,Bd, >) -> Cn=An,Cd=Ad; Cn=Bn,Cd=Bd ).
-
 
 mulq(Na,Da, Nb,Db, Nc,Dc) :-
   Gcd1 is gcd(Na,Db),
@@ -203,6 +208,31 @@ as_float(Exp, Float) :-
   Float is N/D.
 
 % ------------------------------- PE patterns ---------------------------------
+
+% arith_zero(A-B) :- 'arith_zero-1'(A, B).
+% arith_zero(A*B-1) :- 'arith_zero-*1'(A,B).
+% arith_zero(A-1) :- 'arith_zero-1'(A).
+
+% arith_eval(A<0)	:-'arith_eval<1'(A).
+% arith_eval(A>0)	:-'arith_eval>1'(A).
+% arith_eval(A<B)	:-'arith_eval<1'(A,B).
+% arith_eval(A=<0):-'arith_eval=<1'(A).
+% arith_eval(A>=0):-'arith_eval>=1'(A).
+% arith_eval(A-B,C):-'arith_eval-1'(A,B,C).
+% arith_eval(A*B,C):-'arith_eval*1'(A,B,C).
+% arith_eval(A*B-C,D):-'arith_eval-*1'(A,B,C,D).
+% arith_eval(A*B+C*D,E):-'arith_eval+*1'(A,B,C,D,E).
+% arith_eval(A*B-C*D,E):-'arith_eval-*1'(A,B,C,D,E).
+% arith_eval(A+B,C):-'arith_eval+1'(A,B,C).
+% arith_eval(A+B+C,D):-'arith_eval++1'(A,B,C,D).
+% arith_eval(A+B+C+D,E):-'arith_eval+++1'(A,B,C,D,E).
+% arith_eval(-(A/B),C):-'arith_eval-/1'(A,B,C).
+% arith_eval(-1/A,B):-'arith_eval/-11'(A,B).
+% arith_eval(-(A/B),C):-'arith_eval-/2'(A,B,C).
+% arith_eval(-(A),B):-'arith_eval-1'(A,B).
+% arith_eval(A*rat(B,C),D):-'arith_eval*1'(A,B,C,D).
+% arith_eval(A*B+C,D):-'arith_eval+*1'(A,B,C,D).
+% arith_eval(A+B*C,D):-'arith_eval+1'(A,B,C,D).
 
 % 'arith_zero-1'(A,B):-arith_zero(A-B)
 'arith_zero-1'(A, B) :-

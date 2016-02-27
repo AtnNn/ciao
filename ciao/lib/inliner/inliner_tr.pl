@@ -1,20 +1,17 @@
-:- module(inliner_tr, [inliner_sentence_tr/3, inliner_goal_tr/3, inline_db/3,
-		lit_clause_arity/4, inline_module_db/2, compound_struct/3],
-	    [assertions, dcg]).
+:- module(_, [inliner_sentence_tr/3, inliner_goal_tr/3, inline_db/4,
+		lit_clause_arity/4, in_inline_module_db/2, compound_struct/3],
+	    [assertions, hiord, dcg]).
 
 :- use_module(library(filenames)).
 :- use_module(library(aggregates)).
 :- use_module(library(terms)).
-:- use_module(library(strings)).
 :- use_module(library(freeze)).
 :- use_module(library(sort)).
 :- use_module(library(lists)).
-:- use_module(library(file_utils)).
 :- use_module(library(hiordlib)).
 :- use_module(library(messages)).
 :- use_module(library(terms_vars)).
 :- use_module(library(write)).
-:- use_module(library(read)).
 :- use_module(library(terms_check)).
 :- use_module(library(compiler(c_itf_internal)),
 	    [defines_module/2, meta_args/2, multifile/3, imports_pred/7,
@@ -44,19 +41,25 @@ Examples:
 It is being used in the rtcheck package and in the resources analysis
 of ciaopp.").
 
+:- doc(bug, "Suggestion to debug: rename this file and debug the
+	renamed file, because it is compiled statically in the
+	shell.").
+
 :- data source_clause_db/3.
 :- data meta_pred_db/4.
 :- data rename_goal_db/4.
-:- data inline_db/3.
+:- data inline_db/4.
 :- data unused_inline_db/4.
 :- data renamer_db/3.
 :- data unused_renamer_db/4.
 :- data unused_unfold_db/3.
-:- data use_inline_db/3.
-:- data inline_module_db/2.
+:- data no_slice_db/3.
+:- data inline_module_db/4.
+:- data in_inline_module_db/2.
 :- data unfold_db/2.
 :- data generated_db/3.
 :- data unfold_meta_db/1.
+:- data use_module_db/4.
 
 :- doc(bug, "If the predicate being inline contains cuts (!), it
 	could generate a malformed body error. --EMM").
@@ -101,9 +104,12 @@ inliner_goal_tr(end_of_file, _, M) :-
 	fail.
 inliner_goal_tr(Goal0, Goal, M) :-
 	varset(Goal0, Vars), %Kludge to avoid removal of variables
-	body_expansion(Goal0, iparams([], _, Vars, Vars, 2, M), Goal, [], []),
+	body_expansion(Goal0, iparams([], _, Vars, Vars, 2, M), Goal, Clauses,
+	    []),
+	(Clauses \== [] -> warning_cl_goal_exp(Clauses), fail ; true),
 	!,
 	Goal0 \== Goal.
+
 % Assume that meta predicates should be unfolded:
 process_declaration(unfold_meta, [], M) :-
 	assertz_fact(unfold_meta_db(M)).
@@ -117,16 +123,18 @@ process_declaration(unfold(PredSpec), [], M) :-
 	!,
 	assert_unfold(PredSpec, M).
 % Used internally to mark the start of an inlined module
-process_declaration(ini_inline_module(PredList), [], M) :-
+process_declaration(ini_inline_module(Base, Alias, PredList), [], M) :-
 	!,
-	asserta_fact(inline_module_db(PredList, M)).
+	asserta_fact(inline_module_db(Base, Alias, PredList, M)),
+	asserta_fact(in_inline_module_db(Base, M)).
 % Used internally to mark the end of an inlined module
 process_declaration(end_inline_module(Base), [], M) :-
 	!,
-	retract_fact(inline_module_db(PredList, M)),
+	retract_fact(in_inline_module_db(Base, M)),
 	(
+	    inline_module_db(Base, _, PredList, M),
 	    nonvar(PredList) ->
-	    findall(F/A, (member(F/A, PredList), \+inline_db(F, A, M)),
+	    findall(F/A, (member(F/A, PredList), \+inline_db(F, A, _, M)),
 		UnusedPreds),
 	    (
 		UnusedPreds \== [] ->
@@ -144,7 +152,7 @@ process_declaration(end_inline_module(Base), [], M) :-
 % removes its definition in the module, saving space:
 process_declaration(inline(F/A), [], M) :-
 	!,
-	assert_inline(F, A, M),
+	assert_inline(F, A, srclocal, M),
 	assert_unused_inline(F, A, M).
 % Declare a user-defined name for a specialization:
 process_declaration(renamer(F/A), [], M) :-
@@ -153,11 +161,14 @@ process_declaration(renamer(F/A), [], M) :-
 % Remove the inline declaration
 process_declaration(noinline(F/A), [], M) :-
 	!,
-	retract_fact(inline_db(F, A, M)).
-% Allows usage of inline/unfolded predicates in the body the involved predicate
+	retract_fact(inline_db(F, A, _, M)).
+% Allows usage of inline/unfolded predicates in the body the involved
+% predicate, but do not remove its definition even if it is unused.
 process_declaration(use_inline(F/A), [], M) :-
 	!,
-	assert_use_inline(F, A, M).
+	assert_inline(F, A, srclocal, M),
+	assert_unused_inline(F, A, M),
+	assert_no_slice(F, A, M).
 % Allows inlining of the predicates specifield in PredList in a module
 process_declaration(inline_module(Alias, PredList), Clauses, M) :-
 	!,
@@ -166,35 +177,110 @@ process_declaration(inline_module(Alias, PredList), Clauses, M) :-
 process_declaration(inline_module(Alias), Clauses, M) :-
 	!,
 	process_inline_module(Alias, _, Clauses, M).
-process_declaration(_, [], M) :-
-	inline_module_db(_, M),
-	!.
+process_declaration(use_module(Alias), Clauses, M) :-
+	!,
+	process_use_module(use_module(Alias), combine_inline_info, Clauses, M).
+process_declaration(use_module(Alias, PredList), Clauses, M) :-
+	!,
+	process_use_module(use_module(Alias, PredList), combine_inline_info,
+	    Clauses, M).
+process_declaration(Decl0, Decl, M) :-
+	in_inline_module_db(_, M),
+	!,
+	(pass_thru_decl(Decl0) -> Decl = [(:- Decl0)] ; Decl = []).
 
-% :- use_module(library(compiler(c_itf_internal)),
-% 	    [expand_module_decl/4, read_sentence/2]).
-process_inline_module(Alias, PredList, [(:- include(FAuto))], M) :-
-%	get_idx(Alias, M, Idx),
-%	atom_number(AIdx, Idx),
-	absolute_file_name(Alias, AName),
-	no_path_file_name(AName, FN),
-	file_name_extension(FN, Base, _Ext),
-% The next way to process inline modules is a kludge, a better
-% way is to support it in the compiler. --EMM
-	atom_concat([M, '_', Base, '_auto.pl'], FAuto),
+use_module_alias_predlist(use_module(Alias, PredList), Alias, PredList).
+use_module_alias_predlist(use_module(Alias),           Alias, _).
+
+union_lists(PrevList, CurrList, UnionList) :-
+	( var(PrevList) -> UnionList = PrevList
+	; var(CurrList) -> UnionList = CurrList
+	; union(PrevList, CurrList, UnionList)
+	).
+
+diff_lists(PrevList, CurrList, DiffList) :-
+	( var(PrevList) ->DiffList = []
+	; var(CurrList) ->
+	    (var(PrevList) -> DiffList = [] ; DiffList = CurrList)
+	; difference(CurrList, PrevList, DiffList)
+	).
+
+combine_inline_info(Base, M, PrevList, CurrList, UnionList, DiffList) :-
+	(inline_module_db(Base, _, InlineList, M) -> true ; InlineList = []),
+	union_lists(PrevList,   InlineList, UnionList0),
+	union_lists(UnionList0, CurrList,   UnionList),
+	diff_lists(UnionList0, CurrList, DiffList).
+
+combine_usage_info(_, _, PrevList, CurrList, UnionList, DiffList) :-
+	union_lists(PrevList, CurrList, UnionList),
+	diff_lists(PrevList, CurrList, DiffList).
+
+:- meta_predicate process_use_module(?, pred(6), ?, ?).
+process_use_module(Decl, CombineInfo, Clauses, M) :-
+	use_module_alias_predlist(Decl, Alias, CurrList),
+	absolute_file_name(Alias, File),
+	file_base(File, Base),
+	( retract_fact(use_module_db(Base, PrevInlineModule, PrevList, M)) ->
+	    true ; PrevList = []
+	),
+	CombineInfo(Base, M, PrevList, CurrList, UnionList, DiffList),
+	( DiffList == [] -> DiffClauses = []
+	; var(DiffList) -> DiffClauses = [(:- use_module(Alias))]
+	; DiffClauses = [(:- use_module(Alias, DiffList))]
+	),
+	( (in_inline_module_db(_, M) ; PrevInlineModule == yes) ->
+	    Clauses = DiffClauses,
+	    InlineModule = yes
+	;
+	    Clauses = [(:- Decl)],
+	    InlineModule = no
+	),
+	asserta_fact(use_module_db(Base, InlineModule, UnionList, M)).
+
+
+pass_thru_decl(use_package(_)).
+pass_thru_decl(use_module(_)).
+pass_thru_decl(use_module(_, _)).
+pass_thru_decl(include(_)).
+
+file_base(File, Base) :-
+	no_path_file_name(File, FN),
+	file_name_extension(FN, Base, _Ext).
+
+% :- use_module(library(read)).
+:- use_module(library(compiler(c_itf_internal)),
+	    [expand_module_decl/5, read_sentence/3]).
+process_inline_module(Alias, PredList,
+	    [(:- use_package(Package)),
+		(:- use_package(.(BAuto)))], M) :-
+	% get_idx(Alias, M, Idx),
+	% atom_number(AIdx, Idx),
+	absolute_file_name(Alias, File),
+	file_base(File, Base),
+	% The next way to process inline modules is a kludge, a better
+	% way is to support it in the compiler. --EMM
+	atom_concat([M, '_', Base, '_auto'], BAuto),
+	atom_concat(BAuto, '.pl', FAuto),
 	absolute_file_name(Alias, File),
 	open(File, read, Stream),
-	read(Stream, _),
-% 	read_sentence(Stream, Sentence),
-% 	expand_module_decl(Sentence, Base, module(_Base, _Exports, Package),
-% 	    _Rest),
-%	(var(PredList) -> PredList = Exports ; true),
-	stream_to_string(Stream, String),
+	% read(Stream, _),
+	read_sentence(Stream, Base, Sentence),
+	expand_module_decl(Sentence, Base, module, module(_Module, Exports,
+		Package), _Rest),
+	(var(PredList) -> PredList = Exports ; true),
 	open(FAuto, write, OStream),
-	writeq(OStream, (:- ini_inline_module(PredList))),
+	writeq(OStream, (:- package(BAuto))),
 	display(OStream, '.\n'),
-% 	writeq(OStream, (:- use_package(Package))),
-% 	display(OStream, '.\n'),
-	write_string(OStream, String),
+	writeq(OStream, (:- ini_inline_module(Base, Alias, PredList))),
+	display(OStream, '.\n'),
+	% writeq(OStream, (:- use_package(Package))),
+	% display(OStream, '.\n'),
+	writeq(OStream, (:- push_prolog_flag(unused_pred_warnings, yes))),
+	display(OStream, '.\n'),
+	writeq(OStream, (:- include(Alias))),
+	display(OStream, '.\n'),
+	writeq(OStream, (:- pop_prolog_flag(unused_pred_warnings))),
+	display(OStream, '.\n'),
 	writeq(OStream, (:- end_inline_module(Base))),
 	display(OStream, '.\n'),
 	close(OStream).
@@ -207,10 +293,10 @@ assert_unfold(PredSpec, M) :-
 	location(Loc),
 	assertz_fact(unused_unfold_db(PredSpec, M, Loc)).
 
-assert_inline(F, A, M) :-
-	inline_db(F, A, M) -> true
+assert_inline(F, A, Alias, M) :-
+	inline_db(F, A, _, M) -> true
     ;
-	assertz_fact(inline_db(F, A, M)).
+	assertz_fact(inline_db(F, A, Alias, M)).
 
 assert_unused_inline(F, A, M) :-
 	location(Loc),
@@ -223,23 +309,22 @@ assert_renamer(F, A, M) :-
 	location(Loc),
 	assertz_fact(unused_renamer_db(F, A, M, Loc)).
 
-assert_use_inline(F, A, M) :-
-	( use_inline_db(F, A, M) -> true
-	; assertz_fact(use_inline_db(F, A, M)) ).
+assert_no_slice(F, A, M) :-
+	( no_slice_db(F, A, M) -> true
+	; assertz_fact(no_slice_db(F, A, M)) ).
 
 process_meta_predicate(PredSpec, Clauses, M) :-
 	functor(PredSpec, F, LitArity),
 	(
-	    inline_module_db(PredList, M) ->
-	    (
-		member(F/LitArity, PredList) ->
-		assert_inline(F, LitArity, M),
-		assert_unused_inline(F, LitArity, M),
-		assert_unfold_from_meta_decl(PredSpec, M),
-		assert_meta_pred_if_required(F, LitArity, PredSpec, Clauses, M)
-	    ;
-		Clauses = []
-	    )
+	    in_inline_module_db(Base, M) ->
+	    inline_module_db(Base, Alias, PredList, M),
+	    assert_inline(F, LitArity, Alias, M),
+	    ( nonvar(PredList), member(F/LitArity, PredList) ->
+		assert_unused_inline(F, LitArity, M)
+	    ; true
+	    ),
+	    assert_unfold_from_meta_decl(PredSpec, M),
+	    assert_meta_pred_if_required(F, LitArity, PredSpec, Clauses, M)
 	;
 	    unfold_meta_db(M) ->
 	    assert_unfold_from_meta_decl(PredSpec, M),
@@ -249,7 +334,7 @@ process_meta_predicate(PredSpec, Clauses, M) :-
 	).
 
 assert_meta_pred_if_required(F, LitArity, PredSpec, Clauses, M) :-
-	inline_db(F, LitArity, M) ->
+	inline_db(F, LitArity, _, M) ->
 	Clauses = [],
 	assertz_fact(meta_pred_db(F, LitArity, PredSpec, M))
     ;
@@ -295,11 +380,10 @@ lit_clause_arity(M, F, LitArity, ClauseArity) :-
 	LitArity = ClauseArity.
 
 assert_clause_if_required(Head, F, LitArity, Body, M) :-
-	(
-	    functor(Spec, F, LitArity),
-	    unfold_db(Spec, M)
-	;
-	    inline_db(F, LitArity, M)
+	( functor(Spec, F, LitArity), unfold_db(Spec, M)
+	; inline_db(F, LitArity, _, M)
+	; \+ ( ( use_module_db(_Base, _, PredList, M) ->
+		    member(F/LitArity, PredList) ; true ) )
 	) ->
 	assert_clause(Head, Body, M)
     ;
@@ -319,7 +403,7 @@ meta_predicate(F, A, PredSpec, M) :-
 	defines_module(Base, M),
 	imports_pred(Base, _, F, A, _, PredSpec, _).
 
-record_generated(F, A, M) :-
+assert_generated(F, A, M) :-
 	(generated_db(F, A, M) -> true ; assertz_fact(generated_db(F, A, M))).
 
 % only takes the source code of the specified predicates
@@ -355,57 +439,61 @@ is_renamer(Body,   Head) :-
 		fail
 	    ),
 	    ( varset(Body, Args2), diff_vars(Args1, Args2, []) -> true
-	    ; error_message(Loc,
-		    "Header of Renamer contain singleton variables")
 	    ;
-		warning_message(Loc,
-		    "Predicate ~w/~w can not be a renamer", [F, Arity]),
+		error_message(Loc,
+		    "Header of Renamer ~w/~w contain singleton variables",
+		    [F, Arity]),
 		fail
 	    )
 	),
 	!.
 
 process_sentence_(Head, Body, Clauses, M, F, LitArity) :-
-	inline_module_db(PredList, M),
+	in_inline_module_db(Base, M),
 	!,
-	inline_module_sentence(Head, Body, Clauses, F, LitArity, PredList, M).
+	inline_module_sentence(Head, Body, Clauses, M, F, LitArity, Base).
 process_sentence_(Head, Body0, Clauses, M, F, LitArity) :-
 	assert_clause_if_required(Head, F, LitArity, Body0, M),
 	(
 	    defines_module(Base, M),
-	    inline_db(F, LitArity, M),
+	    inline_db(F, LitArity, _, M),
+	    \+ no_slice_db(F, LitArity, M),
 	    \+ exports_pred(Base, F, LitArity) ->
 	    Clauses = [],
 	    retractall_fact(assertion_read(Head, M, _, _, _, _, _, _, _))
 	;
-% is too early to begin expansion of F/A predicate: suppose that there
-% are more clauses
+	    % is too early to begin expansion of F/A predicate: suppose that there
+	    % are more clauses
 	    varset(Head, Vars),
-	    record_generated(F, LitArity, M),
+	    assert_generated(F, LitArity, M),
 	    (
-		(\+ use_inline_db(_, _, M) ; use_inline_db(F, LitArity, M))
-	    -> (
-		    \+ inline_db(F, LitArity, M), is_renamer(Body0, Head)
-		-> generate_specialized_clauses(Body0, Body, renamer(Head),
-			iparams([F/LitArity], _, [], Vars, 1, M), Clauses,
-			Clauses0),
-		    ( functor(Head, FH, AH), functor(Body, FH, AH) ->
-			Clauses0 = [] ; Clauses0 = [(Head :- Body)] )
-		;
-		    body_expansion(Body0, iparams([F/LitArity], _, [],
-			    Vars, 1, M),
-			Body, Clauses, [(Head :- Body)])
-		)
-	    ;
+		no_slice_db(F, LitArity, M) ->
 		Clauses = [(Head :- Body0)]
+	    ;
+
+		\+ inline_db(F, LitArity, _, M), is_renamer(Body0, Head)
+	    -> generate_specialized_clauses(Body0, Body, renamer(Head),
+		    iparams([F/LitArity], _, [], Vars, 1, M), Clauses,
+		    Clauses0),
+		( functor(Head, FH, AH), functor(Body, FH, AH) ->
+		    Clauses0 = [] ; Clauses0 = [(Head :- Body)] )
+	    ;
+		body_expansion(Body0, iparams([F/LitArity], _, Vars,
+			Vars, 1, M), Body, Clauses, [(Head :- Body)])
+
 	    )
 	),
 	!.
 
-inline_module_sentence(Head, Body, [], F, LitArity, PredList, M) :-
-	member(F/LitArity, PredList) ->
-	assert_clause(Head, Body, M),
-	assert_inline(F, LitArity, M)
+inline_module_sentence(Head, Body, [], M, F, LitArity, Base) :-
+	inline_module_db(Base, Alias, PredList, M),
+	\+ ( ( use_module_db(Base, no, UMList, M),
+		member(F/LitArity, UMList) ) ) ->
+	( member(F/LitArity, PredList) ->
+	    assert_inline(F, LitArity, Alias, M)
+	; true
+	),
+	assert_clause(Head, Body, M)
     ;
 	true.
 
@@ -469,7 +557,7 @@ gen_new_key(Vars, Pred, M, F, LitArity, Name) :-
 	intersect_vars(LVars0, Vars, LVars),
 	get_idx(idx(Pred, LVars), M, Idx),
 	atom_number(AIdx, Idx),
-% 	atom_concat('inl$', AIdx, Name).
+	% atom_concat('inl$', AIdx, Name).
 	atom_number(ALitArity, LitArity),
 	atom_concat([F, '/', ALitArity, '$', AIdx], Name).
 
@@ -478,7 +566,7 @@ gen_new_key(Vars, Pred, M, F, LitArity, Name) :-
 get_idx(idx(Pred, Vars0), M, Idx) :-
 	prettyvars(Pred),
 	sort(Vars0, Vars),
-% 	hash_term(idx(Pred, Vars), Idx),
+	% hash_term(idx(Pred, Vars), Idx),
 	num_term(idx(Pred, Vars), M, Idx),
 	assertz_fact(idx_db(Idx)),
 	fail.
@@ -508,6 +596,7 @@ fails_(var(A)) :- nonvar(A).
 fails_(int(A)) :- \+ int(A).
 fails_(integer(A)) :- \+ int(A).
 fails_(num(A)) :- \+ num(A).
+fails_(number(A)) :- \+ num(A).
 fails_(nnegint(A)) :- \+ nnegint(A).
 fails_(atm(A)) :- \+ atm(A).
 fails_(atom(A)) :- \+ atm(A).
@@ -521,6 +610,7 @@ succs_(true).
 succs_(nonvar(A)) :- nonvar(A).
 succs_(int(A)) :- integer(A).
 succs_(integer(A)) :- integer(A).
+succs_(number(A)) :- number(A).
 succs_(num(A)) :- nonvar(A), num(A).
 succs_(nnegint(A)) :- nonvar(A), nnegint(A).
 succs_(atm(A)) :- atom(A).
@@ -552,6 +642,9 @@ lit_disj(A, B, (A ; B)).
 
 lit_then(A, _, fail) :-
 	fails(A),
+	!.
+lit_then(A, B, B) :-
+	succs(A),
 	!.
 lit_then(A, B, (A->B)).
 
@@ -608,6 +701,11 @@ add_nuvars_u(A, B, NUVars, NUVarsB) :-
 	varscount(B, Vars0, Count0),
 	selectnu(Vars0, Count0, NUVars1),
 	varset(NUVars+NUVars1, NUVarsB).
+
+% inst_list(L) :- \+ non_inst(List(L), L).
+inst_list(L) :- var(L), !, fail.
+inst_list([]).
+inst_list([_|L]) :- inst_list(L).
 
 body_expansion(A, _, A) -->
 	{var(A)},
@@ -679,7 +777,7 @@ body_expansion(catch(A, E, B), iparams(Locks, Pending, NUVars, Vars, Level, M),
 	    NB).
 body_expansion(intercept(A, E, B), iparams(Locks, Pending, NUVars, Vars, Level,
 		M), intercept(NA, E, NB)) -->
-	{\+ inline_db(intercept, 3, M)},
+	{\+ inline_db(intercept, 3, _, M)},
 	!,
 	{varset(Vars+E+B, VarsA)},
 	body_expansion(A, iparams(Locks, Pending, NUVars, VarsA, Level, M),
@@ -698,6 +796,12 @@ body_expansion(A is E, Params, Goal) -->
 	!,
 	{B is E},
 	body_expansion(A=B, Params, Goal).
+body_expansion(A=..B, Params, Goal) -->
+	{nonvar(A), !, A =.. A0},
+	body_expansion(A0=B, Params, Goal).
+body_expansion(A=..B, Params, Goal) -->
+	{inst_list(B), B = [C|_], atom(C), !, B0 =.. B},
+	body_expansion(A=B0, Params, Goal).
 body_expansion(A=..B, _,                              A=..B) --> !, [].
 body_expansion(A=B,   iparams(_, _, NUVars, _, _, _), Goal) -->
 	!,
@@ -713,6 +817,18 @@ body_expansion(call(Goal0), _, call(Goal0)) -->
 body_expansion(call(Goal0), Params, Goal) -->
 	!,
 	body_expansion(Goal0, Params, Goal).
+body_expansion(Goal0, Params, Goal) -->
+	{Goal0 =.. [call, Pred|GArgs]},
+	!,
+	(
+	    {var(Pred)} ->
+	    {Goal = Goal0}
+	;
+	    {Pred =.. [F|PArgs]},
+	    {comp_args(GArgs, PArgs, Args)},
+	    {Goal1 =.. [F|Args]},
+	    body_expansion(Goal1, Params, Goal)
+	).
 body_expansion('$meta_call'(Goal0), Params, Goal) -->
 	!,
 	body_expansion(Goal0, Params, Goal).
@@ -728,14 +844,15 @@ body_expansion(MetaCall, Params, Goal) -->
 	},
 	body_expansion(Goal0, Params, Goal),
 	!.
-body_expansion(Goal0, Params, Goal) -->
-	{Params = iparams(Locks, Pending, NUVars, Vars, Level, M)},
-	generate_specialized_clauses(Goal0, Goal1, no, Params),
+body_expansion(Goal0, Params0, Goal) -->
+	{Params0 = iparams(Locks, Pending, NUVars, Vars, Level0, M)},
+	{Level is Level0 + 1},
+	{Params = iparams(['$wgf$off'|Locks], Pending, NUVars, Vars, Level, M)
+	},
+	generate_specialized_clauses(Goal0, Goal1, no, Params0),
 	(
 	    {Goal0 \== Goal1} ->
-	    {Params1 = iparams(['$wgf$off'|Locks], Pending, NUVars, Vars,
-		    Level, M)},
-	    body_expansion(Goal1, Params1, Goal)
+	    body_expansion(Goal1, Params, Goal)
 	;
 	    (
 		{
@@ -750,6 +867,10 @@ body_expansion(Goal0, Params, Goal) -->
 	),
 	!.
 body_expansion(Goal, _, Goal) --> [].
+
+comp_args([], PArgs, PArgs).
+comp_args([Arg|GArgs], PArgs, [Arg|Args]) :-
+	append(PArgs, GArgs, Args).
 
 expand_metas([], _, [], []) --> [].
 expand_metas([Meta|Metas], iparams(Locks, Pending, NUVars, Vars, Level, M),
@@ -804,8 +925,8 @@ select_applicable([(Head1 :- Body0)|Clauses], Head, AClauses0) :-
 	    select_applicable(Clauses, Head, AClauses)
 	;
 	    succs_cut(Body0, Body),
-% 	    Body0 = (Cut, Body),
-% 	    Cut == !, % Very specific case: cut is first literal
+	    % Body0 = (Cut, Body),
+	    % Cut == !, % Very specific case: cut is first literal
 	    (instance(Head, Head1) ; Clauses == []) ->
 	    AClauses0 = [(Head1 :- Body)]
 	;
@@ -845,9 +966,6 @@ partial_unify_arg(N, A, B, NUVars) -->
 	{N1 is N + 1},
 	partial_unify_arg(N1, A, B, NUVars).
 partial_unify_arg(_, _, _, _) --> [].
-
-in_goal_expansion(Clause, Clause) :-
-	Clause == [].
 
 get_lit_expansor(M, Lit, F, LitArity, Pred) :-
 	functor(USpec, F, LitArity),
@@ -933,8 +1051,15 @@ expand_goal(Goal0, Renamer, F, LitArity, ClauseArity, SC1, Key,
 	    Name = Key,
 	    Args = Args2
 	),
-	compound_struct(Head, Name, Args),
-	map(SC1, rename_head_clause(Head2, Head), SC2).
+	compound_struct(Head0, Name, Args),
+	(
+	    SC1 = [(_ :- SBody)], succs_(SBody) ->
+	    SC2 = [],
+	    Head = true
+	;
+	    map(SC1, rename_head_clause(Head2, Head0), SC2),
+	    Head = Head0
+	).
 
 meta_expansion(Pred, Expansion, M) :-
 	functor(Pred, F, A),
@@ -988,26 +1113,54 @@ meta_unfold_spec_arg(addterm(Spec), Arg, M) -->
 	meta_unfold_spec_arg(Spec, Arg, M), [Arg].
 meta_unfold_spec_arg(_, Arg, _) --> [Arg].
 
-gsc_special_cases(F, LitArity, M, Level0, _Level, Goal0, NUVars, Locks,
-	    _Pending, Goal) -->
-	{select_clauses(Goal0,  SC0,   M)},
-	{select_applicable(SC0, Goal0, SC)},
+lits_to_list(Body) --> {var(Body)}, !, [Body].
+lits_to_list((Lit, Body)) --> !, lits_to_list(Lit), lits_to_list(Body).
+lits_to_list(Lit) --> [Lit].
+
+handle_cuts_([],    [], _, true) :- !.
+handle_cuts_([!|L], R,  S, Body) :- !, handle_cuts_(L, R, S, Body).
+handle_cuts_(L,     R,  S, Body) :- handle_cuts__(L, R, S, Body).
+
+handle_cuts__([],    [], L,  Body) :- list_to_lits(L, Body).
+handle_cuts__([!|R], [], L0, (Body0->Body1)) :- !,
+	list_to_lits(L0, Body0),
+	handle_cuts_(R, L, L, Body1).
+handle_cuts__([Lit|R], [Lit|L0], L, Body) :-
+	handle_cuts__(R, L0, L, Body).
+
+:- export(handle_cuts/2).
+
+:- test handle_cuts(A, B) : (A = (!)) => (B = true) + not_fails.
+:- test handle_cuts(A, B) : (A = (a, !)) => (B = (a->true)) + not_fails.
+:- test handle_cuts(A, B) : (A = (!, a)) => (B = a) + not_fails.
+:- test handle_cuts(A, B) : (A = (a, b, c, !, d, e))
+	=> (B = (a, b, c->d, e)) + not_fails.
+
+handle_cuts(Body0, Body) :-
+	lits_to_list(Body0, List, []),
+	handle_cuts_(List, L, L, Body).
+
+gsc_special_cases(F, LitArity, _Level, Params, Goal0, Goal) :-
+	select_clauses(Goal0, SC0, M),
+	select_applicable(SC0, Goal0, SC),
+	Params = iparams(Locks, _Pending, NUVars, _Vars, Level0, M),
 	(
-	    {SC = [(Head :- Body)]},
-	    {( inline_db(F, LitArity, M) ->
+	    SC = [(Head :- Body0)],
+	    ( ( inline_db(F, LitArity, _, M) ->
 		    retractall_fact(unused_inline_db(F, LitArity, M, _)) )
-	    ; Level0 > 1 -> true} ->
-	    {get_lit_expansor(M, Goal0, F, LitArity, Head)},
-	    {add_nuvars_u(Goal0, Body, NUVars, NUVarsB)},
-	    {partial_unify(Head, Goal0, NUVarsB, Remainings, [Body])},
-	    {list_to_lits(Remainings, Goal)}
+	    ; Level0 > 1 -> true ) ->
+	    get_lit_expansor(M, Goal0, F, LitArity, Head),
+	    add_nuvars_u(Goal0, Body0, NUVars, NUVarsB),
+	    handle_cuts(Body0, Body),
+	    partial_unify(Head, Goal0, NUVarsB, Remainings, [Body]),
+	    list_to_lits(Remainings, Goal)
+	    % body_expansion(Goal1, Params, Goal, _, _)
 	;
-	    {SC = []} ->
-	    {Goal = fail,
-		( member('$wgf$off', Locks) -> true
-		; warning_goal_failed(Goal0)
-		)
-	    }
+	    SC = [] ->
+	    Goal = fail,
+	    ( member('$wgf$off', Locks) -> true
+	    ; warning_goal_failed(Goal0)
+	    )
 	).
 
 lit_expand(F, LitArity, ClauseArity, M, Goal0, Vars, Key, Head) :-
@@ -1016,59 +1169,100 @@ lit_expand(F, LitArity, ClauseArity, M, Goal0, Vars, Key, Head) :-
 	gen_new_key(Vars, Head0, M, F, LitArity, Key),
 	copy_term(Head0, Head).
 
-generate_specialized_clauses(UGoal0, Goal, Renamer, Params) -->
-	{Params = iparams(Locks, Pending, NUVars, Vars, Level0, M)},
-	{functor(UGoal0, F, LitArity)},
-	{meta_expansion(UGoal0, Goal0, M)},
-	{functor(Goal0, F, ClauseArity)},
-	{Level is Level0 + 1},
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% TO REFORMULATE, USING STATE VARIABLES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+rename_goal(Key, Goal0, Goal, M) :- rename_goal_db(Key, Goal0, Goal, M).
+record_rename_goal(Key, Head2, Head, M) :-
+	assertz_fact(rename_goal_db(Key, Head2, Head, M)).
+generated(Name, A, M) :- generated_db(Name, A, M).
+record_generated(Name, A, M) :- assert_generated(Name, A, M).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+generate_specialized_clauses(UGoal0, Goal, Renamer, Params,
+	    Clauses0, Clauses) :-
+	Params = iparams(Locks, Pending, _NUVars, Vars, Level0, M),
+	functor(UGoal0, F, LitArity),
+	meta_expansion(UGoal0, Goal0, M),
+	functor(Goal0, F, ClauseArity),
+	Level is Level0 + 1,
 	(
-	    {functor(Head5, F, ClauseArity),
-		\+ source_clause_db(Head5, _, M)} ->
-	    {Goal = UGoal0}
+	    functor(Head5, F, ClauseArity),
+	    \+ source_clause_db(Head5, _, M) ->
+	    Goal = UGoal0,
+	    Clauses0 = Clauses
 	;
-	    {member(F/LitArity, Locks)} ->
-	    {Goal = UGoal0}
+	    member(F/LitArity, Locks) ->
+	    Goal = UGoal0,
+	    Clauses0 = Clauses
 	;
-	    gsc_special_cases(F, LitArity, M, Level0, Level, Goal0, NUVars,
-		Locks, Pending, Goal) ->
-	    []
+	    gsc_special_cases(F, LitArity, Level, Params, Goal0, Goal) ->
+	    Clauses0 = Clauses
 	;
-	    {lit_expand(F, LitArity, ClauseArity, M, Goal0, Vars, Key, Head0)},
+	    lit_expand(F, LitArity, ClauseArity, M, Goal0, Vars, Key, Head0),
 	    (
-		{member(Key, Locks)} ->
-		{freeze_rename_goal(Key, Pending, Goal0, Goal, M)}
+		member(Key, Locks) ->
+		freeze_rename_goal(Key, Pending, Goal0, Goal, M),
+		Clauses0 = Clauses
 	    ;
-		{rename_goal_db(Key, Goal0, Goal, M)} -> []
+		rename_goal(Key, Goal0, Goal, M) ->
+		Clauses0 = Clauses
 	    ;
-		{select_clauses(Head0, SC0, M)},
-		expand_clauses(SC0, M, [Key|Locks] -Pending-Level, SC1, []),
-		{expand_goal(Goal0, Renamer, F, LitArity, ClauseArity, SC1,
-			Key, Params, Head2, Head, Name, SC20)},
-		{select_applicable(SC20, Head, SC2)},
-		{member(Key/Freezed, Pending) -> true},
-		{functor(Head, _, A)},
-		{assertz_fact(rename_goal_db(Key, Head2, Head, M))},
-		(
-		    {generated_db(Name, A, M), Renamer == no} ->
-		    {Goal0 = Head2, Head = Goal}
-		;
-		    in_goal_expansion ->
-		    {warning_cl_goal_exp(SC2)},
-		    {Goal0 = Goal}
-		;
-		    {record_generated(Name, A, M)},
-		    head_decls(Name, A, M),
-		    put(SC2),
-		    {Goal0 = Head2, Head = Goal}
-		),
-		{Freezed = Key}
+		do_generate_specialized_clauses(Goal0, Goal, F, LitArity,
+		    ClauseArity, M, Head0, Renamer, Key, Locks, Pending, Level,
+		    Params, Clauses0, Clauses)
 	    )
 	),
 	!.
 generate_specialized_clauses(Goal, Goal, _, _) --> [],
-% We should never reach this line, all empty cases were considered before:
+	% We should never reach this line, all empty cases were considered before:
 	{warning_gsc_failed(Goal)}.
+
+do_generate_specialized_clauses(Goal0, Goal, F, LitArity, ClauseArity, M, Head0,
+	    Renamer, Key, Locks, Pending, Level, Params, Clauses0, Clauses) :-
+	select_clauses(Head0, SC0, M),
+	expand_clauses(SC0, iparams([Key|Locks], Pending, [], _, Level, M),
+	    SC1, [], Clauses1, Clauses2),
+	expand_goal(Goal0, Renamer, F, LitArity, ClauseArity, SC1, Key, Params,
+	    Head2, Head, Name, SC20),
+	select_applicable(SC20, Head, SC2),
+	(member(Key/Freezed, Pending) -> true),
+	functor(Head, _, A),
+	record_rename_goal(Key, Head2, Head, M),
+	(
+	    generated(Name, A, M), Renamer == no ->
+	    Goal0 = Head2, Head = Goal, Freezed = Key, Clauses = Clauses0
+	;
+	    record_generated(Name, A, M),
+	    Goal0 = Head2, Head = Goal, Freezed = Key,
+	    (
+		F/ClauseArity == Name/A ->
+		(
+		    \+ inline_db(F, LitArity, srclocal, M),
+		    use_module_db(Base, Alias, List, M),
+		    nonvar(List),
+		    member(F/LitArity, List) ->
+		    Clauses0 = Clauses1, Clauses2 = Clauses
+		    % Clauses = Clauses0
+		;
+		    inline_module_db(Base, Alias, List, M),
+		    member(F/LitArity, List) ->
+		    process_use_module(use_module(Alias, [F/LitArity]),
+			combine_usage_info, Decls, M),
+		    Clauses0 = Clauses1,
+		    put(Decls, Clauses2, Clauses)
+		    % put(Decls, Clauses0, Clauses)
+		;
+		    Clauses0 = Clauses1,
+		    head_decls(Name, A, M, Clauses2, Clauses3),
+		    put(SC2, Clauses3, Clauses)
+		)
+	    ;
+		Clauses0 = Clauses1,
+		head_decls(Name, A, M, Clauses2, Clauses3),
+		put(SC2, Clauses3, Clauses)
+	    )
+	).
 
 warning_gsc_failed(Goal) :-
 	location(Loc),
@@ -1087,7 +1281,7 @@ warning_cl_goal_exp(SC2) :-
 
 freeze_rename_goal(Key, Pending, Goal0, Goal, M) :-
 	(member(Key/X, Pending) -> true ; true),
-	freeze(X, ( rename_goal_db(Key, Goal0, Goal, M) -> true; Goal0 =
+	freeze(X, ( rename_goal(Key, Goal0, Goal, M) -> true; Goal0 =
 		Goal )).
 
 put(SC2, SC3, Tail) :-
@@ -1101,28 +1295,33 @@ head_decls(F, A, M) -->
     ;
 	[].
 
-expand_clauses([], _, _, Clauses, Clauses) --> [].
-expand_clauses([(Head :- Body0)|SC], M, Locks-Pending-Level,
-	    [(Head :- Body)|Clauses0], Clauses) -->
+expand_clauses([],                   _,      Clauses,  Clauses) --> [].
+expand_clauses([(Head :- Body0)|SC], Params, Clauses0, Clauses) -->
+	{Params = iparams(Locks, Pending, NUVars, _, Level, M)},
 	{varset(Head, Vars)},
-	body_expansion(Body0, iparams(Locks, Pending, [], Vars, Level, M),
+	body_expansion(Body0, iparams(Locks, Pending, NUVars, Vars, Level, M),
 	    Body),
-	expand_clauses(SC, M, Locks-Pending-Level, Clauses0, Clauses).
+	{fails(Body) -> Clauses0 = Clauses1
+	; Clauses0 = [(Head :- Body)|Clauses1]},
+	expand_clauses(SC, Params, Clauses1, Clauses).
 
 cleanup_db(M) :-
 	retractall_fact(source_clause_db(_, _, M)),
 	retractall_fact(rename_goal_db(_, _, _, M)),
-% 	retractall_fact(inline_goal_db(_, _, _, M)),
-	retractall_fact(inline_db(_, _, M)),
+	% retractall_fact(inline_goal_db(_, _, _, M)),
+	retractall_fact(inline_db(_, _, _, M)),
 	retractall_fact(unused_inline_db(_, _, M, _)),
 	retractall_fact(renamer_db(_, _, M)),
 	retractall_fact(unused_renamer_db(_, _, M, _)),
-	retractall_fact(use_inline_db(_, _, M)),
+	retractall_fact(no_slice_db(_, _, M)),
 	retractall_fact(generated_db(_, _, M)),
 	retractall_fact(meta_pred_db(_, _, _, M)),
 	retractall_fact(num_term_db(_, M, _)),
 	retractall_fact(unfold_meta_db(M)),
-	retractall_fact(unfold_db(_, M)).
+	retractall_fact(unfold_db(_, M)),
+	retractall_fact(use_module_db(_, _, _, M)),
+	retractall_fact(in_inline_module_db(_, M)),
+	retractall_fact(inline_module_db(_, _, _, M)).
 
 % :- pred compound_struct(Pred, F, Args) :: (term(Pred), atm(F), list(Args)).
 

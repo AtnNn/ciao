@@ -14,7 +14,7 @@
 %     [version_date/2, version_numstr/2]).
 
 :- use_module(library(lists), [list_concat/2]).
-:- use_module(fastformat, [format_to_string/3]).
+:- use_module(library(format_to_string), [format_to_string/3]).
 
 % ======================================================================
 
@@ -45,9 +45,16 @@ rw_command(env_('description', X), _, [raw_fc, raw(".(l F"), raw_nleb, X, raw_fc
 rw_command(env_('cartouche', X),   _, [raw_fc, raw_nleb, X, raw_fc, raw_nleb]) :- !.
 rw_command(env_('alert', X),       _, [raw_fc, raw_nleb, X, raw_fc, raw_nleb]) :- !.
 rw_command(env_('verbatim', X),    _, [raw_fc, raw(".DS"), raw_nleb, X, raw_fc, raw(".DE"), raw_nleb]) :- !.
-rw_command(item(S),                _, [raw_fc, raw("* ")]) :- doctree_is_empty(S), !.
-rw_command(item(S),                _, NewAll) :- !,
-	NewAll = [raw_fc, raw("* "), S, raw(": ")].
+rw_command(item(S), _, NBody) :- !, % (items for lists and descriptions)
+	( doctree_is_empty(S) ->
+	    NBody = [raw_fc, raw("* ")]
+	; NBody = [raw_fc, raw("* "), S, raw(": ")]
+	).
+rw_command(item_num(S), _, NBody) :- !, % (items for enumerations)
+	( S = "" ->
+	    NBody = [raw_fc] % TODO: Wrong, not supported
+	; NBody = [raw_fc, S, raw(". ")]
+	).
 rw_command(footnote(Text), _DocSt, NBody) :- !,
 	NBody = [raw_fc, raw(".B Note: "), raw_nl, Text, raw_nl, raw_nleb].
 rw_command('}',                    _, raw("}")) :- !.
@@ -91,8 +98,8 @@ rw_command(copyright(""),          _, raw("(c)")) :- !.
 rw_command(iso(""),                _, raw("[*ISO*]")) :- !.
 rw_command(bullet(""),             _, [raw_fc, raw("* ")]) :- !.
 rw_command(result(""),             _, raw("=>")) :- !.
-rw_command(uref(URL),              _, raw(URL)) :- !.
-rw_command(uref(Text, URL), _DocSt, NBody) :- !,
+rw_command(href(URL),              _, raw(URL)) :- !.
+rw_command(href(URL, Text), _DocSt, NBody) :- !,
 	NBody = [Text, raw(" ("), raw(URL), raw(")")].
 rw_command(email(Address), _DocSt, Address) :- !.
 rw_command(email(Text, Address), _DocSt, NBody) :- !,
@@ -116,7 +123,7 @@ rw_command(simple_link(_,_,_,_), _, nop) :- !.
 rw_command(man_page(TitleR, Version, AuthorRs, AddressRs, SummaryR, UsageR, CopyrightR), DocSt, R) :- !,
         fmt_man(TitleR, Version, AuthorRs, AddressRs, SummaryR, UsageR, CopyrightR, DocSt, R).
 rw_command(X, _DocSt, _R) :- !,
-	throw(cannot_rewrite(rw_command(X))).
+	throw(error(domain_error, rw_command/3-env(['X'=X]))).
 
 rw_command_body(bf(Body),    "B", Body) :- !.
 rw_command_body(em(Body),    "I", Body) :- !.
@@ -201,10 +208,12 @@ sep_nl([X|Xs], Rs) :-
 
 fmt_structuring(SecProps, TitleR, R) :-
 	( section_prop(level(Level), SecProps) ->
-	    ( Level = 3 -> R = [raw(".SH 2 "), TitleR, raw_nleb]
-	    ; Level = 2 -> R = [raw_fc, raw(".SH 1 "), TitleR, raw_nleb]
+	    ( Level = 2 -> R = [raw_fc, raw(".SH 1 "), TitleR, raw_nleb]
+	    ; Level = 3 -> R = [raw(".SH 2 "), TitleR, raw_nleb]
+	    ; Level = 4 -> R = [raw(".SH 3 "), TitleR, raw_nleb]
+	    ; throw(error(bad_level(Level), fmt_structuring/3))
 	    )
-	; throw(missing_level_prop(SecProps))
+	; throw(error(missing_level_prop(SecProps), fmt_structuring/3))
 	).
 
 % ===========================================================================

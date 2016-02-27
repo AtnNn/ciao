@@ -7,6 +7,7 @@
 :- doc(author,"Amadeo Casas"||
 	          " (@tt{http://www.cs.unm.edu/~amadeo},"||
                   " University of New Mexico)").
+:- doc(author,"Jose F. Morales (minor modifications)").
 
 :- doc(module, "This library package allows the use of lazy evaluation
    in a Ciao module/program.

@@ -7,8 +7,8 @@
 	works. In this case, a bug have been introduced: in the call
 	to append/3 by qsort/2, variables R1 and R2 are swapped.  Then
 	we prove statically part of the assertions, for the part that
-	can not be verified statically we generate run-time checks,
-	and finally, the program also have a test attached that
+	cannot be verified statically we generate run-time checks,
+	and finally, the program also has a test attached that
 	exercises the run-time checks.").
 
 :- prop sorted_num_list/1.

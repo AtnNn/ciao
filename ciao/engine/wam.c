@@ -35,7 +35,7 @@ int start_of_savedump = 0;                    /* Must be the first symbol */
 #include "locks_defs.h"
 #include "timing_defs.h"
 #include "profile_defs.h"
-
+#include "tabling.h"
 
 /* private function declarations */
 
@@ -118,6 +118,8 @@ int wam(Arg, desc)
   EXCEPTION__CATCH({ /* try */
       return wam__2(Arg, desc, func);
     }, { /* catch */
+      tagged_t *pt1; int i;
+      CODE_NECK;                 /* Force neck if not done */
       X(0) = MakeSmall(ErrCode); /* Error code */
       X(1) = init_atom_check(ErrFuncName); /* Builtin name */
       X(2) = MakeSmall(ErrFuncArity); /* Builtin arity */
@@ -345,9 +347,14 @@ int wam(Arg, desc)
 #endif
   Heap_Warn_Soft = Int_Heap_Warn;
   VSetB(w->node);
+
+#if defined(TABLING)
+  MAKE_TRAIL_CACTUS_STACK;
+#endif
+
   if (TrailYounger(pt2=w->trail_top,t1=(tagged_t)TagToPointer(B->trail_top))) {
     do
-	PlainUntrail(pt2,t0,{goto undo;})
+      PlainUntrail(pt2,t0,{goto undo;})
     while (TrailYounger(pt2,t1));
     w->trail_top = pt2;
   }
@@ -410,6 +417,11 @@ int wam(Arg, desc)
 
   if ((w->next_alt = ((try_node_t *)P)->next)==NULL) {
     w->node = SetB(w->next_node);
+#if defined(TABLING)
+    //To avoid sharing wrong trail - it might be associated to
+    //the previous frozen choice point
+    if (FrozenChpt(B)) push_choicept(w,address_nd_fake_choicept);
+#endif
     SetShadowregs(B);
   }
 
@@ -425,7 +437,6 @@ int wam(Arg, desc)
 
 #if defined (ANDPARALLEL)
   if (Suspend == TOSUSPEND) {
-    printf("\nWARNING: stack expansion!!!\n"); fflush(stdout);
     Suspend = SUSPENDED;
     Wait_Acquire_lock(Waiting_For_Work_Lock);
     Cond_Var_Wait(Waiting_For_Work_Cond_Var,Waiting_For_Work_Lock);
@@ -433,16 +444,33 @@ int wam(Arg, desc)
     Release_lock(Waiting_For_Work_Lock);
   }
 
-  if (Cancel_Goal_Exec_Handler != NULL && Safe_To_Cancel) {
-    Cancel_Goal_Exec_Handler = NULL;
-    Safe_To_Cancel = FALSE;
-    // Metacut
-    w->node = Current_Init_ChP;
-    w->trail_top = Current_Trail_Top;
-    SetShadowregs(w->node);
-    goto fail;
-  }
+//  if (Cancel_Goal_Exec && Safe_To_Cancel) {
+//    Cancel_Goal_Exec = FALSE;
+//    Safe_To_Cancel = FALSE;
+//    SetShadowregs(w->node);
+//    goto fail;
+//  }
 #endif
+//#if defined (ANDPARALLEL)
+//  if (Suspend == TOSUSPEND) {
+//    printf("\nWARNING: stack expansion!!!\n"); fflush(stdout);
+//    Suspend = SUSPENDED;
+//    Wait_Acquire_lock(Waiting_For_Work_Lock);
+//    Cond_Var_Wait(Waiting_For_Work_Cond_Var,Waiting_For_Work_Lock);
+//    Suspend = RELEASED;
+//    Release_lock(Waiting_For_Work_Lock);
+//  }
+//
+//  if (Cancel_Goal_Exec_Handler != NULL && Safe_To_Cancel) {
+//    Cancel_Goal_Exec_Handler = NULL;
+//    Safe_To_Cancel = FALSE;
+//    // Metacut
+//    w->node = Current_Init_ChP;
+//    w->trail_top = Current_Trail_Top;
+//    SetShadowregs(w->node);
+//    goto fail;
+//  }
+//#endif
 
 //#if defined(PARBACK)
 //  if (Suspend == CHECK_SUSP) {
@@ -482,7 +510,7 @@ int wam(Arg, desc)
     if (OffHeaptop(H+4*wake_count,Heap_Warn)) {
       SETUP_PENDING_CALL(address_true);
       StoreH;
-      heap_overflow(Arg,CALLPAD+4*wake_count);
+      heap_overflow(Arg,SOFT_HEAPPAD+4*wake_count);
       LoadH;
     }
     if (wake_count>0) {
@@ -520,7 +548,7 @@ int wam(Arg, desc)
     if (OffHeaptop(H+2*wake_count,Heap_Warn)) {
       SETUP_PENDING_CALL(address_true);
       StoreH;
-      heap_overflow(Arg,CALLPAD+2*wake_count);
+      heap_overflow(Arg,SOFT_HEAPPAD+2*wake_count);
       LoadH;
     }
     if (wake_count>0) {

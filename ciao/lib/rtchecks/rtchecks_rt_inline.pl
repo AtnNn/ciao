@@ -8,10 +8,10 @@
 :- use_module(engine(internals),   ['$setarg'/4]).
 :- use_module(library(terms_check)).
 
-:- unfold checkif(yes, no, no, yes, yes, yes, yes, yes).
-:- unfold rtcheck(no, no, yes, yes, yes, yes, yes).
+:- unfold checkif(yes, no, no, no, yes, yes, yes, yes, yes).
+:- unfold rtcheck(no, no, yes, no, yes, yes, yes, yes).
 :- unfold checkif_comp(yes, yes, yes, yes).
-:- unfold comploc_stack(yes, yes, yes).
+:- unfold add_info_rtsignal(yes, yes, yes, yes).
 :- unfold rtcheck(yes, yes, yes).
 :- unfold attach_cut_fail(yes, yes).
 :- unfold map(no, yes, no).
@@ -46,18 +46,18 @@
 		condition/1,
 		checkc/6,
 		checkc/4,
-		checkif/8,
+		checkif/9,
 		checkif_comp/4,
-		rtcheck/7,
+		rtcheck/8,
 		disj_prop/5,
 		disj_prop/3,
-		comploc_stack/3,
+		add_info_rtsignal/4,
 		call_stack/2,
 		non_inst/2,
 		non_compat/2,
 		rtcheck/3,
 		rtcheck_/3,
-		send_prop_rtcheck/5,
+		send_rtcheck/5,
 		pretty_prop/2
 	    ]).
 :- inline_module(library(assertions(native_props)), [

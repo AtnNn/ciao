@@ -16,6 +16,7 @@
 :- use_module(library(dict)).
 
 % Ciao libraries
+:- use_module(library(aggregates), [findall/3, setof/3, (^)/2]).
 :- use_module(library(compiler), [use_module/1]).
 :- use_module(library(assertions(assrt_lib)),
 	    [
@@ -35,7 +36,7 @@
 	    [append/3, reverse/2, length/2, list_concat/2, select/3]).
 :- use_module(library(terms), [atom_concat/2]).
 
-:- use_module(library(make(system_extra)), [(-) /1, try_finally/3]).
+:- use_module(library(system_extra), [(-) /1, try_finally/3]).
 
 % Local libraries
 :- use_module(lpdocsrc(src(autodoc_settings))).
@@ -64,6 +65,7 @@ supported_option(no_authors).
 supported_option(no_stability).
 supported_option(no_version).
 supported_option(no_versioned_output).
+supported_option(no_lpdocack).
 supported_option(no_changelog).
 supported_option(no_patches).
 supported_option(modes).
@@ -75,6 +77,7 @@ supported_option(no_propsepln).
 supported_option(no_biblio).
 supported_option(no_sysmods).
 supported_option(no_engmods).
+supported_option(no_packages).
 supported_option(no_isoline).
 supported_option(propmods).
 supported_option(no_propuses).
@@ -95,40 +98,45 @@ supported_option(no_math).
 @includedef{option_comment/2}          
           ".
 
-option_comment(verbose,        "Verbose output (good for debugging).        ").
-option_comment(no_bugs,      "Do not include information on bugs.         ").
-option_comment(no_authors,   "Do not include author names.                ").
-option_comment(no_stability, "Do not include stability comment.           ").
-option_comment(no_version,   "Do not include version information.         ").
-option_comment(no_versioned_output,
-                               "Do not include version in the output name.  ").
-option_comment(no_changelog, "Do not include change log.                  ").
-option_comment(no_patches,   "Do not include comments for patches.        ").
+option_comment(verbose, "Verbose output (good for debugging).").
+option_comment(no_bugs, "Do not include information on bugs.").
+option_comment(no_authors, "Do not include author names.").
+option_comment(no_stability, "Do not include stability comment.").
+option_comment(no_version, "Do not include version information.").
+option_comment(no_versioned_output, 
+    "Do not include version in the output name.").
+option_comment(no_lpdocack, "Do not include an ack of LPdoc in output.").
+option_comment(no_changelog, "Do not include change log.").
+option_comment(no_patches, "Do not include comments for patches.").
 %% @tt{modes} and @tt{headprops} are used by normalizer!
-option_comment(modes,        "Do not translate modes and their arguments
-	                        (except for properties)                     ").
-option_comment(head_props,   "Do not move head properties to body.        ").
+option_comment(modes,
+     "Do not translate modes and their arguments (except for properties)").
+option_comment(head_props, "Do not move head properties to body.").
 
-option_comment(literal_props,"Do not use text to document properties.     ").
-option_comment(no_propnames, "Do not include property names in prop text. ").
-option_comment(no_undefined, "Do not signal undefined properties in text. ").
+option_comment(literal_props,"Do not use text to document properties.").
+option_comment(no_propnames, "Do not include property names in prop text.").
+option_comment(no_undefined, "Do not signal undefined properties in text.").
 option_comment(no_propsepln, "Do not put each property in a separate line.").
 
-option_comment(no_biblio,    "Do not include a bibliographical 'References' appendix.").
-option_comment(no_sysmods,   "Do not include system modules in list of 
-                                libraries used.").
-option_comment(no_engmods,   "Do not include system engine modules in list 
-                                of libraries used.").
-option_comment(no_isoline,   "Do not include *textual* description that a 
-                                given usage conforms to the ISO standard.").
-option_comment(propmods,    "Include module name to which props belong.").
-option_comment(no_propuses, "Do not Include property uses (from assertions) in indices.").
-option_comment(shorttoc,    "Produce shorter table of contents (no entries
-                                for individual defs of preds, props, etc.).").
-option_comment(regtype_props,"Include in the doc for regtypes the global
-                                prop stating that they are indeed regtypes.").
-option_comment(onesided,    "For printing on one side (default is two).").
-option_comment(no_math,      "Disable mathematical environments.").
+option_comment(no_biblio, 
+    "Do not include a bibliographical 'References' appendix.").
+option_comment(no_sysmods, "Do not include system modules in the import list.").
+option_comment(no_engmods, 
+    "Do not include system engine modules in the import list.").
+option_comment(no_packages, "Do not include packages in the import list.").
+option_comment(no_isoline, 
+    "Do not include *textual* description that a given usage conforms to the"||
+    " ISO standard.").
+option_comment(propmods, "Include module name to which props belong.").
+option_comment(no_propuses, 
+    "Do not include property uses (from assertions) in indices.").
+option_comment(shorttoc, 
+    "Produce shorter table of contents (no entries for individual defs of"||
+    " preds, props, etc.).").
+option_comment(regtype_props,"Include in the doc for regtypes the global prop"||
+    " stating that they are indeed regtypes.").
+option_comment(onesided, "For printing on one side (default is two).").
+option_comment(no_math, "Disable mathematical environments.").
 
 % ===========================================================================
 
@@ -544,7 +552,7 @@ docst_gdata_restore_(Base, DocSt) :-
 	),
 	close(RefsOS).
 docst_gdata_restore_(Base, _DocSt) :-
-	throw(bug_no_rr_file_for(Base)).
+	throw(error(no_rr_file_for(Base), docst_gdata_restore_/2)).
         % Entry = sect([level(999)], "", string_esc("[ERROR-UNRESOLVED]")),
 	% docst_currmod(DocSt, Name),
 	% assertz_fact(docst_gdata(Entry, Name, Name)).
@@ -594,7 +602,7 @@ save_mvar_entry(Var, DocSt, OS) :-
 	    Term =.. [Var, Value],
 	    writeq(OS, Term),
 	    write(OS, '.\n')
-	; throw(cannot_save(Var))
+	; throw(error(cannot_save(Var), save_mvar_entry/3))
 	).
 
 restore_mvar_entries([], _, _).
@@ -607,15 +615,13 @@ restore_mvar_entry(Var, DocSt, IS) :-
         docst_mvar_lookup(DocSt, Var, Value),
 	Term =.. [Var, Value],
 	( read(IS, Term) -> true
-	; throw(cannot_restore(Var))
+	; throw(error(cannot_restore(Var), restore_mvar_entry/3))
 	).
 
 % ===========================================================================
 
 :- doc(subsection, "Required Documentation Indices").
 % (for a given backend and the current options)
-
-:- use_module(library(aggregates), [findall/3]).
 
 :- export(docst_has_index/2).
 docst_has_index(Index, DocSt) :-
@@ -636,7 +642,8 @@ enum_indices(IdxName, DocSt) :-
 
 % ---------------------------------------------------------------------------
 
-:- doc(subsection, "Querying the Module Loaded in docstate").
+:- doc(subsection, "Querying module documentation").
+% (the module is loaded in docstate)
 
 :- export(get_doc/4).
 % :- pred get_doc(in(Id),in(MessageType),in(DocState),go(Comment)).
@@ -644,31 +651,31 @@ enum_indices(IdxName, DocSt) :-
 % If the value is not defined, the action specified by MessageType is carried out.
 get_doc(Id, MessageType, DocSt, Value) :-
 	doc_id_type(Id, Type, ValueType),
-	get_doc__2(Id, Type, ValueType, MessageType, DocSt, Value).
+	get_doc_(Id, Type, ValueType, MessageType, DocSt, Value).
 
-get_doc__2(Id, single, ValueType, _MessageType, DocSt, Value) :-
-	get_doc_field(Id, RContent, Loc),
+get_doc_(Id, single, ValueType, _MessageType, DocSt, Value) :-
+	get_docdecl(Id, RContent, Dict, Loc),
 	!,
-	process_content(ValueType, DocSt, Loc, RContent, Value).
-get_doc__2(Id, multiple, ValueType, _MessageType, DocSt, Values) :-
+	process_content(ValueType, DocSt, Dict, Loc, RContent, Value).
+get_doc_(Id, multiple, ValueType, _MessageType, DocSt, Values) :-
 	findall(Value,
-	    ( get_doc_field(Id, RContent, Loc),
-	      process_content(ValueType, DocSt, Loc, RContent, Value) 
+	    ( get_docdecl(Id, RContent, Dict, Loc),
+	      process_content(ValueType, DocSt, Dict, Loc, RContent, Value) 
             ),
 	    Values),
 	Values \== [],
 	!.
-get_doc__2(Id, Type, ValueType, MessageType, DocSt, Value) :-
+get_doc_(Id, Type, ValueType, MessageType, DocSt, Value) :-
+	% No docdecl found for this Id
 	( Type = single, ValueType = docstr ->
 	    % default empty case
 	    empty_doctree(Value)
 	; Value = []
 	),
-	docst_inputfile(DocSt, S),
-	show_message_type(MessageType, loc(S, 1, 1),
-	    "no "":- doc(~w,...)"" declaration found", [Id]).
+	treat_missing_docdecl(MessageType, Id, DocSt).
 
-process_content(ValueType, DocSt, Loc, RContent, Value) :-
+process_content(ValueType, DocSt, Dict, Loc, RContent, Value) :-
+	bind_dict_varnames(Dict),
 	( ValueType = docstr ->
 	    % Parse a docstring to obtain a doctree
 	    % TODO: emit error if \+string(RContent)
@@ -676,30 +683,109 @@ process_content(ValueType, DocSt, Loc, RContent, Value) :-
 	; Value = RContent
 	).
 
-%% The lowest message levels (for the options in get_doc_field)
+% What to do if no docdecl is found, according to `MessageType`
+treat_missing_docdecl(ignore, _, _) :- !.
+treat_missing_docdecl(dofail, _, _) :- !, fail.
+treat_missing_docdecl(MessageType, Id, DocSt) :-
+	docst_inputfile(DocSt, S),
+	show_message(MessageType, loc(S, 1, 1),
+	    "no "":- doc(~w,...)"" declaration found", [Id]).
 
-show_message_type(ignore,      _,   _,      _) :- !.
-show_message_type(dofail,      _,   _,      _) :- !, fail.
-show_message_type(MessageType, Loc, Format, Args) :-
-	show_message(MessageType, Loc, Format, Args).
-
-:- export(get_doc_field/3).
-get_doc_field(Id0, Field, loc(S, LB, LE)) :-
-%	(Id=title->display('b:'),display(Id),display(':'),display(Field),nl;true),
-	( Id0 = pred(Id) -> true ; Id = Id0 ),
-	% TODO: accept 'comment' for compatibility, but emit deprecate message
-	( clause_read(_, 1, comment(Id, Field), Dict, S, LB, LE)
-	; clause_read(_, 1, doc(Id, Field), Dict, S, LB, LE)
-	),
-	bind_dict_varnames(Dict).
-
-:- export(get_doc_field_dict/3).
-get_doc_field_dict(Id0, Field, Dict) :-
-	% TODO: accept 'comment' for compatibility, but emit deprecate message
-	( Id0 = pred(Id) -> true ; Id = Id0 ),
-	( clause_read(_, 1, comment(Id, Field), Dict, _, _, _)
-	; clause_read(_, 1, doc(Id, Field), Dict, _, _, _)
+:- export(get_doc_changes/3).
+% Retrieve the changelog (list of change/2).
+get_doc_changes(DocSt, VPatch, Changes) :-
+	( setof(Change,
+	    VPatch^change_field(VPatch, DocSt, Change),
+	    RChanges) ->
+	    reverse(RChanges, Changes)
+	; Changes = []
 	).
+
+change_field(VPatch, DocSt, change(Version, RC)) :-
+	version_patch(V, VPatch),
+	get_docdecl(V, C, _Dict, Loc),
+	parse_docstring_loc(DocSt, Loc, C, RC),
+	( V = version(Ver, Date) ->
+	    Version = version(Ver, Date, [])
+	; Version = V
+	).
+
+:- use_module(lpdocsrc(src(autodoc_aux)), [all_vars/1]).
+
+:- export(get_doc_pred_varnames/2).
+% Obtain the argument variable names (as atoms) for predicate
+% @tt{F/A}. The names are extracted from a predicate documentation
+% comment. If there is no such comment, 'Arg1',...,'ArgN' is returned.
+get_doc_pred_varnames(F/A, CArgs) :-
+	functor(CH, F, A),
+	get_docdecl(pred(CH), _, Dict, Loc),
+	CH =.. [_|CArgs],
+	( all_vars(CArgs) ->
+	    true
+	; % TODO: should we create new non-colliding names instead?
+	  warning_message(Loc, "nonvariable argument(s) in comment head ~w, "
+		|| "variable names ignored", [CH]),
+	  fail
+	),
+	!,
+	bind_dict_varnames(Dict). % (this bind names in CArgs)
+get_doc_pred_varnames(_/A, CArgs) :-
+	new_var_arg_names(A, CArgs).
+
+% Args is the list ['Arg1', ..., 'ArgN']
+new_var_arg_names(N, Args) :-
+	new_var_arg_names_(1, N, Args).
+
+new_var_arg_names_(I, N, []) :- I > N, !.
+new_var_arg_names_(I, N, [Arg|Args]) :-
+	number_codes(I, IS),
+	atom_codes(II, IS),
+	atom_concat('Arg', II, Arg),
+	I1 is I + 1,
+	new_var_arg_names_(I1, N, Args).
+
+% ---------------------------------------------------------------------------
+
+% Note: In order to pass custom variable name dictionaries, those
+%   predicates recognized the special '\6\varnames'/2 structure when
+%   it appears in the comments part of assertions or in the value of
+%   ':- doc' declarations.
+%
+% TODO: A mechanism manipulate the variable dictionary in sentence
+%   translations would be much better.
+extract_varnames(CO0, CO, Dict) :-
+	nonvar(CO0),
+	CO0 = '\6\varnames'(CO, Dict).
+
+:- export(doc_assertion_read/9).
+% A wrapper for assertion_read/9 that allow replacement of the
+% variable name dictionary.
+doc_assertion_read(P, M, Status, Type, NAss2, Dict2, S, LB, LE) :-
+	assertion_read(P, M, Status, Type, NAss, Dict, S, LB, LE),
+	( assertion_body(P, DP, CP, AP, GP, CO0, NAss),
+	  extract_varnames(CO0, CO1, Dict1) ->
+	    Dict2 = Dict1,
+	    assertion_body(P, DP, CP, AP, GP, CO1, NAss2)
+	; NAss2 = NAss,
+	  Dict2 = Dict
+	).
+
+% :- export(get_docdecl/4).
+% Query a `:- doc(Cmd, Val)` declaration in the source, with variable
+% names `Dict` and location `Loc`.
+get_docdecl(Id0, Field, Dict, Loc) :-
+	% TODO: accept 'comment' for compatibility, but emit deprecate message
+	( Id0 = pred(Id) -> true ; Id = Id0 ),
+	( clause_read(_, 1, comment(Id, Field0), Dict0, S, LB, LE)
+	; clause_read(_, 1, doc(Id, Field0), Dict0, S, LB, LE)
+	),
+	( extract_varnames(Field0, Field1, Dict1) ->
+	    Field = Field1,
+	    Dict = Dict1
+	; Field = Field0,
+	  Dict = Dict0
+	),
+	Loc = loc(S, LB, LE).
 
 :- export(bind_dict_varnames/1).
 :- pred bind_dict_varnames(Dict) # "Binds the variables in @var{Dict}
@@ -719,6 +805,18 @@ get_mod_doc(P, DocSt, Value) :-
 	; ErrorType = ignore
 	),
 	get_doc(P, ErrorType, DocSt, Value).
+
+:- export(pred_has_docprop/2).
+% pred_has_docprop(+Pred, +Prop)
+% TODO: not efficient
+pred_has_docprop(Pred, Prop) :-
+	( % :- doc(Prop, Pred)
+	  get_docdecl(Prop, Pred, _Dict, _Loc)
+	; % :- doc(Prop, [..., Pred, ...])
+	  get_docdecl(Prop, PredList, _Dict, _Loc),
+	  list(PredList),
+	  member(Pred, PredList)
+	).
 
 % ---------------------------------------------------------------------------
 

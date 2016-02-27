@@ -171,7 +171,7 @@ fmt_idx_env(Mode, Type, IdxLabel, Ref, Body, DocSt, R) :-
 	doctree_to_rawtext(Ref, DocSt, RefLab),
 	( Indices = [I1|_] ->
 	    get_idxbase(I1, DocSt, IdxBase)
-	; throw(bug_empty_indices)
+	; throw(error(empty_indices, fmt_idx_env/7))
 	),
 	OutLink = link_to(IdxBase, local_label(RefLab)),
 	%
@@ -244,7 +244,7 @@ sort_index_entries_([idx_e(ExtMode,Text,Base,IdxLabel)|Es], D0, D) :-
 query_index_entries(IndexId, DocSt, ExtMode, Text, Base, IdxLabel) :-
 	( typeindex(IdxName, IndexId, _, _, _) ->
 	    true
-	; throw(wrong_index_id(IndexId))
+	; throw(error(wrong_index_id(IndexId), query_index_entries/6))
 	),
 	docst_gdata_query(DocSt, Base, idx(Mode, Type, IdxLabel, Text)),
 	( Mode = def -> ExtMode = def(Type) % extend the mode with the type
@@ -272,7 +272,7 @@ index_links([(K,(DefBs,UseBs))|KVs], Rs) :-
 % TODO: precondition: Bs is not empty
 index_key(K, [B|Bs], R) :-
 	% format the first entry
-	% TODO: K already escaped?, usign raw(K) instead of string_esc(K)
+	% TODO: K already escaped?, using raw(K) instead of string_esc(K)
 	index_key_single([raw(K), string_esc(" ")], B, local_label(K), R, R0),
 	% format other entries
 	index_key2(Bs, Rbs),

@@ -208,8 +208,8 @@ try reinstalling the system.
       available in the @tt{DOCDIR} directory specified during
       installation. Printing can be done using an application such as
       @apl{ghostview} (freely available from
-      @uref{http://www.cs.wisc.edu/~ghost/index.html}) or @apl{acrobat
-      reader} (@uref{http://www.adobe.com}, only
+      @href{http://www.cs.wisc.edu/~ghost/index.html}) or @apl{acrobat
+      reader} (@href{http://www.adobe.com}, only
       @tt{pdf}). @cindex{printing, manual} @cindex{manual, printing}
 
 

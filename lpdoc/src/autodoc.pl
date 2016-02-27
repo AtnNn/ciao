@@ -1,4 +1,4 @@
-:- module(autodoc, [], [dcg, assertions, regtypes, basicmodes, fsyntax]).
+:- module(autodoc, [], [assertions, regtypes, dcg, basicmodes, fsyntax]).
 
 :- doc(title, "Documentation Generation Library").
 :- doc(author, "Manuel Hermenegildo").
@@ -83,18 +83,30 @@
 		assertion_read/9,
 		assertion_body/7,
 		get_code_and_related_assertions_opts/6,
-		set_libs/2
+		set_libs/2,
+		use_pkg/2
 	    ]).
 :- use_module(library(compiler(c_itf))).
-:- use_module(library(assertions(assertions_props)),
-	    [predfunctor/1, propfunctor/1]).
 :- use_module(library(messages)).
 :- use_module(library(filenames), [no_path_file_name/2, basename/2]).
 :- use_module(library(lists),
 	    [append/3, reverse/2, length/2, list_concat/2, select/3]).
 :- use_module(library(terms), [atom_concat/2]).
 
-:- use_module(library(make(system_extra)), [(-) /1, try_finally/3]).
+:- use_module(library(system_extra), [(-) /1, try_finally/3]).
+
+% ---------------------------------------------------------------------------
+
+% TODO: rename predicates in assertions_props
+:- use_module(library(assertions(assertions_props)),
+	    [predfunctor/1, propfunctor/1]).
+
+% @var{X} is a definition for predicates
+defkind_pred(X) :- predfunctor(X).
+% @var{X} is a definition for properties
+defkind_prop(X) :- propfunctor(X).
+
+% ---------------------------------------------------------------------------
 
 % Local libraries
 :- use_module(lpdocsrc(src(autodoc_state))).
@@ -170,7 +182,7 @@ prepare_auxfiles(Backend, Opts) :- Backend = html, !,
 	copy_file(HtmlStyle, OutCSS, [overwrite]).
 prepare_auxfiles(_, _) :- !.
 
-:- use_module(library(make(system_extra)), [copy_file/3]).
+:- use_module(library(system_extra), [copy_file/3]).
 
 :- use_module(lpdocsrc(src(autodoc_html_resources)),
 	[prepare_web_skel/1, prepare_mathjax/0]).
@@ -413,7 +425,7 @@ infodir_version(Version, VersionR) :-
 % ---------------------------------------------------------------------------
 
 :- doc(subsection, "Version Extraction").
-% TODO: Merge with component_versions.pl
+% TODO: Merge with library/lpdist/bundle_versions.pl
 % TODO: This could be extended to extract version info other revision
 %       control system (such as SVN, GIT, Hg)
 
@@ -429,9 +441,10 @@ get_last_version(Version, GlobalVers, DocSt) :-
 
 get_last_version_(Version, GlobalVers, Dir, DocSt) :-
 	% TODO: Indeed, directory in 'version_maintenance' could be
-	% avoided if automatic makedir/CONFIG.pl detection is
-	% implemented
-	get_doc_field(version_maintenance, dir(VDir), Loc),
+ 	%       avoided if automatic Manifest.pl detection is
+ 	%       implemented. The version_maintenance directory is
+ 	%       indeed the bundle directory.
+	get_doc(version_maintenance, dofail, DocSt, dir(VDir)),
 	!,
 	%% version maintained in dir (computed relative to .pl file Dir!)
 	atom_concat([Dir, '/', VDir, '/', 'GlobalChangeLog'], ChangeLogFile),
@@ -441,8 +454,8 @@ get_last_version_(Version, GlobalVers, Dir, DocSt) :-
 		open(ChangeLogFile, read, CLFS),
 		read(CLFS, (:- doc(GlobalVers, _))),
 		close(CLFS))
-	; error_message(Loc,
-		"Version file ~w not found, using version comments in file",
+	; error_message(
+	        "Version file ~w not found, using version comments in file",
 		[ChangeLogFile]),
 	  GlobalVers = Version
 	),
@@ -454,27 +467,17 @@ get_last_version_(Version, Version, _Dir, DocSt) :-
 get_last_local_version(Version, DocSt) :-
 	%% get last version in doc/2 decls in file
 	docst_message("Getting local version from file...", DocSt),
-	( setof(VTerm, version_field(VTerm), Versions),
-	    %% Leaves most recent one last...
-	    append(_, [LVersion], Versions)
-	-> Version = LVersion
-	;
-	    ( lpdoc_option('-cv') ->
-	        docst_inputfile(DocSt, I),
-		note_message(loc(I, 1, 1),
-		    "no "":- doc(version(...),...)"" declaration found", []
-		)
-	    ; true
-	    ),
-	    Version = []
+	( get_doc_changes(DocSt, _, Changes),
+	  Changes = [change(LVersion, _)|_] ->
+	    Version = LVersion
+	; ( lpdoc_option('-cv') ->
+	      docst_inputfile(DocSt, I),
+	      note_message(loc(I, 1, 1),
+	        "no "":- doc(version(...),...)"" declaration found", [])
+	  ; true
+	  ),
+	  Version = []
         ).
-
-version_field(VTerm) :-
-	get_doc_field(version(Version, Date), _Comment, _Loc),
-	VTerm=version(Version, Date, []).
-version_field(VTerm) :-
-	get_doc_field(version(Version, Date, Time), _Comment, _Loc),
-	VTerm=version(Version, Date, Time).
 
 :- use_module(library(system), [file_exists/1]).
 
@@ -1017,24 +1020,10 @@ fmt_changes(Special, DocSt, ChangesR) :-
 	      VPatch = 0
 	  ; true
 	  ),
-	  ( setof(Change,
-	      VPatch^change_field(VPatch, DocSt, Change),
-	      RChanges) ->
-	        reverse(RChanges, Changes)
-	  ; Changes = []
-	  )
+	  get_doc_changes(DocSt, VPatch, Changes)
 	),
 	gen_changes(Changes, Changes2),
 	nonbody_section(Special, 'changes', "Version/Change Log", Changes2, DocSt, ChangesR).
-
-change_field(VPatch, DocSt, change(Version, RC)) :-
-	version_patch(V, VPatch),
-	get_doc_field(V, C, Loc),
-	( V = version(Ver, Date) ->
-	    Version = version(Ver, Date, [])
-	; Version = V
-	),
-	parse_docstring_loc(DocSt, Loc, C, RC).
 
 gen_changes([], nop) :- !.
 gen_changes(Xs, R) :-
@@ -1071,11 +1060,15 @@ nonbody_props(Special, Sub, DocSt, SecProps, SectLabel) :-
 	        %% Detach in a subfile (and add is_special property)
 	        SecProps = [level(1),subfile(Sub),is_special(Special2)],
 		SectLabel = global_label(_)
-	    ; docst_no_components(DocSt),
-	      \+ docst_backend(DocSt, html) -> % TODO: strange output in html
-	        %% Detach in a subfile
-	        SecProps = [level(0),subfile(Sub)],
-		SectLabel = global_label(_)
+% TODO: This code generated a buggy doctree for 'texinfo' backend
+%       when documenting single modules. Make sure that it is really
+%       not useful somewhere else. Then, remove.
+%%	    ; docst_no_components(DocSt),
+%%	      \+ docst_backend(DocSt, html) -> % TODO: strange output in html
+%%	        %% Detach in a subfile
+%%	        display(nobodyhere), nl,
+%%	        SecProps = [level(0),subfile(Sub)],
+%%		SectLabel = global_label(_)
 	    ; SecProps = [level(2)],
 	      SectLabel = local_label(_)
 	    )
@@ -1138,72 +1131,27 @@ doc_interface(DocSt, R) :-
 	% Multifiles
 	findall(F/A, def_multifile(Base, F, A, _), RMultifiles),
 	eliminate_hidden(RMultifiles, Multifiles),
-	( ( Exports=[], Multifiles=[],
-	    \+ modtype_include_or_package(ModuleType)
-	  ) ->
-	    docst_inputfile(DocSt, I),
-	    warning_message(loc(I, 1, 1),
-		"no exported predicates to be documented", [])
-	; true
-	),
+	% Check if there are definitions to be documented
+	check_no_definitions(ModuleType, Exports, Multifiles, DocSt),
 	%
 	% Imported modules
 	findall(IFile, uses_file(Base, IFile), IFiles),
 	% Other user files loaded
 	findall(IUFile, adds(Base, IUFile), IUFiles),
+	% Packages
+	get_pkgs(M, Base, DocSt, PkgFiles),
 	%
 	% Source files whose contents should not be documented
 	get_doc(nodoc, ignore, DocSt, NoDocS),
 	docst_message("Not documenting: ~w", [NoDocS], DocSt),
 	%
-	% The ops (only "exported" if package or include)
-	( modtype_include_or_package(ModuleType) ->
-	    findall(op(P, Prec, PredNames),
-		( clause_read(_, 1, op(P, Prec, PredNames), _, S, _, _),
-		    no_path_file_name(S, FN),
-		    basename(FN, BN),
-		    \+ member(BN, NoDocS) ),
-		Ops),
-	    normalize_ops(Ops, SOps)
-	; SOps=[]
-	),
+	get_ops(ModuleType, NoDocS, SOps),
 	%
 	% The modes (only "exported" if package or include)
-	( modtype_include_or_package(ModuleType) ->
-	    findall(F/A, ( assertion_read(ModeP, M, _, modedef, _, _, S, _, _),
-		    no_path_file_name(S, FN),
-		    basename(FN, BN),
-		    \+ member(BN, NoDocS),
-		    functor(ModeP, F, A) ),
-		CModes),
-	    eliminate_duplicates(CModes, NModes)
-	; NModes = []
-	),
+	get_modes(M, ModuleType, NoDocS, NModes),
 	%
-	% Gather all decls to be documented. 
-	% ??? Not a good idea???
-	( modtype_include_or_package(ModuleType) ->
-	    % document all having an explicit comment in the module:
-	    findall(F/A, 
-                    ( assertion_read(DeclP, M, _, decl, _, _, S, _, _),
-		        no_path_file_name(S, FN),
-		        basename(FN, BN),
-		        \+ member(BN, NoDocS),
-		        functor(DeclP, F, A) ),
-		CDecls),
-	    % also those having a new_declaration in the module
-	    findall(NDP,
-		( clause_read(Base, 1, new_declaration(NDP), _, S, _, _),
-		    no_path_file_name(S, FN),
-		    basename(FN, BN),
-		    \+ member(BN, NoDocS)
-		),
-		NDDecls),
-	    append(CDecls, NDDecls, PDupDecls),
-	    % E.g., in case of being in both cases above
-	    eliminate_duplicates(PDupDecls, NDecls)
-	; NDecls=[]
-        ),
+	% Gather all decls to be documented.
+	get_decls(Base, M, ModuleType, NoDocS, NDecls),
 	%
 	% Internals  
 	get_doc(doinclude, ignore, DocSt, Preds),
@@ -1213,27 +1161,40 @@ doc_interface(DocSt, R) :-
 	classify_files(IFiles, UFiles, SysFiles, EngFiles, DocSt),
 	%
 	fmt_module_usage(DocSt, CExports, Multifiles,
-	    UFiles, IUFiles, SysFiles, EngFiles, SOps, NDecls,
+	    UFiles, IUFiles, SysFiles, EngFiles, PkgFiles,
+	    SOps, NDecls,
 	    NModes, ModuleUsageR),
 	%
 	% new declarations
-	fmt_predicates_kind(decl, "new declarations", NDecls, DocSt, DeclsR),
+	fmt_definitions_kind(decl, "new declarations", NDecls, DocSt, DeclsR),
 	% any modes defined
-	fmt_predicates_kind(modedef, "new modes", NModes, DocSt, ModesR),
+	fmt_definitions_kind(modedef, "new modes", NModes, DocSt, ModesR),
 	% exported predicates, props, etc.
-	fmt_predicates_kind(nodecl, "exports", Exports, DocSt, ExportsR),
+	fmt_definitions_kind(nodecl, "exports", Exports, DocSt, ExportsR),
 	% multifile predicates
-	fmt_predicates_kind(nodecl, "multifiles", Multifiles, DocSt, MultifilesR),
+	fmt_definitions_kind(nodecl, "multifiles", Multifiles, DocSt, MultifilesR),
 	% predicates for which it is explicitly requested (via a
 	% @tt{:- doc(doinclude,<PredName>)} directive)
-	fmt_predicates_kind(_IsDecl, "internals", Internals, DocSt, InternalsR),
+	fmt_definitions_kind(_DefKind, "internals", Internals, DocSt, InternalsR),
 	R = [ModuleUsageR, DeclsR, ModesR, ExportsR, MultifilesR, InternalsR].
 
 modtype_include_or_package(include).
 modtype_include_or_package(package).
 
+% Show a warning if there are no definitions to be documented.
+check_no_definitions(ModuleType, Exports, Multifiles, DocSt) :-
+	( ( Exports=[], Multifiles=[],
+	    \+ modtype_include_or_package(ModuleType)
+	  ) ->
+	    docst_inputfile(DocSt, I),
+	    warning_message(loc(I, 1, 1),
+		"no exported predicates to be documented", [])
+	; true
+	).
+
 :- doc(fmt_module_usage(DocSt,Exports,Mults,
-   UMods,IUMods,SMods,EMOds,Ops,NDecls,NModes,R), "This
+   UMods,IUMods,SMods,EMOds,PkgMods,
+   Ops,NDecls,NModes,R), "This
    predicate defines the format of the usage info for the
    module. @var{Exports} contains the predicates
    exported by the module (taken from the @pred{module/2}
@@ -1245,17 +1206,18 @@ modtype_include_or_package(package).
    declarations. @var{NModes} contains any new mode
    definitions.").
 
-:- pred fmt_module_usage(DocSt, Exports, Mults, UMods, IUMods,
-	    SysMods, EngMods, Ops, NDecls, NModes, R)
+:- pred fmt_module_usage(DocSt, Exports, Mults,
+	    UMods, IUMods, SysMods, EngMods, PkgMods,
+	    Ops, NDecls, NModes, R)
 	: ( docstate(DocSt), list(Exports, predname),
-	    list(Exports, predname), list(UMods, atm), list(IUMods, atm),
-	    list(SysMods, atm),
-	    list(EngMods, atm), list(Ops), list(NDecls, atm), list(NModes, atm),
+	    list(Exports, predname),
+	    list(UMods, atm), list(IUMods, atm), list(SysMods, atm), list(EngMods, atm), list(PkgMods, atm),
+	    list(Ops), list(NDecls, atm), list(NModes, atm),
 	    doctree(R) )
 # "The module header info is documented as the first section of the
    chapter.".
 fmt_module_usage(DocSt, CExports, Mults,
-	    UMods, IUMods, SysMods, EngMods, Ops, NDecls,
+	    UMods, IUMods, SysMods, EngMods, PkgMods, Ops, NDecls,
 	    NModes, R) :-
 	get_doc(usage, ignore, DocSt, UsageR0),
 	( is_nonempty_doctree(UsageR0) ->
@@ -1294,13 +1256,14 @@ fmt_module_usage(DocSt, CExports, Mults,
 	gen_cases(bf, string_esc("New operators defined"), Ops, Ro),
 	gen_cases(bf, string_esc("New modes defined"), NModes, Rm),
 	gen_cases(bf, string_esc("New declarations defined"), NDecls, Rd),
-	( UMods = [], SysMods = [], EngMods = [] ->
+	( IUMods = [], UMods = [], SysMods = [], EngMods = [], PkgMods = [] ->
 	    Pa3 = nop
 	; gen_cases(em, string_esc("Application modules"), UMods, L1),
 	  gen_cases(em, [string_esc("Files of module "), tt(string_esc("user"))], IUMods, L2),
 	  gen_cases(em, string_esc("System library modules"), SysMods, L3),
 	  gen_cases(em, string_esc("Internal (engine) modules"), EngMods, L4),
-	  gen_item(bf, string_esc("Other modules used"), itemize_minus([L1, L2, L3, L4]), Pa3)
+	  gen_cases(em, string_esc("Packages"), PkgMods, L5),
+	  gen_item(bf, string_esc("Imports"), itemize_minus([L1, L2, L3, L4, L5]), Pa3)
 	),
 	% TODO: this section_env contains more things!
 	R = section_env(
@@ -1336,7 +1299,9 @@ gen_cases(Style, LabelR, Xs, R) :-
 
 % ----------------------------------------------------------------------
 
-filter_export_by_type([],                        _Type,   []).
+% Get the list of exports with the same assertion type
+% TODO: assertion type is based on comparing the text representation
+filter_export_by_type([], _TypeStr, []).
 filter_export_by_type([export(F/A, Type)|CExps], TypeStr, [F/A|FExps]) :-
 	assrt_type_text(Type, TypeStr, _, _),
 	!,
@@ -1444,19 +1409,31 @@ export_list(Base, DocSt, AllExports) :-
 
 eliminate_hidden([],           []).
 eliminate_hidden([Pred|Preds], EPreds) :-
-	get_doc_field(hide, Pred, _),
-	!,
-	eliminate_hidden(Preds, EPreds).
-eliminate_hidden([Pred|Preds], EPreds) :-
-	get_doc_field(hide, PredList, _),
-	list(PredList),
-	member(Pred, PredList),
+	pred_has_docprop(Pred, hide),
 	!,
 	eliminate_hidden(Preds, EPreds).
 eliminate_hidden([Pred|Preds], [Pred|EPreds]) :-
 	eliminate_hidden(Preds, EPreds).
 
 %% ---------------------------------------------------------------------------
+
+% Get the ops defined in the module
+get_ops(ModuleType, NoDocS, SOps) :-
+	% The ops (only "exported" if package or include)
+	( modtype_include_or_package(ModuleType) ->
+	    findall(op(P, Prec, PredNames),
+	            get_ops_(P, Prec, PredNames, NoDocS),
+		    Ops),
+	    normalize_ops(Ops, SOps)
+	; SOps=[]
+	).
+
+get_ops_(P, Prec, PredNames, NoDocS) :-
+	clause_read(_, 1, op(P, Prec, PredNames), _, S, _, _),
+	no_path_file_name(S, FN),
+	basename(FN, BN),
+	\+ member(BN, NoDocS).
+
 :- pred normalize_ops/2 # "Flattens out the cases where several ops
    are defined in the same declaration.".
 
@@ -1477,6 +1454,49 @@ normalize_ops_list([],           _Prec, _Style, NOpsE,
 normalize_ops_list([Pred|Preds], Prec,  Style,  [op(Prec, Style, Pred)|NOps],
 	    NOpsE) :-
 	normalize_ops_list(Preds, Prec, Style, NOps, NOpsE).
+
+%% ---------------------------------------------------------------------------
+% Get the modes defined in a module
+
+get_modes(M, ModuleType, NoDocS, NModes) :-
+	( modtype_include_or_package(ModuleType) ->
+	    findall(F/A, ( assertion_read(ModeP, M, _, modedef, _, _, S, _, _),
+		    no_path_file_name(S, FN),
+		    basename(FN, BN),
+		    \+ member(BN, NoDocS),
+		    functor(ModeP, F, A) ),
+		CModes),
+	    eliminate_duplicates(CModes, NModes)
+	; NModes = []
+	).
+
+%% ---------------------------------------------------------------------------
+% Gather all decls to be documented. 
+% TODO: ??? Not a good idea???
+
+get_decls(Base, M, ModuleType, NoDocS, NDecls) :-
+	( modtype_include_or_package(ModuleType) ->
+	    % document all having an explicit comment in the module:
+	    findall(F/A, 
+                    ( assertion_read(DeclP, M, _, decl, _, _, S, _, _),
+		        no_path_file_name(S, FN),
+		        basename(FN, BN),
+		        \+ member(BN, NoDocS),
+		        functor(DeclP, F, A) ),
+		CDecls),
+	    % also those having a new_declaration in the module
+	    findall(NDP,
+		( clause_read(Base, 1, new_declaration(NDP), _, S, _, _),
+		    no_path_file_name(S, FN),
+		    basename(FN, BN),
+		    \+ member(BN, NoDocS)
+		),
+		NDDecls),
+	    append(CDecls, NDDecls, PDupDecls),
+	    % E.g., in case of being in both cases above
+	    eliminate_duplicates(PDupDecls, NDecls)
+	; NDecls=[]
+        ).
 
 %% ---------------------------------------------------------------------------
 :- pred classify_exports/4 # "Classifies exported predicates as
@@ -1509,7 +1529,7 @@ classify_exports([F/A|Exps], M, Base, [export(F/A, pred)|CExps]) :-
 check_types_in_assertions(P, F, A, M, Exports) :-
 	findall(export(F/A, PType),
 	    ( assertion_read(P, M, _Status, Type, NAss, _Dict, _S, _LB, _LE),
-		predfunctor(Type),
+		defkind_pred(Type),
 		patch_special_prop(Type, NAss, PType) ),
 	    DExports),
 	eliminate_duplicates(DExports, Exports).
@@ -1530,6 +1550,45 @@ patch_special_prop(Type, _NAss, Type).
 %% Native properties should be added here also? Perhaps dynamically?
 
 special_prop(regtype(_), regtype).
+
+%% ---------------------------------------------------------------------------
+% Get the list of imported packages
+
+get_pkgs(M, Base, DocSt, PkgFiles) :-
+	( docst_opt(no_packages, DocSt) ->
+	    % do not document imported packages
+	    PkgFiles = []
+	; findall(PkgFile, use_pkg(Base, PkgFile), PkgFiles0),
+	  filter_pkgs(PkgFiles0, M, PkgFiles)
+	).
+
+% remove library(_) functor and packages that seem to be using
+% themselves (like assertions; that happens because the documentation
+% code is separated from the package code).
+filter_pkgs([], _, []).
+filter_pkgs([P0|Ps0], M, Qs) :-
+	( P0 = library(P) ->
+	    true
+	; P = P0
+	),
+	( same_mod(P, M) ->
+	    Qs = Qs0
+	; Qs = [P|Qs0]
+	),
+	filter_pkgs(Ps0, M, Qs0).
+
+% TODO: what is simpler? keeping the real file M (with optional _doc)
+%       or the effective M (without _doc). I need the effective M
+%       for file names in documentation.
+same_mod(P, M) :- P == M, !.
+same_mod(P, user(S)) :- !,
+	no_path_file_name(S, FN),
+	basename(FN, BN),
+	atom_concat(P, '_doc', BN). 
+same_mod(P, M) :-
+	% TODO: incomplete (P may be a module spec, e.g. foreign_interface(...))
+	atom(P),
+	atom_concat(P, '_doc', M). 
 
 %% ---------------------------------------------------------------------------
 :- pred classify_files/5 # "Classifies file references, such as
@@ -1568,14 +1627,14 @@ classify_files_([File|Files], LibPaths, SysLibPaths, [File|UFiles], SysFiles,
 
 %% ---------------------------------------------------------------------------
 
-:- pred fmt_predicates_kind/5
-# "Generates documentation for predicates or declarations of a given kind.".
+:- pred fmt_definitions_kind/5
+   # "Generates documentation for definitions of predicates, declarations, modes, etc. of a given kind.".
 
-fmt_predicates_kind(Kind, Desc, Items, DocSt, R) :-
+fmt_definitions_kind(DefKind, Desc, Items, DocSt, R) :-
 	docst_message("Documenting "||Desc, DocSt),
 	( Items = [] ->
 	    R = []
-	; doc_predicates(Items, Kind, DocSt, ItemsR),
+	; fmt_definitions(Items, DefKind, DocSt, ItemsR),
 	  Title = "Documentation on "||Desc,
 	  R = section_env([with_parent,level(2)], local_label(_), string_esc(Title), ItemsR)
 	).
@@ -1602,10 +1661,10 @@ filter_out_exports([Pred|Preds], Exports, [Pred|FPreds]) :-
 
 %% ---------------------------------------------------------------------------
 
-:- doc(subsection, "Document Predicates").
+:- doc(subsection, "Document Definitions (predicates or declarations)").
 
-:- pred doc_predicates/4
-# "Generates documentation for a list of predicates.
+:- pred fmt_definitions/4
+   # "Generates documentation for a list of predicates.
 
       One issue here, given that there may be reexports, is which
       assertions and code to use in the documentation. The best thing
@@ -1615,27 +1674,32 @@ filter_out_exports([Pred|Preds], Exports, [Pred|FPreds]) :-
       takes precedence over imported code.
 
       Thus, we treat the assertions in the current module first.
-      Otherwise, we follow import chain.  ".
+      Otherwise, we follow import chain.".
 
-doc_predicates([],     _,    _DocSt, []).
-doc_predicates([P|Ps], IsDecl, DocSt, [R|Rs]) :-
+fmt_definitions([],     _,    _DocSt, []).
+fmt_definitions([P|Ps], DefKind, DocSt, [R|Rs]) :-
 	docst_mvar_get(DocSt, modinfo, ModSt),
-	doc_predicate(P, IsDecl, ModSt, DocSt, R),
-	doc_predicates(Ps, IsDecl, DocSt, Rs).
+	fmt_definition(P, DefKind, ModSt, DocSt, R),
+	fmt_definitions(Ps, DefKind, DocSt, Rs).
 
 %% General case:
-doc_predicate(F/A, IsDecl, ModSt, DocSt, R) :-
+:- pred fmt_definition/5
+   # "Generates documentation for one definition (predicate or declaration).".
+% TODO: ModSt is passed due to reexport chains
+
+fmt_definition(F/A, DefKind, ModSt, DocSt, R) :-
 	ModSt = modinfo(M, Base),
 	%
-	docst_message("Generating documentation for ~w:~w/~w", [M, F, A], DocSt),
+	docst_message("Generating documentation for predicate or declaration ~w:~w/~w", [M, F, A], DocSt),
 	functor(P, F, A),
-	predicate_usages(P, IsDecl, M, Usages, N, Multiple),
+	predicate_usages(P, DefKind, M, Usages),
 	predicate_level_comment(F/A, DocSt, CommentR, CommentHead),
-	other_assertions(P, IsDecl, M, OtherAssrt, ON),
-	( ( IsDecl == decl
-	  ; IsDecl == modedef
+	other_assertions(P, DefKind, M, OtherAssrt),
+	%
+	( ( DefKind == decl
+	  ; DefKind == modedef
 	  ) ->
-	    PType = IsDecl
+	    PType = DefKind
 	; look_for_pred_type(Usages, F/A, PType)
 	),
 	% Check that there are assertions, get assertion type
@@ -1670,12 +1734,11 @@ doc_predicate(F/A, IsDecl, ModSt, DocSt, R) :-
 	fmt_head_descriptor(CommentHead, PType, Standard, HeadR),
 	%% Trying to catch props that are just declared with no comment:
 	( doctree_is_empty(NCommentR),
-	    Usages = [assertion_read(_, _, _, _, NAss, _, _, _, _)], %% N=1,
-	    assertion_body(_, _, _, _, _, [], NAss), %% I.e., no comment
-	    ( PType=prop, PropText= "property"
-	    ; PType=regtype, PropText= "regular type"
-	    )
-	-> atom_codes(F, FS),
+	  Usages = [assertion_read(_, _, _, _, NAss, _, _, _, _)], %% N=1,
+	  assertion_body(_, _, _, _, _, [], NAss), %% I.e., no comment
+	  assrt_is_prop(PType) ->
+	    assrt_type_ptext(PType, PropText),
+	    atom_codes(F, FS),
 	    number_codes(A, AS),
 	    list_concat(["A ", PropText,
 		    ", defined as follows:@includedef{",
@@ -1688,23 +1751,27 @@ doc_predicate(F/A, IsDecl, ModSt, DocSt, R) :-
 	    parse_docstring_loc(DocSt, Loc, TNComment, NNCommentR0)
 	; NNCommentR0 = NCommentR
 	),	
-	( (CommentHead = _/_ ; doctree_is_empty(NNCommentR0)) ->
+	( ( CommentHead = _/_ ; doctree_is_empty(NNCommentR0) ) ->
 	    NNCommentR1 = NNCommentR0
 	; NNCommentR1 = [p(""), NNCommentR0]
 	),
+	% The language declarations
 	doc_native_declarations(F/A, M, Base, DocSt, NativeR),
-	doc_other_assertions(OtherAssrt, ON, N, F/A, PType, DocSt, OtherAssrtR),
-	doc_usages(Usages, 1, Multiple, F/A, PType, DocSt, UsagesR),
+	% (not 'pred' assertions')
+	doc_other_assertions(Usages, OtherAssrt, F/A, PType, DocSt, OtherAssrtR),
+	% ('pred' assertions')
+	doc_usages(Usages, F/A, PType, DocSt, UsagesR),
+	% Put all together
 	( doctree_is_empty(NativeR),
 	  doctree_is_empty(OtherAssrtR) ->
 	    PredR = [UsagesR]
-	; PredR = [linebreak, NativeR, OtherAssrtR, UsagesR]
+	; PredR = [UsagesR, NativeR, OtherAssrtR]
 	),
 	R = [defpred(local_label(_), PType, PText, F/A, [
                HeadR, NNCommentR1, PredR
                ]),
              sp("1"), raw_nl].
-doc_predicate(F/A, IsDecl, ModSt, DocSt, R) :-
+fmt_definition(F/A, DefKind, ModSt, DocSt, R) :-
 	ModSt = modinfo(M, Base),
 	imports_pred(Base, UFile, F, A, _DefType, _Meta, _EndFile),
 	base_name(UFile, UBase),
@@ -1712,14 +1779,9 @@ doc_predicate(F/A, IsDecl, ModSt, DocSt, R) :-
 	M \== UM, %% To handle engine preds: they appear as imported 
 	%% in the file in which they are defined!
 	!,
-	( ( get_doc_field(doinclude, F/A, _)
-	  ; ( get_doc_field(doinclude, PredList, _),
-	      list(PredList),
-	      member(F/A, PredList)
-	    )
-	  ) ->
+	( pred_has_docprop(F/A, doinclude) ->
 	    docst_message("following reexport chain for ~w to ~w", [F/A, UM], DocSt),
-	    doc_predicate(F/A, IsDecl, modinfo(UM, UBase), DocSt, R)
+	    fmt_definition(F/A, DefKind, modinfo(UM, UBase), DocSt, R)
 	;
 	    docst_message("~w reexported from ~w (not documented)", [F/A, UM], DocSt),
 	    Type = udreexp,
@@ -1732,30 +1794,29 @@ doc_predicate(F/A, IsDecl, ModSt, DocSt, R) :-
 	    add_lines(RText, RText1),
 	    R = [defpred(local_label(_), Type, PText, F/A, [RText1]), sp("1"), raw_nl]
 	).
-doc_predicate(P, _, _ModSt, _DocSt, R) :-
+fmt_definition(P, _, _ModSt, _DocSt, R) :-
 	R = [],
-	error_message(_, "could not document predicate ~w", [P]).
+	error_message(_, "could not document predicate or new declaration ~w", [P]).
 
 %% ---------------------------------------------------------------------------
 %% Abstracted out parts of doc_predicate:
 
-%% Get the assertions that describe usages (predfunctor type):
+%% Get the assertions that describe usages (defkind_pred type):
 %% (do not get decl or modedef assrts; if documenting decl or modedef, 
 %% then get only decl or modedef  assrts)
-predicate_usages(P, IsDecl, M, Usages, N, Multiple) :-
+predicate_usages(P, DefKind, M, Usages) :-
 	findall(assertion_read(P, M, Status, Type, NAss, Dict, S, LB, LE),
-	    ( assertion_read(P, M, Status, Type, NAss, Dict, S, LB, LE),
-		( nonvar(IsDecl)
-		-> ( (IsDecl = decl ; IsDecl = modedef)
-		    -> Type = IsDecl
+	    ( doc_assertion_read(P, M, Status, Type, NAss, Dict, S, LB, LE),
+		( nonvar(DefKind)
+		-> ( (DefKind = decl ; DefKind = modedef)
+		    -> Type = DefKind
 		    ; ((\+ Type = decl), (\+ Type = modedef)) )
 		; true ),
-		predfunctor(Type),
+		defkind_pred(Type),
 		% (findall does internally backtracking, which undoes variable bindings)
 		bind_dict_varnames(Dict)
 	    ),
-	    Usages),
-	length(Usages, N), (N>1 -> Multiple=1; Multiple=0).
+	    Usages).
 
 %% Get any comment declarations, compute CommentHead:
 predicate_level_comment(F/A, DocSt, CommentR, CommentHead) :-
@@ -1767,28 +1828,26 @@ predicate_level_comment(F/A, DocSt, CommentR, CommentHead) :-
 	; CommentHead = F/A, empty_doctree(CommentR)
 	).
 
-
 %% Get any other assertions:
 %% (except for decls)
-other_assertions(_P, IsDecl, _M, [], 0) :-
-	IsDecl == decl,
+other_assertions(_P, DefKind, _M, []) :-
+	DefKind == decl,
 	!.
-other_assertions(P, _IsDecl, M, OtherAssrt, ON) :-
+other_assertions(P, _DefKind, M, OtherAssrt) :-
 	findall(assertion_read(P, M, Status, Type, NAss, Dict, S, LB, LE),
-	    ( assertion_read(P, M, Status, Type, NAss, Dict, S, LB, LE),
-		\+ (predfunctor(Type)),
+	    ( doc_assertion_read(P, M, Status, Type, NAss, Dict, S, LB, LE),
+		\+ (defkind_pred(Type)),
 		bind_dict_varnames(Dict) ),
-	    OtherAssrt),
-	length(OtherAssrt, ON).
+	    OtherAssrt).
 
 %% ---------------------------------------------------------------------------
 :- pred look_for_pred_type(L, P, T) ::
-	(list(L), predname(P), predfunctor_ext(T)) #
+	(list(L), predname(P), defkind_pred_ext(T)) #
 "@var{T} is the type of the predicate described by the assertions
    in @var{L} for predicate @var{P}.".
 
-:- regtype predfunctor_ext/1.
-predfunctor_ext(_).
+:- regtype defkind_pred_ext/1.
+defkind_pred_ext(_).
 
 %% If no explicit type found (e.g., only basic assertions) then assume pred
 %% (unless explicitly declared as a new_declaration)
@@ -1812,14 +1871,14 @@ look_for_pred_type(
 
 handle_pred_type(AType, R, Type, _Loc) :-
 	var(Type),
-	(predfunctor(AType) ; special_prop(_, AType)),
+	(defkind_pred(AType) ; special_prop(_, AType)),
 	!,
 	%% We assume that this is the type.
 	Type = AType,
 	look_for_pred_type(R, _, Type).
 handle_pred_type(AType, R, Type, Loc) :-
 	nonvar(Type),
-	predfunctor(AType),
+	defkind_pred(AType),
 	!,
 	%% Must be identical to previously found type.
 	( Type == AType -> true
@@ -1882,54 +1941,64 @@ fmt_meta_info(Meta, R) :-
 	     linebreak].
 
 %% ---------------------------------------------------------------------------
-:- pred doc_other_assertions/7 # "Generates documentation for assertions 
+:- pred doc_other_assertions/6 # "Generates documentation for assertions 
    other than @tt{pred} assertions.".
 
-doc_other_assertions(OtherAssrt,  ON,  N,  P,  Type, DocSt, R) :-
-	( ON = 0 ->
-	    R = []
-	; ON > 0, N > 0 ->
+doc_other_assertions(Usages, OtherAssrt, P, Type, DocSt, R) :-
+	( show_other_assrt_header(Usages, OtherAssrt) ->
 	    gen_other_assrt_header(R0),
-	    doc_other_assrts(OtherAssrt, P, Type, DocSt, R1),
-	    R = [R0, R1]
-	; ON > 0, N = 0 ->
-	    doc_other_assrts(OtherAssrt, P, Type, DocSt, R)
-	).
+	    R = [R0,Ra]
+	; R = [Ra]
+	),
+	doc_other_assertions_(OtherAssrt, P, Type, DocSt, Ra).
+
+doc_other_assertions_([], _P, _Type, _DocSt, []) :- !.
+doc_other_assertions_([Assrt|Assrts], _P, Type, DocSt, [AssrtR|AssrtsR]) :-
+	doc_usage(Assrt, _, -1, Type, DocSt, AssrtR),	
+	doc_other_assertions_(Assrts, _P, Type, DocSt, AssrtsR).
+
+% Do I need to show the 'other assertions' message?
+show_other_assrt_header(Usages, OtherAssrt) :-
+	Usages = [_|_], % length > 0
+	OtherAssrt = [_|_]. % length > 0
 
 gen_other_assrt_header(R) :-
 	R = [raw_nl, bf(string_esc("General properties:")), string_esc(" ")].
 
-doc_other_assrts([], _P, _Type, _DocSt, []) :- !.
-doc_other_assrts([Assrt|Assrts], _P, Type, DocSt, [AssrtR|AssrtsR]) :-
-	doc_usage(Assrt, _, -1, Type, DocSt, AssrtR),	
-	doc_other_assrts(Assrts, _P, Type, DocSt, AssrtsR).
-
 %% ---------------------------------------------------------------------------
-:- pred doc_usages/7 # "Generates documentation for each ``usage'' of
+:- pred doc_usages/5 # "Generates documentation for each @em{usage} of
    a predicate (as declared in a @tt{pred} assertion).".
 
-doc_usages([], _N, _M, _P, _Type, _DocSt, []) :- !.
-doc_usages([Usage|Usages], N, Multiple, _P, Type, DocSt, [UsageR|UsagesR]) :-
-	doc_usage(Usage, N, Multiple, Type, DocSt, UsageR),
+doc_usages(Usages, F/A, PType, DocSt, UsagesR) :-
+	( Usages = [_,_|_] -> % length > 1
+	    Multiple = 1
+	; Multiple = 0
+	),
+	doc_usages_(Usages, 1, Multiple, F/A, PType, DocSt, UsagesR).
+
+doc_usages_([], _N, _Multiple, _P, _PType, _DocSt, []) :- !.
+doc_usages_([Usage|Usages], N, Multiple, _P, PType, DocSt, [UsageR|UsagesR]) :-
+	doc_usage(Usage, N, Multiple, PType, DocSt, UsageR),
 	N1 is N+1,
-	doc_usages(Usages, N1, Multiple, _P, Type, DocSt, UsagesR).
+	doc_usages_(Usages, N1, Multiple, _P, PType, DocSt, UsagesR).
 
 %% If no info, then don't document!
-doc_usage(Assrt, _N, _Multiple, _Type, _DocSt, UsageR) :-
-	Assrt = assertion_read(CP, _M, _Status, _Type, NAss, _, _, _, _),
+doc_usage(Assrt, _N, _Multiple, _PType, _DocSt, UsageR) :-
+	Assrt = assertion_read(CP, _M, _Status, _PType, NAss, _, _, _, _),
 	assertion_body(_, [], [], [], [], [], NAss),
 	CP =.. [_|Args],
 	allvars(Args),
 	!,
 	UsageR = [].
-doc_usage(Assrt, N, Multiple, Type, DocSt, UsageR) :-
-	Assrt = assertion_read(_P, _M, Status, AType, NAss, _, S, LB, LE),
+doc_usage(Assrt, N, Multiple, PType, DocSt, UsageR) :-
+	Assrt = assertion_read(_P, _M, Status, AType, NAss, _Dict, S, LB, LE),
+%	display(a(N, Multiple, PType, Assrt)), nl,
 	Loc = loc(S, LB, LE),
 	assertion_body(P, DP, CP, AP, GP, CO, NAss),
 	fix_var_arg_names(P, Loc, NP),
 	( member(iso(_), GP), Multiple \== -1 -> %% Done differently for gen props
-	    Standard=iso
-	; Standard=non_iso
+	    Standard = iso
+	; Standard = non_iso
 	),
 	( docst_opt(no_isoline, DocSt),
 	  select(iso(_), GP, NNGP) ->
@@ -1944,24 +2013,28 @@ doc_usage(Assrt, N, Multiple, Type, DocSt, UsageR) :-
 	%
 	( CO=[], DP=[], CP=[], AP=[], NGP=[] ->
 	    UsageR = [] % No info
-	; gen_usage_header(N, Multiple, HeaderR),
+	; gen_usage_header(N, Status, AType, Multiple, HeaderStr),
+	  % TODO: Extract a descriptive head from the normalized assertion
 	  % Documenting a general property or empty usage
-	  fmt_head_descriptor(NP, Type, Standard, HeadR),
+	  fmt_head_descriptor(NP, PType, Standard, HeadR),
 	  %
 	  doc_description(CO, Loc, NP, DocSt, DescR),
 	  %% Cond used to see whether calls and comp props are conditional
-	  (CP = [] -> Cond=empty ; Cond = full),
-	  doc_site(compat, Loc, Cond, DP,  NP, Type,  Status, DocSt, DPR),
+	  ( CP = [] -> Cond = empty ; Cond = full ),
+	  %
+	  doc_site(compat, Loc, Cond, DP,  NP, PType,  Status, DocSt, DPR),
+	  %
 	  doc_site(call,   Loc, Cond, CP,  NP, AType, Status, DocSt, CPR),
 	  doc_site(answer, Loc, Cond, AP,  NP, AType, Status, DocSt, APR),
+	  %
 	  doc_site(global, Loc, Cond, NGP, NP, AType, Status, DocSt, NGPR),
-	  UsageR = [HeaderR, HeadR, itemize_minus([DescR, DPR, CPR, APR, NGPR])]
+	  UsageR = defassrt(Status, AType, HeaderStr, HeadR, DescR, assrtprops(DPR, CPR, APR, NGPR))
         ).
 
-fmt_head_descriptor(P, Type, Standard, HeadR) :-
+fmt_head_descriptor(P, PType, Standard, HeadR) :-
 	( P=_F/_A ->
 	    R1 = []
-	; assrt_type_text(Type, _Text, Prefix, Postfix),
+	; assrt_type_text(PType, _Text, Prefix, Postfix),
 	  format_to_string("~w", [P], PS),
 	  R1 = [string_esc(Prefix), tt(string_esc(PS)), string_esc(Postfix)]
 	),
@@ -1979,13 +2052,38 @@ fmt_standard(iso, R) :- !,
 	R = iso("").
 fmt_standard(_Standard, []).
 
-gen_usage_header(N, Multiple, R) :-
+gen_usage_header(_N, _Status, test, _Multiple, HeaderStr) :- !,
+	% TODO: Probably not right.
+	HeaderStr = "Test:".
+gen_usage_header(N, check, _AType, Multiple, HeaderStr) :- !,
+	( usage_str(N, Multiple, HeaderStr0) ->
+	    HeaderStr = HeaderStr0
+	; HeaderStr = "Check:" % TODO: Correct?
+	).
+gen_usage_header(N, Status, _AType, Multiple, HeaderStr) :-
+	% TODO: N is not used, is it correct?
+	( % Name for other assertions (take from status)
+	  % TODO: check at compile time that we cover all cases
+          %   in assertions_props:assrt_status/1
+          ( Status = true ->  StatusStr = "True"
+          ; Status = false -> StatusStr = "False"
+%          ; Status = check -> StatusStr = "Check" % TODO: Already treated
+          ; Status = checked -> StatusStr = "Checked"
+          ; Status = trust -> StatusStr = "Trust"
+	  ; throw(error(unknown_assrt_status(Status), gen_usage_header/5))
+	  )
+	),
+	( usage_str(N, Multiple, UsageStr) ->
+	    append("("||StatusStr, ") "||UsageStr, HeaderStr)
+	; append(StatusStr, ":", HeaderStr)
+	).
+
+usage_str(N, Multiple, Str) :-
 	( Multiple = 1 ->
-	    format_to_string("Usage ~w:", N, UsageStr),
-	    R = [p(""), bf(string_esc(UsageStr)), string_esc(" ")]
+	    format_to_string("Usage ~w:", N, Str)
 	; Multiple = 0 ->
-	    R = [p(""), bf(string_esc("Usage:")), string_esc(" ")]
-	; R = []
+	    Str = "Usage:"
+	; fail % (not an usage)
 	).
 
 allvars([]).
@@ -1996,10 +2094,10 @@ allvars([H|T]) :-
 %% ---------------------------------------------------------------------------
 :- use_module(library(assertions(assertions_props)), [assrt_type/1]).
 
-:- pred assrt_type_text(Type,Text,Prefix,Postfix) 
+:- pred assrt_type_text(PType,Text,Prefix,Postfix) 
 	: assrt_type * string * string * string
 	# "@var{Text} is an appropriate text for the header for
-           @var{Type}.  Same for @var{Prefix} and @var{Postfix}".
+           @var{PType}.  Same for @var{Prefix} and @var{Postfix}".
 
 assrt_type_text(pred,    "PREDICATE",   "",    "") :- !.
 assrt_type_text(compat,  "PREDICATE",   "",    "") :- !.
@@ -2016,21 +2114,32 @@ assrt_type_text(entry,   "ENTRY POINT", "",    "") :- !.
 assrt_type_text(udreexp, "(UNDOC_REEXPORT)",     "",    "") :- !.
 assrt_type_text(_,       "UNKNOWN",     "",    "") :- !.
 
-%% ---------------------------------------------------------------------------
-:- pred doc_site/9 # "Generates documentation for each program point
-   (call, exit, ...) of a predicate.".
+% Text for the assertion type that can be used in paragraphs
+% TODO: incomplete
+assrt_type_ptext(prop, "property").
+assrt_type_ptext(regtype, "regular type").
 
-doc_site(_T, _Loc, _Cond, Props, _P, _Type, _Status, _DocSt, R) :-
+% The assertion is a property (or some kind of property).
+assrt_is_prop(prop).
+assrt_is_prop(regtype).
+
+%% ---------------------------------------------------------------------------
+
+:- pred doc_site/9 # "Generates documentation for each program point
+   site (@tt{compat}, @tt{call}, @tt{answer}, @tt{global}) of a
+   predicate.".
+
+doc_site(_T, _Loc, _Cond, Props, _P, _PType, _Status, _DocSt, R) :-
 	Props = [],
 	!,
 	R = [].
-doc_site(T, Loc, Cond, Props, P, Type, Status, DocSt, R) :-
-	site_text(T, Cond, Type, Status, Text, Bullet),
+doc_site(T, Loc, Cond, Props, P, PType, Status, DocSt, R) :-
+	site_text(T, Cond, PType, Status, Text, Bullet),
 	!,
 	fmt_site_begin(Text, Bullet, BeginR),
 	doc_properties(Props, Loc, P, DocSt, PropsR),
 	R = [BeginR, PropsR, raw_nl].
-doc_site(T, Loc, _Cond, Props, P, _Type, _Status, _DocSt, R) :-
+doc_site(T, Loc, _Cond, Props, P, _PType, _Status, _DocSt, R) :-
 	R = [],
 	warning_message(Loc,
 	    "error while formatting ~w properties ~w for predicate ~w",
@@ -2039,29 +2148,31 @@ doc_site(T, Loc, _Cond, Props, P, _Type, _Status, _DocSt, R) :-
 fmt_site_begin(Text, bullet, BeginR) :-
 	BeginR = [item(""), em(string_esc(Text))].
 fmt_site_begin(Text, nobullet, BeginR) :-
-	BeginR = [raw_nl, raw_nl, em(string_esc(Text)), raw_nl].
+	BeginR = [linebreak, em(string_esc(Text)), raw_nl].
 
 site_text(compat, _Cond, pred, Status, Text, bullet) :-
-%% Special case for true/trust pred, compat properties:
-	(Status = true ; Status = trust),
+	%% Special case for true/trust pred, compat properties:
+	( Status = true ; Status = trust ),
 	!,
 	Text = "Calls should, and exit will be compatible with:".
-site_text(compat, _Cond, _Type, Status, Text, bullet) :-
+site_text(compat, _Cond, _PType, Status, Text, bullet) :-
 	!,
 	status_text_infix(Status, SText),
-	list_concat(["Call and exit", SText, "compatible with:"], Text).
-site_text(T, Cond, Type, Status, Text, Bullet) :-
-	status_text_prefix(Type, T, Cond, PText, Bullet),
-	status_text_mode(Status, Type, T, MText),
+	list_concat(["Call and exit ", SText, " compatible with:"], Text).
+site_text(T, Cond, PType, Status, Text, Bullet) :-
+	status_text_prefix(PType, T, Cond, PText, Bullet),
+	status_text_mode(Status, PType, T, MText),
 	prog_point_text(T, PPText),
 	!,
-	list_concat([PText, MText, PPText], Text).
+	list_concat([PText, " ", MText, " ", PPText], Text).
 
-status_text_infix(trust,   " are ").
-status_text_infix(true,    " are ").
-status_text_infix(false,   " are not ").
-status_text_infix(check,   " should be ").
-status_text_infix(checked, " are ").
+%:- use_module(library(format), [format/3]).
+
+status_text_infix(trust,   "are").
+status_text_infix(true,    "are").
+status_text_infix(false,   "are not").
+status_text_infix(check,   "should be").
+status_text_infix(checked, "are").
 
 status_text_prefix(modedef, _,      _,
 	           "The following properties", bullet) :- !.
@@ -2071,29 +2182,34 @@ status_text_prefix(calls,   _,      _,
 	           "The following properties", bullet) :- !.
 status_text_prefix(decl,    _,      _,
 	           "The following properties", bullet) :- !.
+% 'call' site
 status_text_prefix(_,       call,   _,
 	           "If the following properties", bullet).
+% 'answer' site
 status_text_prefix(_,       answer, full,
 	           "then the following properties", nobullet).
 status_text_prefix(_,       answer, empty,
 	           "The following properties", bullet).
+% 'global' site
 status_text_prefix(_,       global, full,
 	           "then the following properties", nobullet).
 status_text_prefix(_,       global, empty,
 	           "The following properties", bullet).
 
 %% Introduced special case for guard
-status_text_mode(_, modedef, _,    " are added ") :- !.
-status_text_mode(_, success, call, " hold ") :- !.
-status_text_mode(_, comp,    call, " hold ") :- !.
+status_text_mode(_, modedef, _,    "are added") :- !.
+status_text_mode(_, success, call, "hold") :- !.
+status_text_mode(_, comp,    call, "hold") :- !.
 %% Introduced special case for true/trust pred.
-status_text_mode(trust,   pred, call, " should hold ") :- !.
-status_text_mode(trust,   _,    _,    " hold ").
-status_text_mode(true,    pred, call, " should hold ") :- !.
-status_text_mode(true,    _,    _,    " hold ").
-status_text_mode(false,   _,    _,    " do not hold ").
-status_text_mode(check,   _,    _,    " should hold ").
-status_text_mode(checked, _,    _,    " are proved to hold ").
+status_text_mode(trust,   pred, call, "should hold") :- !.
+status_text_mode(trust,   _,    _,    "hold").
+status_text_mode(true,    pred, call, "should hold") :- !.
+status_text_mode(true,    _,    _,    "hold").
+% TODO: This 'do not hold' should not be applied in the condition (i.e. in the call?) (not (p -> q)) == (p -> not q)
+%       (JFMC)
+status_text_mode(false,   _,    _,    "do not hold").
+status_text_mode(check,   _,    _,    "should hold").
+status_text_mode(checked, _,    _,    "are proved to hold").
 
 prog_point_text(call,   "at call time:").
 prog_point_text(answer, "upon exit:").
@@ -2198,8 +2314,7 @@ doc_description(Desc, _Loc, P, _DocSt, DescR) :-
 	DescR = [].
 %%	note_message("no comment found for usage in ~w/~w",[F,A]).
 doc_description(Desc, Loc, _P, DocSt, DescR) :-
-	parse_docstring_loc(DocSt, Loc, Desc, DescR0),
-	DescR = [item(""), em(string_esc("Description:")), string_esc(" "), DescR0].
+	parse_docstring_loc(DocSt, Loc, Desc, DescR).
 
 %% ---------------------------------------------------------------------------
 :- pred prop_format(DocSt, Prop, Loc, PM, BasicFormat, VarDict)
@@ -2223,8 +2338,8 @@ doc_description(Desc, Loc, _P, DocSt, DescR) :-
 prop_format(DocSt, Prop, Loc, PM, BasicFormat, VarDict) :-
 	nonvar(Prop),
 	% Get assertion
-	assertion_read(Prop, PM, _PStatus, PType, NAss, PDict, _, _, _),
-	propfunctor(PType), %% prop, ...
+	doc_assertion_read(Prop, PM, _PStatus, PType, NAss, PDict, _, _, _),
+	defkind_prop(PType), %% prop, ...
 	%% Should add also ~imports(M,AM,F,A), but, since this is flagged 
 	%% during normalization, here we use whatever we can find.
 	% Get comment field
@@ -2243,9 +2358,12 @@ maybe_remove_full_stop(DocSt, DocString, DocString2) :-
 	).
 
 %% ---------------------------------------------------------------------------
-:- pred fix_var_arg_names(H, Loc, NH) # "In both @var{NH} and @var{H} the
-   arguments of @var{H} which are vars are replaced with the name of
-   their argument position, i.e.,
+
+:- use_module(lpdocsrc(src(autodoc_aux)), [all_vars/1]).
+
+:- pred fix_var_arg_names(H, Loc, NH)
+ # "In both @var{NH} and @var{H} the arguments of @var{H} which are
+   vars are replaced with the name of their argument position, i.e.,
    @tt{fix_var_arg_names(p(X,a),p('Arg1',a)}. However, if all
    arguments of @var{H} are originally free variables, then @var{NH}
    is of the form @tt{F/A}, where @tt{F} is the principal functor of
@@ -2254,49 +2372,20 @@ maybe_remove_full_stop(DocSt, DocString, DocString2) :-
    predicate descriptor specifying argument names: these names are
    used in this case instead of 'ArgN'.".
 
-fix_var_arg_names(H, Loc, NH) :-
-	functor(H,  F, A),
-	functor(CH, F, A),
-	get_doc_field_dict(pred(CH), _, Dict),
-	CH =.. [_|Args],
-	( all_var_args(Args) ->
-	    bind_dict_varnames(Dict),
-	    do_fix_var_arg_names(H, NH, CH)
-	; warning_message(Loc, "nonvariable argument(s) in comment head ~w, "
-		|| "variable names ignored", [CH]),
-	  do_fix_var_arg_names(H, NH, [])
-	).
 fix_var_arg_names(H, _Loc, NH) :-
-	do_fix_var_arg_names(H, NH, []).
-
-all_var_args([]).
-all_var_args([H|T]) :-
-	var(H),
-	all_var_args(T).
-
-do_fix_var_arg_names(H, NH, CH) :-
 	functor(H, F, A),
-	fix_A_var_arg_names(A, H, Allvars, CH),
-	( Allvars == false -> NH=H
-	; NH=F/A
-	).
+	get_doc_pred_varnames(F/A, CArgs),
+	H =.. [_|Args],
+	( all_vars(Args) -> NH=F/A ; NH=H ),
+	fix_var_arg_names_(Args, CArgs).
 
-fix_A_var_arg_names(0, _H, _Allvars, _CH) :- !.
-fix_A_var_arg_names(A, H,  Allvars,  CH) :-
-	A > 0,
-	NA is A-1,
-	arg(A, H, Arg),
+fix_var_arg_names_([], []) :- !.
+fix_var_arg_names_([Arg|Args], [CArg|CArgs]) :-
 	( var(Arg) ->
-	    ( CH == [] ->
-	        number_codes(A, AS),
-		atom_codes(AA, AS),
-		atom_concat(['Arg', AA], Arg)
-	    ; arg(A, CH, Arg)
-	   %% Allvars=false 
-	    )
-	; Allvars=false
+	    Arg = CArg
+	; true
         ),
-	fix_A_var_arg_names(NA, H, Allvars, CH).
+	fix_var_arg_names_(Args, CArgs).
 
 % ---------------------------------------------------------------------------
 
@@ -2403,7 +2492,7 @@ autodoc_gen_alternative(Backend, Alt) :-
 
 :- doc(section, "Auxiliar Definitions").
 
-:- pred eliminate_duplicates(X,Y) # "@var{Y} is @var{X} whre
+:- pred eliminate_duplicates(X,Y) # "@var{Y} is @var{X} where
    duplicated elements has been removed".
 
 eliminate_duplicates(X, Y) :-
@@ -2432,8 +2521,6 @@ eliminate_duplicates_([H|T], Seen, [H|NT]) :-
    subset of (clip) bibtex files to make manuals standalone.").
 
 :- doc(bug, "entry declarations documented as 'if'?.").
-
-:- doc(bug, "htmlview command must be configurable.").
 
 :- doc(bug, "documentation of exceptions.").
 

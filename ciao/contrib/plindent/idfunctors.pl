@@ -234,10 +234,10 @@ auto_space_argdescs([Argdesc1|Argdescs0], GArgdescs0) :-
 		[functordesc${name => Name, tokentype => TokenType,
 			indentlevel => IndentLevel, argdescs => Argdescs2,
 			pos => pos(Col, LineF2)}],
-% 		format("LineF1=~w\n", [LineF1]),
-% 		format("LineA1=~w\n", [LineA1]),
-% 		format("LineF2=~w\n", [LineF2]),
-% 		format("LineA2=~w\n", [LineA2]),
+		% format("LineF1=~w\n", [LineF1]),
+		% format("LineA1=~w\n", [LineA1]),
+		% format("LineF2=~w\n", [LineF2]),
+		% format("LineA2=~w\n", [LineA2]),
 		LineF1 \== LineF2, % Not in the same line
 		LineA1 + 1 =:= LineF2, % Second clause begins in the next line
 		LineA1 - LineF1 =:= LineA2 - LineF2, % Same number of lines
@@ -297,7 +297,7 @@ update_offsets(
 	Pos = pos(_, LastLine),
 	(
 	    LastLine0 \== LastLine ->
-% 	    display(pos(Col0-LastLine0)-Pos),nl,
+	    % display(pos(Col0-LastLine0) -Pos), nl,
 	    Offset is Offset0 + Col0 - 1
 	;
 	    Offset = Offset0
@@ -331,8 +331,8 @@ instantiate_pos_bookmarks([Offset0|Offsets0],
 	;
 	    length(Bookmark, SpaceLength),
 	    Delta is SpaceLength
-% 	    ( LastLine0 =\= Line0 -> Delta is SpaceLength
-% 	    ; Delta is Max - (OffsetChar0 + Col0) )
+	    % ( LastLine0 =\= Line0 -> Delta is SpaceLength
+	    % ; Delta is Max - (OffsetChar0 + Col0) )
 	),
 	OffsetChar is OffsetChar0 + Delta,
 	instantiate_pos_bookmarks(Offsets0, PosBookmarkss0, Min, Max,

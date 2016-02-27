@@ -1,4 +1,4 @@
-:- module(example2, [main/0], [persdb, dcg]).
+:- module(example2, [main/0], [dcg, persdb]).
 
 :- use_module(library(xdr_handle)).
 :- use_package(pillow).

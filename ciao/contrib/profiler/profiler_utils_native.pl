@@ -17,7 +17,7 @@
 :- doc(author, "Edison Mera").
 :- doc(title, "Profiler Utils").
 
-:- doc(module, "This inteface emulates that of the SWI-Prolog profiler.").
+:- doc(module, "This inteface is similar to that of the SWI-Prolog profiler.").
 
 :- use_module(library(profiler(profiler_rt)), []).
 

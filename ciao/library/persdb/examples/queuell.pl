@@ -1,6 +1,4 @@
-:- module(queuell, [main/0],['persdb/ll']).
-
-:- use_package(iso).
+:- module(queuell, [main/0],['persdb/persdb_ll',iso]).
 
 :- use_module(library(read)).
 :- use_module(library(write)).

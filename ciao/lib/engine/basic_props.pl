@@ -5,8 +5,8 @@
 	 sequence/2, sequence_or_list/2, character_code/1, string/1,
 	 num_code/1, predname/1, atm_or_atm_list/1, compat/2, inst/2,
 	 iso/1, deprecated/1, not_further_inst/2, sideff/2, regtype/1,
-	 native/1, native/2, no_rtcheck/1, eval/1, equiv/2,
-	 bind_ins/1, error_free/1,memo/1,filter/2, flag_values/1,
+	 native/1, native/2, rtcheck/1, rtcheck/2, no_rtcheck/1, eval/1,
+	 equiv/2, bind_ins/1, error_free/1,memo/1,filter/2, flag_values/1,
 	 pe_type/1 ],
         [assertions, nortchecks, nativeprops]).
 
@@ -430,23 +430,70 @@ iso(Goal) :- call(Goal).
 :- meta_predicate deprecated(goal).
 deprecated(Goal) :- call(Goal).
 
-:- true prop no_rtcheck(G) # "Declares that the assertion in which
-	this comp property appears must not be checked at run-time.".
+:- true prop rtc_status/1 + regtype # "Status of the runtime-check
+	implementation for a given property. Valid values are:
+ @begin{itemize}
+
+ @item unimplemented: No run-time checker has been implemented for the
+                      property. Althought it can be implemented
+                      further.
+
+ @item incomplete: The current run-time checker is incomplete, which
+                   means, under certain circunstances, no error is
+                   reported if the property is violated.
+
+ @item unknown: We do not know if current implementation of run-time
+                checker is complete or not.
+
+ @item complete: The opposite of incomplete, error is reported always
+                 that the property is violated. Default.
+
+ @item impossible: The property must not be run-time checked (for
+		   theoretical or practical reasons).
+
+ @end{itemize}
+".
+
+rtc_status(unimplemented).
+rtc_status(incomplete).
+rtc_status(unknown).
+rtc_status(exhaustive).
+rtc_status(impossible).
+
+:- true prop rtcheck(G, Status) : callable * rtc_status # "The runtime
+	check of the property have the status @var{Status}.".
+
+:- true comp rtcheck(G, Status) + sideff(free).
+
+:- meta_predicate rtcheck(goal, ?).
+rtcheck(Goal, _) :- call(Goal).
+
+:- true prop rtcheck(G) : callable # "Equivalent to rtcheck(G,
+	complete).".
+
+:- true comp rtcheck(G) + sideff(free).
+
+:- meta_predicate rtcheck(goal).
+rtcheck(Goal) :- rtcheck(Goal, complete).
+
+:- true prop no_rtcheck(G) : callable # "Declares that the assertion
+	in which this comp property appears must not be checked at
+	run-time.  Equivalent to rtcheck(G, impossible).".
 
 :- true comp no_rtcheck(G) + sideff(free).
 
 :- meta_predicate no_rtcheck(goal).
-no_rtcheck(Goal) :- call(Goal).
+no_rtcheck(Goal) :- rtcheck(Goal, impossible).
 
 :- true prop not_further_inst(G,V)
         # "@var{V} is not further instantiated.". % by the predicate
-:- true comp not_further_inst(G,V) + sideff(free).
+:- true comp not_further_inst(G,V) + (sideff(free), no_rtcheck).
 
 :- meta_predicate not_further_inst(goal, ?).
 not_further_inst(Goal, _) :- call(Goal).
 
-:- true comp sideff(G,X) + (native, sideff(free)).
-:- true prop sideff(G,X) : member(X,[free,soft,hard])
+:- true comp sideff(G,X) + (native, sideff(free), no_rtcheck).
+:- true prop sideff(G,X) : (callable(G), member(X,[free,soft,hard]))
 # "@var{G} is side-effect @var{X}.".
 :- doc(sideff(G,X),"Declares that @var{G} is side-effect free
    (if its execution has no observable result other than its success,

@@ -128,7 +128,7 @@ example, the following rule, when the command @tt{lpmake realclean} is
 issued, deletes temporary files in the LaTeX application:
 
 @begin{verbatim}
-:- use_module(library(make(system_extra))).
+:- use_module(library(system_extra)).
 
 clean <- :-
         ls('*aux|*log|*~',Files)
@@ -151,7 +151,7 @@ executed first:
 
 @begin{verbatim}
 :- use_package(fsyntax).
-:- use_module(library(make(system_extra))).
+:- use_module(library(system_extra)).
 
 realclean <- clean :-
         delete_files(~ls('*dvi|*ps')).
@@ -167,7 +167,7 @@ the fact @tt{main(paper).}  --see the @lib{fsyntax} library):
 
 @begin{verbatim}
 :- use_package(fsyntax).
-:- use_module(library(make(system_extra))).
+:- use_module(library(system_extra)).
 :- use_module(library(terms), [atom_concat/2]).
 
 main := paper.

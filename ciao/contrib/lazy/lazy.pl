@@ -4,6 +4,4 @@
 :- use_module(library(freeze)).
 
 :- load_compilation_module(library(lazy(lazytr))).
-:- add_sentence_trans(lazy_sentence_translation/3).
-
-
+:- add_sentence_trans(lazy_sentence_translation/3, 620).

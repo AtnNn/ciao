@@ -1,10 +1,4 @@
-:- module(expander_tr, [expand_sentence/4, expand_clause/4], [assertions]).
-
-:- use_module(library(aggregates)).
-:- use_module(library(compiler(c_itf)),
-	    [defines_module/2, package/2, exports_pred/3]).
-:- use_module(library(write)).
-:- use_module(library(varnames(pretty_names))).
+:- module(expander_tr, [expand_sentence/4, expand_clause/4], [condcomp, assertions]).
 
 :- doc(author, "The CLIP Group").
 :- doc(author, "Improved by Edison Mera.").
@@ -16,6 +10,24 @@
    time this expansion intercepts the compiler results. It would be
    easier to base this package in the same dump code shared by static
    analysis tools.").
+
+% ---------------------------------------------------------------------------
+
+:- use_module(library(aggregates)).
+:- use_module(library(write)).
+:- use_module(library(varnames(pretty_names))).
+
+:- if(defined(optim_comp)).
+% TODO: fix
+defines_module(M,M).
+package(_,_) :- fail.
+exports_pred(_,_,_) :- fail.
+:- else.
+:- use_module(library(compiler(c_itf)),
+	    [defines_module/2, package/2, exports_pred/3]).
+:- endif.
+
+% ---------------------------------------------------------------------------
 
 :- data io_output/1.
 

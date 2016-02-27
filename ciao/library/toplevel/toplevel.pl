@@ -4,9 +4,6 @@
 		new_declaration/1, new_declaration/2,
 		%
 		load_compilation_module/1,
-		add_sentence_trans/1, % TODO: DEPRECATE
-		add_term_trans/1, % TODO: DEPRECATE
-		add_goal_trans/1, % TODO: DEPRECATE
 		add_sentence_trans/2,
 		add_term_trans/2,
 		add_goal_trans/2,
@@ -44,7 +41,7 @@
 	    [copy_extract_attr/3, copy_extract_attr_nc/3]).
 :- use_module(library(debugger)).
 :- use_module(library(compiler(translation)),
-	    [expand_term/4, add_sentence_trans/3, add_term_trans/3]).
+	    [expand_term/4, add_sentence_trans_and_init/3, add_term_trans/3]).
 :- use_module(library(compiler(c_itf)),
 	    [interpret_srcdbg/1, default_shell_package/1]).
 :- use_module(engine(internals),
@@ -54,10 +51,10 @@
 :- use_module(library(format),     [format/3]).
 :- use_module(library(aggregates), [findall/3]).
 :- use_module(library(libpaths),   [get_alias_path/0]).
-:- use_module(library(dict),       [dic_lookup/3]).
+:- use_module(library(dict),       [dic_lookup/3, dic_get/3]).
 
-:- use_module(library(rtchecks(rtchecks_utils)), [handle_rtcheck/1]).
-:- use_module(library(atom_to_term)).
+:- use_module(library(rtchecks(rtchecks_utils)), [call_rtc/1]).
+:- use_module(library(read_from_string)).
 
 :- redefining(make_exec/2).
 :- redefining(debug_module/1).
@@ -72,8 +69,11 @@ define_flag(prompt_alternatives_no_bindings, [on, off], off).
 
 toplevel(Args) :-
 	get_alias_path,
+	%
 	'$shell_module'(Module),
+	retractall_fact(shell_module(_)), % clean shell_module/1
 	asserta_fact(shell_module(Module)),
+	%
 	interpret_args(Args, opts(true, true)),
 	op(900, fy, [(spy), (nospy)]),
 	shell_body,
@@ -106,7 +106,7 @@ interpret_args(['-u', File|R], Opts) :- !,
 	use_module(File),
 	interpret_args(R, Opts).
 interpret_args(['-e', Query|R], Opts) :- !,
-	atom_to_term(Query, Term),
+	read_from_atom(Query, Term),
 	call(Term),
 	interpret_args(R, Opts).
 interpret_args(['-p', Prompt|R], Opts) :- !,
@@ -183,9 +183,7 @@ shell_query(Variables, Query) :-
 	!,
 	( Query == top ->
 	    ttynl, throw(go_top)
-	; intercept(valid_solution(Query, Variables, VarNames),
-		rtcheck(T, P, Pr, V, L),
-		(handle_rtcheck(rtcheck(T, P, Pr, V, L)),tracertc)) ->
+	; valid_solution(Query, Variables, VarNames) ->
 	    (quiet_mode -> true ; ttynl, ttydisplay(yes))
 	; (quiet_mode -> true ; ttynl, ttydisplay(no))
 	),
@@ -211,7 +209,7 @@ handle_syntax_error(L0, L1, Msg, ErrorLoc) :-
 
 valid_solution(Query, Variables, VarNames) :-
 	(adjust_debugger ; switch_off_debugger, fail),
-	error_protect(shell_call(Query, MoreSols, VarNames)),
+	error_protect(call_rtc(shell_call(Query, MoreSols, VarNames))),
 	(switch_off_debugger ;                 adjust_debugger, fail),
 	('$nodebug_call'(after_solution_hook), fail ;           true),
 	current_prolog_flag(check_cycles, CyclesFlag),
@@ -364,7 +362,7 @@ solution_var(Var, Val) -->
 	[Var = Val].
 
 display_ok_solution(Solution, Variables, MoreSols) :-
-	prettyvars(Solution),
+	prettyvars(Solution, Variables),
 	current_output(StrOut),
 	set_output(user_output),
 	display_solution(Solution, '', Sep),
@@ -425,13 +423,13 @@ ok_solution(Sep, Solution, Variables, MoreSols) :-
 	).
 
 
-% This is alike the one in library(write), except that variable names
+% This is like the one in library(write), except that variable names
 % start with "_"
 
-prettyvars(Term) :-
+prettyvars(Term, Variables) :-
 	collect_vars(Term, Vars0, []),
 	keysort(Vars0, Vars),
-	pretty_vars(Vars, 0).
+	pretty_vars(Vars, Variables, 0, _).
 
 collect_vars(Var) -->
 	{var(Var)}, !, [Var-[]].
@@ -449,30 +447,36 @@ collect_vars_(A0, A, X) -->
 	collect_vars(X1),
 	collect_vars_(A1, A, X).
 
-pretty_vars([],        _).
-pretty_vars([X, Y|Xs], N0) :-
+pretty_vars([], _Variables, N, N).
+pretty_vars([X, Y|Xs], Variables, N0, N2):-
 	X==Y, !,
-	name_var(X, N0),
-	N is N0+1,
-	pretty_vars_(Xs, X, N).
-pretty_vars(['$VAR'('_')-[]|Xs], N0) :-
-	pretty_vars(Xs, N0).
+	X = ('$VAR'(Name)-[]),
+	free_name_var(Name, Variables, N0, N1),
+	pretty_vars_(Xs, X, Variables, N1, N2).
+pretty_vars(['$VAR'('_')-[]|Xs], Variables, N0, N1):-
+	pretty_vars(Xs, Variables, N0, N1).
 
-pretty_vars_([X|Xs], Y, N0) :-
+pretty_vars_([X|Xs], Y, Variables, N0, N1):-
 	X==Y, !,
-	pretty_vars_(Xs, Y, N0).
-pretty_vars_(Xs, _, N0) :-
-	pretty_vars(Xs, N0).
+	pretty_vars_(Xs, Y, Variables, N0, N1).
+pretty_vars_(Xs, _, Variables, N0, N1) :-
+	pretty_vars(Xs, Variables, N0, N1).
 
-name_var('$VAR'(Name)-[], N) :-
-	Letter is N mod 26 + 0'A,
-	( N>=26 ->
-	    Rest is N//26,
+free_name_var(Name, Variables, N0, N1) :-
+	Letter is N0 mod 26 + 0'A,
+	( N0>=26 ->
+	    Rest is N0//26,
 	    number_codes(Rest, Index)
 	; Index = ""
 	),
-	atom_codes(Name, [0'_, Letter|Index]).
-
+	StrName = [0'_, Letter|Index], 
+	\+  dic_get(Variables,StrName,_), !,
+	atom_codes(Name, StrName), 
+	N1 is N0 + 1.
+free_name_var(X, Variables, N0, N2) :-
+	N1 is N0 + 1,
+	free_name_var(X, Variables, N1, N2).
+	
 :- data querylevel/1.
 
 reset_query_level :-
@@ -644,9 +648,6 @@ shell_directive(op(_, _, _)).
 shell_directive(new_declaration(_, _)).
 shell_directive(new_declaration(_)).
 shell_directive(load_compilation_module(_)).
-shell_directive(add_sentence_trans(_)). % TODO: DEPRECATE
-shell_directive(add_term_trans(_)). % TODO: DEPRECATE
-shell_directive(add_goal_trans(_)). % TODO: DEPRECATE
 shell_directive(add_sentence_trans(_, _)).
 shell_directive(add_term_trans(_, _)).
 shell_directive(add_goal_trans(_, _)).
@@ -725,27 +726,11 @@ load_compilation_module(File) :-
 	shell_module(ShM),
 	use_module(File, all, ShM). % In toplevel__scope for goal expansions
 
-% TODO: DEPRECATE
-add_sentence_trans(P) :- % (with default priority)
-	current_fact(shell_module(ShMod)),
-	( translation:add_sentence_trans(ShMod, P, default_priority) ->
-	    true
-	; message(warning, [add_sentence_trans(P), ' - declaration failed'])
-	).
-
 add_sentence_trans(P, Prior) :-
 	current_fact(shell_module(ShMod)),
-	( translation:add_sentence_trans(ShMod, P, Prior) ->
+	( translation:add_sentence_trans_and_init(ShMod, P, Prior) ->
 	    true
 	; message(warning, [add_sentence_trans(P, Prior), ' - declaration failed'])
-	).
-
-% TODO: DEPRECATE
-add_term_trans(P) :- % (with default priority)
-	current_fact(shell_module(ShMod)),
-	( translation:add_term_trans(ShMod, P, default_priority) ->
-	    true
-	; message(warning, [add_term_trans(P), ' - declaration failed'])
 	).
 
 add_term_trans(P, Prior) :-
@@ -753,14 +738,6 @@ add_term_trans(P, Prior) :-
 	( translation:add_term_trans(ShMod, P, Prior) ->
 	    true
 	; message(warning, [add_term_trans(P, Prior), ' - declaration failed'])
-	).
-
-% TODO: DEPRECATE
-add_goal_trans(P) :- % (with default priority)
-	current_fact(shell_module(ShMod)),
-	( goal_trans:add_goal_trans(ShMod, P, default_priority) ->
-	    true
-	; message(warning, [add_goal_trans(P), ' - declaration failed'])
 	).
 
 add_goal_trans(P, Prior) :-

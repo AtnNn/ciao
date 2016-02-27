@@ -3,6 +3,9 @@ package CiaoJava;
 import java.io.*;
 import java.net.*;
 
+// import org.apache.commons.logging.Log;
+// import org.apache.commons.logging.LogFactory;
+
 /**
  * Class for managing communication to Prolog.
  * Starts and handles a connection to a Prolog process via sockets.
@@ -46,6 +49,8 @@ public class PLConnection {
     private static final PLTerm PJ_SYNC = new PLAtom("data");
     private static final PLTerm JP_SYNC = new PLAtom("event");
     private static final PLTerm ID_INTERFACE = new PLInteger(0);
+    
+    // final Log LOG = LogFactory.getLog(PLConnection.class);
 
     /**
      * Creates a new <code>PLConnection</code> object, establishing
@@ -166,7 +171,9 @@ public class PLConnection {
     private void start(String where) throws IOException, PLException {
 	Runtime rt = Runtime.getRuntime();
 
-	plProc = rt.exec(where);
+	plProc = rt.exec(where); // runs plServer
+	plProcHasNotDied(true);
+	
 	OutputStream pipeOut = plProc.getOutputStream();
 	PrintStream out = new PrintStream(pipeOut);
 	plInterpreter = new PLInterpreter(this);
@@ -197,6 +204,8 @@ public class PLConnection {
 	Runtime rt = Runtime.getRuntime();
 
 	plProc = rt.exec(where);
+	plProcHasNotDied(true);
+	
 	OutputStream pipeOut = plProc.getOutputStream();
 	PrintStream out = new PrintStream(pipeOut);
 	plInterpreter = new PLInterpreter(this);
@@ -244,6 +253,40 @@ public class PLConnection {
 	System.out.println(port + ".");
 	System.out.flush();
 	bindSockets(System.out);
+    }
+    
+    /**
+     * Tests if the pl Process has died.
+     * In this case the java process hangs indefinitely, a not expected behavior.
+     * ifDiedThrowException: Switches between throw exception or return true when died.
+     *
+     * @exception IOException if there are I/O problems.
+     * @exception PLException if there are problems regarding the Prolog
+     *                        process.
+     */
+    private Boolean plProcHasNotDied (Boolean ifDiedThrowException) throws PLException {
+    	// LOG.info("Testing if plProc has died. ");
+    	Boolean hasDied;
+    	try {
+    		// LOG.info("Waiting 1 sec for plServer to load.");
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// LOG.info("Interruption received when waiting for plServer to load.");
+			e.printStackTrace();
+		}
+    	try{
+    		plProc.exitValue(); // asks for plServer return value
+    		// LOG.info("plProc has died. ERROR. ");
+    		if (ifDiedThrowException) {
+    			throw new PLException("ERROR: plServer process has died.");
+    		}
+    		hasDied = true;
+    	}
+    	catch (IllegalThreadStateException ex) { // if it is still running, all is ok.
+    		// LOG.info("plProc has NOT died. OK. ");
+    		hasDied= false;
+    	}
+    	return hasDied;
     }
 
     /**

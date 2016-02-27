@@ -23,11 +23,13 @@
 
 #include "configure.h"
 #include "termdefs.h"
-#include "streams_defs.h"
 #include "debug.h"
 
 #include "own_malloc_defs.h"
-#include "mmap_defs.h"
+#if defined(HAS_MMAP)
+#  include "own_mmap.h"
+#endif
+
 
 #if defined(USE_OWN_MALLOC)
 
@@ -100,33 +102,14 @@ void print_mem_map()
 tagged_t *mmap_base = NULL;
 
 void init_own_malloc() {
-  tagged_t *returned_base;
   int mmap_size = AddressableSpace;       // In bytes
   MEM_BLOCK *new_block;
-  int fd_mmap_file = -1;
-  off_t zero_offset = 0;
 
-  // Chunks of code identical to those in configure.c - keep them in sync!
-#if !defined(ANONYMOUS_MMAP)
-  char *mmap_file = MMAP_FILE;
-
-  if ((fd_mmap_file = open(MMAP_FILE, O_RDWR|O_CREAT)) < 0) {
-    fprintf(stderr,
-	    "\n\nPANIC: Error opening map file in own_malloc_linear.c\n\n");
-    exit(1);
-  }
-#endif
 
   mmap_base = (tagged_t *)MallocBase; 
-  returned_base = (tagged_t *)mmap((char *)mmap_base, 
-		       mmap_size,
-		       PROT_READ|PROT_WRITE,
-		       MMAP_FLAGS, 
-		       fd_mmap_file,
-		       zero_offset);
-  if (returned_base != mmap_base) {
+ 
+  if (own_fixed_mmap((void *) mmap_base, mmap_size)) {
     fprintf(stderr, "PANIC: cannot mmap() own memory at %p!!!\n", mmap_base);
-    fprintf(stderr, "PANIC: returned pointer is %p!!!\n", returned_base);
     exit(-1);
   }
   // What follows is basically a create_new_block which allocates 

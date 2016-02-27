@@ -1,5 +1,5 @@
-include ../../../SETTINGS
-include ../../../SHARED
+CIAOBUILDDIRtemp=../../../../build
+include $(CIAOBUILDDIRtemp)/CONFIG_mkf
 
 compile:
 	$(SETLOCALCIAO) $(CIAOC) -x phone_book

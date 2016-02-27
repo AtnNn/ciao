@@ -2,7 +2,7 @@
 
 :- doc(filetype, part).
 
-:- doc(title,"PART X - Miscellaneous standalone utilities").
+:- doc(title,"Other miscellaneous standalone utilities").
 
 :- doc(subtitle_extra,"@bf{The Ciao System Documentation Series}").
 :- doc(subtitle_extra,"Technical Report CLIP X/98.1").

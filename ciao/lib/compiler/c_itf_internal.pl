@@ -86,6 +86,19 @@ define_flag(itf_format,             [f,   r],   f). % f=fast{read,write}, r=prol
 define_flag(compress_lib,           [yes, no],  no).
 define_flag(read_assertions,        [yes, no],  yes).
 define_flag(use_compile_packages,   [yes, no],  yes).
+% runtime checks related flags:
+define_flag(runtime_checks,          [yes, no],                no).
+define_flag(rtchecks_level,          [inner, exports],         inner).
+define_flag(rtchecks_trust,          [yes, no],                yes).
+define_flag(rtchecks_entry,          [yes, no],                yes).
+define_flag(rtchecks_exit,           [yes, no],                yes).
+define_flag(rtchecks_test,           [yes, no],                no).
+define_flag(rtchecks_inline,         [yes, no],                no).
+define_flag(rtchecks_asrloc,         [yes, no],                yes).
+define_flag(rtchecks_predloc,        [yes, no],                yes).
+define_flag(rtchecks_callloc,        [no, literal, predicate], predicate).
+define_flag(rtchecks_namefmt,        [short, long],            long).
+define_flag(rtchecks_abort_on_error, [yes, no],                no).
 
 % Keep asertions after reading
 % TODO: This is a temporal hack for assertions/assrt_lib. It needs better integration.
@@ -482,7 +495,7 @@ process_file_(Base, PlName, Dir, Mode, Type, TreatP, StopP, SkipP, RedoP) :-
 	; Check = static -> true
 	; new_file_status(Base, PlName, Dir, Type, Status)
 	),
-	process_file_2(Base, Status, PlName, Dir, Mode,
+	process_file_2(Base, Status, PlName, Dir, Mode, Type,
 	               TreatP, StopP, SkipP, RedoP),
 	asserta_fact(processed(Base, Mode)).
 
@@ -498,9 +511,9 @@ new_file_status(Base, PlName, Dir, Type, Status) :-
 	).
 
 :- meta_predicate
-	process_file_2(+, +, +, +, +, pred(1), pred(1), pred(1), pred(1)).
+	process_file_2(+, +, +, +, +, +, pred(1), pred(1), pred(1), pred(1)).
 
-process_file_2(Base, Status, PlName, Dir, Mode, TreatP, StopP, SkipP, RedoP) :-
+process_file_2(Base, Status, PlName, Dir, Mode, Type, TreatP, StopP, SkipP, RedoP) :-
 	( StopP(Base) ->
 	    do_not_treat(Status, Base, NewStatus)
 	; handle_related_files(Base, Mode),
@@ -512,10 +525,10 @@ process_file_2(Base, Status, PlName, Dir, Mode, TreatP, StopP, SkipP, RedoP) :-
 	      ; Status = itf_read(ItfName,ItfTime),
 	        changed_dependences(Base, ItfTime)
 	      ) ->
-	        read_record_file(PlName, Base, Dir, any),
+	        read_record_file(PlName, Base, Dir, Type), % TODO: Type was 'any'
 	        compute_itf_treat_file(Base, PlName, Dir, ItfName, TreatP)
 	    ; RedoP(Base) -> % Do not regenerate .itf
-	        read_record_file(PlName, Base, Dir, any),
+	        read_record_file(PlName, Base, Dir, Type), % TODO: Type was 'any'
 	        check_itf_treat_file(Base, PlName, TreatP)
 	    ; true
 	    ),
@@ -721,7 +734,7 @@ read_record_file_(PlName, Base, Type) :-
 	'$open'(PlName, r, Stream),
 	skip_shell_lines(Stream),
 	read_sentence(Stream, Base, Sentence),
-	expand_module_decl(Sentence, Base, module(Module, Exports, Package),
+	expand_module_decl(Sentence, Base, Type, module(Module, Exports, Package),
 	    Rest),
 	(record_module_decl(Sentence, Module, Base, PlName) -> true ; true),
 	(Sentence = sentence(_, _, _, Ln0, Ln1) -> true ; Ln0 = 1, Ln1 = 1),
@@ -744,6 +757,8 @@ read_record_file_(PlName, Base, Type) :-
 	  fail
 	),
 	!,
+	%log_translations(Base, Module, term),
+	%log_translations(Base, Module, sentence),
 	assert_dyn_decl(Base, '$current_module', 1, dynamic, 1, 1),
 	assert_dyn_decl(Base, '$meta_args', 2, dynamic, 1, 1),
 	assert_dyn_decl(Base, '$imports', 5, dynamic, 1, 1),
@@ -817,8 +832,22 @@ process_expanded_data_list(Data0, Base, M, VNs, Sings, Pl, Ln0, Ln1) :-
 	; true
 	).
 
-% :- export(expand_module_decl/4).
-expand_module_decl(Sentence, Base, Decl2, Rest) :-
+:- export(expand_module_decl/5).
+expand_module_decl(Sentence, Base, Type, Decl2, Rest) :-
+	% TODO: This code use required by CiaoPP (not used by Ciao)
+	%       in p_asr:process_main_files_ when treating
+	%       packages instead of modules. I am not sure that
+        %       this should be the way to implement it. (JFMC)
+	Type = package, !,
+	check_include_decl(package, Base, Sentence, Sentences),
+	( Sentences = [Sentence2] ->
+	    expand_module_decl(Sentence2, Base, any, Decl2, Rest)
+	; % TODO: duplicated in the next clause
+	  default_package(DefaultPackage),
+	  user_module_decl(Base, DefaultPackage, Decl2),
+	  Rest = Sentences
+	).
+expand_module_decl(Sentence, Base, _Type, Decl2, Rest) :-
 	( Sentence = sentence((:- Decl), _, _, _, _),
 	  normalize_module_decl(Decl, Base, Decl2) ->
 	    Rest = []
@@ -900,6 +929,7 @@ call_list_rev([G|Gs]) :-
 	call_list_rev(Gs),
 	call(G).
 
+:- export(read_sentence/3).
 read_sentence(Stream, Base, Sentence) :-
 	repeat,
 	catch(do_read_sentence(Stream, Sentence),
@@ -1054,16 +1084,17 @@ is_known_decl(push_prolog_flag(_, _)).
 is_known_decl(pop_prolog_flag(_)).
 is_known_decl(new_declaration(_)).
 is_known_decl(new_declaration(_, _)).
-is_known_decl(add_sentence_trans(_)). % TODO: DEPRECATE
-is_known_decl(add_term_trans(_)). % TODO: DEPRECATE
-is_known_decl(add_clause_trans(_)). % TODO: DEPRECATE
-is_known_decl(add_goal_trans(_)). % TODO: DEPRECATE
 is_known_decl(add_sentence_trans(_,_)).
 is_known_decl(add_term_trans(_,_)).
 is_known_decl(add_clause_trans(_,_)).
 is_known_decl(add_goal_trans(_,_)).
 is_known_decl(initialization(_)).
 is_known_decl(on_abort(_)).
+% Deprecated declarations (show warning)
+is_known_decl(add_sentence_trans(_)).
+is_known_decl(add_term_trans(_)).
+is_known_decl(add_clause_trans(_)).
+is_known_decl(add_goal_trans(_)).
 
 process_decl(module(_,_),_Base,_M,_VNs, Ln0, Ln1) :- !,
 	compiler_error(Ln0, Ln1, nonstarting(module,2)).
@@ -1126,38 +1157,48 @@ process_decl(new_declaration(S), Base,_M,_VNs, Ln0, Ln1) :- !,
 	do_new_decl(S, off, Base, Ln0, Ln1).
 process_decl(new_declaration(S, ITF), Base,_M,_VNs, Ln0, Ln1) :- !,
 	do_new_decl(S, ITF, Base, Ln0, Ln1).
-% TODO: DEPRECATE
-process_decl(add_sentence_trans(P), Base, M,_VNs, Ln0, Ln1) :- !,
-	do_add_sentence_trans(M, P, default_priority, Base, Ln0, Ln1).
 process_decl(add_sentence_trans(P, Prior), Base, M,_VNs, Ln0, Ln1) :- !,
 	do_add_sentence_trans(M, P, Prior, Base, Ln0, Ln1).
-% TODO: DEPRECATE
-process_decl(add_term_trans(P), Base, M,_VNs, Ln0, Ln1) :- !,
-	do_add_term_trans(M, P, default_priority, Base, Ln0, Ln1).
 process_decl(add_term_trans(P, Prior), Base, M,_VNs, Ln0, Ln1) :- !,
 	do_add_term_trans(M, P, Prior, Base, Ln0, Ln1).
 % These four processed from clause_of
-process_decl(add_clause_trans(_),_Base,_M,_VNs,_Ln0,_Ln1) :- !. % TODO: DEPRECATE
 process_decl(add_clause_trans(_, _),_Base,_M,_VNs,_Ln0,_Ln1) :- !.
-process_decl(add_goal_trans(_),_Base,_M,_VNs,_Ln0,_Ln1) :- !. % TODO: DEPRECATE
 process_decl(add_goal_trans(_, _),_Base,_M,_VNs,_Ln0,_Ln1) :- !.
 process_decl(initialization(_),_Base,_M,_VNs,_Ln0,_Ln1) :- !.
 process_decl(on_abort(_),_Base,_M,_VNs,_Ln0,_Ln1) :- !.
+%
+process_decl(Decl, _Base, _M,_VNs, Ln0, Ln1) :-
+	deprecated_decl_error(Decl, Msg), !,
+	functor(Decl, F, A),
+	compiler_error(Ln0, Ln1, deprecated_decl_error(F, A, [' '|Msg])).
+% User-defined declarations
 process_decl(D, Base,_M,_VNs,_Ln0,_Ln1) :-
 	new_decl(Base, D, ITF), !,
 	( ITF = on -> assertz_fact(decl(Base, D)) ; true).
 
-do_use_package([], _, _, _, _) :- !.
-do_use_package([F|Fs], Base, Module, Ln0, Ln1) :- !,
-	do_use_package(F, Base, Module, Ln0, Ln1),
-	do_use_package(Fs, Base, Module, Ln0, Ln1).
+% Deprecated declarations where recovery is not possible
+deprecated_decl_error(add_clause_trans(_), 'Use add_clause_trans/2').
+deprecated_decl_error(add_goal_trans(_), 'Use add_goal_trans/2').
+deprecated_decl_error(add_sentence_trans(_), 'Use add_sentence_trans/2').
+deprecated_decl_error(add_term_trans(_), 'Use add_term_trans/2').
+
 do_use_package(F, Base, Module, Ln0, Ln1) :-
+	% Disable this type of warnings in packages:
+	do_push_pl_flag(unused_pred_warnings, no, Base, Ln0, Ln1),
+	do_use_package_(F, Base, Module, Ln0, Ln1),
+	do_pop_pl_flag(unused_pred_warnings, Base, Ln0, Ln1).
+
+do_use_package_([], _, _, _, _) :- !.
+do_use_package_([F|Fs], Base, Module, Ln0, Ln1) :- !,
+	do_use_package_(F, Base, Module, Ln0, Ln1),
+	do_use_package_(Fs, Base, Module, Ln0, Ln1).
+do_use_package_(F, Base, Module, Ln0, Ln1) :-
 	package_file(F, P), !,
 	( current_fact(package(Base,P)) -> true
 	; assertz_fact(package(Base,P)),
 	  do_include(package, P, Base, Module, Ln0, Ln1)
 	).
-do_use_package(F, _, _, Ln0, Ln1) :-
+do_use_package_(F, _, _, Ln0, Ln1) :-
 	compiler_error(Ln0, Ln1, bad_package_file(F)).
 
 package_file(F, P) :-
@@ -1494,8 +1535,8 @@ do_pop_pl_flag(Flag, Base, Ln0, Ln1) :-
 	).
 
 do_add_sentence_trans(M, P, Prior, Base, Ln0, Ln1) :-
-	( add_sentence_trans(M, P, Prior) ->
-	    asserta_fact(undo_decl(Base, add_sentence_trans_no_ini(M, P, Prior),
+	( add_sentence_trans_and_init(M, P, Prior) ->
+	    asserta_fact(undo_decl(Base, add_sentence_trans(M, P, Prior),
 	                                 del_sentence_trans(M)))
 	; warning_failed_decl(Ln0, Ln1, add_sentence_trans(P, Prior))
 	).
@@ -1988,7 +2029,8 @@ compiler_error_data(incompatible_decl(F,A,Decl,Decl2),
 	               ' but it was already defined ',Decl2]).
 compiler_error_data(module_redefined(OtherFile, _SourceFile, M),
 	['Module ',M,' already defined in source ',OtherFile]).
-
+compiler_error_data(deprecated_decl_error(F,A,Msg),
+	['Declaration ',~~(F/A), ' is deprecated.'|Msg]).
 
 %%% --- Compilation to .po --- %%%
 
@@ -2181,10 +2223,15 @@ compiler_pass(Source, Base, Module, Mode, Ok) :-
 	compile_dyn_decls(Base, Module, Mode),
 	activate_translation(Base, Module, add_clause_trans),
 	activate_translation(Base, Module, add_goal_trans),
+	%log_translations(Base, Module, clause),
+	%log_translations(Base, Module, goal),
 	compile_goal_decl(initialization, Base, Module, Mode),
 	compile_goal_decl(on_abort, Base, Module, Mode),
 	compile_clauses(Base, Module, Mode),
-	record_imports_dependencies(Base, Module),
+	( current_prolog_flag(unused_pred_warnings, yes) ->
+	  record_imports_dependencies(Base, Module)
+	; true
+	),
 	( current_prolog_flag(read_assertions, yes) ->	
 	  check_assertions_syntax(Module)
 	; true
@@ -2206,17 +2253,6 @@ compiler_pass(Source, Base, Module, Mode, Ok) :-
 	cleanup_upw_db(Module),
 	cleanup_compilation_data.
 
-% TODO: DEPRECATE
-activate_translation(Base, Module, Name) :-
-	% translation with no priority 
-	functor(Decl, Name, 1),
-	arg(1, Decl, Pred),
-	clause_of(Base, 1, Decl, _, Src, Ln0, Ln1),
-	  functor(Goal, Name, 2),
-	  arg(1, Goal, Module),
-	  arg(2, Goal, Pred),
-	  do_add_trans(Goal, Decl, Src, Ln0, Ln1),
-	  fail.
 activate_translation(Base, Module, Name) :-
 	% translation with priority 
 	functor(Decl, Name, 2),
@@ -2240,9 +2276,7 @@ do_add_trans(Goal, Decl, Src, Ln0, Ln1) :-
 	).
 
 % (Avoid meta-expansions)
-call_trans(add_clause_trans(M, Tr)) :- add_clause_trans(M, Tr, default_priority). % TODO: deprecate
 call_trans(add_clause_trans(M, Tr, Prior)) :- add_clause_trans(M, Tr, Prior).
-call_trans(add_goal_trans(M, Tr)) :- add_goal_trans(M, Tr, default_priority). % TODO: deprecate
 call_trans(add_goal_trans(M, Tr, Prior)) :- add_goal_trans(M, Tr, Prior).
 
 :- data mexpand_error/0.
@@ -3268,3 +3302,4 @@ location(Loc) :- (location(Src, Ln0, Ln1) -> Loc = loc(Src, Ln0, Ln1) ; true).
 
 signal_compilation_error :- 
 	send_silent_signal(compilation_error).
+

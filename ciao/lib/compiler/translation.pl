@@ -2,8 +2,8 @@
         expand_term/4,
         expand_clause/6,
         goal_trans/3,
+        add_sentence_trans_and_init/3,
         add_sentence_trans/3,
-        add_sentence_trans_no_ini/3,
         del_sentence_trans/1,
         add_term_trans/3,
         del_term_trans/1,
@@ -13,8 +13,8 @@
         del_goal_trans/1
         ], [assertions, nortchecks]).
 
+:- meta_predicate add_sentence_trans_and_init(+, spec, +).
 :- meta_predicate add_sentence_trans(+, spec, +).
-:- meta_predicate add_sentence_trans_no_ini(+, spec, +).
 :- meta_predicate add_term_trans(+, spec, +).
 :- meta_predicate add_clause_trans(+, spec, +).
 
@@ -32,15 +32,15 @@ expand_term(X0, M, Dict, X2) :-
 %   translations for @var{M}"
 :- data sentence_translations/2.
 
-% TODO: Rename by add_sentence_trans_and_init?
-add_sentence_trans(M, S, Prior) :-
+% (like add_sentence_trans/3, but invokes translation of '0', used for
+%  translation initialization)
+add_sentence_trans_and_init(M, S, Prior) :-
 	check_priority(Prior),
         meta_spec_trans(M, S, Tr),
         do_translation(Tr, 0, [], _), % Initialize transl. for this module
         record_sentence_trans(M, Tr, Prior).
 
-% TODO: Rename by add_sentence_trans?
-add_sentence_trans_no_ini(M, S, Prior) :-
+add_sentence_trans(M, S, Prior) :-
 	check_priority(Prior),
         meta_spec_trans(M, S, Tr),
         record_sentence_trans(M, Tr, Prior).
@@ -193,3 +193,18 @@ comp_goal(T, Dict, G) :-
         arg(3, G, M),
         arg(4, G, Dict).
 
+% ===========================================================================
+
+% Enable to display a log of used translations
+
+% :- export(log_translations/3).
+% log_translations(Base, M, What) :-
+% 	( ( What = term -> term_translations(M, KVs)
+% 	  ; What = sentence -> sentence_translations(M, KVs)
+% 	  ; What = goal -> findall(K-V, goal_trans(M, V, K), KVs)
+% 	  ; What = clause -> clause_translations(M, KVs)
+% 	  ) -> true
+% 	; KVs = []
+% 	),
+% 	display(user_error, trpackagesfor(Base, M, What, KVs)), nl(user_error),
+% 	nl(user_error).

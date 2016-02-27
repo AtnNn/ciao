@@ -7,9 +7,9 @@
 :- use_module(library(aggregates)).
 :- use_module(library(system)).
 :- use_module(library(file_utils)).
-:- use_module(library(make(system_extra))).
+:- use_module(library(system_extra)).
 
-:- use_module(library(distutils(dirutils)), [path_name/2, get_abs_path/2]).
+:- use_module(library(dirutils), [path_name/2, get_abs_path/2]).
 
 :- use_module(library(lists)).
 :- use_module(library(terms), [atom_concat/2]).
@@ -50,7 +50,11 @@ fmt_html_template(File, Args0) := R :-
 	%
 	append(Args0, WS, Args),
 	%
-	String = ~file_to_string(~get_abs_path(~locate_tmpl(File))),
+	( String = ~file_to_string(~get_abs_path(~locate_tmpl(File))) ->
+	    true
+	; % TODO: this should be a normal user error, not a bug
+          throw(error(html_template_not_found(File), fmt_html_template/3))
+	),
 	html_template(String, HtmlR0, FreeDict0),
 	subst_params_in_strings(HtmlR0, HtmlR1, FreeDict0, FreeDict),
 	html_to_doctree(HtmlR1, R),
@@ -59,20 +63,21 @@ fmt_html_template(File, Args0) := R :-
 
 locate_tmpl(A, B) :-
 	BR = ~setting_value(website_root_dir),
-	WD = ~atom_concat(BR, 'tmpl/'),
+	WD = ~atom_concat(BR, '/tmpl/'),
 	atom_concat([WD, A], B).
 
 % Connect values in the first list with the mapping B
 connect_params([], _Args).
 connect_params([Var=Value|As], Args) :-
 	( member(Var=V0, Args) -> true
-	; throw(parameter_not_found(Var))
+	; % TODO: this should be a normal user error, not a bug
+	  throw(error(tmpl_parameter_not_found(Var), connect_params/2))
 	),
 	( param_type(Var, Type) ->
 	    ( Type = atom, atom(V0) -> atom_codes(V0, V1), V = raw(V1)
 	    ; Type = string -> V = raw(V0) % TODO: raw or string_enc?
 	    ; Type = doctree -> V = V0
-	    ; throw(bad_param_type(Type, V0))
+	    ; throw(error(bad_param_type(Type, V0), connect_params/2))
 	    )
 	; V = V0 % assume doctree
 	),
@@ -133,7 +138,7 @@ html_to_doctree('$'(E, Attrs0), htmlenv1(E, Attrs)) :- !,
 html_to_doctree(declare(X), htmldecl(X)) :- !.
 html_to_doctree(comment(X), htmlcomment(X)) :- !.
 html_to_doctree(E, _) :-
-	throw(unknown_html(E)).
+	throw(error(domain_error, html_to_doctree/2-env(['E'=E]))).
 
 attrs_to_doctree([(V=Val0)|Ts0], [attr(V,Val)|Ts]) :- !,
 	html_to_doctree(Val0, Val),

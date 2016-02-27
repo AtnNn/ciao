@@ -13,7 +13,7 @@
    You need to install the BLT package in your computer.  BLT is an
    extension to the Tk toolkit and it does not require any patching of
    the Tcl or Tk source files. You can find it in
-   @uref{http://www.tcltk.com/blt/index.html}
+   @href{http://www.tcltk.com/blt/index.html}
 
    Basically, when the user invokes a predicate, the library (internally)
    creates a bltwish interpreter and passes the information

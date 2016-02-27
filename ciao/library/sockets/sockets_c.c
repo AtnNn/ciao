@@ -3,6 +3,7 @@
 #include "datadefs.h"
 #include "support.h"
 #include "support_defs.h"
+#include "streams_defs.h"
 #include "stacks_defs.h"
 
 #if defined(LINUX) || defined(DARWIN) || defined(BSD)

@@ -76,7 +76,7 @@ open_internal(FileName, Mode, S, Opts, N) :-
 	  throw(error(domain_error(open_option_list, Opts), open/N-4))
 	).
 open_internal(_, _, S, _, N) :- nonvar(S), !,
-        throw(error(type_error(variable), open/N-3)).
+        throw(error(uninstantiation_error(S), open/N-3)).
 open_internal(FileName, _, _, _, N) :- var(FileName), !,
         throw(error(instantiation_error, open/N-1)).
 open_internal(FileName, _, _, _, N) :- nonvar(FileName), !,

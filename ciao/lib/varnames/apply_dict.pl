@@ -1,5 +1,6 @@
-:- module(apply_dict, [apply_dict/3, select_applicable/3, select_applicable/4],
-	    [assertions, basicmodes, dcg, hiord, fsyntax]).
+:- module(apply_dict, [apply_dict/3, apply_dict/4, select_applicable/3,
+		select_applicable/4],
+	    [assertions, basicmodes, dcg, hiord, fsyntax, unittestprops]).
 
 :- use_module(library(varnames(dict_types))).
 
@@ -43,7 +44,23 @@ select_applicable_args(N, Term, Dict) -->
 
 :- pred apply_dict(?term, +varnamesl, ?term).
 
-apply_dict(Var0, Dict, Var) :-
+apply_dict(Term, Dict, PrettyTerm) :-
+	apply_dict(Term, Dict, no, PrettyTerm).
+
+:- load_test_module(library(varnames(dict_types))).
+
+:- test apply_dict(T, D, Idemp, _) : (T=f(A, B), Idemp=yes, D=['C'=A, 'D'=B]).
+
+:- prop apply_dict(?term, +varnamesl, ?, ?term).
+
+:- success apply_dict(?Term0, +Dict, Idemp, Term)
+	: (varnamesl(Dict), Idemp = yes)
+	=> (apply_dict(Term, Dict, Idemp, Term1), Term = Term1)
+
+# "The idempotent property: multiple applications of apply_dict/4 over
+	any term gives the same term.".
+
+apply_dict(Var0, Dict, _, Var) :-
 	var(Var0),
 	!,
 	(
@@ -55,25 +72,31 @@ apply_dict(Var0, Dict, Var) :-
 	;
 	    Var = Var0
 	).
-apply_dict('$VAR'(Term0), Dict, '$VAR'(Term)) :-
+apply_dict('$VAR'(Term0), Dict, Idemp, '$VAR'(Term)) :-
 	!,
-	( atom(Term0) ->
-	    atom_concat('\'',  Term0, Term1),
-	    atom_concat(Term1, '\'',  Term2),
-	    Term = '$VAR'(Term2)
-	;
-	    apply_dict(Term0, Dict, Term)
+	( atom(Term0) -> escape_varname(Idemp, Term0, Term)
+	; apply_dict(Term0, Dict, Idemp, Term)
 	).
-apply_dict(Term0, Dict, Term) :-
+apply_dict(Term0, Dict, Idemp, Term) :-
 	functor(Term0, F, A),
 	functor(Term,  F, A),
-	apply_dict_args(A, Term0, Dict, Term).
+	apply_dict_args(A, Term0, Dict, Idemp, Term).
 
-apply_dict_args(0, _,     _,    _) :- !.
-apply_dict_args(N, Term0, Dict, Term) :-
+escape_varname(yes, Term,  Term).
+escape_varname(no,  Term0, '$VAR'(Term)) :-
+	escape_atom(Term0, Term).
+
+escape_atom(Atom0, Atom) :-
+	( atom_concat('''', _, Atom0) -> Atom0 = Atom1
+	; atom_concat('''', Atom0, Atom1) ),
+	( atom_concat(_, '''', Atom1) -> Atom = Atom1
+	; atom_concat(Atom1, '''', Atom) ).
+
+apply_dict_args(0, _,     _,    _,     _) :- !.
+apply_dict_args(N, Term0, Dict, Idemp, Term) :-
 	arg(N, Term0, Arg0),
 	arg(N, Term,  Arg),
-	apply_dict(Arg0, Dict, Arg),
+	apply_dict(Arg0, Dict, Idemp, Arg),
 	!,
 	N1 is N - 1,
-	apply_dict_args(N1, Term0, Dict, Term).
+	apply_dict_args(N1, Term0, Dict, Idemp, Term).

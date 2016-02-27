@@ -11,6 +11,13 @@
 
 % ---------------------------------------------------------------------------
 
+:- export(all_vars/1).
+% All elements of the list are variables
+all_vars([]).
+all_vars([H|T]) :- var(H), all_vars(T).
+
+% ---------------------------------------------------------------------------
+
 % TODO: replace by a predicate that opens a file, and closes it if
 %       fails? call_cleanup?
 
@@ -34,7 +41,7 @@ read_stream(IS, Content) :-
 	  read_stream(IS, Rest)
 	).
 
-:- use_module(library(make(system_extra)), [try_finally/3]).
+:- use_module(library(system_extra), [try_finally/3]).
 
 % ---------------------------------------------------------------------------
 
@@ -47,7 +54,7 @@ ascii_blank_lines(N,[0'\n | R]) :-
 % ---------------------------------------------------------------------------
 % (call external commands from lpdoc)
 
-:- use_module(library(make(system_extra)), [do/2, do/4, (-)/1]).
+:- use_module(library(system_extra), [do/2, do/4, (-)/1]).
 :- use_module(library(lists), [append/3, select/3]).
 
 :- export(sh_exec/2).

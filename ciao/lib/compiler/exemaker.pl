@@ -51,21 +51,10 @@
 % Extension for ciao executables in Win32
 :- include(win_exec_ext).
 
-define_flag(executables,      [static, eagerload, lazyload], eagerload).
-define_flag(check_libraries,  [on, off],                     off).
-define_flag(self_contained,   atom,                          none).
-define_flag(compress_exec,    [yes, no],                     no).
-define_flag(runtime_checks,   [yes, no],                     no).
-define_flag(rtchecks_level,   [inner, exports],              inner).
-define_flag(rtchecks_trust,   [yes, no],                     yes).
-define_flag(rtchecks_entry,   [yes, no],                     yes).
-define_flag(rtchecks_exit,    [yes, no],                     yes).
-define_flag(rtchecks_test,    [yes, no],                     no).
-define_flag(rtchecks_inline,  [yes, no],                     no).
-define_flag(rtchecks_asrloc,  [yes, no],                     yes).
-define_flag(rtchecks_predloc, [yes, no],                     yes).
-define_flag(rtchecks_callloc, [no, literal, predicate],      predicate).
-define_flag(rtchecks_namefmt, [short, long],                 long).
+define_flag(executables,     [static, eagerload, lazyload], eagerload).
+define_flag(check_libraries, [on, off],                     off).
+define_flag(self_contained,  atom,                          none).
+define_flag(compress_exec,   [yes, no],                     no).
 
 :- data ok_lazy/1.
 
@@ -433,7 +422,7 @@ copy_header(none) :- !, % OPA
 	copy_stdout(AbsoluteFileName).
 %MIER	copy_stdout(library(compiler(header))).
 copy_header(TargetEng) :-
-	get_engine(TargetEng, _, _, Engine),
+	get_engine_file(TargetEng, Engine),
 	verbose_message(['{Using ', Engine, ' for executable}']),
 	!, % Found it, go ahead
 	copy_stdout(Engine).
@@ -461,7 +450,7 @@ generate_batch_Win32(ExecName) :-
 	),
 	get_arch(Arch),
 	atom_concat('Win32', Arch, TargetEng),
-	get_engine(TargetEng, _, _, Engine),
+	get_engine_file(TargetEng, Engine),
 	winpath(Engine, EngineP),
 	atom_concat(Base, BatExt, BatName),
 	open(BatName, write, Stream),

@@ -2,7 +2,8 @@
 
 :- load_compilation_module(library(byrdbox(byrdbox_expand))).
 
-:- add_sentence_trans(expand_byrdbox/3).
+% note: after 'tracing' expansion
+:- add_sentence_trans(expand_byrdbox/3, 9060).
 
 :- use_module(library(byrdbox(byrd))).
 

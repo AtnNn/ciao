@@ -1,3 +1,4 @@
+% TODO: See the 'todo' comments in this file
 :- module(test, [delete_non_ground/3,foo/1], [assertions,regtypes,isomodes]).
 :- use_package(doccomments).
 :- use_package(expander).
@@ -7,6 +8,7 @@
 %
 %! author:    Daniel Cabeza
 %! author:    Manuel Carro
+%! credits:   @bf{The Ciao Team}
 %
 %! summary:   
 %
@@ -27,25 +29,33 @@
 %  absolute_file_name/2 on names of files or directories taken
 %  as arguments. 
 % 
-
+%
 %! hide: foo/1
 %! nodoc: assertions
 %! hide: [bar/1,too/2]
+%! doinclude: eq/2
+% 
 
 :- pred foo/1.
 
 foo(_).
 
-%!  delete_non_ground(L1,E,L2): A nice predicate, L2 is ... .
+% TODO: Does not work (see bug in process_comments/2)
+%
+% %! delete_non_ground(L1,E,L2): A nice predicate, L2 is ... .
 
-%!  delete_non_ground/3: A nice predicate.
+%% Works: 
+%! delete_non_ground/3: A nice predicate.
 
 :- pred delete_non_ground(L1,_E,L2) => (list(L1), list(L2)).
 
-%!  L2 is L1 without the ocurrences of E. E can be a nonground term so
-%   that all the elements in L1 it unifies with will be deleted.
+% TODO: We would like it to be:
+% %!   L2 is L1 without the ocurrences of E. E can be a nonground term so
+% %   that all the elements in L1 it unifies with will be deleted.
+% TODO: In order to do this, we must detect strings followed by : as 
+% commands and other things as strings.
 
-:- true comp delete_non_ground/3 + sideff(true).
+:- true comp delete_non_ground/3 + sideff(soft).
 :- true comp delete_non_ground(L1,E,L2) : (ground(L1), ground(L2)) + eval.
 
 delete_non_ground([A], _, [A]) :-
@@ -56,6 +66,11 @@ delete_non_ground([Head|Tail], Element, Rest) :-
 	delete_non_ground(Tail, Element, Rest).
 delete_non_ground([Head|Tail], Element, [Head|Rest]) :-
 	delete_non_ground(Tail, Element, Rest).
+
+
+:- pred eq(@,@).
+
+%! eq/2: Checks arguments unify without biding them.
 
 eq(A, B):- \+ \+ A = B.
 

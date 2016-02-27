@@ -1,6 +1,6 @@
 :- module(term_basic,
         [(=)/2, (\=)/2, arg/3, functor/3, (=..)/2, non_empty_list/1,
-         copy_term/2, copy_term_nat/2, 'C'/3],
+         copy_term/2, copy_term_nat/2, cyclic_term/1, 'C'/3],
         [assertions, nativeprops, isomodes, nortchecks]).
 
 :- doc(title,"Basic term manipulation").
@@ -130,3 +130,8 @@ list_functor([A|B]):-
 
 non_empty_list([_|B]):-
 	list(B).
+
+:- pred cyclic_term(T) # "True if @var{T} is cyclic (infinite).".
+
+:- impl_defined(cyclic_term/1). 
+

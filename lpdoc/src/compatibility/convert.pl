@@ -259,10 +259,12 @@ generate_atom_concat__( [ A | As ] , AT ) :-
 
 transform_option( "FILEPATHS"         , "filepath"               ) :- !.
 transform_option( "SYSTEMPATHS"       , "systempath"             ) :- !.
+% (obsolete)
 transform_option( "MAIN"              , "mainfile"               ) :- !.
 transform_option( "COMPONENTS"        , "component"              ) :- !.
 transform_option( "COMPOPTS"          , "fileoption(~component)" ) :- !.
 transform_option( "MAINOPTS"          , "fileoption(~mainfile)"  ) :- !.
+%
 transform_option( "DOCFORMATS"        , "docformat"              ) :- !.
 transform_option( "INDICES"           , "index"                  ) :- !.
 transform_option( "BIBFILES"          , "bibfile"                ) :- !.
@@ -290,10 +292,10 @@ do_transform_option(A, B) :-
 %% To subsitute strings
 %%%%%%%%%%%%%%%%%%%%%%%
 
-string_subs( "/home/clip/Systems/ciao"  , "~component_src(ciao)"           ).
-string_subs( "/home/clip/Systems/lpdoc" , "~component_src(lpdoc)"          ).
+string_subs( "/home/clip/Systems/ciao"  , "~bundle_src(ciao)"           ).
+string_subs( "/home/clip/Systems/lpdoc" , "~bundle_src(lpdoc)"          ).
 string_subs( "/home/clip/public_html/Local/lpdoc_docs",
-	"~('MenuOptions':docdir)" ).
+	"~(ciao_config_options:docdir)" ).
 string_subs( "664"                      , "perm(rw, rw, r)"    ).
 string_subs( "775"                      , "perm(rwx, rwx, rx)" ).
 

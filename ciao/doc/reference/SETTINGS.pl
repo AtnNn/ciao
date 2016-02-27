@@ -1,13 +1,12 @@
 :- module(_, _, [ciaopaths, regtypes, fsyntax, assertions]).
 
-:- include(lpdocsrc(lib('SETTINGS_schema'))).
+:- include(lpdoclib('SETTINGS_schema')).
 % ****************************************************************************
 % This is an LPdoc configuration file. See SETTINGS_schema for documentation *
 % ****************************************************************************
 
-:- use_module(library(terms), [atom_concat/2]).
-:- use_module(library(component_registry), [component_src/2]).
-:- use_module(ciaodesrc(makedir('ConfigValues'))).
+:- use_module(library(lpdist(makedir_aux)), [fsR/2]).
+:- use_module(library(lpdist(ciao_config_options))). % TODO: used?
 
 :- reexport(ciaosrc(doc(common('LPDOCCOMMON')))).
 libtexinfo(_) :- fail.
@@ -16,20 +15,16 @@ execmode(_) :- fail.
 
 output_name := 'ciao'.
 
-% TODO: use parent_component to share those defs
-filepath := ~atom_concat(~component_src(ciao), ~ciaofilepathref)|~emacs_mode_path.
-
-ciaofilepathref := ~ciaofilepath|~ciaofilepath_common.
-
-emacs_mode_path := ~atom_concat(~component_src(ciaode), '/emacs-mode').
-
-ciaofilepath :=
-	'/doc/reference'|
-	'/shell'|
-	'/ciaoc'|
-	'/engine'|
-	'/etc'|
-	'/library/pillow/dist/doc'.
+% TODO: use parent_bundle to share those defs
+filepath := ~fsR(bundle_src(ciao)/'doc'/'reference').
+filepath := ~fsR(bundle_src(ciao)/'shell').
+filepath := ~fsR(bundle_src(ciao)/'ciaoc').
+filepath := ~fsR(bundle_src(ciao)/'engine').
+filepath := ~fsR(bundle_src(ciao)/'etc').
+filepath := ~fsR(bundle_src(ciao)/'etc_contrib').
+filepath := ~fsR(bundle_src(ciao)/'library'/'pillow'/'dist'/'doc').
+filepath := ~ciaofilepath_common.
+filepath := ~fsR(bundle_src(ciaode)/'emacs-mode').
 
 doc_structure := 
         ciao-[
@@ -43,8 +38,8 @@ doc_structure :=
 	  'ExtendProlog'-(~docstr_extendprolog),
 	  'Interfaces'-(~docstr_interfaces),
 	  'ADTs'-(~docstr_adts),
-	  'ciao-utilities'-(~docstr_utilcomponents),
 	  'Contrib'-(~docstr_contrib),
+	  'ciao-contrib-utilities'-(~docstr_utilscontrib),
  	  'Append'-(~docstr_installation)
         ].
 
@@ -62,8 +57,25 @@ docstr_devenv :=
 	 'toplevel/toplevel_doc',
 	 'debugger/debugger_doc'-['debugger/debugger'],
 	 'ciao-shell',
+	 'ciao-utilities'-(~docstr_utils),
 	 'libpaths',
 	 'CiaoMode'].
+
+% (those are part of the development environment)
+docstr_utils :=
+	['fileinfo',
+	 'viewpo',
+%        'xrefs_doc',
+	 'xrefs/callgraph',
+	 % 'show_deps'?
+	 'get_deps',
+	 'pldiff',
+	 'lpmake',
+	 'ciao_get_arch_doc',
+	 'compiler_output'].
+% Note: subsumed by lpdist, moved to etc/Attic
+%	 'auto_compile_ciao_doc'
+%	 'collect_modules_doc'
 
 docstr_refcomponents :=
 	['engine/modules',
@@ -83,6 +95,7 @@ docstr_refcomponents :=
 	 'engine/data_facts',
 	 'engine/syntax_extensions',
 	 'engine/io_aux',
+	 'attr/attr_doc' - ['attr/attr_rt'],
 	 'engine/attributes',
 	 'engine/system_info',
 	 'condcomp/condcomp_doc',
@@ -109,8 +122,7 @@ docstr_isoprolog :=
 	 'iso_incomplete'].
 
 docstr_classicprolog :=
-	['dcg/dcg_doc',
-	 'dcg/dcg_tr',
+	['dcg/dcg_doc'-['dcg/dcg_phrase_doc'],
 	 %
 	 'format',
 	 'lists',
@@ -152,7 +164,7 @@ docstr_miscprolog :=
 	 'strings',
 	 'messages',
 	 'io_alias_redirection',
-	 'atom2term',
+	 'read_from_string',
 	 'ctrlcclean',
 	 'errhandle',
 	 'fastrw',
@@ -179,7 +191,7 @@ docstr_miscprolog :=
 	 % TODO: nest
 	 'make/make_doc',
 	 'make/make_rt',
-	 'make/system_extra'].
+	 'system_extra'].
 
 %    'tokenize',
 %     'assrt_lib',
@@ -201,10 +213,7 @@ docstr_extendprolog :=
 	 'argnames/argnames_doc',
 	 'fsyntax/fsyntax_doc',
 	 'global',
-% 'andprolog_old_doc',
 	 'andorra/andorra_doc',
-	 'andprolog/andprolog_doc',
-	 'apll/apll',
          %
 	 'det_hook/det_hook_doc',
 	 'det_hook/det_hook_rt',
@@ -253,7 +262,7 @@ docstr_interfaces :=
 	 'menu/menu_doc',
 	 'menu/menu_generator',
 	 %
-	 'davinci',
+	 'davinci/davinci',
 	 %
 	 'tcltk/tcltk'-['tcltk/tcltk_low_level'],
 	 %
@@ -277,7 +286,8 @@ docstr_interfaces :=
 	 'pillow/pillow_doc'-[
 	   'pillow/html',
 	   'pillow/http',
-	   'pillow/pillow_types'
+	   'pillow/pillow_types',
+	   'pillow/json'
          ],
          %
 	 'persdb/persdbrt'-[
@@ -338,21 +348,6 @@ docstr_adts :=
 %     'llists',
 %     'lsets'
 
-docstr_utilcomponents :=
-	['cleandirs',
-	 'fileinfo',
-	 'viewpo',
-%        'xrefs_doc',
-	 'xrefs/callgraph',
-	 % 'show_deps'?
-	 'get_deps',
-	 'pldiff',
-	 'lpmake',
-	 'ciao_get_arch_doc',
-	 'compiler_output',
-	 'auto_compile_ciao_doc',
-	 'collect_modules_doc'].
-
 docstr_contrib :=
 	['chartlib/chartlib'-[
 	   'chartlib/bltclass',
@@ -393,6 +388,8 @@ docstr_contrib :=
 	   'dht/dht_misc'
          ],
          %
+	 'clpfd/clpfd_doc' -[
+	   'clpfd/clpfd_rt'],
 	 'fd/fd_doc',
 	 'gendot/gendot',
 	 'gnuplot/gnuplot',
@@ -426,6 +423,9 @@ docstr_contrib :=
 	 'time_analyzer/time_analyzer',
 	 'xdr_handle/xdr_handle',
 	 'xml_path/doc/xml_path_doc'].
+
+docstr_utilscontrib :=
+	['cleandirs'].
 
 %doc_mainopts := no_patches.
 doc_mainopts := _ :- fail. % Allow patches in main changelog (those are the release notes)

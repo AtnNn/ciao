@@ -363,7 +363,7 @@ nonindep( [V*_|Vs], Inr, Indep) :-
 indep_var( [V*K], I, Self) :-
   Self == V,
   arith_zero( I),
-  arith_zero( 1-K).
+  arith_eval( 1=:=K).
 
 memq( X, [Y|_]) :- X == Y, !.
 memq( X, [_|L]) :- memq( X, L).
@@ -523,6 +523,8 @@ tidy_frozen_system( Goal, Dict) -->
 %% Code for CLPQ
 tidy_frozen_system_op('solver_q:solve_abs'(_,A,B,_), Dict) -->
   tidy_equation( A, abs(B), Dict).
+tidy_frozen_system_op('solver_q:solve_sign'(_,A,B,_), Dict) -->
+  tidy_equation( A, sign(B), Dict).
 tidy_frozen_system_op('solver_q:solve_mix'(_,Mix,A,B,C,_), Dict) -->
   { F =.. [Mix,B,C] },
   tidy_equation( A, F, Dict).
@@ -537,6 +539,8 @@ tidy_frozen_system_op('solver_q:solve_trig'(_,Trig,A,B,_), Dict) -->
 %% Code for CLPR
 tidy_frozen_system_op('solver_r:solve_abs'(_,A,B,_), Dict) -->
   tidy_equation( A, abs(B), Dict).
+tidy_frozen_system_op('solver_r:solve_sign'(_,A,B,_), Dict) -->
+  tidy_equation( A, sign(B), Dict).
 tidy_frozen_system_op('solver_r:solve_mix'(_,Mix,A,B,C,_), Dict) -->
   { F =.. [Mix,B,C] },
   tidy_equation( A, F, Dict).
@@ -636,9 +640,9 @@ free_of_var(N, Term, Variable) :-
 nf_to_sum( Hk, Ik, Sum) :-
   ( arith_zero( Ik) ->
       ( Hk = [Var*Kid|Fs] ->
-         ( arith_zero( Kid-1) ->
+         ( arith_eval( Kid=:=  1) ->
              New = Var
-         ; arith_zero( Kid+1) ->
+         ; arith_eval( Kid=:= -1) ->
              New = -Var
          ;
              New = Kid*Var
@@ -653,9 +657,9 @@ nf_to_sum( Hk, Ik, Sum) :-
 
 nf_to_sum1( [], Term, Term).
 nf_to_sum1( [Var*K|Rest], Sofar, Term) :-
-  ( arith_zero( K-1) ->
+  ( arith_eval( K=:=1) ->
       Next = Sofar + Var
-  ; arith_zero( K+1) ->
+  ; arith_eval( K=:= -1) ->
       Next = Sofar - Var
   ; arith_eval( K < 0) ->
       arith_eval( -K, Ka),

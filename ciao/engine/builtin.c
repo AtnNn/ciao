@@ -15,6 +15,10 @@
 #include "wam_defs.h"
 #include "inout_defs.h"
 
+#if defined(DBG) || defined(DEBUG)
+#include "streams_defs.h"
+#endif
+
 /* local declarations */
 
 #if defined(DBG) || defined(DEBUG)

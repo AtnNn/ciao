@@ -9,16 +9,17 @@
         numbervars/3, prettyvars/1,
         printable_char/1
         ], 
-        [dcg, assertions, nortchecks, nativeprops, isomodes, define_flag]).
+        [dcg, assertions, nortchecks, nativeprops, isomodes, define_flag, expander]).
 
 :- use_package(doccomments).
 
 :- use_module(library(operators)).
 :- use_module(library(sort)).
 :- use_module(engine(internals), ['$atom_mode'/2]).
+:- use_module(engine(attributes)).
 
 %--------------------------------------------------------------------
-%! title:  Term output
+%! title: Term output
 %
 %! module: This library provides different predicates for term output,
 %          additional to the kernel predicates

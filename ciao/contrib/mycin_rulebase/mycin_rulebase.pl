@@ -28,5 +28,5 @@
 :- load_compilation_module(library(mycin_rulebase(mycin_tr))).
 
 % Note: add_clause_trans/1 MUST be located before add_sentence_trans/1...
-:- add_clause_trans(mycin_clause_tr/3).
-:- add_sentence_trans(mycin_sentence_tr/3).
+:- add_clause_trans(mycin_clause_tr/3, 750). % TODO: Right priority?
+:- add_sentence_trans(mycin_sentence_tr/3, 750). % TODO: Right priority?

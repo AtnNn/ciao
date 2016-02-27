@@ -1,7 +1,7 @@
 :- module(_, [main/0], [condcomp]).
 
 % Try to comment or uncomment the following line:
-:- define(use_write).
+:- compilation_fact(use_write).
 
 :- if(defined(use_write)).
 :- use_module(library(write)).

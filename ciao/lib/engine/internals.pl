@@ -12,6 +12,8 @@ provides handles for the module system into the internal definitions.
 
 ").
 
+% ===========================================================================
+
 :- use_module(engine(hiord_rt), ['SYSCALL'/1, '$nodebug_call'/1, '$meta_call'/1]).
 
 :- export('$show_nodes'/2).
@@ -562,9 +564,24 @@ initialization(M) :- '$initialization'(M).
 
 % ---------------------------------------------------------------------------
 % Low level global variables
-
-% - global variable 2 is used by CHR package (chr/hrpolog.pl)
-% - global variable 3 is used by global_vars module
+%
+% Currently, the global variables are reserved statically:
+%
+%   [optim_comp only]
+%   1 - debugger
+%   2 - action__compile
+%   4 - action__split
+%   3 - Errs object during analysis
+%   5 - unused, see compiler/dynload.pl
+%   6 - absmach
+%
+%   [rest of Ciao]
+%   10 - CHR package (chr/hrpolog.pl)
+%   11 - global_vars module
+%
+% TODO: move to a different file and share
+%       (ciao/lib/engine/internals.pl and
+%        optim_comp/modules/core/engine/internals.pl)
 
 % non mutable version
 :- export('$global_vars_get'/2).
@@ -802,7 +819,7 @@ load_po(File) :-
 :- export(poversion/1).
 poversion(version(67)).
 
-% ---------------------------------------------------------------------------
+% ===========================================================================
 % JF: New absolute file name library. I need it to fix some pending issues
 % of the foreign interface and future problems with the compilation to C
 
@@ -871,7 +888,7 @@ product_filename(Type, Base0, Name) :-
 	true.
 
 % %TO DEACTIVATE
-% todo: define ciao_build_dir, use to patch bases (do it from C to avoid atom pollution)
+% TODO: define ciao_build_dir, use to patch bases (do it from C to avoid atom pollution)
 %translate_base(Base, Base) :- display(user_error, trbase(Base)), nl(user_error), fail.
 translate_base(Base, Base) :- !.
 % %TO ACTIVATE
@@ -1121,17 +1138,24 @@ glue_suffix(gluecode_c,        '_glue').
 glue_suffix(gluecode_o,        '_glue').
 glue_suffix(gluecode_unique_o, '_glue').
 
-
 :- data opt_suff/1.
 
 :- export(opt_suff/1).
 opt_suff('_opt').
 
-%------ attributed variables ------%
-:- include( attributed_variables ).
+% ===========================================================================
+% Attributed variables
 
+% (entry information)
+:- trust pred verify_attribute(A,B).
+:- trust pred combine_attributes(A,B).
+:- entry uvc/2.
+:- entry ucc/2.
+:- entry pending_unifications/1.
+:- include(attributed_variables).
 
-%------ internal builtin errors ------%
+% ===========================================================================
+% Internal builtin errors
 
 % Called from within the emulator
 :- entry error/5.
@@ -1139,7 +1163,7 @@ error(Type, PredName, PredArity, Arg, Culprit) :-
 %        display('In Error'(Type, Culprit)), nl,
         error_term(Type, Culprit, Error_Term),
 %        display(error_term_is(Error_Term)), nl,
-        where_term(Arg, PredName, PredArity, Where_Error),
+        where_term(PredName, PredArity, Arg, Where_Error),
         throw(error(Error_Term, Where_Error)).
 
 in_range(Type, Code, WhichWithinType):-
@@ -1157,7 +1181,7 @@ error_term(N, _, resource_error(Res)) :-
 	in_range(res, N, Code), !, 
 	resource_code(Code, Res).
 error_term(Code, _, user_error) :-     in_range(user,   Code, _), !.
-error_term(N, Culprit, evaluation_error(Type, Culprit)) :-
+error_term(N, _Culprit, evaluation_error(Type)) :-
         in_range(eval, N, Code), !,
         evaluation_code(Code, Type).
 error_term(N, _Culprit, representation_error(Type)) :-
@@ -1289,7 +1313,20 @@ evaluation_code(3, underflow).
 evaluation_code(4, zero_divisor).
 
 resource_code(0, undefined).
+resource_code(1, heap).
 
-where_term(0, PredName, PredArity, PredName/PredArity) :- !.
-where_term(Arg, PredName, PredArity, PredName/PredArity-Arg).
+:- multifile('$internal_error_where_term'/4).
+
+where_term(PredName, PredArity, Arg, WhereError):-
+	'$internal_error_where_term'(PredName, PredArity, Arg, WhereError), !.
+where_term(PredName, PredArity, 0, PredName/PredArity) :- !.
+where_term(PredName, PredArity, Arg, PredName/PredArity-Arg).
+
+:- export('$undo_heap_overflow_excep'/0).
+:- trust pred '$undo_heap_overflow_excep'/0.
+:- impl_defined('$undo_heap_overflow_excep'/0). 
+
+:- export('$heap_limit'/1).
+:- trust pred '$heap_limit'/1.
+:- impl_defined('$heap_limit'/1). 
 

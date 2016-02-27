@@ -1,6 +1,7 @@
 :- module(native_props, [
 		clique/1,
 		clique_1/1,
+		compat/1,
 		constraint/1,
 		covered/1,
 		covered/2,
@@ -11,6 +12,7 @@
 		have_choicepoints/1,
 		indep/1,
 		indep/2,
+		instance/1,
 		is_det/1,
 		linear/1,
 		mshare/1,
@@ -43,6 +45,7 @@
 		size_ub/2,
 		size_metric/3,
 		size_metric/4,
+		succeeds/1,
 		steps/2,
 		steps_lb/2,
 		steps_o/2,
@@ -52,8 +55,8 @@
 		test_type/2,
 		throws/2,
 		user_output/2
-% 		intervals/2 %[LD]
-% 		, user_error/2
+		% intervals/2 %[LD]
+		% , user_error/2
 	    ],
 	    [assertions, hiord]).
 
@@ -74,13 +77,16 @@
 :- reexport(library(terms_check), [instance/2]).
 :- doc(doinclude, [instance/2]).
 
-:- use_module(library(terms_vars), [varsbag/3]).
-:- use_module(library(sort),       [sort/2]).
+:- use_module(library(terms_vars)).
+:- use_module(library(hiordlib)).
+:- use_module(library(sort), [sort/2]).
 :- use_module(library(lists)).
-:- use_module(engine(internals)).
 :- use_module(library(streams)).
 :- use_module(library(file_utils)).
 :- use_module(library(system)).
+:- use_module(library(odd)).
+:- use_module(library(rtchecks(rtchecks_send))).
+:- use_module(engine(internals), ['$setarg'/4]).
 
 % --------------------------------------------------------------------------
 :- doc(title, "Properties which are native to analyzers").
@@ -104,7 +110,7 @@
 %%    @begin{itemize}
 %%    @item For any @var{Goal}, @pred{call(Goal)} must be equivalent to:
 %% 
-%%      intercept(Prop(Goal), rtcheck(_, _, _, _, _), true).
+%%      intercept(Prop(Goal), rtcheck(_, _, _, _, _, _), true).
 %% 
 %%    @item Remove the choicepoints if the goal does not introduce new ones.
 %% 
@@ -126,6 +132,10 @@
 :- doc(tau(Types), "@var{Types} contains a list with the type associations
    for each variable, in the form @tt{V/[T1,..,TN]}. Note that tau is used
    in object-oriented programs only").
+
+% TODO: Improve documentation saying if the run-time checks of some
+% TODO: properties are complete (exhaustive), incomplete, not possible
+% TODO: or unimplemented --EMM.
 
 :- true prop tau(TypeInfo) + native
 # "@var{Types} is a list of associations between variables and list of types".
@@ -238,11 +248,24 @@ linear(T) :-
    @prop{ground/1}, @prop{indep/1} and @prop{indep/2} properties,
    which are easier to read.").
 
-:- prop mshare(X) + native(sharing(X))
+:- test mshare(L) : (L = [[A], [p(A)]]) + fails.
+:- test mshare(L) : (L = [[A], [p(B)]]) + not_fails.
+
+:- prop mshare(X) + (native(sharing(X)), no_rtcheck)
 # "The sharing pattern is @tt{@var{X}}.".
 
-mshare(_).
-% :- impl_defined(mshare/1).
+mshare(L) :-
+	map(L, term_variables, V),
+	\+ not_mshare(V).
+
+% try to find a counter-example:
+not_mshare([V1|L]) :-
+	member(V2, L),
+	member(X1, V1),
+	member(X2, V2),
+	X1 == X2 -> true
+    ;
+	not_mshare(L).
 
 :- doc(clique(X), "@var{X} is a set of variables of interest, much the
    same as a sharing group but @var{X} represents all the sharing groups in
@@ -250,7 +273,7 @@ mshare(_).
    often translated to @prop{ground/1}, @prop{indep/1}, and @prop{indep/2}
    properties.").
 
-:- prop clique(X) + native(clique(X))
+:- prop clique(X) + (native(clique(X)), no_rtcheck)
 # "The clique pattern is @tt{@var{X}}.".
 
 :- impl_defined(clique/1).
@@ -261,7 +284,7 @@ mshare(_).
    singletons. Similar to a sharing group, a clique_1 is often translated
    to @prop{ground/1}, @prop{indep/1}, and @prop{indep/2} properties.").
 
-:- prop clique_1(X) + native(clique_1(X))
+:- prop clique_1(X) + (native(clique_1(X)), no_rtcheck)
 # "The 1-clique pattern is @tt{@var{X}}.".
 
 :- impl_defined(clique_1/1).
@@ -278,16 +301,17 @@ nonground(X) :- \+ ground(X).
 %
 :- doc(fails(X), "Calls of the form @var{X} fail.").
 
-:- true prop fails(X) + native # "Calls of the form @var{X} fail.".
+:- true prop fails(X) + native
+# "Calls of the form @var{X} fail.".
 
 :- meta_predicate fails(goal).
 
 fails(Goal) :-
 	Solved = solved(no),
-	Goal,
+	no_exception_2(Goal, fails, _),
 	(
 	    arg(1, Solved, no) ->
-	    send_signal(rtcheck(comp, Goal, fails, not_fails, [])),
+	    send_comp_rtcheck(Goal, fails, not_fails),
 	    '$setarg'(1, Solved, yes, true)
 	;
 	    true
@@ -303,8 +327,8 @@ fails(Goal) :-
 :- doc(not_fails(X), "Calls of the form @var{X} produce at least
    one solution, or do not terminate @cite{non-failure-iclp97}.").
 %
-:- true prop not_fails(X) + native #
-	"All the calls of the form @var{X} do not fail.".
+:- true prop not_fails(X) + native
+# "All the calls of the form @var{X} do not fail.".
 % %
 % :- meta_predicate not_fails( goal ).
 %
@@ -319,11 +343,11 @@ not_fails(Goal) :-
 	    true
 	;
 	    arg(1, Solved, no) ->
-	    send_signal(rtcheck(comp, Goal, not_fails, fails, [])),
+	    send_comp_rtcheck(Goal, not_fails, fails),
 	    fail
 	),
 	'$metachoice'(C0),
-	Goal,
+	no_exception_2(Goal, not_fails, _),
 	'$metachoice'(C1),
 	( C0 == C1 -> !
 	; '$setarg'(1, Solved, yes, true) ).
@@ -333,7 +357,7 @@ not_fails(Goal) :-
    nothing can be ensured about non-failure nor termination of such
    calls.").
 
-:- prop possibly_fails(X)
+:- prop possibly_fails(X) + no_rtcheck
 # "Non-failure is not ensured for calls of the form @var{X}.".
 
 :- meta_predicate possibly_fails(goal).
@@ -345,7 +369,7 @@ possibly_fails(Goal) :- call(Goal).
    least one clause whose test succeeds (i.e., all the calls of the
    form @var{X} are covered) @cite{non-failure-iclp97}.").
 
-:- prop covered(X)
+:- prop covered(X) + rtcheck(unimplemented)
 # "All the calls of the form @var{X} are covered.".
 
 covered(Goal) :- call(Goal).
@@ -354,7 +378,7 @@ covered(Goal) :- call(Goal).
    which there is no clause whose test succeeds
    @cite{non-failure-iclp97}.").
 
-:- prop not_covered(X)
+:- prop not_covered(X) + rtcheck(unimplemented)
 # "Not all of the calls of the form @var{X} are covered.".
 
 not_covered(Goal) :- call(Goal).
@@ -379,8 +403,8 @@ is_det(Goal) :-
 	->
 	    true
 	;
-	    send_signal(rtcheck(comp, Goal, is_det, non_det, []))
-% more than one solution!
+	    send_comp_rtcheck(Goal, is_det, non_det)
+	    % more than one solution!
 	),
 	'$setarg'(1, Solved, yes, true).
 
@@ -398,7 +422,7 @@ non_det(Goal) :-
 	    true
 	;
 	    arg(1, Solved, one) ->
-	    send_signal(rtcheck(comp, Goal, non_det, is_det, [])),
+	    send_comp_rtcheck(Goal, non_det, is_det),
 	    fail
 	),
 	'$metachoice'(C0),
@@ -409,7 +433,7 @@ non_det(Goal) :-
 	    (
 		C1 == C0 ->
 		!,
-		send_signal(rtcheck(comp, Goal, non_det, no_choicepoints, []))
+		send_comp_rtcheck(Goal, non_det, no_choicepoints)
 	    ;
 		'$setarg'(1, Solved, one, true)
 	    )
@@ -427,8 +451,8 @@ no_choicepoints(Goal) :-
 	Goal,
 	'$metachoice'(C1),
 	( C1 == C0 -> true
-	; send_signal(rtcheck(comp, Goal, no_choicepoints, have_choicepoints,
-		    [])) ).
+	; send_comp_rtcheck(Goal, no_choicepoints, have_choicepoints)
+	).
 
 :- prop have_choicepoints(X)
 # "A call to @var{X} creates choicepoints.".
@@ -439,15 +463,14 @@ have_choicepoints(Goal) :-
 	Goal,
 	'$metachoice'(C1),
 	( C1 == C0 ->
-	    send_signal(rtcheck(comp, Goal, have_choicepoints, no_choicepoints,
-		    []))
+	    send_comp_rtcheck(Goal, have_choicepoints, no_choicepoints)
 	; true ).
 
 :- doc(possibly_nondet(X), "Non-determinism is not ensured for all
    calls of the form @var{X}. In other words, nothing can be ensured
    about determinacy nor termination of such calls.").
 
-:- prop possibly_nondet(X)
+:- prop possibly_nondet(X) + no_rtcheck
 # "Non-determinism is not ensured for calls of the form @var{X}.".
 
 :- meta_predicate possible_nondet(goal).
@@ -467,7 +490,7 @@ test_type(Goal, _) :- call(Goal).
 :- doc(mut_exclusive(X), "For any call of the form @var{X} at most
    one clause succeeds, i.e., clauses are pairwise exclusive.").
 
-:- prop mut_exclusive(X)
+:- prop mut_exclusive(X) + rtcheck(unimplemented)
 # "For any call of the form @var{X} at most one clause succeeds.".
 
 :- meta_predicate mut_exclusive(goal).
@@ -481,7 +504,7 @@ mut_exclusive(Goal) :- call(Goal).
 %% For any call of the form @var{X} at most one
 %% clause succeeds, i.e. clauses are pairwise exclusive.").
 
-:- prop not_mut_exclusive(X)
+:- prop not_mut_exclusive(X) + rtcheck(unimplemented)
 # "For some calls of the form @var{X} more than one clause
 may succeed.".
 
@@ -495,7 +518,7 @@ not_mut_exclusive(Goal) :- call(Goal).
    argument, e.g., list-length, term-size, term-depth, integer-value,
    etc. @cite{caslog,granularity-jsc}.").
 
-:- prop size_lb(X, Y)
+:- prop size_lb(X, Y) + no_rtcheck
 # "@var{Y} is a lower bound on the size of argument @var{X}.".
 
 :- impl_defined(size_lb/2).
@@ -506,7 +529,7 @@ not_mut_exclusive(Goal) :- call(Goal).
    argument, e.g., list-length, term-size, term-depth, integer-value,
    etc. @cite{caslog,granularity-jsc}.").
 
-:- prop size_ub(X, Y)
+:- prop size_ub(X, Y) + no_rtcheck
 # "@var{Y} is a upper bound on the size of argument @var{X}.".
 
 :- impl_defined(size_ub/2).
@@ -515,14 +538,14 @@ not_mut_exclusive(Goal) :- call(Goal).
 %% # "The maximum size of arguments of calls of the form @var{X} are
 %%    given by the expression @var{Y}.".
 
-:- prop size_o(X, Y)
+:- prop size_o(X, Y) + no_rtcheck
 # "The size of argument @var{X} is in the order of @var{Y}.".
 
 :- impl_defined(size_o/2).
 
 :- meta_predicate size_metric(goal, ?, ?, ?).
 
-:- prop size_metric(Head, Approx, Var, Metric)
+:- prop size_metric(Head, Approx, Var, Metric) + no_rtcheck
 # "@var{Metric} is the metric of the variable @var{Var}, for the
    approximation @var{Approx}. Currently, @var{Metric} can be:
    @tt{int/1}, @tt{size/1}, @tt{length/1}, @tt{depth/2}, and
@@ -532,7 +555,7 @@ size_metric(Goal, _, _, _) :- call(Goal).
 
 :- meta_predicate size_metric(goal, ?, ?).
 
-:- prop size_metric(Head, Var, Metric)
+:- prop size_metric(Head, Var, Metric) + no_rtcheck
 # "@var{Metric} is the metric of the variable @var{Var}, for any
    approximation.".
 
@@ -544,7 +567,7 @@ size_metric(Goal, _, _) :- call(Goal).
    resolution steps) spent by any call of the form @var{X} is given by
    the expression @var{Y} @cite{low-bounds-ilps97,granularity-jsc}").
 
-:- prop steps_lb(X, Y)
+:- prop steps_lb(X, Y) + no_rtcheck
 # "@var{Y} is a lower bound on the cost of any call of the form
 @var{X}.".
 
@@ -559,7 +582,7 @@ steps_lb(Goal, _) :- call(Goal).
    resolution steps) spent by any call of the form @var{X} is given by
    the expression @var{Y} @cite{caslog,granularity-jsc}.").
 
-:- prop steps_ub(X, Y)
+:- prop steps_ub(X, Y) + no_rtcheck
 # "@var{Y} is a upper bound on the cost of any call of the form
 @var{X}.".
 
@@ -573,14 +596,14 @@ steps_ub(Goal, _) :- call(Goal).
 :- doc(steps(X, Y), "The time (in resolution steps) spent by any
    call of the form @var{X} is given by the expression @var{Y}").
 
-:- prop steps(X, Y)
+:- prop steps(X, Y) + no_rtcheck
 # "@var{Y} is the cost (number of resolution steps) of any call of the form
 @var{X}.".
 
 :- meta_predicate steps(goal, ?).
 steps(Goal, _) :- call(Goal).
 
-:- prop steps_o(X, Y)
+:- prop steps_o(X, Y) + no_rtcheck
 # "@var{Y} is the complexity order of the cost of any call of the form
 @var{X}.".
 
@@ -629,20 +652,20 @@ indep([]).
 indep([[X, Y]|L]) :- indep(X, Y), indep(L).
 %%%%%%%%%%%%%%%%%%%%
 
-:- prop sideff_pure(X)
+:- prop sideff_pure(X) + no_rtcheck
 # "@var{X} is pure, i.e., has no side-effects.".
 
 :- meta_predicate sideff_pure(goal).
 sideff_pure(Goal) :- call(Goal).
 
-:- prop sideff_soft(X)
+:- prop sideff_soft(X) + no_rtcheck
 # "@var{X} has @index{soft side-effects}, i.e., those not affecting
    program execution (e.g., input/output).".
 
 :- meta_predicate sideff_soft(goal).
 sideff_soft(Goal) :- call(Goal).
 
-:- prop sideff_hard(X)
+:- prop sideff_hard(X) + no_rtcheck
 # "@var{X} has @index{hard side-effects}, i.e., those that might affect
    program execution (e.g., assert/retract).".
 
@@ -652,7 +675,7 @@ sideff_hard(Goal) :- call(Goal).
 :- doc(finite_solutions(X), "Calls of the form @var{X} produce a
    finite number of solutions @cite{non-failure-iclp97}.").
 
-:- prop finite_solutions(X)
+:- prop finite_solutions(X) + no_rtcheck
 # "All the calls of the form @var{X} have a finite number of
    solutions.".
 
@@ -669,7 +692,7 @@ num_solutions_eq(Goal, N) :-
 	    (
 		(A == done ; A == N) -> fail
 	    ;
-		send_signal(rtcheck(comp, Goal, num_solutions(N), Sols, [])),
+		send_comp_rtcheck(Goal, num_solutions(N), Sols),
 		fail
 	    )
 	),
@@ -687,14 +710,14 @@ num_solutions_eq(Goal, N) :-
 		(
 		    N1 == N -> true
 		;
-		    send_signal(rtcheck(comp, Goal, num_solutions(N),
-			    num_solutions(N1), []))
+		    send_comp_rtcheck(Goal, num_solutions(N),
+			num_solutions(N1))
 		)
 	    ;
 		(
 		    N1 > N ->
-		    send_signal(rtcheck(comp, Goal, num_solutions(N),
-			    num_solutions('>'(N)), [])),
+		    send_comp_rtcheck(Goal, num_solutions(N),
+			num_solutions('>'(N))),
 		    '$setarg'(1, Sols, done, true)
 		;
 		    '$setarg'(1, Sols, N1, true)
@@ -702,8 +725,8 @@ num_solutions_eq(Goal, N) :-
 	    )
 	).
 
-:- prop num_solutions(X, N) : callable * int #
-	"All the calls of the form @var{X} have @var{N} solutions.".
+:- prop num_solutions(X, N) : callable * int
+# "All the calls of the form @var{X} have @var{N} solutions.".
 
 :- prop num_solutions(Goal, Check) : callable * callable
 # "For a call to @var{Goal}, @pred{Check(X)} succeeds, where @var{X} is
@@ -724,8 +747,8 @@ num_solutions(Goal, Check, Term) :-
 	    (
 		Check(N0) -> fail
 	    ;
-		send_signal(rtcheck(comp, Goal, num_solutions(Term),
-			num_solutions(N0), [])),
+		send_comp_rtcheck(Goal, num_solutions(Term),
+		    num_solutions(N0)),
 		fail
 	    )
 	),
@@ -740,16 +763,14 @@ num_solutions(Goal, Check, Term) :-
 	    (
 		Check(N1) -> true
 	    ;
-		send_signal(rtcheck(comp, Goal, num_solutions(Term),
-			num_solutions(N0), []))
+		send_comp_rtcheck(Goal, num_solutions(Term), num_solutions(N0))
 	    )
 	;
 	    '$setarg'(1, Sols, N1, true)
 	).
 
-:- prop solutions(Goal, Sols) : callable * list #
-
-	"Goal @var{Goal} produces the solutions listed in @var{Sols}.".
+:- prop solutions(Goal, Sols) : callable * list
+# "Goal @var{Goal} produces the solutions listed in @var{Sols}.".
 
 :- meta_predicate solutions(addterm(goal), ?).
 
@@ -763,8 +784,7 @@ solutions(Goal, Sol, Sols) :-
 		(Sols == done ; Sols0 == []) -> fail
 	    ;
 		append(Sols2, Sols0, Sols),
-		send_signal(rtcheck(comp, Goal, solutions(Sols),
-			solutions(Sols2), [])),
+		send_comp_rtcheck(Goal, solutions(Sols), solutions(Sols2)),
 		fail
 	    )
 	),
@@ -783,8 +803,7 @@ solutions(Goal, Sol, Sols) :-
 		    Elem \= Sol ->
 		    append(Curr, Sols0, Sols),
 		    append(Curr, [Sol], Sols2),
-		    send_signal(rtcheck(comp, Goal, solutions(Sols),
-			    solutions(Sols2), []))
+		    send_comp_rtcheck(Goal, solutions(Sols), solutions(Sols2))
 		;
 		    true
 		)
@@ -793,8 +812,7 @@ solutions(Goal, Sol, Sols) :-
 		    Elem \= Sol ->
 		    append(Curr, Sols0,   Sols),
 		    append(Curr, [Sol|_], Sols2),
-		    send_signal(rtcheck(comp, Goal, solutions(Sols),
-			    solutions(Sols2), [])),
+		    send_comp_rtcheck(Goal, solutions(Sols), solutions(Sols2)),
 		    '$setarg'(1, Remaining, done, true)
 		;
 		    '$setarg'(1, Remaining, Sols1, true)
@@ -806,7 +824,7 @@ solutions(Goal, Sol, Sols) :-
    solutions. In other words, @var{N} is the cardinality of the
    solution set of @var{X}.").
 
-:- prop relations(X, N)
+:- prop relations(X, N) + rtcheck(unimplemented)
 # "Goal @var{X} produces @var{N} solutions.".
 
 :- meta_predicate relations(goal, ?).
@@ -815,7 +833,7 @@ relations(Goal, _) :- call(Goal).
 :- doc(terminates(X), "Calls of the form @var{X} always
    terminate @cite{non-failure-iclp97}.").
 
-:- prop terminates(X)
+:- prop terminates(X) + no_rtcheck
 # "All calls of the form @var{X} terminate.".
 
 :- meta_predicate terminates(goal).
@@ -823,7 +841,7 @@ terminates(Goal) :- call(Goal).
 
 % Built-in in CiaoPP
 :- export(entry_point_name/2).
-:- prop entry_point_name/2.
+:- prop entry_point_name/2 + no_rtcheck.
 % if you change this declaration, you have to change ciaoPP:
 :- meta_predicate entry_point_name(goal, ?).
 :- impl_defined(entry_point_name/2).
@@ -849,21 +867,22 @@ end_signal_check(Choice, Goal, CheckThrown) :-
 	retract_fact_nb(signal_db(Choice, Thrown, E)),
 	signal_prop(CheckThrown, E, EP, EV),
 	( Thrown = CheckThrown -> true
-	; send_signal(rtcheck(comp, Goal, EP, EV, []))
+	; send_comp_rtcheck(Goal, EP, EV)
 	).
 
 emit_signal(Choice, E) :-
 	retract_fact_nb(signal_db(Choice, _, _)),
 	assertz_fact(signal_db(Choice, yes, E)).
 
-:- prop signal(Goal) # "Calls of the form @var{Goal} throw a signal.".
+:- prop signal(Goal)
+# "Calls of the form @var{Goal} throw a signal.".
 
 :- meta_predicate signal(goal).
 
 signal(Goal) :- signal(Goal, _).
 
-:- prop signal(Goal, E) #
-	"A call to @var{Goal} sends a signal that unifies with @var{E}.".
+:- prop signal(Goal, E)
+# "A call to @var{Goal} sends a signal that unifies with @var{E}.".
 
 :- meta_predicate signal(goal, ?).
 
@@ -876,15 +895,15 @@ signal(Goal, E) :-
 	retract_signal_check(Choice, Goal, E, yes),
 	(C0 == C1 -> ! ; true).
 
-:- prop no_signal(Goal) #
-	"Calls of the form @var{Goal} do not send any signal.".
+:- prop no_signal(Goal)
+# "Calls of the form @var{Goal} do not send any signal.".
 
 :- meta_predicate no_signal(goal).
 
 no_signal(Goal) :- no_signal(Goal, _).
 
-:- prop no_signal(Goal, E) #
-	"Calls of the form @var{Goal} do not send the signal @var{E}.".
+:- prop no_signal(Goal, E)
+# "Calls of the form @var{Goal} do not send the signal @var{E}.".
 
 :- meta_predicate no_signal(goal, ?).
 
@@ -897,13 +916,14 @@ no_signal(Goal, E) :-
 	retract_signal_check(Choice, Goal, E, no),
 	(C0 == C1 -> ! ; true).
 
-:- prop exception(Goal) # "Calls of the form @var{Goal} throw an exception.".
+:- prop exception(Goal)
+# "Calls of the form @var{Goal} throw an exception.".
 
 :- meta_predicate exception(goal).
 
 exception(Goal) :-
 	Goal,
-	send_signal(rtcheck(comp, Goal, exception, no_exception, [])).
+	send_comp_rtcheck(Goal, exception, no_exception).
 
 :- prop exception(Goal, E) # "Calls of the form @var{Goal} throw an
 	exception that unifies with @var{E}.".
@@ -914,57 +934,48 @@ exception(Goal, E) :-
 	catch(Goal, F,
 	    (
 		( E \= F ->
-		    send_signal(rtcheck(comp, Goal, exception(E),
-			    exception(F), []))
+		    send_comp_rtcheck(Goal, exception(E), exception(F))
 		;
 		    true
 		),
 		throw(F)
 	    )),
-	send_signal(rtcheck(comp, Goal, exception(E), no_exception, [])).
+	send_comp_rtcheck(Goal, exception(E), no_exception).
 
 :- prop no_exception(Goal) #
 	"Calls of the form @var{Goal} do not throw any exception.".
 
 :- meta_predicate no_exception(goal).
 
-no_exception(Goal) :-
-	catch(Goal, E,
-	    (
-		send_signal(
-		    rtcheck(comp, Goal, no_exception, exception(E), [])),
-		throw(E)
-	    )).
+no_exception(Goal) :- no_exception_2(Goal, no_exception, _).
 
 :- prop no_exception(Goal, E) # "Calls of the form @var{Goal} do not
 	throw exception @var{E}.".
 
 :- meta_predicate no_exception(goal, ?).
 
-no_exception(Goal, E) :-
+no_exception(Goal, E) :- no_exception_2(Goal, no_exception(E), E).
+
+:- meta_predicate no_exception_2(goal, ?, ?).
+no_exception_2(Goal, Prop, E) :-
 	catch(Goal, E,
 	    (
-		send_signal(
-		    rtcheck(comp, Goal, no_exception(E), exception(E), [])),
+		send_comp_rtcheck(Goal, Prop, exception(E)),
 		throw(E)
 	    )).
 
-:- doc(bug, "run-time check for throws/2 unimplemented yet.").
-
-:- prop throws(Goal, Es) # "Calls of the form @var{Goal} can throw
-	only the exceptions that unify with the terms listed in
-	@var{Es}.".
+:- prop throws(Goal, Es) + rtcheck(unimplemented)
+# "Calls of the form @var{Goal} can throw only the exceptions that
+   unify with the terms listed in @var{Es}.".
 
 :- meta_predicate throws(goal, ?).
 
 throws(Goal, _E) :- call(Goal).
 
 
-:- doc(bug, "run-time check for signals/2 unimplemented yet.").
-
-:- prop signals(Goal, Es) # "Calls of the form @var{Goal} can generate
-	only the signals that unify with the terms listed in
-	@var{Es}.".
+:- prop signals(Goal, Es) + rtcheck(unimplemented)
+# "Calls of the form @var{Goal} can generate only the signals that
+   unify with the terms listed in @var{Es}.".
 
 :- meta_predicate signals(goal, ?).
 
@@ -979,7 +990,8 @@ user_output(Goal, S) :-
 	mktemp_in_tmp('tmpciaoXXXXXX', FileName),
 	asserta_user_output_check(Choice, FileName, Goal, S),
 	'$metachoice'(C0),
-	intercept(Goal, E, throw(E)),
+	catch(Goal, E,
+	    (end_output_check(Choice, FileName, Goal, S), throw(E))),
 	'$metachoice'(C1),
 	retract_user_output_check(Choice, FileName, Goal, S),
 	(C0 == C1 -> ! ; true).
@@ -1009,8 +1021,7 @@ end_output_check(Choice, FileName, Goal, S) :-
 	display_string(S1),
 	(
 	    S \== S1 ->
-	    send_signal(rtcheck(comp, Goal, user_output(S), user_output(S1),
-		    []))
+	    send_comp_rtcheck(Goal, user_output(S), user_output(S1))
 	;
 	    true
 	),
@@ -1031,7 +1042,7 @@ user_error(Goal, S) :-
 	display_string(S1),
 	(
 	    S \== S1 ->
-	    send_signal(rtcheck(comp, Goal, user_error(S), user_error(S1), []))
+	    send_comp_rtcheck(Goal, user_error(S), user_error(S1))
 	;
 	    true
 	).
@@ -1050,7 +1061,7 @@ not_fails_is_det(Goal) :-
 	    true
 	;
 	    arg(1, Solved, no) ->
-	    send_signal(rtcheck(comp, Goal, not_fails, fails, [])),
+	    send_comp_rtcheck(Goal, not_fails, fails),
 	    fail
 	),
 	Goal,
@@ -1059,7 +1070,7 @@ not_fails_is_det(Goal) :-
 	->
 	    true
 	;
-	    send_signal(rtcheck(comp, Goal, is_det, non_det, []))
+	    send_comp_rtcheck(Goal, is_det, non_det))
 % more than one solution!
 	),
 	'$setarg'(1, Solved, yes, true).
@@ -1074,11 +1085,11 @@ not_fails_non_det(Goal) :-
 	    true
 	;
 	    arg(1, Solved, no) ->
-	    send_signal(rtcheck(comp, Goal, not_fails, fails, [])),
+	    send_comp_rtcheck(Goal, not_fails, fails),
 	    fail
 	;
 	    arg(1, Solved, one) ->
-	    send_signal(rtcheck(comp, Goal, non_det, is_det, [])),
+	    send_comp_rtcheck(Goal, non_det, is_det),
 	    fail
 	),
 	'$metachoice'(C0),
@@ -1089,7 +1100,7 @@ not_fails_non_det(Goal) :-
 	    (
 		C1 == C0 ->
 		!,
-		send_signal(rtcheck(comp, Goal, non_det, no_choicepoints, []))
+		send_comp_rtcheck(Goal, non_det, no_choicepoints))
 	    ;
 		'$setarg'(1, Solved, one, true)
 	    )
@@ -1098,15 +1109,30 @@ not_fails_non_det(Goal) :-
 	).
 */
 
-:- prop size(A, X, Y)
+:- prop size(A, X, Y) + no_rtcheck
 # "@var{Y} is the size of argument @var{X}, for the approximation @var{A}.".
 
 size(_, _, _).
 % :- impl_defined(size/3).
 
 
-:- prop size(X, Y)
+:- prop size(X, Y) + no_rtcheck
 # "@var{Y} is the size of argument @var{X}, for any approximation.".
 
 size(_, _).
 % :- impl_defined(size/2).
+
+:- prop succeeds(Prop) + no_rtcheck # "A call to @var{Prop} succeeds.".
+:- meta_predicate succeeds(goal).
+succeeds(Prop) :- \+ \+ call(Prop). % Defined but processed in rtchecks_basic
+
+:- prop instance(Prop) + no_rtcheck
+# "Use Prop as an instantiation property. Verify that execution of
+   @var{Prop} does not produce bindings for the argument variables.".
+:- meta_predicate instance(goal).
+instance(_). % processed in rtchecks_basic
+
+:- prop compat(Prop) + no_rtcheck
+# "Use @var{Prop} as a compatibility property.".
+:- meta_predicate compat(goal).
+compat(_). % processed in rtchecks_basic

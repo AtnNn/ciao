@@ -1,7 +1,8 @@
 :- module(terms_check,
-	[ ask/2, instance/2, variant/2,
+	[ ask/2, instance/2, subsumes_term/2, variant/2, 
 	  most_general_instance/3,
-	  most_specific_generalization/3
+	  most_specific_generalization/3,
+	  unifiable/3
 	],
 	[assertions, nortchecks]).
 
@@ -70,9 +71,15 @@ varpair(X,X,N,N).
 :- true prop instance(Term1,Term2) + native
 	# "@var{Term1} is an instance of @var{Term2}.".
 
+:- pred subsumes_term(Term1,Term2) + iso
+	# "@var{Term2} is an instance of @var{Term1}.".
+
 ask(A, B) :- '$instance'(A, B).
 
 instance(A, B) :- '$instance'(A, B).
+
+subsumes_term(A, B) :- '$instance'(B, A).
+
 
 /* 
 % This is the version implemented in Prolog (10 times slower)
@@ -225,3 +232,12 @@ mgi_each_arg(N,T1,T2,T):-
 	most_general_instance(A1,A2,A),
 	mgi_each_arg(N1,T1,T2,T).
 */
+
+
+:- true pred unifiable(X, Y, Unifier) # "If @var{X} and @var{Y} can
+  unify, unify @var{Unifier} with a list of @tt{Var = Value},
+  representing the bindings required to make @var{X} and @var{Y}
+  equivalent. The predicate handles attributed varibales as classical
+  ones".
+
+:- impl_defined([unifiable/3]).

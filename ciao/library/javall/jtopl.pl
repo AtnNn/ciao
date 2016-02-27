@@ -452,9 +452,9 @@ check_solution(Query,Id,Error) :-
 	 assertz_fact(query_solutions(Id, Query))
 	),
 	!.
-
+*/
 %---------------------------------------------------------------------------
-:- use_module(library(atom2term), [string2term/2]).
+:- use_module(library(read_from_string), [read_from_string_atmvars/2]).
 :- pred prolog_parse(+String, -Term)
         :: string * term
         # "Parses the string received as first argument and returns
@@ -463,8 +463,8 @@ check_solution(Query,Id,Error) :-
            from java side, to parse strings to Prolog terms.".
 %---------------------------------------------------------------------------
 prolog_parse(S,Term) :-
-	string2term(S, Term).
-*/
+	read_from_string_atmvars(S, Term).
+
 %---------------------------------------------------------------------------
 :- pred write_answer(+Id,+Answer)
 	:: prolog_query_id * answer

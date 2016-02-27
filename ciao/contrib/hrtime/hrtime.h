@@ -11,6 +11,9 @@ typedef unsigned long long uint64;
 typedef long long int64;
 #endif
 
+typedef unsigned long uint32;
+typedef long int32;
+
 #if defined(__i386__) || defined(_M_IX86)
 
 # if defined(__BORLANDC__) || defined(_MSC_VER)
@@ -24,28 +27,28 @@ extern uint64 __cdecl hrtime(void);
 # define HRTIME_METHOD "rdtsc"
 
 #  if defined(SERIALIZE_WITH_CPUID)
-#   define hrtime()				\
-  ({						\
-    register uint64 x;				\
-    __asm__ __volatile__("pushl %eax");		\
-    __asm__ __volatile__("pushl %ebx");		\
-    __asm__ __volatile__("pushl %edx");		\
-    __asm__ __volatile__("pushl %ecx");		\
-    __asm__ __volatile__("xorl %eax, %eax");	\
-    __asm__ __volatile__("cpuid");		\
-    __asm__ __volatile__("rdtsc" : "=A" (x));	\
-    __asm__ __volatile__("popl %ecx");		\
-    __asm__ __volatile__("popl %edx");		\
-    __asm__ __volatile__("popl %ebx");		\
-    __asm__ __volatile__("popl %eax");		\
-    x;						\
+#   define hrtime()					\
+  ({							\
+    register uint32 x, y;				\
+    __asm__ __volatile__("pushl %eax");			\
+    __asm__ __volatile__("pushl %ebx");			\
+    __asm__ __volatile__("pushl %edx");			\
+    __asm__ __volatile__("pushl %ecx");			\
+    __asm__ __volatile__("xorl %eax, %eax");		\
+    __asm__ __volatile__("cpuid");			\
+    __asm__ __volatile__("rdtsc" : "=a"(x), "=d(y)");	\
+    __asm__ __volatile__("popl %ecx");			\
+    __asm__ __volatile__("popl %edx");			\
+    __asm__ __volatile__("popl %ebx");			\
+    __asm__ __volatile__("popl %eax");			\
+    ((uint64)x|((uint64)y)<<32);			\
   })
 #  else
-#   define hrtime()				\
-  ({						\
-    register uint64 x;				\
-    __asm__ __volatile__("rdtsc" : "=A" (x));	\
-    x;						\
+#   define hrtime()					\
+  ({							\
+    register uint32 x, y;				\
+    __asm__ __volatile__("rdtsc" : "=a"(x), "=d"(y));	\
+    ((uint64)x|((uint64)y)<<32);			\
   })
 #  endif
 
@@ -60,17 +63,17 @@ extern uint64 hrfreq(void);
 #  if defined(SERIALIZE_WITH_CPUID)
 #   define hrtime()					\
   ({							\
-    register uint64 x;					\
+    register uint32 x, y;				\
     __asm__ __volatile__("cpuid");			\
-    __asm__ __volatile__("rdtsc" : "=a"(x));		\
-    x;							\
+    __asm__ __volatile__("rdtsc" : "=a"(x), "=d"(y));	\
+    ((uint64)x|((uint64)y)<<32);			\
   })
 #  else
 #   define hrtime()					\
   ({							\
-    register uint64 x;					\
-    __asm__ __volatile__("rdtsc" : "=a"(x));		\
-    x;							\
+    register uint32 x, y;				\
+    __asm__ __volatile__("rdtsc" : "=a"(x), "=d"(y));	\
+    ((uint64)x|((uint64)y)<<32);			\
   })
 #  endif
 
@@ -109,9 +112,9 @@ __inline__ uint64 hrtime(void) {
 
 # define HRTIME_METHOD "gethrtime"
 
-#define hrtime() (gethrtime())
+#define hrtime() ((uint64)(gethrtime()))
 
-#define hrfreq() (1000000000ll)
+#define hrfreq() ((uint64)1000000000ll)
 
 #else
 

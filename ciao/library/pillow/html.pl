@@ -343,7 +343,7 @@ html_att(A) -->  {atom_codes(A,AS)},
         string(AS).
 
 html_quoted_quote(T) -->
-        {atomic(T) -> name(T,TS) ; TS = T},
+        { atomic(T), \+ T = "" -> name(T,TS) ; TS = T },
         html_quoted_quote_chars(TS).
 
 html_quoted_quote_chars([]) --> [].

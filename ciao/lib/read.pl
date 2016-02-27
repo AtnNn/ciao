@@ -21,6 +21,8 @@
 :- doc(author, "Daniel Cabeza (modifications and documentation,"||
 	           " adapted from SICStus 0.6 code)").
 :- doc(author, "Manuel Carro (modifications and documentation)").
+:- doc(author, "Jose F. Morales (modifications for curly blocks,
+postfix blocks, and doccomments)").
 
 :- set_prolog_flag(multi_arity_warnings, off).
 
@@ -266,23 +268,40 @@ read(atom(Functor), ['('|S1], Precedence, Answer, S) :- !,
         ).
 read(atom(Functor), S0, Precedence, Answer, S) :-
 	current_prefixop(Functor, Prec, Right),
-	% todo: the reader backtracks here! can it be rewritten in a deterministic way?
+	% TODO: It may backtrack here! Can it be rewritten in a
+	% deterministic way?
 	after_prefix_op(Functor, Prec, Right, S0, Precedence, Answer, S).
 read(atom(Atom), S0, Precedence, Answer, S) :- !,
 	read_rest(S0, 0, Atom, Precedence, Answer, S).
 read(number(Number), S0, Precedence, Answer, S) :-
 	number(Number), !,
 	read_rest(S0, 0, Number, Precedence, Answer, S).
-read(doccomment(Chars), S0, Precedence, Answer, S) :-
-	% New syntax for '%!' comments: read it as a prefix operator
-	% (JFMC)
+read(doccomment(Col, Mark, Chars), S0, Precedence, Answer, S) :-
+	% A doccomment read as a prefix operator (JFMC)
 	Prec = Precedence,
-        Right = Precedence,
+	Right = Precedence,
+	% TODO: Copied from prefix atoms, check again -- I removed
+	% backtracking.
+	S0 = [Token|_],
+	\+ cant_start_expr(Token), !,
 	read(S0, Right, Arg, S1),
-	functor(Term, '\6\doccomment', 2),
-	arg(1, Term, Chars),
-	arg(2, Term, Arg),
+	functor(Term, '\6\doccomment', 5),
+	arg(1, Term, Col),
+	arg(2, Term, Mark),
+	arg(3, Term, prefix),
+	arg(4, Term, Chars),
+	arg(5, Term, Arg),
 	read_rest(S1, Prec, Term, Precedence, Answer, S).
+read(doccomment(Col, Mark, Chars), S0, Precedence, Answer, S) :- !,
+	% A doccomment, not as an operator (JFMC) -- e.g., for end-of-file
+	functor(Term, '\6\doccomment', 3),
+	arg(1, Term, Col),
+	arg(2, Term, Mark),
+	arg(3, Term, Chars),
+	( S0 = [] -> % introduce fake '.', for doccomments ending files
+	    read_rest([.], 0, Term, Precedence, Answer, S)
+	; read_rest(S0, 0, Term, Precedence, Answer, S)
+	).
 read('[', [']'|S1], Precedence, Answer, S) :- !,
 	read(atom([]), S1, Precedence, Answer, S).
 read('[', S1, Precedence, Answer, S) :- !,
@@ -352,12 +371,11 @@ read_curly_block(S1, TermList, S) :-
 %   LPrec and Prec are the lower and upper bounds for the precedence
 %   of the topmost operator.
 
-
 read_rest([atom(F)|S1], LPrec, Term, Precedence, Answer, S) :-
 	current_infixop(F, L, O, R),
 	Precedence >= O, LPrec =< L,
-	% todo: the may backtrack here! (although I did not found any
-	% example) can it be rewritten in a deterministic way?
+	% TODO: It may backtrack here! (although I did not found any
+	% example) Can it be rewritten in a deterministic way?
 	(   current_postfixop(F, L1, O1),
 	    Precedence >= O1, LPrec =< L1 -> true
 	;   !
@@ -373,13 +391,26 @@ read_rest([atom(F)|S1], LPrec, Term, Precedence, Answer, S) :-
 	functor(Expr, F, 1),
 	arg(1, Expr, Term),
 	read_rest(S1, O, Expr, Precedence, Answer, S).
+read_rest([doccomment(Col, Mark, Chars)|S1], LPrec, Term, Precedence, Answer, S) :-
+	% A doccomment read as a postfix operator (JFMC)
+	L = Precedence,
+        O = Precedence,
+	Precedence >= O, LPrec =< L,
+	!,
+	functor(Expr, '\6\doccomment', 5),
+	arg(1, Expr, Col),
+	arg(2, Expr, Mark),
+	arg(3, Expr, postfix),
+	arg(4, Expr, Chars),
+	arg(5, Expr, Term),
+	read_rest(S1, O, Expr, Precedence, Answer, S).
 read_rest([F|S1], LPrec, Term, Precedence, Answer, S) :-
 	( F = '[' -> Op = '[]' ; F = '{' -> Op = '{}' ),
 	% jfmc: extended syntax for postfix blocks
         current_prolog_flag(read_postfix_blocks, on),
-	display(user_error, o(Op,L,O)), nl(user_error),
+%	display(user_error, o(Op,L,O)), nl(user_error),
 	current_postfixop(Op, L, O),
-	display(user_error, o2(Op,L,O)), nl(user_error),
+%	display(user_error, o2(Op,L,O)), nl(user_error),
 	Precedence >= O, LPrec =< L, !,
 	functor(Expr, '\6\postfix_block', 2),
 	arg(1, Expr, Term),

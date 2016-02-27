@@ -1,6 +1,4 @@
-:- module(queue, [main/0],[persdb]).
-
-:- use_package(iso).
+:- module(queue, [main/0],[persdb,iso]).
 
 :- use_module(library(read)).
 :- use_module(library(write)).

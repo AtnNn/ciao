@@ -20,4 +20,4 @@
 :- initialization(init_persdb).
 
 :- load_compilation_module(library(persdb(persdbtr))).
-:- add_sentence_trans(persistent_tr/3).
+:- add_sentence_trans(persistent_tr/3, 1110).

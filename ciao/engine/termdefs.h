@@ -322,6 +322,16 @@ typedef struct definition_ definition_t; /* defined in objareas.h */
 #define TagToEmul(X)	((emul_info_t *)TermToPointer(X))
 #define TagToFunctor(X)	((definition_t *)TermToPointer(X))
 
+#if defined(TABLING)
+typedef struct node_tr_ node_tr_t;
+struct node_tr_ {
+  int size;
+  tagged_t *trail_sg;
+  node_tr_t *next;
+  node_tr_t *chain;
+};
+#endif
+
 #if defined(ANDPARALLEL)
 
 typedef struct parallel_exec_entry_ parallel_exec_entry_t;
@@ -332,9 +342,11 @@ typedef struct par_handler_ par_handler_t;
 /* HANDLER structure */
 
 struct par_handler_ {
-  tagged_t goal;                              /* Parallel goal */
-  bool_t det;                                 /* Deterministic goal? */
-  ENG_INT exec_state;                       /* Parallel execution state */
+  tagged_t goal;                       /* Parallel goal */
+  bool_t det;                          /* Deterministic goal? */
+  int dep_size;                        /* Dependence number size*/
+  int* dep_id;                          /* Dependence number ID*/
+  ENG_INT exec_state;                  /* Parallel execution state */
   worker_t *agent;                     /* Pointer to publishing agent */
   worker_t *remote_agent;              /* Pointer to stealing agent */
   parallel_exec_entry_t *exec_limits;  /* Limits of parallel execution */
@@ -348,10 +360,7 @@ struct par_handler_ {
 struct parallel_exec_entry_ {
   node_t *init;                 /* Pointer to beginning of goal exec */
   node_t *end;                  /* Pointer to end of goal exec */
-  node_t *wipe;                 /* Pointer to previous not dead exec */
-  tagged_t *trail_top;                 /* Pointer to save current trail top */
   parallel_exec_entry_t *prev;  /* Pointer to previous one */
-  parallel_exec_entry_t *next;  /* Pointer to next one */
 };
 
 /* GOAL LIST */
@@ -365,7 +374,6 @@ struct handler_entry_ {
 struct event_entry_ {
   tagged_t handler;                      /* Handler */
   bool_t canc;                           /* Cancellation or backtracking? */
-  parallel_exec_entry_t *limits;  /* Execution limits */
   event_entry_t *prev;            /* Pointer to previous one */
   event_entry_t *next;            /* Pointer to next one */
 };
@@ -397,7 +405,6 @@ struct visandor_event_ {
 };
 #endif
 #endif
-
 #if defined(PARBACK)
 
 typedef struct goal_entry goal_entry_t;
@@ -568,6 +575,11 @@ struct misc_info_ {
   JMP_BUF *errhandler;
 #endif
 
+#if defined(USE_OVERFLOW_EXCEPTIONS)
+  int soft_heappad;
+  int heap_limit;
+#endif 
+
   /* Access the goal descriptor for this thread */
   goal_descriptor_t *goal_desc_ptr;
 
@@ -576,6 +588,13 @@ struct misc_info_ {
 
   /* This goal should stop right now! */
   bool_t stop_this_goal;
+
+#if defined(TABLING)
+  //tagged_t *tabled_top = NULL;
+  frame_t *stack_freg;
+  tagged_t *heap_freg;
+  node_tr_t *last_node_tr;
+#endif
 
 #if defined(ANDPARALLEL)
   /* TO_DO: not very efficient solution. THEY SHOULD BE ADDED IN
@@ -586,6 +605,9 @@ struct misc_info_ {
   /* Goal list, pointers and lock */
   handler_entry_t *goal_list_start;  /* Start of goal list */
   handler_entry_t *goal_list_top;    /* Top of goal list */
+  par_handler_t *goal_cache;
+  int dep_size_exec;                        /* Dependence number size*/
+  int* dep_id_exec;                          /* Dependence number ID*/
   SLOCK goal_list_l;
 
   /* Event Queue, pointers and lock */
@@ -595,9 +617,6 @@ struct misc_info_ {
 
   /* Pointers to limits of goal executions */
   parallel_exec_entry_t *last_parallel_exec;
-  SLOCK parallel_exec_l;
-  node_t *node_top;
-  tagged_t *trail_top_global;
 
   /* Lock for creating mutual exclusions */
   SLOCK mutex_l;
@@ -606,10 +625,8 @@ struct misc_info_ {
   volatile int suspend;     /* Suspend the execution? */
 
   /* For cancellation */
-  volatile par_handler_t *cancel_goal_exec;  /* Cancel goal execution */
+  volatile bool_t cancel_goal_exec;  /* Cancel goal execution */
   volatile bool_t safe_to_cancel;    /* Can the thread safely cancel it? */
-  node_t *current_init_chp;   /* Initial ch.p. of current execution */
-  tagged_t *current_trail_top;       /* Trail pointer of current execution */
 
   /* Suspend until stolen goal finished or goals available */
   LOCK waiting_for_work_l;       /* Waiting for more work to do (lock) */
@@ -617,11 +634,11 @@ struct misc_info_ {
   int mode;                      /* Executing backwards or forwards */
   volatile bool_t suspended_waiting_for_work;  /* Flag */
 
-#if defined(Solaris)
-  /* Measure of total suspending time of the agent */
-  double_par_t *total_suspending_time;        /* Measure */
-  hrtime_t suspending_time_cont;                     /* Measure */
-#endif
+  //#if defined(Solaris)
+  ///* Measure of total suspending time of the agent */
+  //double_par_t *total_suspending_time;        /* Measure */
+  //hrtime_t suspending_time_cont;                     /* Measure */
+  //#endif
 
   /* Pointer to next WAM */
   worker_t *next_wam;

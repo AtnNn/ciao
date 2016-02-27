@@ -1,4 +1,4 @@
-:- module( _ , [ menu_demo/0, test_menu/1 ] , [ menu ] ).
+:- module(_, [menu_demo/0, test_menu/1], [menu]).
 
 % Entry point.
 menu_demo :-    menu(select).

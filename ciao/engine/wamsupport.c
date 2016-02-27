@@ -85,6 +85,7 @@ int p2_offset(insn)
 }
 
 try_node_t *def_retry_c(proc,arity)
+//     bool_t (*proc)(worker_t *w);
      bool_t (*proc)();
      int arity;
 {

@@ -52,6 +52,7 @@
             file_properties/6,
             modif_time/2,
             modif_time0/2,
+	    touch/1,
             fmode/2,
             chmod/2,
             chmod/3,
@@ -93,9 +94,9 @@
         c_posixpath/2, c_winfile/2, c_posixfile/2, c_errno/1,
         c_strerror/1, get_pid/1, get_uid/1, get_gid/1, get_pwnam/1,
         get_grnam/1, current_executable/1, shell/0, shell/2, system/2,
-        mktemp/2, file_exists/2, wait/3, file_properties/6, chmod/2,
-        umask/2, delete_file/1, using_windows/0, delete_directory/1,
-        rename_file/2, make_directory/2]).
+        mktemp/2, file_exists/2, wait/3, file_properties/6, touch/1,
+        chmod/2, umask/2, delete_file/1, using_windows/0,
+        delete_directory/1, rename_file/2, make_directory/2]).
 
 
 :- trust pred c_set_env(+atm,+atm).
@@ -323,6 +324,7 @@ cyg2win(Dir, Path, Swap) :-
 	winpath_c(relative, Dir, PathSwap),
 	no_swapslash(Swap, PathSwap, Path).
 
+% TODO: Check this code w.r.t. what the documentation says.
 no_swapslash(swap, Dir, Dir) :-
 	!.
 no_swapslash(noswap, Dir, Path) :-
@@ -801,7 +803,7 @@ file_exists(Path) :- file_exists(Path, 0).
 @begin{description}
 
 @item{type(@var{Type})} @var{Type} is one of @tt{regular}, @tt{directory},
-      @tt{symlink}, @tt{fifo}, @tt{socket} or @tt{unknown}.
+      @tt{fifo}, @tt{socket} or @tt{unknown}.
 
 @item{linkto(@var{Linkto})} If @var{File} is a symbolic link,
       @var{Linkto} is the file pointed to by the link (and the other
@@ -857,7 +859,7 @@ file_property_(Other, _) :-
 @begin{itemize} 
 
 @item File type @var{Type} (one of @tt{regular}, @tt{directory},
-      @tt{symlink}, @tt{fifo}, @tt{socket} or @tt{unknown}).
+      @tt{fifo}, @tt{socket} or @tt{unknown}).
 
 @item If @var{Path} is a symbolic link, @var{Linkto} is the file pointed
       to.  All other properties come from the file pointed, not the
@@ -904,6 +906,19 @@ modif_time0(Path, Time) :-
         set_prolog_flag(fileerrors, OldFE),
         Time = T.
 
+:- doc(touch(File), "Change the modification time of @var{File} to the
+   current time of day. If the file does not exist, it is created with
+   default permissions.
+
+   @bf{Note:} This operation cannot be fully implemented with
+   @pred{modif_time/2}. In POSIX systems, that can be done as long as
+   the user has write permissions on the file, even if the owner is
+   different. Change of modification time to arbitrary time values is
+   not allowed in this case.").
+
+:- pred touch(+atm).
+
+
 :- doc(fmode(File, Mode), "The file @var{File} has protection mode
         @var{Mode}.").
 
@@ -911,7 +926,6 @@ modif_time0(Path, Time) :-
 
 fmode(Path, Mode) :-
         file_properties(Path, [], [], [], Mode, []).
-
 
 
 :- doc(chmod(File, NewMode), "Change the protection mode of file

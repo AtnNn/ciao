@@ -137,7 +137,7 @@ get_nav(Tree, Curr, Nav, CurrTree) :-
 	    df_link(Prev0, Prev),
 	    df_link(Next0, Next)
 	; % TODO: README*.lpdoc files fail here... find a better way to catch this
-          fail %throw(bug_get_nav(Curr)) % not found!
+          fail %throw(error(arg(1,Curr), get_nav/1)) % not found!
 	),
 	!,
 	Nav = nav(CurrPath, Prev, Next).

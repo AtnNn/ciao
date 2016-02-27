@@ -12,8 +12,12 @@
 :- test p(A) : (A = a) + not_fails # "Test OK".
 :- test p(A) : (A = b) + fails # "Test OK".
 :- test p(A) : (A = c) + exception(error(c, _)) # "Test OK".
+:- test p(A) : (A = c) + fails # "Test OK".
+:- test p(A) : (A = c) + not_fails # "Test OK".
+:- test p(A) : (A = c) # "Test OK (?)".
 :- test p(A) : (A = d, A = a) # "Wrong test (precondition fails)".
-
+:- test p(A) : (throw(any_exception(A))) # "Wrong test (precondition throws exception)".
+:- test p(A) : (A = h) # "Abort".
 :- test p(Z) => (Z = d).
 
 :- check comp p(X) : (X = a) + not_fails.
@@ -22,6 +26,7 @@
 p(a).
 p(b) :- fail.
 p(c) :- throw(error(c, 'error c')).
+p(h) :- halt(1).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

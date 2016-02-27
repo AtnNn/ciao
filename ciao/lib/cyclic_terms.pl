@@ -1,11 +1,13 @@
 :- module(cyclic_terms,
-        [cyclic_term/1, acyclic_term/1, uncycle_term/2, recycle_term/2],
+        [acyclic_term/1, uncycle_term/2, recycle_term/2],
         [assertions]).
 
 :- use_module(library(lists), [nocontainsx/2, list_lookup/3]).
+:- use_module(engine(term_basic), [cyclic_term/1]).
 
 :- doc(title, "Cyclic terms handling").
 :- doc(author, "Daniel Cabeza").
+:- doc(author, "Remy Haemmerle").
 
 :- doc(module, "This module implements predicates related to cyclic
    terms.  Cyclic (or infinite) terms are produced when unifying a
@@ -13,29 +15,12 @@
 
 :- pred cyclic_term(T) # "True if @var{T} is cyclic (infinite).".
 
-cyclic_term(T) :-
-        \+ acyclic_term(T).
+:- reexport(engine(term_basic), [cyclic_term/1]).
 
-:- pred acyclic_term(T) # "True if @var{T} is acyclic (finite).".
+:- pred acyclic_term(T) + iso # "True if @var{T} is acyclic (finite).".
 
 acyclic_term(T) :-
-        acyclic_term_(T, []).
-
-acyclic_term_(T, Seen) :-
-        ( var(T) -> true
-        ; atomic(T) -> true
-        ; nocontainsx(Seen, T),
-          functor(T, _, A),
-          acyclic_term_args(A, T, [T|Seen])
-        ).
-
-acyclic_term_args(0, _, _) :- !.
-acyclic_term_args(N, T, Seen) :-
-         N > 0,
-        arg(N, T, SubT),
-        acyclic_term_(SubT, Seen),
-        N1 is N - 1,
-        acyclic_term_args(N1, T, Seen).
+	\+ term_basic:cyclic_term(T).
 
 :- pred uncycle_term(T, U) # "Given a term @var{T}, @var{U} is a
    finite representation of @var{T} as an acyclic term.  This

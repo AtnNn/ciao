@@ -1,5 +1,6 @@
 :- module(terms_vars, [varset/2, intersect_vars/3, member_var/2, diff_vars/3,
-		varsbag/3, varset0/2, varset_in_args/2],
+		varsbag/3, varset0/2, varset_in_args/2, term_variables/2,
+		term_variables/3],
 	    [assertions]).
 
 :- use_module(library(idlists), [memberchk/2, union_idlists/3]).
@@ -11,6 +12,48 @@
 
 :- doc(module, "This module implements predicates to handle sets of
    variables in terms.").
+
+%-------------------------------------------------------------------------
+
+:- pred term_variables(Term, Vars) + iso #
+   "@var{Vars} is the list of all the variables in @var{Term}, ordered
+   as they appear in @var{Term} right-to-left depth-first (without
+   duplicates).".
+
+% TODO: check that second argument is partial list or list.
+
+term_variables(Term, Vars) :- 
+	term_variables(Term, Vars, []).
+
+:- doc(term_variables(Term, Vars, Tail), "@var{Vars}-@var{Tail} is
+   the difference list of all the variables in @var{Term}, ordered as
+   they appear in @var{Term} right-to-left depth-first (without
+   duplicates).").
+
+term_variables(Term, Vars, Tail) :- 
+	term_variables_2(Term, Vars0, Vars0, Tail), 
+	Vars = Vars0.
+ 
+term_variables_2(X, Vars, Tail0, Tail) :-
+	var(X), !,
+	push_var(Vars, X, Tail0, Tail).
+term_variables_2(Term, Vars, Tail0, Tail) :-
+	term_variables_3(1, Term, Vars, Tail0, Tail).
+
+term_variables_3(N0, Term, Vars, Tail0, Tail) :-
+	arg(N0, Term, Arg),
+	!,
+	term_variables_2(Arg, Vars, Tail0, Tail1),
+	N is N0 + 1,
+	term_variables_3(N, Term, Vars, Tail1, Tail).
+term_variables_3(_, _, _, Tail, Tail).
+
+push_var(Vars, X, _, Tail) :-
+	var(Vars),
+	!,
+	Vars = [X|Tail].
+push_var([E|Vars], X, Tail0, Tail) :-
+	E==X -> Tail0 = Tail ; push_var(Vars, X, Tail0, Tail).
 
 %-------------------------------------------------------------------------
 

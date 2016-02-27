@@ -21,17 +21,6 @@
 /* extern int atom_buffer_length; */  /* Non-shared --- used by each worker */
 
 
-/* Streams pointing to "user" -- should be shared */
-
-extern stream_node_t *stream_user_input;                   /* Shared */
-extern stream_node_t *stream_user_output;                  /* Shared */
-extern stream_node_t *stream_user_error;                   /* Shared */
-
-
-/* root of the stream pointers -- shared */
-
-extern stream_node_t *root_stream_ptr;            /* Shared & locked */
-
 extern sw_on_key_t *prolog_predicates;    /* Shared -- never changes */
 /*extern sw_on_key_t *user_predicates;*/
 extern sw_on_key_t **predicates_location;                  /* Shared */
@@ -60,7 +49,7 @@ extern SLOCK stackset_expansion_l;  /* Mutex for stack set expansion */
 extern worker_t *main_worker;  /* Pointer to main worker */
 extern bool_t unwinding_done;         /* Has the unwinding been performed? */
 
-extern volatile int nagents;      /* Number of agents created */
+extern int nagents;      /* Number of agents created */
 extern SLOCK nagents_l;
 
 /* Parallel goals */
@@ -114,9 +103,6 @@ extern tagged_t atom_share;
 extern tagged_t atom_noshare;
 extern tagged_t atom_nil;
 extern tagged_t atom_list;
-extern tagged_t atom_user_input;
-extern tagged_t atom_user_output;
-extern tagged_t atom_user_error;
 extern tagged_t atom_read;
 extern tagged_t atom_write;
 extern tagged_t atom_append;
@@ -127,7 +113,6 @@ extern tagged_t atom_directory;
 extern tagged_t atom_fifo;
 extern tagged_t atom_unknown;
 extern tagged_t atom_prolog;
-extern tagged_t atom_user;
 extern tagged_t atom_lessthan;
 extern tagged_t atom_greaterthan;
 extern tagged_t atom_equal;
@@ -166,6 +151,11 @@ extern tagged_t atom_no_block;
 #if defined(GAUGE)
 extern tagged_t atom_counter;
 #endif
+
+#if defined(USE_OVERFLOW_EXCEPTIONS)
+extern tagged_t atom_undo_heap_overflow_excep;
+#endif
+extern tagged_t atom_heap_limit;
 
 extern tagged_t functor_neck;
 extern tagged_t functor_list;
@@ -217,6 +207,9 @@ extern try_node_t *address_nd_current_predicate;
 extern try_node_t *address_nd_predicate_property;
 extern try_node_t *address_nd_current_stream;
 extern try_node_t *address_nd_atom_concat;
+#if defined(TABLING)
+extern try_node_t *address_nd_fake_choicept;
+#endif
 #if defined(PARBACK)
 extern try_node_t *address_nd_suspension_point;
 extern bcp_t restart_point_insn;
@@ -266,6 +259,9 @@ extern bool_t nd_current_predicate PROTO((worker_t *w));
 extern bool_t nd_predicate_property PROTO((worker_t *w));
 extern bool_t nd_current_stream PROTO((worker_t *w));
 extern bool_t nd_atom_concat PROTO((worker_t *w));
+#if defined(TABLING)
+extern bool_t nd_fake_choicept PROTO((worker_t *w));
+#endif
 #if defined(PARBACK)
 extern bool_t nd_suspension_point PROTO((worker_t *w));
 #endif

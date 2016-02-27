@@ -3,7 +3,9 @@
 :- use_module(library(terms),    [atom_concat/2]).
 :- use_module(library(libpaths), [get_alias_path/0]).
 :- use_module(library(make(make_rt))).
-:- use_module(library(make(system_extra)), [any_to_term/2, ls/3]).
+:- use_module(library(system_extra), [ls/3]).
+
+:- use_module(library(read_from_string), [read_from_atom_atmvars/2]).
 
 %% :- use_package(trace).
 
@@ -214,8 +216,9 @@ parse_args(['-d', NameValue|Args], ApplName, Options) :-
 	add_name_value(Name, Value),
 	!,
 	parse_args(Args, ApplName, Options).
-parse_args([Type, File|Args], ApplName, options(H, C, [FFile|ConfigFile])) :-
-	(Type='-m', FFile = File ;Type='-l', FFile = library(File)),
+parse_args([Type, File0|Args], ApplName, options(H, C, [FFile|ConfigFile])) :-
+	read_from_atom_atmvars(File0, File),
+	( Type='-m', FFile = File ; Type='-l', FFile = library(File) ),
 	!,
 	parse_args(Args, ApplName, options(H, C, ConfigFile)).
 parse_args(Args, ApplName, Options) :-
@@ -229,8 +232,7 @@ parse_args(Args, ApplName, _Options) :-
 parse_other_options(Args, ApplName, options(H, ConfigFiles, [])) :-
 	( ConfigFiles == [] ->
 	    current_default_config_file(A),
-	    load_config_files(A,
-		"(default) module")
+	    load_config_files(A, "(default) module")
 	;
 	    load_config_files(ConfigFiles, "module")
 	),
@@ -242,12 +244,12 @@ parse_other_options(Args, ApplName, options(H, ConfigFiles, [])) :-
 	).
 
 default_config_file('makedir').
-default_config_file('\'Makedir\'').
+default_config_file('Makedir').
 %% default_config_file('makefile').
-%% default_config_file('\'Makefile\'').
+%% default_config_file('Makefile').
 
 valid_dir('makedir').
-valid_dir('\'Makedir\'').
+valid_dir('Makedir').
 
 current_default_config_file([A]) :-
 	default_config_file(A),
@@ -263,10 +265,11 @@ current_default_config_file(A) :-
 	findall(L,
 	    (
 		member(L0, A0),
-		atom_concat(['\'makedir/', L0, '\''], L)
+		% TODO: allow makedir/L0?
+		L = '.'('makedir'(L0)) %atom_concat(['\'makedir/', L0, '\''], L)
 	    ), A).
-current_default_config_file(['\'Makefile.pl\'']).
-current_default_config_file(['\'makefile.pl\'']).
+current_default_config_file(['Makefile.pl']).
+current_default_config_file(['makefile.pl']).
 
 load_config_files([],     _).
 load_config_files([M|Ms], Message) :-
@@ -319,10 +322,9 @@ load_config_files([M|Ms], Message) :-
 
 load_config_file(Text, ConfigFile) :-
 	verbose_message("loading ~s ~w", [Text, ConfigFile]),
-	any_to_term(ConfigFile, ConfigModule),
-	use_module(ConfigModule),
-	(call_unknown(_:register_config_file(ConfigModule)) -> true ; true),
-	dyn_load_cfg_module_into_make(ConfigModule).
+	use_module(ConfigFile),
+	( call_unknown(_:register_config_file(ConfigFile)) -> true ; true ),
+	dyn_load_cfg_module_into_make(ConfigFile).
 
 %% ensure_loaded(ConfigFile),
 %% dyn_load_cfg_file_into_make(ConfigFile)

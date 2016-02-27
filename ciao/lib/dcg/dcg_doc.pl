@@ -1,7 +1,7 @@
 :- use_package(assertions).
 :- doc(nodoc,assertions).
 
-:- doc(title,"Definite clause grammars").
+:- doc(title,"Definite Clause Grammars").
 
 :- doc(author, "The CLIP Group").
 
@@ -11,14 +11,15 @@
 %% language analysis---a survey of the formalism and a comparison with
 %% augmented transition networks} by F.C.N. Pereira and D.H.D. Warren, in
 %% @cite{Artificial Intelligence} 13:231-278, 1980. 
- 
-:- doc(module,"This library package allows the use of DCGs
-   (Definite Clause Grammars) @cite{Colmerauer78,PereiraWarren80}
-   in a Ciao module/program.
 
-Definite clause grammars are an extension of the well-known context-free
-grammars. Prolog's grammar rules provide a convenient notation for expressing
-definite clause grammars. A DCG rule in Prolog takes the general form
+:- doc(module,"This library package allows the use of DCGs (Definite
+   Clause Grammars) @cite{Colmerauer78,PereiraWarren80} in a Ciao
+   module/program.
+
+Definite clause grammars are an extension of the well-known
+context-free grammars. Prolog's grammar rules provide a convenient
+notation for expressing definite clause grammars. A DCG rule in
+Prolog takes the general form
 
 @begin{verbatim}
 @var{head} --> @var{body}.
@@ -28,6 +29,13 @@ definite clause grammars. A DCG rule in Prolog takes the general form
 meaning ``a possible form for @var{head} is @var{body}''.  Both
 @var{body} and @var{head} are sequences of one or more items linked by the
 standard Prolog conjunction operator ""@tt{,}"". 
+
+@bf{Note:} support for @pred{phrase/2} and @pred{phrase/3} is
+offered by the @lib{dcg/dcg_phrase} package. Those predicates may
+perform code translations at runtime, which in some cases is not
+desired feature (e.g., make precision of static analysis worse or
+increasing size of static executables). Thus, we separate by design
+the static and dynamic behaviours.
 
 Definite clause grammars extend context-free grammars in the following ways:
 
