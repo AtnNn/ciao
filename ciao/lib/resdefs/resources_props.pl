@@ -4,9 +4,10 @@
 		head_cost/4,
 		literal_cost/4,
 		intervals/3,
-		calls/1
+		calls/1,
+		cost_args/2
 	    ],
-	    [assertions, hiord]).
+	    [assertions, regtypes, hiord]).
 
 :- use_package(library(resdefs(resources_decl))).
 :- reexport(library(resdefs(resources_types))).
@@ -18,6 +19,21 @@
 %----------------------------------------------------------------------------
 % Added by JNL 
 %----------------------------------------------------------------------------
+
+:- regtype cost_mode_t/1.
+
+cost_mode_t('+').
+cost_mode_t('-').
+cost_mode_t('?').
+cost_mode_t(void).
+
+:- meta_predicate cost_args(goal, ?).
+
+:- prop cost_args(Head, Args) : callable * list(cost_mode_t) + no_rtcheck
+# "Specifies the modes for the given predicate, as required by
+   the resources analysis".
+
+cost_args(Goal, _) :- call(Goal).
 
 :- meta_predicate head_cost(goal, ?, ?, pred(2)).
 

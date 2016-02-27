@@ -39,9 +39,9 @@ case ${CIAOARCH} in
     crossWin32i86)     OSNAME=crossWin32; ARCHNAME=i86 ;; #New in official (useful?)
 esac
 
-setup_lion_cc() {
-    # In Lion 'gcc' points to 'llvm-gcc' by default, which generates
-    # wrong code for Ciao (and many other programs).
+setup_darwin11_cc() {
+    # In MacOS (release 10.7 and above) 'gcc' points to 'llvm-gcc' by default, which 
+    # generates wrong code for Ciao (and many other programs).
     #
     # If the user did not provide a custom 'cc' and 'ld', we will
     # assume that the default values are wrong and stop the
@@ -55,12 +55,12 @@ setup_lion_cc() {
 
 ** ERROR: Unspecified compiler and linker.
 
-The default compiler on Mac OS X Lion (llvm-gcc that comes with
-XCode-4.2) does not correctly compile CiaoDE.  You have to use an
+The default compiler on Mac OS release 10.7 and above (llvm-gcc that comes
+with XCode-4.2) does not correctly compile CiaoDE.  You have to use an
 alternative C-compiler, for instance separately compiled GNU gcc, that
 does not depend on the LLVM backend.
 
-Building Ciao on Lion was succesfully tested with GNU gcc versions 4.2
+Building Ciao on Mac OS 10.7 was succesfully tested with GNU gcc versions 4.2
 and 4.6.1. Use the '--cc=CC' option (and '--ld=LD') in 'ciaosetup
 configure' to specify the alternative C compiler (and linker) that are
 going to be used for compiling Ciao. If you are using GNU gcc, the
@@ -68,7 +68,7 @@ linker and compiler can be the same executable.  Example:
 
   ./ciaosetup configure --cc=/HOME/mygcc/bin/gcc-4.6.1
 
-An illustration of how to compile gcc-4.6.1 on Mac OS X Lion can be
+An illustration of how to compile gcc-4.6.1 on Mac OS 10.7 can be
 found on the following web page:
 
 http://solarianprogrammer.com/2011/09/20/compiling-gcc-4-6-1-on-mac-osx-lion/
@@ -98,7 +98,7 @@ else
 	crossWin32i86)  CC=i386-mingw32-gcc; LD=i386-mingw32-gcc ;;
 	DARWIN*)
 	    case "`/usr/bin/uname -r`" in
-		11.*)  setup_lion_cc ;;
+		11.*|12.*|13.*)  setup_darwin11_cc ;;
 		*)     CC=gcc; LD=gcc ;;
 	    esac ;;
 	*)

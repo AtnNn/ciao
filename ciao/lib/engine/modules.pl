@@ -9,43 +9,50 @@
    special has to be done to use them.").
 
 :- doc(summary, "Modularity is a basic notion in a modern computer
-   language.  Modules allow dividing programs in several parts, which
-   have their own independent name spaces.").
+   language.  Modules allow dividing programs into several parts,
+   which have their own independent name spaces.").
 
 :- doc(module, "Modularity is a basic notion in a modern computer
-   language.  Modules allow dividing programs in several parts, which
-   have its own independent name spaces.  The module system in Ciao
-   @cite{ciao-modules-cl2000}, as in many other Prolog implementations,
-   is procedure based.  This means that predicate names are local to a
-   module, but functor/atom names in data are shared (at least by default).
+   language.  Modules allow dividing programs into several parts,
+   which have their own independent name spaces.  The module system in
+   Ciao @cite{ciao-modules-cl2000} is, as in most Prolog
+   implementations, @em{procedure based}.  This means that predicate
+   names are local to a module, but functor/atom names in data are
+   shared (at least by default).
 
-   The predicates visible in a module are the predicates defined in
-   that module, plus the predicates imported from other modules.  Only
-   predicates exported by a module can be imported from other modules.
-   The default module of a given predicate name is the local one if
-   the predicate is defined locally, else the last module from which
-   the predicate is imported, where explicit imports have priority
-   over implicit ones (that is, a predicate imported through a
-   @tt{use_module/2} declaration is always preferred over a predicate
-   imported through a @tt{use_module/1} declaration).  To refer to a
-   predicate from a module which is not the default module for that
-   predicate the name has to be module @cindex{module
-   qualification}qualified.  A module qualified predicate name has the
+   @subsubsection{Visibility rules}
+
+   The @em{predicates visible in a module} are the predicates
+   defined in that module, plus the predicates imported from other
+   modules.  Only predicates exported by a module can be imported from
+   other modules.  The default module of a given predicate name is the
+   local one if the predicate is defined locally, else the @em{last}
+   module from which the predicate is imported, where explicit imports
+   have priority over implicit ones (that is, a predicate imported
+   through a @tt{use_module/2} declaration is always preferred over a
+   predicate imported through a @tt{use_module/1} declaration).  To
+   refer to a predicate from a module which is not the default module
+   for that predicate the name has to be module @cindex{module
+   qualification}qualified.  A module-qualified predicate name has the
    form @var{Module}:@var{Predicate} as in the call
    @tt{debugger:debug_module(M)}.  Note that in Ciao this module
    qualification cannot be used for gaining access to predicates that
    have not been imported, nor for defining clauses of other modules.
 
+   @subsubsection{Files with no mudule declaration ('user' files)}
+
    All predicates defined in files with no module declaration belong
    to a special module called @cindex{user module} @tt{user}, from
    which they are all implicitly exported.  This provides backward
-   compatibility for programs written for implementations with no
-   module system and allows dividing programs into several files
+   compatibility for programs written for Prolog implementations with
+   no module system and allows dividing programs into several files
    without being aware of the module system at all.  Note that this
    feature is only supported for the above-mentioned
    backward-compatibility reasons, and the use of @tt{user} files is
    discouraged.  Many attractive compilation features of Ciao cannot
    be supported for @tt{user} modules.
+
+   @subsubsection{Multifile predicates}
 
    The case of multifile predicates (defined with the declaration
    @decl{multifile/1}) is also special.  Multifile predicates can be
@@ -54,15 +61,34 @@
    name space of multifile predicates is independent, as if they
    belonged to the special module @tt{multifile}.
 
-   Every @tt{user} or module file imports implicitly a number of
-   modules called @concept{builtin modules}.  They are imported before
-   all other importations of the module, thus allowing the
-   redefinition of any of their predicates (with the exception of
-   @pred{true/0}) by defining local versions or importing them from
-   other modules.  Importing explicitly from a builtin module,
-   however, disables the implicit importation of the rest (this
-   feature is used by package @lib{library(pure)} to define pure
-   Prolog code).").
+   @subsubsection{Libraries imported by default ('builtins')}
+
+   While in Ciao there are no 'built-in' predicates (i.e., predicates
+   whose load cannot be avoided or that that cannot be redefined --see
+   below) for convenience every module or @tt{user file} imports
+   implicitly a number of modules called @concept{builtin modules}
+   (also referred to as @concept{default modules}). Which exact
+   modules are imported by default is controlled by the third argument
+   of @decl{module/3} declarations, the lack thereof in
+   @decl{module/2} declarations, some rules for user files, etc., as
+   described below. For example, for backward compatibility with
+   traditional Prolog systems, if a @decl{module/2} declaration is
+   used, then the traditional predicates that are built in in most
+   Prolog systems are imported in that module.
+
+   Predicates coming from builtin/default modules are imported before
+   all other importations of the module. This allows the
+   @concept{redefinition of builtins}, i.e., the redefinition of any
+   of the predicates imported by default from builtin/default modules
+   (with the exception of @pred{true/0}) by either defining local
+   versions of these predicates or by importing them from other
+   modules.
+
+   Importing explicitly from a builtin module, however, disables the
+   implicit importation of the rest of the builtin modules that would
+   be otherwise loaded (this feature is used for example by package
+   @lib{library(pure)} to define pure modules that do not import any
+   traditional Prolog builtins; i.e., @concept{pure Prolog} code).").
 
 :- doc(doinclude,module/3).
 :- true decl module(Name, Exports, Packages)
@@ -145,7 +171,21 @@
           file at the time of compilation).  For the same reason the
           predicates imported are not checked to be exported by
           @var{Module}.  Its use in other cases is strongly discouraged,
-          as it disallows many compiler optimizations.".
+          as it disallows many compiler optimizations.
+
+          This is an example of such a case for a dynamically loaded
+          module:
+
+@begin{verbatim}
+:- module(_,_).
+
+:- import(bar,[b/1]).
+
+main(X) :- 
+     use_module(bar),
+     b(X).
+@end{verbatim}
+".
 
 :- doc(doinclude,reexport/2).
 :- true decl reexport(Module, Preds) : sourcename * list(predname)
@@ -167,10 +207,10 @@
 
 :- true decl meta_predicate(MetaSpecs) : sequence(metaspec)
         # "Specifies that the predicates in @var{MetaSpecs} have
-          arguments which has to be module expanded (predicates, goals,
-          etc).  The directive is only mandatory for exported
-          predicates (in modules).  This directive is defined as a
-          prefix operator in the compiler.".
+          arguments which have to be module expanded (predicates,
+          goals, etc).  @decl{meta_predicate/1} directives are only
+          mandatory for exported predicates (in modules).  This
+          directive is defined as a prefix operator in the compiler.".
 
 :- doc(doinclude, modulename/1).
 

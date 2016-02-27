@@ -762,11 +762,10 @@ prebuild_hook_decl(ppl).
 prebuild_hook(ppl) :-
 	( with_ppl(yes) ->
 	    bold_message("Configuring PPL Interface"),
- 	    foreign_config_var(ppl, 'cflags', CompilerOpts1),
- 	    foreign_config_var(ppl, 'cppflags', CompilerOpts2),
+ 	    foreign_config_var(ppl, 'cppflags', CompilerOpts1),
+ 	    foreign_config_var(ppl, 'cxxflags', CompilerOpts2),
+	    append(CompilerOpts1, " "||CompilerOpts2, CompilerOpts),
  	    foreign_config_var(ppl, 'ldflags', LinkerOpts),
- 	    append(CompilerOpts1, " ",  Tmp),
-	    append(Tmp, CompilerOpts2, CompilerOpts),
 	    T = ~flatten(["%Do not edit generated automatically\n\n",
 		    ":- extra_compiler_opts('", CompilerOpts, "').\n",
 		    ":- extra_linker_opts('", LinkerOpts, "').\n"]),
@@ -777,9 +776,15 @@ prebuild_hook(ppl) :-
 		fail
 	    ; Version @< [0, 10] ->
 		ppl_interface_version("0_9"),
-		string_to_file("", ~fsR(~ppl_dir/'0_10'/'NOCOMPILE'))
-	    ; ppl_interface_version("0_10"),
-	      string_to_file("", ~fsR(~ppl_dir/'0_9'/'NOCOMPILE'))
+		string_to_file("", ~fsR(~ppl_dir/'0_10'/'NOCOMPILE')),
+  	        string_to_file("", ~fsR(~ppl_dir/'1_0'/'NOCOMPILE'))
+	    ;  Version @< [1, 0] ->
+		ppl_interface_version("0_10"),
+		string_to_file("", ~fsR(~ppl_dir/'0_9'/'NOCOMPILE')),
+		string_to_file("", ~fsR(~ppl_dir/'1_0'/'NOCOMPILE'))
+	    ; ppl_interface_version("1_0"),
+	      string_to_file("", ~fsR(~ppl_dir/'0_9'/'NOCOMPILE')),
+	      string_to_file("", ~fsR(~ppl_dir/'0_10'/'NOCOMPILE'))
 	    )
 	;
 	    string_to_file(
@@ -787,7 +792,8 @@ prebuild_hook(ppl) :-
 		":- initialization(error('PPL library not installed')).",
 		~fsR(~ppl_dir/'ppl_auto.pl')),
 	    string_to_file("", ~fsR(~ppl_dir/'0_9'/'NOCOMPILE')),
-	    string_to_file("", ~fsR(~ppl_dir/'0_10'/'NOCOMPILE'))
+	    string_to_file("", ~fsR(~ppl_dir/'0_10'/'NOCOMPILE')),
+	    string_to_file("", ~fsR(~ppl_dir/'1_0'/'NOCOMPILE'))
 	).
 
 % This selects one of the two versions

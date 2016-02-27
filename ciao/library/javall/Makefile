@@ -6,7 +6,7 @@ PROLOGSERVER=plserver
 
 all: 
 	$(SETLOCALCIAO) $(CIAOC) -c $(PROLOGSOURCES)
-	$(SETLOCALCIAO) $(CIAOC) -x -s $(PROLOGSERVER)
+	$(SETLOCALCIAO) $(CIAOC) -x $(PROLOGSERVER)
 	-chmod  $(EXECMODE) $(PROLOGSERVER)
 	cd CiaoJava && $(MAKE) all
 	cd examples/java2pl && $(MAKE) all

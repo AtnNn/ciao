@@ -242,7 +242,7 @@ details."
 
 ;; TODO: Add pattern for 'bash'. Better idea: change the prompt of
 ;;   external shell used for LPdoc.
-(defcustom ciao-os-shell-prompt-pattern "\\(\\[[0-9]+\\]> \\|.*\\$ \\|.*> \\)"
+(defcustom ciao-os-shell-prompt-pattern "\\(\\[[0-9]+\\]> \\|.*\\$ \\|.*> \\|[A-Z]:.*>\\)"
   "Regular expression used to describe typical shell prompt
 patterns (csh and bash), so that error location works in inferior
 shells. This is useful for example so that errors are located

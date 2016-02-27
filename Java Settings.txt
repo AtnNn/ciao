@@ -1,0 +1,41 @@
+      |------------------------------------------------------| 
+      |packages needed:                                      |
+      | emacs21                                              |
+      | install ant                                          |
+      |         ant-optional                                 |
+      |         sun-java6-jdk                                |
+      | set java-6-sun                                       |
+      |   sudo update-java-alternatives --set java-6-sun     |
+      |------------------------------------------------------|
+      |add the following in .emacs:                          |
+      | ;; Java mode in ciao                                 |
+      | (setq load-path                                      |
+      |    (cons "/home/umer/SvnReps/CiaoDE/ciao/emacs-mode"| 
+      |     load-path))                                      |
+      | (defun load-java-ciaopp-mode ()                      |
+      |   (require 'java-ciaopp)                             |
+      |   (java-ciaopp-setup))                               |
+      | (add-hook 'java-mode-hook 'load-java-ciaopp-mode)    |
+      |------------------------------------------------------|
+      |Mac Classes path:                                     |
+      |(in /ilciao/build.xml & /ilciao/ant.properties)       |
+      |    Uncomment variable macClasses2                    |
+      |------------------------------------------------------|    
+      |prepare ciaopp:                                       | 
+      | cd /../CiaoDE                                        |
+      | svn up                                               |
+      | cd /../CiaoDE                                        |
+      | ./ciaosetup realclean                                |
+      | ./ciaosetup user-install                             |
+      | cd <CiaoDE>/ciaopp/ilciao/examples/Resources         |
+      | rm *_co.java                                         |
+      | cd <CiaoDE>/ciaopp/ilciao                            |
+      | ant compile                                          |
+      |------------------------------------------------------| 
+      |analysis:                                             |
+      |(in /ilciao/examples/Resources)                       |
+      | $ module('~/.../*.java').                            |
+      | $ analyze(resources).                                |
+      | $ output. -> shows the file that contains the results|
+      |            open it                                   |
+      |------------------------------------------------------|
