@@ -6,39 +6,30 @@
 
 argnames_def((:- argnames(R)), _, M) :-
         functor(R, F, N),
-        add_argnames_def(R, F, N, M).
-argnames_def((:- data(R)), (:- data(F/N)), M) :-
-        \+ (R = _/_),
-        functor(R, F, N),
-        add_argnames_def(R, F, N, M).
-argnames_def(end_of_file, end_of_file, M) :-
-        retractall_fact(argnames(_,_,_,M)).
-
-add_argnames_def(R, F, N, M) :-
         ( argnames(F, _, R0, M)  ->
             ( R0 == R -> true
-            ; error(['incompatible argnames declaration ',R])
+            ; inform_user(['ERROR: incompatible argnames declaration ',R])
             )
         ; arg(R, A), \+ atomic(A) ->
-            error(['invalid argnames declaration ',R])
+            inform_user(['ERROR: invalid argnames declaration ',R])
         ; assertz_fact(argnames(F,N,R,M))
         ).
+argnames_def(end_of_file, end_of_file, M) :-
+        retractall_fact(argnames(_,_,_,M)).
 
 argnames_use($(F,TheArgs), T, M) :-
         atom(F),
         argnames_args(TheArgs, Args),
-        argnames_trans(Args, F, M, T).
+        argnames_trans(F, Args, M, T).
 
-argnames_trans((/), F, M, T) :-
-        argnames(F, A, _, M),
-        T = F/A, !.
-argnames_trans(Args, F, M, T) :-
+argnames_trans(F, Args, M, T) :-
         argnames(F, A, R, M),
         functor(T, F, A),
         insert_args(Args, R, A, T), !.
-argnames_trans(Args, F, _, _) :-
+argnames_trans(F, Args, _, _) :-
         argnames_args(TheArgs, Args), !,
-        warning(['invalid argnames ',F,' $ ',~~(TheArgs),' - not translated']),
+        inform_user(['WARNING: invalid argnames ',F,' $ ',TheArgs,
+                     ' - not translated']),
         fail.
 
 insert_args([], _, _, _).
@@ -61,10 +52,6 @@ argnames_args({Args}, Args).
 
 % ----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
-
-:- comment(version(1*11+34,2003/08/21,17:46*13+'CEST'), "Added treatment
-   of data(functor(argnames)) and the functor$@{/@} syntax.  Eliminated
-   use of deprecated inform_user predicate. (Daniel Cabeza Gras)").
 
 :- comment(version(0*4+5,1998/2/24), "Synchronized file versions with
    global CIAO version.  (Manuel Hermenegildo)").

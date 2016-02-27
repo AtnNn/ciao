@@ -1,269 +1,102 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Lists of numbers</TITLE>
+<TITLE>The Ciao Prolog System               - Printing the declarations and code in a file</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_169.html">previous</A>, <A HREF="ciao_171.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_169.html">previous</A>, <A HREF="ciao_171.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC699" HREF="ciao_toc.html#TOC699">Lists of numbers</A></H1>
-<P>
-<A NAME="IDX7434"></A>
-
+<H1><A NAME="SEC687" HREF="ciao_toc.html#TOC687">Printing the declarations and code in a file</A></H1>
 
 <P>
-<STRONG>Author(s):</STRONG> The CLIP Group.
+<STRONG>Author(s):</STRONG> Manuel Hermenegildo.
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#113 (2003/12/22, 18:22:36 CET)
+<STRONG>Version:</STRONG> 0.5#6 (1999/4/15, 20:33:6 MEST)
 
 
 <P>
-This module implements some kinds of lists of numbers.
+A simple program for 
+<A NAME="IDX7037"></A>
+printing assertion information (
+<A NAME="IDX7038"></A>
+predicate declarations, 
+<A NAME="IDX7039"></A>
+property declarations, 
+<A NAME="IDX7040"></A>
+type declarations, etc.) and 
+<A NAME="IDX7041"></A>
+printing code-related information (
+<A NAME="IDX7042"></A>
+imports, 
+<A NAME="IDX7043"></A>
+exports, 
+<A NAME="IDX7044"></A>
+libraries used, etc.) on a file. The file should be a single CIAO or Prolog source file. It uses the CIAO compiler's pass one to do it. This program is specially useful for example to check what the compiler is actually seeing after syntactic expansions, as well as for checking what assertions the 
+<A NAME="IDX7045"></A>
+assertion normalizer is producing from the original assertions in the file. 
 
 
 
 <UL>
-<LI><A HREF="ciao_170.html#SEC700">Usage and interface (numlists)</A>
-<LI><A HREF="ciao_170.html#SEC701">Documentation on exports (numlists)</A>
+<LI><A HREF="ciao_170.html#SEC688">Usage (fileinfo)</A>
+<LI><A HREF="ciao_170.html#SEC689">More detailed explanation of options (fileinfo)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC700" HREF="ciao_toc.html#TOC700">Usage and interface (<CODE>numlists</CODE>)</A></H2>
+<H2><A NAME="SEC688" HREF="ciao_toc.html#TOC688">Usage (fileinfo)</A></H2>
 
-<div class="cartouche">
+
+<PRE>
+   
+    fileinfo -asr &#60;filename.asr&#62; 
+       : pretty prints the contents of &#60;filename.asr&#62; 
+
+    fileinfo [-v] [-m] &#60;-a|-c|-e&#62; &#60;filename&#62; [libdir1] ... [libdirN]
+    -v : verbose output (e.g., lists all files read)
+    -m : restrict info to current module
+    -a : print assertions 
+    -c : print code and interface (imports/exports, etc.)
+    -e : print only errors - useful to check syntax of assertions in file
+
+    fileinfo -h
+       : print this information
+
+</PRE>
+
+
+
+<H2><A NAME="SEC689" HREF="ciao_toc.html#TOC689">More detailed explanation of options (fileinfo)</A></H2>
+
+<P>
+ 
 
 <UL>
 
-<LI><STRONG>Library usage:</STRONG>
+<LI>If the <CODE>-a</CODE> option is selected, <CODE>fileinfo</CODE> prints the assertions (only code-oriented assertions -- not comment-oriented assertions) in the file <EM>after normalization</EM>. If the <CODE>-c</CODE> option is selected <CODE>fileinfo</CODE> prints the file interface, the declarations contained in the file, and the actual code. If the <CODE>-e</CODE> option is selected <CODE>fileinfo</CODE> prints only any sintactic and import-export errors found in the file, including the assertions.
 
-<CODE>:- use_module(library(numlists)).</CODE>
+<LI><CODE>filename</CODE> must be the name of a Prolog or CIAO source file.
 
-<LI><STRONG>Exports:</STRONG>
+<LI>This filename can be followed by other arguments which will be taken to be library directory paths in which to look for files used by the file being analyzed.
 
+<LI>If the <CODE>-m</CODE> option is selected, only the information related to the current module is printed.
 
-<UL>
+<LI>The <CODE>-v</CODE> option produces verbose output. This is very useful for debugging, since all the files accessed during assertion normalization are listed.
 
-<LI><EM>Predicates:</EM>
+<LI>In the <CODE>-asr</CODE> usage,
 
-<A NAME="IDX7435"></A>
-<CODE>get_primes/2</CODE>, 
-<A NAME="IDX7436"></A>
-<CODE>sum_list/2</CODE>, 
-<A NAME="IDX7437"></A>
-<CODE>sum_list/3</CODE>, 
-<A NAME="IDX7438"></A>
-<CODE>sum_list_of_lists/2</CODE>, 
-<A NAME="IDX7439"></A>
-<CODE>sum_list_of_lists/3</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX7440"></A>
-<CODE>intlist/1</CODE>, 
-<A NAME="IDX7441"></A>
-<CODE>numlist/1</CODE>.
+<A NAME="IDX7046"></A>
+<CODE>fileinfo</CODE> can be used to print the contents of a <CODE>.asr</CODE> file in human-readable form. 
 
 </UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX7442"></A>
-<CODE>lists</CODE>.
-
-</UL>
-
-</UL>
-
-</div class="cartouche">
-
-
-
-<H2><A NAME="SEC701" HREF="ciao_toc.html#TOC701">Documentation on exports (<CODE>numlists</CODE>)</A></H2>
-<P>
-<A NAME="IDX7443"></A>
-<A NAME="IDX7444"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>get_primes/2:</B>
-<DD><A NAME="IDX7445"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>get_primes(N, Primes)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Computes the <CODE>N</CODE>th first prime numbers in ascending order.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>N</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>Primes</CODE> is a list of integers.
- (<CODE>numlists:intlist/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7446"></A>
-<A NAME="IDX7447"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>intlist/1:</B>
-<DD><A NAME="IDX7448"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>intlist(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a list of integers.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7449"></A>
-<A NAME="IDX7450"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>numlist/1:</B>
-<DD><A NAME="IDX7451"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>numlist(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a list of numbers.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7452"></A>
-<A NAME="IDX7453"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>sum_list/2:</B>
-<DD><A NAME="IDX7454"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>sum_list(List, N)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>N</CODE> is the total sum of the elements of <CODE>List</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>List</CODE> is a list of numbers.
- (<CODE>numlists:numlist/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>N</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7455"></A>
-<A NAME="IDX7456"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>sum_list/3:</B>
-<DD><A NAME="IDX7457"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>sum_list(List, N0, N)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>N</CODE> is the total sum of the elements of <CODE>List</CODE> plus <CODE>N0</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>List</CODE> is a list of numbers.
- (<CODE>numlists:numlist/1</CODE>)
-
-<CODE>N0</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>N</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7458"></A>
-<A NAME="IDX7459"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>sum_list_of_lists/2:</B>
-<DD><A NAME="IDX7460"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>sum_list_of_lists(Lists, N)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>N</CODE> is the total sum of the elements of the lists of <CODE>Lists</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>List</CODE> is a list of <CODE>numlist</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>N</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7461"></A>
-<A NAME="IDX7462"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>sum_list_of_lists/3:</B>
-<DD><A NAME="IDX7463"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>sum_list_of_lists(Lists, N0, N)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>N</CODE> is the total sum of the elements of the lists of <CODE>Lists</CODE> plus <CODE>N0</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>List</CODE> is a list of <CODE>numlist</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>N0</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>N</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
-</UL>
-
-</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_169.html">previous</A>, <A HREF="ciao_171.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_169.html">previous</A>, <A HREF="ciao_171.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

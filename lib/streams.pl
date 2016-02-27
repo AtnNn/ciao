@@ -8,33 +8,25 @@
 :- comment(title,"Structured stream handling").
 
 open_null_stream(S) :-
-	'$open'('/dev/null', w, S).
+	'$open'('/dev/null', write, S).
 
-open_input(FileName, i(OldInput, NewInput)) :-
+open_input(FileName, (OldInput, NewInput)) :-
         current_input(OldInput),
         open(FileName, read, NewInput),
         set_input(NewInput).
 
-close_input(i(OldInput, NewInput)) :- !,
+close_input((OldInput, NewInput)) :-
         set_input(OldInput),
         close(NewInput).
-close_input(X) :-
-        throw(error(domain_error(open_input_handler, X), close_input/1-1)).
 
-open_output(FileName, o(OldOutput, NewOutput)) :-
+open_output(FileName, (OldOutput, NewOutput)) :-
         current_output(OldOutput),
         open(FileName, write, NewOutput),
         set_output(NewOutput).
 
-close_output(o(OldOutput, NewOutput)) :- !,
+close_output((OldOutput, NewOutput)) :-
         set_output(OldOutput),
         close(NewOutput).
-close_output(X) :-
-        throw(error(domain_error(open_output_handler, X), close_output/1-1)).
-
-:- comment(version(1*11+37,2003/08/29,14:55*55+'CEST'), "Added error
-   messages when doing close_input of an open_output handler or
-   vice versa.  (Daniel Cabeza Gras)").
 
 :- comment(version(0*5+15,1998/06/09,16:30*53+'MET DST'), "Added
    @{open,close@}_@{input,output@}. (Daniel Cabeza Gras)").

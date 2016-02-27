@@ -20,13 +20,10 @@
 
 #include <setjmp.h>
 
-/* TODO: decide which exception should be raised when an exception happens in
-   the C code */
-
 extern jmp_buf ciao_gluecode_jmpbuf;
 #define GLUECODE_TRY(Call) \
     if (setjmp(ciao_gluecode_jmpbuf)) { \
-      BUILTIN_ERROR(SYSTEM_ERROR, X(0), 1) \
+      BUILTIN_ERROR(USER_EXCEPTION, X(0), 1) \
     } else { \
       Call; \
     }

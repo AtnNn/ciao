@@ -1,38 +1,42 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - pl2sqlinsert (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Graphs</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_159.html">previous</A>, <A HREF="ciao_161.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_159.html">previous</A>, <A HREF="ciao_161.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC665" HREF="ciao_toc.html#TOC665">pl2sqlinsert (library)</A></H1>
+<H1><A NAME="SEC658" HREF="ciao_toc.html#TOC658">Graphs</A></H1>
 <P>
-<A NAME="IDX7015"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
+<A NAME="IDX6782"></A>
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.11#63 (2003/11/29, 2:26:35 CET)
+<STRONG>Author(s):</STRONG> F. Bueno.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.5#83 (2000/3/23, 19:23:58 CET)
 
 
 
 <UL>
-<LI><A HREF="ciao_160.html#SEC666">Usage and interface (pl2sqlinsert)</A>
-<LI><A HREF="ciao_160.html#SEC667">Documentation on exports (pl2sqlinsert)</A>
-<LI><A HREF="ciao_160.html#SEC668">Documentation on multifiles (pl2sqlinsert)</A>
+<LI><A HREF="ciao_160.html#SEC659">Usage and interface (graphs)</A>
+<LI><A HREF="ciao_160.html#SEC660">Documentation on exports (graphs)</A>
+<LI><A HREF="ciao_160.html#SEC661">Documentation on internals (graphs)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC666" HREF="ciao_toc.html#TOC666">Usage and interface (<CODE>pl2sqlinsert</CODE>)</A></H2>
+<H2><A NAME="SEC659" HREF="ciao_toc.html#TOC659">Usage and interface (<CODE>graphs</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -40,7 +44,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_159.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(pl2sqlinsert)).</CODE>
+<CODE>:- use_module(library(graphs)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -49,15 +53,21 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_159.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7016"></A>
-<CODE>pl2sqlInsert/2</CODE>.
+<A NAME="IDX6783"></A>
+<CODE>dgraph_to_ugraph/2</CODE>, 
+<A NAME="IDX6784"></A>
+<CODE>dlgraph_to_lgraph/2</CODE>, 
+<A NAME="IDX6785"></A>
+<CODE>edges_to_ugraph/2</CODE>, 
+<A NAME="IDX6786"></A>
+<CODE>edges_to_lgraph/2</CODE>.
 
-<LI><EM>Multifiles:</EM>
+<LI><EM>Regular Types:</EM>
 
-<A NAME="IDX7017"></A>
-<CODE>sql__relation/3</CODE>, 
-<A NAME="IDX7018"></A>
-<CODE>sql__attribute/4</CODE>.
+<A NAME="IDX6787"></A>
+<CODE>dgraph/1</CODE>, 
+<A NAME="IDX6788"></A>
+<CODE>dlgraph/1</CODE>.
 
 </UL>
 
@@ -68,24 +78,12 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_159.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7019"></A>
-<CODE>aggregates</CODE>, 
-<A NAME="IDX7020"></A>
-<CODE>dynamic</CODE>, 
-<A NAME="IDX7021"></A>
-<CODE>iso_misc</CODE>, 
-<A NAME="IDX7022"></A>
-<CODE>iso_byte_char</CODE>, 
-<A NAME="IDX7023"></A>
-<CODE>iso_incomplete</CODE>, 
-<A NAME="IDX7024"></A>
-<CODE>operators</CODE>, 
-<A NAME="IDX7025"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX7026"></A>
-<CODE>write</CODE>, 
-<A NAME="IDX7027"></A>
-<CODE>lists</CODE>.
+<A NAME="IDX6789"></A>
+<CODE>sort</CODE>, 
+<A NAME="IDX6790"></A>
+<CODE>graphs/ugraphs</CODE>, 
+<A NAME="IDX6791"></A>
+<CODE>graphs/lgraphs</CODE>.
 
 </UL>
 
@@ -95,69 +93,227 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_159.html">previous</A>,
 
 
 
-<H2><A NAME="SEC667" HREF="ciao_toc.html#TOC667">Documentation on exports (<CODE>pl2sqlinsert</CODE>)</A></H2>
+<H2><A NAME="SEC660" HREF="ciao_toc.html#TOC660">Documentation on exports (<CODE>graphs</CODE>)</A></H2>
 <P>
-<A NAME="IDX7028"></A>
-<A NAME="IDX7029"></A>
+<A NAME="IDX6792"></A>
+<A NAME="IDX6793"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>pl2sqlInsert/2:</B>
-<DD><A NAME="IDX7030"></A>
+<DT><span class="define">REGTYPE:</span> <B>dgraph/1:</B>
+<DD><A NAME="IDX6794"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<CODE>dgraph(Graph)</CODE>
 
+
+<P>
+A directed graph is a term <CODE>graph(V,E)</CODE> where <CODE>V</CODE> is a list of vertices and <CODE>E</CODE> is a list of edges (none necessarily sorted). Edges are pairs of vertices which are directed, i.e., <CODE>(a,b)</CODE> represents <CODE>a-&#62;b</CODE>. Two vertices <CODE>a</CODE> and <CODE>b</CODE> are equal only if <CODE>a==b</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dgraph(Graph)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Graph</CODE> is a directed graph.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6795"></A>
+<A NAME="IDX6796"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>dlgraph/1:</B>
+<DD><A NAME="IDX6797"></A>
+
+
+<P>
+<CODE>dlgraph(Graph)</CODE>
+
+
+<P>
+A labeled directed graph is a directed graph where edges are triples of the form <CODE>(a,l,b)</CODE> where <CODE>l</CODE> is the label of the edge <CODE>(a,b)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dlgraph(Graph)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Graph</CODE> is a directed labeled graph.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6798"></A>
+<A NAME="IDX6799"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dgraph_to_ugraph/2:</B>
+<DD><A NAME="IDX6800"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dgraph_to_ugraph(+Graph,-UGraph)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Converts <CODE>Graph</CODE> to <CODE>UGraph</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+Graph</CODE> is a directed graph.
+ (<CODE>graphs:dgraph/1</CODE>)
+
+<CODE>-UGraph</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>+Graph</CODE> is a directed graph.
+ (<CODE>graphs:dgraph/1</CODE>)
+
+<CODE>-UGraph</CODE> is an ugraph.
+ (<CODE>ugraphs:ugraph/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6801"></A>
+<A NAME="IDX6802"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dlgraph_to_lgraph/2:</B>
+<DD><A NAME="IDX6803"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dlgraph_to_lgraph(+Graph,-LGraph)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Converts <CODE>Edges</CODE> to <CODE>LGraph</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+Graph</CODE> is a directed labeled graph.
+ (<CODE>graphs:dlgraph/1</CODE>)
+
+<CODE>-LGraph</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>+Graph</CODE> is a directed labeled graph.
+ (<CODE>graphs:dlgraph/1</CODE>)
+
+<CODE>-LGraph</CODE> is a labeled graph of <CODE>term</CODE> terms.
+ (<CODE>lgraphs:lgraph/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6804"></A>
+<A NAME="IDX6805"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>edges_to_ugraph/2:</B>
+<DD><A NAME="IDX6806"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>edges_to_ugraph(+Edges,-UGraph)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Converts <CODE>Graph</CODE> to <CODE>UGraph</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+Edges</CODE> is a list of <CODE>pair</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>-UGraph</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>+Edges</CODE> is a list of <CODE>pair</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>-UGraph</CODE> is an ugraph.
+ (<CODE>ugraphs:ugraph/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6807"></A>
+<A NAME="IDX6808"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>edges_to_lgraph/2:</B>
+<DD><A NAME="IDX6809"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>edges_to_lgraph(+Edges,-LGraph)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Converts <CODE>Edges</CODE> to <CODE>LGraph</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+Edges</CODE> is a list of <CODE>triple</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>-LGraph</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>+Edges</CODE> is a list of <CODE>triple</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>-LGraph</CODE> is a labeled graph of <CODE>term</CODE> terms.
+ (<CODE>lgraphs:lgraph/2</CODE>)
+</UL>
 
 </DL>
 
 
 
-<H2><A NAME="SEC668" HREF="ciao_toc.html#TOC668">Documentation on multifiles (<CODE>pl2sqlinsert</CODE>)</A></H2>
+<H2><A NAME="SEC661" HREF="ciao_toc.html#TOC661">Documentation on internals (<CODE>graphs</CODE>)</A></H2>
 <P>
-<A NAME="IDX7031"></A>
-<A NAME="IDX7032"></A>
+<A NAME="IDX6810"></A>
+<A NAME="IDX6811"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>sql__relation/3:</B>
-<DD><A NAME="IDX7033"></A>
+<DT><span class="define">REGTYPE:</span> <B>pair/1:</B>
+<DD><A NAME="IDX6812"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>pair(P)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> <CODE>P</CODE> is a pair <CODE>(_,_)</CODE>.
 
-<P>
-The predicate is <EM>multifile</EM>.
-
-
-<P>
-The predicate is of type <EM>data</EM>.
-
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7034"></A>
-<A NAME="IDX7035"></A>
+<A NAME="IDX6813"></A>
+<A NAME="IDX6814"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>sql__attribute/4:</B>
-<DD><A NAME="IDX7036"></A>
+<DT><span class="define">REGTYPE:</span> <B>triple/1:</B>
+<DD><A NAME="IDX6815"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>triple(P)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> <CODE>P</CODE> is a triple <CODE>(_,_,_)</CODE>.
 
-<P>
-The predicate is <EM>multifile</EM>.
-
-
-<P>
-The predicate is of type <EM>data</EM>.
-
+</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_159.html">previous</A>, <A HREF="ciao_161.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_159.html">previous</A>, <A HREF="ciao_161.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

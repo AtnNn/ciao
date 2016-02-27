@@ -3,37 +3,29 @@
 # Ciao Global Compilation/Installation SETTINGS
 # ----------------------------------------------------------------------------
 # Define this to be a directory where the sources are reachable system-wide 
-# SRC=/usr/local/src/ciao
+# SRC=/home/clip/public_html/Software/Alpha/Ciao/ciao-1.8p3
 #
-SRC=/usr/local/src/ciao-1.11
+SRC=/home/clip/public_html/Software/Alpha/Ciao/ciao-1.8p3
 #-----------------------------------------------------------------------------
 # Define the following to be the places under which the installation
 # will be performed:
 
-# CIAOROOT=/usr/local
-#   or
-# CIAOROOT=/usr
-#   or
-CIAOROOT=/usr/local
-
 # Executables will go here:
-BINROOT=$(CIAOROOT)/bin
+BINROOT=/usr/local/bin
+#
+# BINROOT=/home/clip/bin
 
 # Directory libraries will grow here:
-LIBROOT=$(CIAOROOT)/lib
-
-# Headers will go here:
-INCLUDEROOT=$(CIAOROOT)/include
+LIBROOT=/usr/local/lib
+# 
+# LIBROOT=/home/clip/lib
 
 # Define this to be the directory in which you want the documentation
 # installed.  Ideally, this directory should be accessible via WWW,
 # emacs info, and man:
-# DOCROOT=/usr/local/etc/httpd/htdocs
+DOCROOT=/usr/local/etc/httpd/htdocs
 # 
-#   or
-# DOCROOT=/var/www/html/ciao
-
-DOCROOT=/var/www/html/ciao
+# DOCROOT=/home/clip/public_html/Local/lpdoc_docs/Ciao
 #-----------------------------------------------------------------------------
 # Misc installation options:
 
@@ -44,8 +36,8 @@ DOCROOT=/var/www/html/ciao
 # WEB_IMAGES_PATH=/usr/local/etc/httpd/htdocs/images/
 # WEB_IMAGES_URL=http:/my.host.here/images/
 #
-WEB_IMAGES_PATH=/var/www/icons
-WEB_IMAGES_URL=/icons/
+WEB_IMAGES_PATH=/home/clip/public_html/images
+WEB_IMAGES_URL=/images/
 
 # Set to "no" if you do not want to create a link to Ciao named "prolog",
 # for example because there are more prolog's in the system
@@ -135,9 +127,8 @@ DOCDIR=$(DOCROOT)
 # Define this to be the permissions for installed execs/dirs and data files:
 EXECMODE=775
 DATAMODE=664
-INSTALLGROUP=clip
 
-# You only want to change this if you are a developer.  Additionally,
+# You oly want to change this if you are a developer.  Additionally,
 # setting the environment variable CIAODEBUG to the value '-debug' at
 # the time of compiling the engine will override the OPTIM_LEVEL and
 # DEBUG_LEVEL flags, and produce non optimized emulator code with
@@ -149,31 +140,22 @@ INSTALLGROUP=clip
 #    profile         -- Include profiling options for the emulator
 #    paranoid-debug  -- Emulator with C level debugging info available
 #                       plus paranoid C compilation warnings
-# DEBUG_LEVEL=nodebug
 DEBUG_LEVEL=nodebug
 
-SAMBASRC=//clip/clip/Systems/ciao-1.11
-
 # This is for locally compiling the engine in NT under Samba, ignore it
-ifeq (CYGWIN,$(findstring $(shell uname),CYGWIN))
-  SRC=$(SAMBASRC)
-  ALT=win32
-  EXECSUFFIX=.exe
-else
-   ifeq ($(OSTYPE),cygwin)
-     SRC=$(SAMBASRC)
-     ALT=win32
-     EXECSUFFIX=.exe
-   else
-      # Same as above, old cygwin versions
-      ifeq ($(OSTYPE),cygwin32)
-        SRC=$(SAMBASRC)
-        ALT=win32
-        EXECSUFFIX=.exe
-      endif
-   endif
+
+ifeq ($(OSTYPE),cygwin)
+    SRC=/home/clip/public_html/Software/Alpha/Ciao/ciao-1.8p3
+    ALT=win32
+    EXECSUFFIX=.exe
 endif
 
+# Same as above, old cygwin versions
+ifeq ($(OSTYPE),cygwin32)
+    SRC=/home/clip/public_html/Software/Alpha/Ciao/ciao-1.8p3
+    ALT=win32
+    EXECSUFFIX=.exe
+endif
 
 # ----------------------------------------------------------------------------
 # Happy compilation!

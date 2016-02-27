@@ -36,8 +36,6 @@
 
 :- comment(title,"Printing status and error messages").
 
-:- comment(author,"The CLIP Group").
-
 :- comment(module,"This is a very simple library for printing status
      and error messages to the console.").
 
@@ -347,9 +345,6 @@ compose(Type,Module,File,LB,LE,Mess,Args) :-
 
 %% ---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
-
-:- comment(version(1*11+127,2003/12/30,22:01*35+'CET'), "Added comment
-   author.  (Edison Mera)").
 
 :- comment(version(1*3+108,1999/11/18,13:48*03+'MET'), "Imported
    @lib{regtypes} package. Still using @tt{^}, though. (Manuel

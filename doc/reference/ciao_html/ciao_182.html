@@ -1,84 +1,334 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - A Program to Help Cleaning your Directories</TITLE>
+<TITLE>The Ciao Prolog System               - Color and Pattern Library</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_181.html">previous</A>, <A HREF="ciao_183.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_181.html">previous</A>, <A HREF="ciao_183.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC737" HREF="ciao_toc.html#TOC737">A Program to Help Cleaning your Directories</A></H1>
-
+<H1><A NAME="SEC725" HREF="ciao_toc.html#TOC725">Color and Pattern Library</A></H1>
 <P>
-<STRONG>Author(s):</STRONG> Manuel Carro.
-
-
-<P>
-<STRONG>Version:</STRONG> 0.1#3 (2001/10/25, 14:31:59 CEST)
+<A NAME="IDX7281"></A>
 
 
 <P>
-A simple program for traversing a directory tree and deciding which files may be deleted in order to save space and not to loose information. 
+This module contains predicates to access and check conformance to the available colors and patterns.
 
 
 
 <UL>
-<LI><A HREF="ciao_182.html#SEC738">Usage (cleandirs)</A>
-<LI><A HREF="ciao_182.html#SEC739">Known bugs and planned improvements (cleandirs)</A>
+<LI><A HREF="ciao_182.html#SEC726">Usage and interface (color_pattern)</A>
+<LI><A HREF="ciao_182.html#SEC727">Documentation on exports (color_pattern)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC738" HREF="ciao_toc.html#TOC738">Usage (cleandirs)</A></H2>
+<H2><A NAME="SEC726" HREF="ciao_toc.html#TOC726">Usage and interface (<CODE>color_pattern</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(color_pattern)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX7282"></A>
+<CODE>color/2</CODE>, 
+<A NAME="IDX7283"></A>
+<CODE>pattern/2</CODE>, 
+<A NAME="IDX7284"></A>
+<CODE>random_color/1</CODE>, 
+<A NAME="IDX7285"></A>
+<CODE>random_lightcolor/1</CODE>, 
+<A NAME="IDX7286"></A>
+<CODE>random_darkcolor/1</CODE>, 
+<A NAME="IDX7287"></A>
+<CODE>random_pattern/1</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX7288"></A>
+<CODE>color/1</CODE>, 
+<A NAME="IDX7289"></A>
+<CODE>pattern/1</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX7290"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX7291"></A>
+<CODE>random/random</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC727" HREF="ciao_toc.html#TOC727">Documentation on exports (<CODE>color_pattern</CODE>)</A></H2>
+<P>
+<A NAME="IDX7292"></A>
+<A NAME="IDX7293"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>color/1:</B>
+<DD><A NAME="IDX7294"></A>
+
+
+<P>
+<CODE>color(Color)</CODE>
+
 
 
 <PRE>
-   
-cleandirs [--silent] &#60;initial_dir&#62; &#60;delete_options&#62; &#60;backup_options&#62;
-cleandirs explores &#60;initial_dir&#62; (which should be an absolute path)
-and looks for backup files and files which can be generated from other
-files, using a plausible heuristic aimed at retaining the same amount
-of information while recovering some disk space.  The heuristic is
-based on the extension of the filename.
-
-Delete options is one of:
-   --list: just list the files/directories which are amenable to be deleted,
-           but do not delete them. SAFE.
-    --ask: list the files/directories and ask for deletion. UNSAFE if you
-           make a mistake.
- --delete: just delete the files/directories without asking.  I envy your
-           brave soul if you choose this option.
-
-Backup options is one of:
- --includebackups: include backup files in the list of files to check.
- --excludebackups: do not include backup files in the list of files to check.
-    --onlybackups: include only backup files in the list of files to check.
-
-Symbolic links are not traversed.  Special files are not checked.
-
+color('GreenYellow').
+color('Yellow').
+color('White').
+color('Wheat').
+color('BlueViolet').
+color('Violet').
+color('MediumTurquoise').
+color('DarkTurquoise').
+color('Turquoise').
+color('Thistle').
+color('Tan').
+color('Sienna').
+color('Salmon').
+color('VioletRed').
+color('OrangeRed').
+color('MediumVioletRed').
+color('IndianRed').
+color('Red').
+color('Plum').
+color('Pink').
+color('MediumOrchid').
+color('DarkOrchid').
+color('Orchid').
+color('Orange').
+color('Maroon').
+color('Magenta').
+color('Khaki').
+color('Grey').
+color('LightGray').
+color('DimGray').
+color('DarkSlateGray').
+color('YellowGreen').
+color('SpringGreen').
+color('SeaGreen').
+color('PaleGreen').
+color('MediumSpringGreen').
+color('MediumSeaGreen').
+color('LimeGreen').
+color('ForestGreen').
+color('DarkOliveGreen').
+color('DarkGreen').
+color('Green').
+color('Goldenrod').
+color('Gold').
+color('Brown').
+color('Firebrick').
+color('Cyan').
+color('Coral').
+color('SteelBlue').
+color('SlateBlue').
+color('SkyBlue').
+color('Navy').
+color('MidnightBlue').
+color('MediumSlateBlue').
+color('MediumBlue').
+color('LightSteelBlue').
+color('LightBlue').
+color('DarkSlateBlue').
+color('CornflowerBlue').
+color('CadetBlue').
+color('Blue').
+color('Black').
+color('MediumAquamarine').
+color('Aquamarine').
 </PRE>
 
 <P>
- 
-Invoking the program with no arguments will return an up-to-date information on the options.
+Defines available colors for elements such as points, lines or bars. 
 
 
+</DL>
+
+<P>
+<A NAME="IDX7295"></A>
+<A NAME="IDX7296"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>color/2:</B>
+<DD><A NAME="IDX7297"></A>
 
 
-<H2><A NAME="SEC739" HREF="ciao_toc.html#TOC739">Known bugs and planned improvements (<CODE>cleandirs</CODE>)</A></H2>
-
+<P>
+<STRONG>Usage:</STRONG> <CODE>color(C1,C2)</CODE>
 
 <UL>
+<LI><EM>Description:</EM> Test whether the color <CODE>C1</CODE> is a valid color or not. If <CODE>C1</CODE> is a variable the predicate will choose a valid color randomly. If <CODE>C1</CODE> is a ground term that is not a valid color an exception (error9) will be thrown
 
-<LI>
+<LI><EM>The following properties should hold at call time:</EM>
 
-Recursive removal of subdirectories relies on the existence of a recursive /bin/rm command in your system.
+<CODE>color_pattern:color(C1)</CODE>
+ (<CODE>color_pattern:color/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>color_pattern:color(C2)</CODE>
+ (<CODE>color_pattern:color/1</CODE>)
 </UL>
 
+</DL>
+
+<P>
+<A NAME="IDX7298"></A>
+<A NAME="IDX7299"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>pattern/1:</B>
+<DD><A NAME="IDX7300"></A>
+
+
+<P>
+<CODE>pattern(Pattern)</CODE>
+
+
+
+<PRE>
+pattern(pattern1).
+pattern(pattern2).
+pattern(pattern3).
+pattern(pattern4).
+pattern(pattern5).
+pattern(pattern6).
+pattern(pattern7).
+pattern(pattern8).
+pattern(pattern9).
+</PRE>
+
+<P>
+Defines valid patterns used in the stipple style bar attribute. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX7301"></A>
+<A NAME="IDX7302"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>pattern/2:</B>
+<DD><A NAME="IDX7303"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>pattern(P1,P2)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Test whether the pattern <CODE>P1</CODE> is a valid pattern or not. If <CODE>P1</CODE> is a variable the predicate will choose a valid pattern randomly. If <CODE>P1</CODE> is a ground term that is not a valid pattern an exception (error10) will be thrown.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>color_pattern:pattern(P1)</CODE>
+ (<CODE>color_pattern:pattern/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>color_pattern:pattern(P2)</CODE>
+ (<CODE>color_pattern:pattern/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7304"></A>
+<A NAME="IDX7305"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>random_color/1:</B>
+<DD><A NAME="IDX7306"></A>
+
+
+<P>
+<CODE>random_color(Color)</CODE>
+
+
+<P>
+This predicate choose a valid color among the availables randomly. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX7307"></A>
+<A NAME="IDX7308"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>random_lightcolor/1:</B>
+<DD><A NAME="IDX7309"></A>
+
+
+<P>
+<CODE>random_lightcolor(Color)</CODE>
+
+
+<P>
+This predicate choose a valid light color among the availables randomly. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX7310"></A>
+<A NAME="IDX7311"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>random_darkcolor/1:</B>
+<DD><A NAME="IDX7312"></A>
+
+
+<P>
+<CODE>random_darkcolor(Color)</CODE>
+
+
+<P>
+This predicate choose a valid dark color among the availables randomly. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX7313"></A>
+<A NAME="IDX7314"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>random_pattern/1:</B>
+<DD><A NAME="IDX7315"></A>
+
+
+<P>
+<CODE>random_pattern(Pattern)</CODE>
+
+
+<P>
+This predicate choose a valid pattern among the availables randomly. 
+
+
+</DL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_181.html">previous</A>, <A HREF="ciao_183.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_181.html">previous</A>, <A HREF="ciao_183.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

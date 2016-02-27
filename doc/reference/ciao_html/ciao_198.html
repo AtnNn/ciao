@@ -1,46 +1,37 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Error Handler for Chartlib</TITLE>
+<TITLE>The Ciao Prolog System               - dictionary_tree (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_197.html">previous</A>, <A HREF="ciao_199.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_197.html">previous</A>, <A HREF="ciao_199.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC784" HREF="ciao_toc.html#TOC784">Error Handler for Chartlib</A></H1>
+<H1><A NAME="SEC779" HREF="ciao_toc.html#TOC779">dictionary_tree (library)</A></H1>
 <P>
-<A NAME="IDX8050"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Isabel Martín.
+<A NAME="IDX7795"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#143 (2003/12/31, 16:44:44 CET)
+<STRONG>Version:</STRONG> 0.1 (1999/1/14, 15:57:36 MET)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.9#155 (2003/12/4, 17:39:9 CET)
-
-
-<P>
-This module is an error handler. If the format of the arguments is not correct in a call to a chartlib predicate an exception will be thrown . You can wrap the chartlib predicates with the predicates exported by this module to handle automatically the errors if any. 
+This module offers a dynamic tree structured dictionary a bit combined with predicates that gives it the useability to be the dictionary for the parser.
 
 
 
 <UL>
-<LI><A HREF="ciao_198.html#SEC785">Usage and interface (chartlib_errhandle)</A>
-<LI><A HREF="ciao_198.html#SEC786">Documentation on exports (chartlib_errhandle)</A>
-<LI><A HREF="ciao_198.html#SEC787">Documentation on internals (chartlib_errhandle)</A>
+<LI><A HREF="ciao_198.html#SEC780">Usage and interface (dictionary_tree)</A>
+<LI><A HREF="ciao_198.html#SEC781">Documentation on exports (dictionary_tree)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC785" HREF="ciao_toc.html#TOC785">Usage and interface (<CODE>chartlib_errhandle</CODE>)</A></H2>
+<H2><A NAME="SEC780" HREF="ciao_toc.html#TOC780">Usage and interface (<CODE>dictionary_tree</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -48,7 +39,7 @@ This module is an error handler. If the format of the arguments is not correct i
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(chartlib_errhandle)).</CODE>
+<CODE>:- use_module(library(dictionary_tree)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -57,10 +48,20 @@ This module is an error handler. If the format of the arguments is not correct i
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX8051"></A>
-<CODE>chartlib_text_error_protect/1</CODE>, 
-<A NAME="IDX8052"></A>
-<CODE>chartlib_visual_error_protect/1</CODE>.
+<A NAME="IDX7796"></A>
+<CODE>create_dictionaries/1</CODE>, 
+<A NAME="IDX7797"></A>
+<CODE>is_dictionaries/1</CODE>, 
+<A NAME="IDX7798"></A>
+<CODE>get_definition_dictionary/2</CODE>, 
+<A NAME="IDX7799"></A>
+<CODE>get_prototype_dictionary/2</CODE>, 
+<A NAME="IDX7800"></A>
+<CODE>dictionary_insert/5</CODE>, 
+<A NAME="IDX7801"></A>
+<CODE>dictionary_lookup/5</CODE>, 
+<A NAME="IDX7802"></A>
+<CODE>merge_tree/2</CODE>.
 
 </UL>
 
@@ -71,10 +72,26 @@ This module is an error handler. If the format of the arguments is not correct i
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX8053"></A>
-<CODE>chartlib/bltclass</CODE>, 
-<A NAME="IDX8054"></A>
-<CODE>chartlib/install_utils</CODE>.
+<A NAME="IDX7803"></A>
+<CODE>aggregates</CODE>, 
+<A NAME="IDX7804"></A>
+<CODE>dynamic</CODE>, 
+<A NAME="IDX7805"></A>
+<CODE>iso_misc</CODE>, 
+<A NAME="IDX7806"></A>
+<CODE>iso_byte_char</CODE>, 
+<A NAME="IDX7807"></A>
+<CODE>iso_incomplete</CODE>, 
+<A NAME="IDX7808"></A>
+<CODE>operators</CODE>, 
+<A NAME="IDX7809"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX7810"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX7811"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX7812"></A>
+<CODE>provrml/internal_types</CODE>.
 
 </UL>
 
@@ -84,113 +101,195 @@ This module is an error handler. If the format of the arguments is not correct i
 
 
 
-<H2><A NAME="SEC786" HREF="ciao_toc.html#TOC786">Documentation on exports (<CODE>chartlib_errhandle</CODE>)</A></H2>
+<H2><A NAME="SEC781" HREF="ciao_toc.html#TOC781">Documentation on exports (<CODE>dictionary_tree</CODE>)</A></H2>
 <P>
-<A NAME="IDX8055"></A>
-<A NAME="IDX8056"></A>
+<A NAME="IDX7813"></A>
+<A NAME="IDX7814"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>chartlib_text_error_protect/1:</B>
-<DD><A NAME="IDX8057"></A>
+<DT><span class="define">PREDICATE:</span> <B>create_dictionaries/1:</B>
+<DD><A NAME="IDX7815"></A>
 
 
 <P>
-<CODE>chartlib_text_error_protect(G)</CODE>
+<STRONG>Usage:</STRONG> <CODE>create_dictionaries(-Dictionary)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> Returns a dictionary. A general name was used if the user would like to change the code to include more dictionaries.
 
-<P>
-This predicate catches the thrown exception and sends it to the appropiate handler. The handler will show the error message in the standard output. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>chartlib_text_error_protect(goal)</CODE>.
-
+<CODE>-Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8058"></A>
-<A NAME="IDX8059"></A>
+<A NAME="IDX7816"></A>
+<A NAME="IDX7817"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>chartlib_visual_error_protect/1:</B>
-<DD><A NAME="IDX8060"></A>
+<DT><span class="define">PREDICATE:</span> <B>is_dictionaries/1:</B>
+<DD><A NAME="IDX7818"></A>
 
 
 <P>
-<CODE>chartlib_visual_error_protect(G)</CODE>
+<STRONG>Usage:</STRONG> <CODE>is_dictionaries(?Dictionary)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> Is the argument a dictionary is solved by this predicate.
 
-<P>
-This predicate catches the thrown exception and sends it to the appropiate handler. The handler will pop up a message box. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>chartlib_visual_error_protect(goal)</CODE>.
-
-
-</DL>
-
-
-
-<H2><A NAME="SEC787" HREF="ciao_toc.html#TOC787">Documentation on internals (<CODE>chartlib_errhandle</CODE>)</A></H2>
-<P>
-<A NAME="IDX8061"></A>
-<A NAME="IDX8062"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>handler_type/1:</B>
-<DD><A NAME="IDX8063"></A>
-
-
-<P>
-<CODE>handler_type(X)</CODE>
-
-
-<P>
-The library chartlib includes two error handlers already programmed. 
-
-<PRE>
-handler_type(text).
-handler_type(visual).
-</PRE>
+<CODE>?Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8064"></A>
-<A NAME="IDX8065"></A>
+<A NAME="IDX7819"></A>
+<A NAME="IDX7820"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>error_message/2:</B>
-<DD><A NAME="IDX8066"></A>
+<DT><span class="define">PREDICATE:</span> <B>get_definition_dictionary/2:</B>
+<DD><A NAME="IDX7821"></A>
 
 
 <P>
-<CODE>error_message(ErrorCode, ErrorMessage)</CODE>
+<STRONG>Usage:</STRONG> <CODE>get_definition_dictionary(+Dictionary,-Tree)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> Returns the definition dictionary (for the moment there is only one dictionary), which is a tree representation.
 
-<P>
-Binds the error code with its corresponding text message. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
+<CODE>+Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
+
+<CODE>-Tree</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8067"></A>
-<A NAME="IDX8068"></A>
+<A NAME="IDX7822"></A>
+<A NAME="IDX7823"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>error_file/2:</B>
-<DD><A NAME="IDX8069"></A>
+<DT><span class="define">PREDICATE:</span> <B>get_prototype_dictionary/2:</B>
+<DD><A NAME="IDX7824"></A>
 
 
 <P>
-<CODE>error_file(ErrorCode, ErrorFile)</CODE>
+<STRONG>Usage:</STRONG> <CODE>get_prototype_dictionary(+Dictionary,-Tree)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Returns the prototype dictionary (for the moment there is only one dictionary), which is a tree representation.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
+
+<CODE>-Tree</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7825"></A>
+<A NAME="IDX7826"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dictionary_insert/5:</B>
+<DD><A NAME="IDX7827"></A>
 
 
 <P>
-Binds the error code with its corresponding script error file. 
+<STRONG>Usage:</STRONG> <CODE>dictionary_insert(+Key,+Type,+Field,+Dictionary,?Info)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> The predicate will search for the place for the Key and return Info, if the element inserted had a post before (same key value) multiple else new. The dictionary is dynamic and do not need output because of using unbinded variables.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Key</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+Type</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+Field</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>+Dictionary</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
+
+<CODE>?Info</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7828"></A>
+<A NAME="IDX7829"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dictionary_lookup/5:</B>
+<DD><A NAME="IDX7830"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dictionary_lookup(+Key,?Type,?Field,+Dictionary,-Info)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate will search for the Key and return Info;defined or undefined accordingly. If defined the fields will be filled as well. The predicate do not insert the element.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Key</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>?Type</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>?Field</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>+Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
+
+<CODE>-Info</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7831"></A>
+<A NAME="IDX7832"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>merge_tree/2:</B>
+<DD><A NAME="IDX7833"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>merge_tree(+Tree,+Tree)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate can be used for adding a tree dictionary to another one (the second). It will remove equal posts but posts with a slight difference will be inserted. The resulting tree will be the second tree.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Tree</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
+
+<CODE>+Tree</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
+</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_197.html">previous</A>, <A HREF="ciao_199.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_197.html">previous</A>, <A HREF="ciao_199.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

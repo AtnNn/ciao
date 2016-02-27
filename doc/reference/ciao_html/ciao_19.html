@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Extra-logical properties for typing</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_18.html">previous</A>, <A HREF="ciao_20.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_18.html">previous</A>, <A HREF="ciao_20.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC135" HREF="ciao_toc.html#TOC135">Extra-logical properties for typing</A></H1>
+<H1><A NAME="SEC137" HREF="ciao_toc.html#TOC137">Extra-logical properties for typing</A></H1>
 <P>
-<A NAME="IDX1446"></A>
+<A NAME="IDX1367"></A>
 
 
 <P>
@@ -20,11 +20,11 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_18.html">previous</A>, 
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#143 (2003/12/31, 16:44:44 CET)
+<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.11#124 (2003/12/26, 20:6:44 CET)
+<STRONG>Version of last change:</STRONG> 0.7#8 (1998/9/23, 19:21:44 MEST)
 
 
 <P>
@@ -33,13 +33,13 @@ This library contains traditional Prolog predicates for testing types. They depe
 
 
 <UL>
-<LI><A HREF="ciao_19.html#SEC136">Usage and interface (term_typing)</A>
-<LI><A HREF="ciao_19.html#SEC137">Documentation on exports (term_typing)</A>
+<LI><A HREF="ciao_19.html#SEC138">Usage and interface (term_typing)</A>
+<LI><A HREF="ciao_19.html#SEC139">Documentation on exports (term_typing)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC136" HREF="ciao_toc.html#TOC136">Usage and interface (<CODE>term_typing</CODE>)</A></H2>
+<H2><A NAME="SEC138" HREF="ciao_toc.html#TOC138">Usage and interface (<CODE>term_typing</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -54,44 +54,25 @@ These predicates are builtin in Ciao, so nothing special has to be done to use t
 
 <UL>
 
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX1447"></A>
-<CODE>var/1</CODE>, 
-<A NAME="IDX1448"></A>
-<CODE>nonvar/1</CODE>, 
-<A NAME="IDX1449"></A>
-<CODE>atom/1</CODE>, 
-<A NAME="IDX1450"></A>
-<CODE>integer/1</CODE>, 
-<A NAME="IDX1451"></A>
-<CODE>float/1</CODE>, 
-<A NAME="IDX1452"></A>
-<CODE>atomic/1</CODE>, 
-<A NAME="IDX1453"></A>
-<CODE>ground/1</CODE>, 
-<A NAME="IDX1454"></A>
-<CODE>type/2</CODE>.
-
 <LI><EM>Properties:</EM>
 
-<A NAME="IDX1455"></A>
+<A NAME="IDX1368"></A>
 <CODE>var/1</CODE>, 
-<A NAME="IDX1456"></A>
+<A NAME="IDX1369"></A>
 <CODE>nonvar/1</CODE>, 
-<A NAME="IDX1457"></A>
+<A NAME="IDX1370"></A>
 <CODE>atom/1</CODE>, 
-<A NAME="IDX1458"></A>
+<A NAME="IDX1371"></A>
 <CODE>integer/1</CODE>, 
-<A NAME="IDX1459"></A>
+<A NAME="IDX1372"></A>
 <CODE>float/1</CODE>, 
-<A NAME="IDX1460"></A>
+<A NAME="IDX1373"></A>
 <CODE>number/1</CODE>, 
-<A NAME="IDX1461"></A>
+<A NAME="IDX1374"></A>
 <CODE>atomic/1</CODE>, 
-<A NAME="IDX1462"></A>
+<A NAME="IDX1375"></A>
 <CODE>ground/1</CODE>, 
-<A NAME="IDX1463"></A>
+<A NAME="IDX1376"></A>
 <CODE>type/2</CODE>.
 
 </UL>
@@ -102,13 +83,183 @@ These predicates are builtin in Ciao, so nothing special has to be done to use t
 
 
 
-<H2><A NAME="SEC137" HREF="ciao_toc.html#TOC137">Documentation on exports (<CODE>term_typing</CODE>)</A></H2>
+<H2><A NAME="SEC139" HREF="ciao_toc.html#TOC139">Documentation on exports (<CODE>term_typing</CODE>)</A></H2>
 <P>
-<A NAME="IDX1464"></A>
-<A NAME="IDX1465"></A>
+<A NAME="IDX1377"></A>
+<A NAME="IDX1378"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>var/1:</B>
+<DD><A NAME="IDX1379"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>var(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a free variable.
+
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>var(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a free variable.
+
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1380"></A>
+<A NAME="IDX1381"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>nonvar/1:</B>
+<DD><A NAME="IDX1382"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>nonvar(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is currently a term which is not a free variable.
+
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>nonvar(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is currently a term which is not a free variable.
+
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1383"></A>
+<A NAME="IDX1384"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>atom/1:</B>
+<DD><A NAME="IDX1385"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>atom(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is currently instantiated to an atom.
+
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>atom(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is currently instantiated to an atom.
+
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1386"></A>
+<A NAME="IDX1387"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>integer/1:</B>
+<DD><A NAME="IDX1388"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>integer(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is currently instantiated to an integer.
+
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>integer(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is currently instantiated to an integer.
+
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1389"></A>
+<A NAME="IDX1390"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>float/1:</B>
+<DD><A NAME="IDX1391"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>float(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is currently instantiated to a float.
+
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>float(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is currently instantiated to a float.
+
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1392"></A>
+<A NAME="IDX1393"></A>
 <DL>
 <DT><span class="define">PROPERTY:</span> <B>number/1:</B>
-<DD><A NAME="IDX1466"></A>
+<DD><A NAME="IDX1394"></A>
 
 
 <P>
@@ -119,49 +270,127 @@ These predicates are builtin in Ciao, so nothing special has to be done to use t
 
 <LI><EM>The following properties hold globally:</EM>
 
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
 </UL>
 
 <P>
 <STRONG>Usage 2:</STRONG> <CODE>number(X)</CODE>
 
 <UL>
-<LI><EM>The following properties hold upon exit:</EM>
+<LI><EM>Description:</EM> <CODE>X</CODE> is currently instantiated to a number.
 
-<CODE>X</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
 <LI><EM>The following properties hold globally:</EM>
 
 <CODE>X</CODE> is not further instantiated.
  (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
 
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
+</DL>
+
+<P>
+<A NAME="IDX1395"></A>
+<A NAME="IDX1396"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>atomic/1:</B>
+<DD><A NAME="IDX1397"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>atomic(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is currently instantiated to an atom or a number.
+
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 3:</STRONG> <CODE>number(X)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>atomic(X)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is currently instantiated to a number.
+<LI><EM>Description:</EM> <CODE>X</CODE> is currently instantiated to an atom or a number.
 
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>X</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
 <LI><EM>The following properties hold globally:</EM>
 
 <CODE>X</CODE> is not further instantiated.
  (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
 
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
+</DL>
+
+<P>
+<A NAME="IDX1398"></A>
+<A NAME="IDX1399"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>ground/1:</B>
+<DD><A NAME="IDX1400"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>ground(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is currently ground (it contains no variables).
+
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>ground(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is currently ground (it contains no variables).
+
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1401"></A>
+<A NAME="IDX1402"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>type/2:</B>
+<DD><A NAME="IDX1403"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>type(X,Y)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is internally of type <CODE>Y</CODE> (<CODE>var</CODE>, <CODE>attv</CODE>, <CODE>float</CODE>, <CODE>integer</CODE>, <CODE>structure</CODE>, <CODE>atom</CODE> or <CODE>list</CODE>).
+
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>Y</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>type(X,Y)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is internally of type <CODE>Y</CODE> (<CODE>var</CODE>, <CODE>attv</CODE>, <CODE>float</CODE>, <CODE>integer</CODE>, <CODE>structure</CODE>, <CODE>atom</CODE> or <CODE>list</CODE>).
+
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>Y</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_18.html">previous</A>, <A HREF="ciao_20.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_18.html">previous</A>, <A HREF="ciao_20.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

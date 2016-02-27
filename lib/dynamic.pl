@@ -8,24 +8,23 @@
 :- use_module(engine(internals)).
 :- use_module(library(prolog_sys), [new_atom/1]).
 
-:- meta_predicate asserta(clause).
-:- meta_predicate asserta(clause, ?).
-:- meta_predicate assertz(clause).
-:- meta_predicate assertz(clause, ?).
-:- meta_predicate assert(clause).
-:- meta_predicate assert(clause, ?).
-:- meta_predicate retract(clause).
-:- meta_predicate retractall(fact).
-:- meta_predicate abolish(spec).
-:- meta_predicate dynamic(addmodule).
-:- meta_predicate data(addmodule).
-:- meta_predicate clause(fact,?).
-:- meta_predicate clause(fact,?,?).
-:- meta_predicate current_predicate(addmodule).
+:- meta_predicate
+        asserta(clause),
+        asserta(clause, ?),
+        assertz(clause),
+        assertz(clause, ?),
+        assert(clause),
+        assert(clause, ?),
+        retract(clause),
+        retractall(fact),
+        abolish(spec),
+	dynamic(addmodule),
+        data(addmodule),
+        clause(fact,?),
+        clause(fact,?,?),
+        current_predicate(addmodule).
 
 :- comment(title,"Dynamic predicates").
-
-:- comment(author, "The CLIP Group").
 
 :- comment(module,"This module implements the assert/retract family of
    predicates to manipulate dynamic predicates.
@@ -52,7 +51,7 @@
           precede all clauses of the affected predicates.  This
           directive is defined as a prefix operator in the compiler.".
 
-:- true pred asserta(+Clause) + (iso, native)
+:- pred asserta(+Clause) + iso
 # "The current instance of @var{Clause} is interpreted as a clause and is
    added to the current program.  The predicate concerned must be dynamic.
    The new clause becomes the @em{first} clause for the predicate concerned.
@@ -64,7 +63,7 @@ asserta(Clause) :-
         dynamic_clauses(Clause, Root, Ptr0, asserta/1),
 	'$inserta'(Root, Ptr0).
 
-:- true pred asserta(+Clause,-Ref) + native
+:- pred asserta(+Clause,-Ref)
 # "Like @tt{asserta/1}. @var{Ref} is a unique identifier of the asserted
    clause.".
 
@@ -73,7 +72,7 @@ asserta(Clause, Ref) :-
 	'$inserta'(Root, Ptr0),
 	'$ptr_ref'(Ptr0, Ref).
 
-:- true pred assertz(+Clause) + (iso, native)
+:- pred assertz(+Clause) + iso
 # "Like @tt{asserta/1}, except that the new clause becomes the @em{last}
    clause for the predicate concerned.".
 
@@ -81,7 +80,7 @@ assertz(Clause) :-
         dynamic_clauses(Clause, Root, Ptr0, assertz/1),
 	'$insertz'(Root, Ptr0).
 
-:- true pred assertz(+Clause,-Ref) + native
+:- pred assertz(+Clause,-Ref)
 # "Like @tt{assertz/1}. @var{Ref} is a unique identifier of the asserted
    clause.".
 
@@ -90,14 +89,14 @@ assertz(Clause, Ref) :-
 	'$insertz'(Root, Ptr0),
 	'$ptr_ref'(Ptr0, Ref).
 
-:- true pred assert(+Clause) + native
+:- pred assert(+Clause)
 # "Identical to @tt{assertz/1}. Included for compatibility.".
 
 assert(Clause) :-
         dynamic_clauses(Clause, Root, Ptr0, assert/1),
 	'$insertz'(Root, Ptr0).
 
-:- true pred assert(+Clause,-Ref) + native
+:- pred assert(+Clause,-Ref)
 # "Identical to @tt{assertz/2}. Included for compatibility.".
 
 assert(Clause, Ref) :-
@@ -119,7 +118,7 @@ dynamic_clauses(Clause, Root, Ptr0, Goal) :-
 canonical_clause((H :- B), H, B) :- !,
 	functor(H, F, _),
 	atom(F).
-canonical_clause(H, H, 'basiccontrol:true') :-
+canonical_clause(H, H, true) :-
 	functor(H, F, _),
 	atom(F).
 
@@ -158,13 +157,13 @@ wellformed_body(Goal, _, Goal) :-
 functor name @var{F} is uninstatiated, a new, unique, predicate name
 is generated at runtime.").
 
-:- true pred dynamic(+Spec).
+:- pred dynamic(+Spec).
 
 dynamic(F/A, Mod) :-
         atom(F), !,
         module_concat(Mod, F, MF),
         functor(Head, MF, A), !,
-        asserta_fact('$imports'(Mod, Mod, F, A, Mod)), % defines/3 in not dynamic
+        asserta_fact(imports(Mod, Mod, F, A, Mod)), % defines/3 in not dynamic
 	dynamic1(Head, dynamic/2).
 
 dynamic(F/A, Mod) :-
@@ -175,7 +174,7 @@ dynamic(F/A, Mod) :-
 
 :- comment(doinclude, data/1).
 
-:- true pred data(+Spec).
+:- pred data(+Spec).
 
 :- comment(data(F/A), "The predicate named @var{F} with arity @var{A}
 is made @concept{data} in the current module at runtime (useful for
@@ -188,7 +187,7 @@ data(F/A, Mod) :-
         atom(F), !,
         module_concat(Mod, F, MF),
         functor(Head, MF, A), !,
-        asserta_fact('$imports'(Mod, Mod, F, A, Mod)), % defines/3 in not dynamic
+        asserta_fact(imports(Mod, Mod, F, A, Mod)), % defines/3 in not dynamic
 	dynamic1(Head, data/2).
 data(F/A, Mod) :-
         var(F), !,
@@ -243,7 +242,7 @@ dynamic1(F, _) :-
 
 
 
-:- true pred retract(+Clause) + (iso, native)
+:- pred retract(+Clause) + iso
 # "The first clause in the program that matches @var{Clause} is erased.
    The predicate concerned must be dynamic. 
 
@@ -265,7 +264,7 @@ retract(Clause) :-
 	'$erase'(Ptr),
         '$unlock_predicate'(Root).
 
-:- true pred retractall(+Head) + native
+:- pred retractall(+Head)
 # "Erase all clauses whose head matches @var{Head}, where @var{Head} must
    be instantiated to an atom or a compound term.  The predicate concerned
    must be dynamic.  The predicate definition is retained.".
@@ -284,7 +283,7 @@ retractall_(Head) :-
 	fail.
 retractall_(_).
 
-:- true pred abolish(+Spec) + (iso, native)
+:- pred abolish(+Spec) + iso
 # "Erase all clauses of the predicate specified by the predicate spec
    @var{Spec}. The predicate definition itself is also erased (the
    predicate is deemed undefined after execution of the abolish). The
@@ -306,7 +305,7 @@ abolish_data_of(Head) :-
         fail.
 abolish_data_of(_).
 
-:- true pred clause(+Head,?Body) + (iso, native)
+:- pred clause(+Head,?Body) +iso
 # "The clause '@var{Head} @tt{:-} @var{Body}' exists in the current
    program. The predicate concerned must be dynamic.".
 
@@ -321,10 +320,10 @@ clause(HEAD, Body) :-
 :- comment(clause(Head,Body,Ref),"Like @tt{clause(Head,Body)}, plus the
    clause is uniquely identified by @var{Ref}.").
 
-:- true comp clause/3 + native.
-:- true pred clause(+Head,?Body,?Ref)
+:- pred clause(+Head,?Body,?Ref)
 # "@var{Head} must be instantiated to an atom or a compound term.".
-:- true pred clause(?Head,?Body,+Ref)
+
+:- pred clause(?Head,?Body,+Ref)
 # "@var{Ref} must be instantiated to a valid identifier.".
 
 clause(HEAD, Body, Ref) :-
@@ -341,29 +340,27 @@ clause(HEAD, Body, Ref) :-
         '$unlock_predicate'(Root),
 	'$ptr_ref'(Ptr, Ref).
 
-:- true pred current_predicate(?Spec) + (iso, native)
+:- pred current_predicate(?Spec) + iso
         # "A predicate in the current module is named @var{Spec}.".
 
-:- true pred current_predicate(?Spec,?Module) + native
+:- pred current_predicate(?Spec,?Module)
         # "A predicate in @var{Module} is named @var{Spec}. @var{Module}
            never is an engine module.".
 
 current_predicate(F/A,M) :-
         current_module(M),
+        \+ internal_module(M),
         module_concat(M,'',MPref),
         '$predicate_property'(P, _, _),
         functor(P, MF, A),
         atom_concat(MPref,F,MF).
 
+internal_module(internals).
+internal_module(M) :- builtin_module(M).
+
 % ----------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../version')).
-
-:- comment(version(1*11+75,2003/12/19,17:04*51+'CET'), "Added comment
-   author.  (Edison Mera)").
-
-:- comment(version(1*11+15,2003/04/07,21:10*47+'CEST'), "Replace
-   imports/5 by '$imports'/5 (Jose Morales)").
 
 :- comment(version(1*7+93,2001/04/24,19:02*53+'CEST'),
    "current_predicate/2 now enumerates non-engine modules (Daniel Cabeza
@@ -395,3 +392,5 @@ documentation.  (MCL)").
 
 :- comment(version(0*4+5,1998/2/24), "Synchronized file versions with
    global CIAO version.  (Manuel Hermenegildo)").
+
+

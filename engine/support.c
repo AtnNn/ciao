@@ -52,17 +52,6 @@ void failc(mesg)
   }
 }
 
-/*-----------------------------------------------------------*/
-
-/* segfault patch -- jf */
-void trail_push_check(Argdecl, TAGGED x) {
-  TAGGED *tr = w->trail_top;
-
-  TrailPush(tr,x);
-  w->trail_top = tr;
-  if (ChoiceYounger(w->node,TrailOffset(tr,CHOICEPAD)))
-    choice_overflow(Arg,CHOICEPAD);
-}
 
 /*------------------------------------------------------------*/
 
@@ -525,7 +514,6 @@ struct stream_node *new_stream(streamname, streammode, streamfile)
   s->streamname = streamname;
   s->streammode = streammode[0];
   s->pending_char = -100;
-  s->socket_eof = FALSE;
   update_stream(s,streamfile);
 
   return insert_new_stream(s);
@@ -1211,32 +1199,29 @@ struct stream_node *stream_to_ptr_check(t, mode, errcode)
 	n = stream_user_output;
       else if (t==atom_user_error)
 	n = stream_user_error;
-      else {
-            *errcode = DOMAIN_ERROR(STREAM_OR_ALIAS);
-            return NULL;
-      }
     }
-  else if (TagIsSTR(t) && (TagToHeadfunctor(t) == functor_Dstream)) {
+  else if (TagIsSTR(t) && (TagToHeadfunctor(t) == functor_Dstream))
+    {
       DerefArg(x1,t,1);
       DerefArg(x2,t,2);
       if (!TagIsSmall(x1) || !TagIsSmall(x2) ||
-	  (n = TagToStream(x1), n->label != x2)) {
-            *errcode = EXISTENCE_ERROR(STREAM);
-            return NULL;
-      }
-    } else {
-        *errcode = DOMAIN_ERROR(STREAM_OR_ALIAS);
-        return NULL;
+	  (n=TagToStream(x1), n->label != x2))
+	n = NULL;
     }
+
+  if (n==NULL) {
+    *errcode = TYPE_ERROR(STREAM_OR_ALIAS);
+    return NULL;
+  }
 
   if (mode=='r') {
     if (n->streammode=='w'||n->streammode=='a') {
-      *errcode = PERMISSION_ERROR(ACCESS,STREAM);  
+      *errcode = NO_READ_PERMISSION;
       return NULL;
     }
   } else if (mode=='w') {
     if (n->streammode=='r') {
-      *errcode = PERMISSION_ERROR(MODIFY,STREAM); 
+      *errcode = NO_WRITE_PERMISSION;
       return NULL;
     }
   }

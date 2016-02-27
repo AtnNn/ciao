@@ -1,66 +1,147 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Filed predicates</TITLE>
+<TITLE>The Ciao Prolog System               - Calling emacs from Prolog</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_152.html">previous</A>, <A HREF="ciao_154.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_152.html">previous</A>, <A HREF="ciao_154.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC633" HREF="ciao_toc.html#TOC633">Filed predicates</A></H1>
+<H1><A NAME="SEC639" HREF="ciao_toc.html#TOC639">Calling emacs from Prolog</A></H1>
 <P>
-<A NAME="IDX6517"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Francisco Bueno.
+<A NAME="IDX6566"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
+<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.9#10 (2002/5/30, 19:46:8 CEST)
+<STRONG>Version of last change:</STRONG> 1.5#54 (2000/2/10, 21:32:23 CET)
 
 
 <P>
-This package allows using files as a "
-<A NAME="IDX6518"></A>
-cache" for predicates defined by facts. This is useful for huge tables of facts that may push the memory limits of the system too far. Goals of a 
-<A NAME="IDX6519"></A>
-filed predicate are executed simply by reading from the corresponding file. 
-
-
-<P>
-Anything in the DB file used for the predicate that is different from a fact for the corresponding predicate is ignored. Each call to a filed predicate forces opening the file, so the use of this package is subject to the limit on the number of open files that the system can support. 
-
-
-<P>
-Dynamic modification of the filed predicates is also allowed during execution of the program. Thus filed predicates are regarded as dynamic, data predicates residing in a file. However, dynamic modifications to the predicates do not affect the file, unless the predicate is also declared persistent. 
-
-
-<P>
-The package is compatible with 
-<A NAME="IDX6520"></A>
-<CODE>persdb</CODE> in the sense that a predicate can be made both filed and persistent. In this way, the predicate can be used in programs, but it will not be loaded (saving memory), can also be modified during execution, and modifications will persist in the file. Thus, the user interface to both packages is the same (so the DB file must be one for both filing and persistency). 
+This library provides a 
+<A NAME="IDX6567"></A>
+<A NAME="IDX6568"></A>
+<EM>prolog-emacs interface</EM>. This interface is complementary to (and independent from) the 
+<A NAME="IDX6569"></A>
+emacs mode, which is used to develop programs from within the 
+<A NAME="IDX6570"></A>
+<CODE>emacs</CODE> editor/environment. Instead, this library allows calling 
+<A NAME="IDX6571"></A>
+<CODE>emacs</CODE> from a running Prolog program. This facilitates the use of 
+<A NAME="IDX6572"></A>
+<CODE>emacs</CODE> as a "user interface" for a Prolog program. Emacs can be made to: 
 
 
 
 <UL>
-<LI><A HREF="ciao_153.html#SEC634">Usage and interface (factsdb_rt)</A>
-<LI><A HREF="ciao_153.html#SEC635">Documentation on exports (factsdb_rt)</A>
-<LI><A HREF="ciao_153.html#SEC636">Documentation on multifiles (factsdb_rt)</A>
-<LI><A HREF="ciao_153.html#SEC637">Documentation on internals (factsdb_rt)</A>
-<LI><A HREF="ciao_153.html#SEC638">Known bugs and planned improvements (factsdb_rt)</A>
+
+<LI>Visit a file, which can then be edited.
+
+<LI>Execute arbitrary
+
+<A NAME="IDX6573"></A>
+<A NAME="IDX6574"></A>
+<EM>emacs lisp</EM> code, sent from Prolog. 
+
+</UL>
+
+<P>
+In order for this library to work correctly, the following is needed: 
+
+
+
+<UL>
+
+<LI>You should be running the
+
+<A NAME="IDX6575"></A>
+<CODE>emacs</CODE> editor on the same machine where the executable calling this library is executing. 
+
+<LI>This
+
+<A NAME="IDX6576"></A>
+<CODE>emacs</CODE> should be running the 
+<A NAME="IDX6577"></A>
+<A NAME="IDX6578"></A>
+<EM>emacs server</EM>. This can be done by including the following line in your 
+<A NAME="IDX6579"></A>
+<CODE>.emacs</CODE> file: 
+
+
+<PRE>
+;; Start a server that emacsclient can connect to.
+(server-start)
+</PRE>
+
+Or typing <CODE>M-x server-start</CODE> within 
+<A NAME="IDX6580"></A>
+<CODE>emacs</CODE>. 
+
+</UL>
+
+<P>
+This suffices for using 
+<A NAME="IDX6581"></A>
+<CODE>emacs</CODE> to edit files. For running arbitrary code the following also needs to be added to the 
+<A NAME="IDX6582"></A>
+<CODE>.emacs</CODE> file: 
+
+
+<DL COMPACT>
+
+<DT><CODE>(setq enable-local-eval t)</CODE>
+<DD>
+Allows executing lisp code without asking. 
+
+<DT><CODE>(setq enable-local-eval nil)</CODE>
+<DD>
+Does not allow executing lisp code without asking. 
+
+<DT><CODE>(setq enable-local-eval 'maybe)</CODE>
+<DD>
+Allows executing lisp code only if user agrees after asking (asks interactively for every invocation). 
+
+</DL>
+
+<P>
+<STRONG>Examples:</STRONG> 
+
+
+<P>
+Assuming that a <CODE>.pl</CODE> file loads this library, then: 
+
+
+<DL COMPACT>
+
+<DT><CODE>..., emacs_edit('foo'), ...</CODE>
+<DD>
+Opens file <CODE>foo</CODE> for editing in 
+<A NAME="IDX6583"></A>
+<CODE>emacs</CODE>. 
+
+<DT><CODE>..., emacs_eval_nowait("(run-ciao-toplevel)"), ...</CODE>
+<DD>
+Starts execution of a Ciao top-level within 
+<A NAME="IDX6584"></A>
+<CODE>emacs</CODE>. 
+
+</DL>
+
+
+<UL>
+<LI><A HREF="ciao_153.html#SEC640">Usage and interface (emacs)</A>
+<LI><A HREF="ciao_153.html#SEC641">Documentation on exports (emacs)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC634" HREF="ciao_toc.html#TOC634">Usage and interface (<CODE>factsdb_rt</CODE>)</A></H2>
+<H2><A NAME="SEC640" HREF="ciao_toc.html#TOC640">Usage and interface (<CODE>emacs</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -68,13 +149,7 @@ The package is compatible with
 
 <LI><STRONG>Library usage:</STRONG>
 
-This facility is used as a package, thus either including 
-<A NAME="IDX6521"></A>
-<CODE>factsdb</CODE> in the package list of the module, or by using the 
-<A NAME="IDX6522"></A>
-<CODE>use_package/1</CODE> declaration. The facility predicates are defined in library module 
-<A NAME="IDX6523"></A>
-<CODE>factsdb_rt</CODE>.
+<CODE>:- use_module(library(emacs)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -83,25 +158,19 @@ This facility is used as a package, thus either including
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6524"></A>
-<CODE>asserta_fact/1</CODE>, 
-<A NAME="IDX6525"></A>
-<CODE>assertz_fact/1</CODE>, 
-<A NAME="IDX6526"></A>
-<CODE>call/1</CODE>, 
-<A NAME="IDX6527"></A>
-<CODE>current_fact/1</CODE>, 
-<A NAME="IDX6528"></A>
-<CODE>retract_fact/1</CODE>.
+<A NAME="IDX6585"></A>
+<CODE>emacs_edit/1</CODE>, 
+<A NAME="IDX6586"></A>
+<CODE>emacs_edit_nowait/1</CODE>, 
+<A NAME="IDX6587"></A>
+<CODE>emacs_eval/1</CODE>, 
+<A NAME="IDX6588"></A>
+<CODE>emacs_eval_nowait/1</CODE>.
 
-<LI><EM>Multifiles:</EM>
+<LI><EM>Regular Types:</EM>
 
-<A NAME="IDX6529"></A>
-<CODE>$factsdb$cached_goal/3</CODE>, 
-<A NAME="IDX6530"></A>
-<CODE>persistent_dir/2</CODE>, 
-<A NAME="IDX6531"></A>
-<CODE>file_alias/2</CODE>.
+<A NAME="IDX6589"></A>
+<CODE>elisp_string/1</CODE>.
 
 </UL>
 
@@ -112,12 +181,14 @@ This facility is used as a package, thus either including
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX6532"></A>
-<CODE>counters</CODE>, 
-<A NAME="IDX6533"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX6534"></A>
-<CODE>persdb/persdbcache</CODE>.
+<A NAME="IDX6590"></A>
+<CODE>terms_check</CODE>, 
+<A NAME="IDX6591"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX6592"></A>
+<CODE>terms</CODE>, 
+<A NAME="IDX6593"></A>
+<CODE>system</CODE>.
 
 </UL>
 
@@ -127,308 +198,104 @@ This facility is used as a package, thus either including
 
 
 
-<H2><A NAME="SEC635" HREF="ciao_toc.html#TOC635">Documentation on exports (<CODE>factsdb_rt</CODE>)</A></H2>
+<H2><A NAME="SEC641" HREF="ciao_toc.html#TOC641">Documentation on exports (<CODE>emacs</CODE>)</A></H2>
 <P>
-<A NAME="IDX6535"></A>
-<A NAME="IDX6536"></A>
+<A NAME="IDX6594"></A>
+<A NAME="IDX6595"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>asserta_fact/1:</B>
-<DD><A NAME="IDX6537"></A>
+<DT><span class="define">PREDICATE:</span> <B>emacs_edit/1:</B>
+<DD><A NAME="IDX6596"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>asserta_fact(fact)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>asserta_fact(Fact)</CODE>
+<STRONG>Usage:</STRONG> <CODE>emacs_edit(+filename)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Version of
+<LI><EM>Description:</EM> Opens the given file for editing in
 
-<A NAME="IDX6538"></A>
-<CODE>data_facts:asserta_fact/1</CODE> for filed predicates. The current instance of <CODE>Fact</CODE> is interpreted as a fact and is added at the beginning of the definition of the corresponding predicate. Therefore, before all the facts filed in the DB file for the predicate. The predicate concerned must be declared as 
-<A NAME="IDX6539"></A>
-<CODE>facts</CODE>; if it is not, then 
-<A NAME="IDX6540"></A>
-<CODE>data_facts:asserta_fact/1</CODE> is used. 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
+<A NAME="IDX6597"></A>
+<CODE>emacs</CODE>. Waits for editing to finish before continuing. 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6541"></A>
-<A NAME="IDX6542"></A>
+<A NAME="IDX6598"></A>
+<A NAME="IDX6599"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>assertz_fact/1:</B>
-<DD><A NAME="IDX6543"></A>
+<DT><span class="define">PREDICATE:</span> <B>emacs_edit_nowait/1:</B>
+<DD><A NAME="IDX6600"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>assertz_fact(fact)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>assertz_fact(Fact)</CODE>
+<STRONG>Usage:</STRONG> <CODE>emacs_edit_nowait(+filename)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Version of
+<LI><EM>Description:</EM> Opens the given file for editing in
 
-<A NAME="IDX6544"></A>
-<CODE>data_facts:assertz_fact/1</CODE> for filed predicates. The current instance of <CODE>Fact</CODE> is interpreted as a fact and is added at the end of the definition of the corresponding predicate. Therefore, after all the facts filed in the DB file for the predicate. The predicate concerned must be declared as 
-<A NAME="IDX6545"></A>
-<CODE>facts</CODE>; if it is not, then 
-<A NAME="IDX6546"></A>
-<CODE>data_facts:assertz_fact/1</CODE> is used. 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
+<A NAME="IDX6601"></A>
+<CODE>emacs</CODE> and continues without waiting for editing to finish. 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6547"></A>
-<A NAME="IDX6548"></A>
+<A NAME="IDX6602"></A>
+<A NAME="IDX6603"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>call/1:</B>
-<DD><A NAME="IDX6549"></A>
+<DT><span class="define">PREDICATE:</span> <B>emacs_eval/1:</B>
+<DD><A NAME="IDX6604"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>call(fact)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>call(Fact)</CODE>
+<STRONG>Usage:</STRONG> <CODE>emacs_eval(+elisp_string)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Same as
+<LI><EM>Description:</EM> Executes in emacs the lisp code given as argument. Waits for the command to finish before continuing.
 
-<A NAME="IDX6550"></A>
-<CODE>current_fact/1</CODE> if the predicate concerned is declared as 
-<A NAME="IDX6551"></A>
-<CODE>facts</CODE>. If it is not, an exception is raised. 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6552"></A>
-<A NAME="IDX6553"></A>
+<A NAME="IDX6605"></A>
+<A NAME="IDX6606"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>current_fact/1:</B>
-<DD><A NAME="IDX6554"></A>
+<DT><span class="define">PREDICATE:</span> <B>emacs_eval_nowait/1:</B>
+<DD><A NAME="IDX6607"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>current_fact(fact)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>current_fact(Fact)</CODE>
+<STRONG>Usage:</STRONG> <CODE>emacs_eval_nowait(+elisp_string)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Version of
+<LI><EM>Description:</EM> Executes in emacs the lisp code given as argument and continues without waiting for it to finish.
 
-<A NAME="IDX6555"></A>
-<CODE>data_facts:current_fact/1</CODE> for filed predicates. The current instance of <CODE>Fact</CODE> is interpreted as a fact and is unified with an actual fact in the current definition of the corresponding predicate. Therefore, with a fact previously asserted or filed in the DB file for the predicate, if it has not been retracted. The predicate concerned must be declared as 
-<A NAME="IDX6556"></A>
-<CODE>facts</CODE>; if it is not, then 
-<A NAME="IDX6557"></A>
-<CODE>data_facts:current_fact/1</CODE> is used. 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6558"></A>
-<A NAME="IDX6559"></A>
+<A NAME="IDX6608"></A>
+<A NAME="IDX6609"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>retract_fact/1:</B>
-<DD><A NAME="IDX6560"></A>
+<DT><span class="define">REGTYPE:</span> <B>elisp_string/1:</B>
+<DD><A NAME="IDX6610"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>retract_fact(fact)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>retract_fact(Fact)</CODE>
+<STRONG>Usage:</STRONG> <CODE>elisp_string(L)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Version of
+<LI><EM>Description:</EM> <CODE>L</CODE> is a string containing
 
-<A NAME="IDX6561"></A>
-<CODE>data_facts:retract_fact/1</CODE> for filed predicates. The current instance of <CODE>Fact</CODE> is interpreted as a fact and is unified with an actual fact in the current definition of the corresponding predicate; such a fact is deleted from the predicate definition. This is true even for the facts filed in the DB file for the predicate; but these are NOT deleted from the file (unless the predicate is persistent). The predicate concerned must be declared as 
-<A NAME="IDX6562"></A>
-<CODE>facts</CODE>; if it is not, then 
-<A NAME="IDX6563"></A>
-<CODE>data_facts:retract_fact/1</CODE> is used. 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
+<A NAME="IDX6611"></A>
+<CODE>emacs</CODE> lisp code. 
 </UL>
 
 </DL>
-
-
-
-<H2><A NAME="SEC636" HREF="ciao_toc.html#TOC636">Documentation on multifiles (<CODE>factsdb_rt</CODE>)</A></H2>
-<P>
-<A NAME="IDX6564"></A>
-<A NAME="IDX6565"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>$factsdb$cached_goal/3:</B>
-<DD><A NAME="IDX6566"></A>
-
-
-<P>
-<CODE>$factsdb$cached_goal(Spec, Spec, Key)</CODE>
-
-
-<P>
-Predicate <CODE>Spec</CODE> is filed within database <CODE>Key</CODE>. Programmers should not define this predicate directly in the program.
-
-
-<P>
-The predicate is <EM>multifile</EM>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX6567"></A>
-<A NAME="IDX6568"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>persistent_dir/2:</B>
-<DD><A NAME="IDX6569"></A>
-
-
-<P>
-See 
-<A NAME="IDX6570"></A>
-<CODE>persdb</CODE>.
-
-
-<P>
-The predicate is <EM>multifile</EM>.
-
-
-<P>
-The predicate is of type <EM>data</EM>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX6571"></A>
-<A NAME="IDX6572"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>file_alias/2:</B>
-<DD><A NAME="IDX6573"></A>
-
-
-<P>
-See 
-<A NAME="IDX6574"></A>
-<CODE>symfnames</CODE>. This predicate is used only if 
-<A NAME="IDX6575"></A>
-<CODE>persistent_dir/2</CODE> fails.
-
-
-<P>
-The predicate is <EM>multifile</EM>.
-
-
-<P>
-The predicate is of type <EM>data</EM>.
-
-
-</DL>
-
-
-
-<H2><A NAME="SEC637" HREF="ciao_toc.html#TOC637">Documentation on internals (<CODE>factsdb_rt</CODE>)</A></H2>
-<P>
-<A NAME="IDX6576"></A>
-<A NAME="IDX6577"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>facts/2:</B>
-<DD><A NAME="IDX6578"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>facts(PredDesc, Keyword)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> Declares the predicate <CODE>PredDesc</CODE> as filed. <CODE>Keyword</CODE> is the
-
-<A NAME="IDX6579"></A>
-identifier of a location where the file DB for the predicate is kept. The location <CODE>Keyword</CODE> is described in the 
-<A NAME="IDX6580"></A>
-<CODE>file_alias</CODE> predicate, which must contain a fact in which the first argument unifies with <CODE>Keyword</CODE>. 
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>PredDesc</CODE> is a Name/Arity structure denoting a predicate name: 
-
-<PRE>
-predname(P/A) :-
-        atm(P),
-        nnegint(A).
-</PRE>
-
- (<CODE>basic_props:predname/1</CODE>)
-
-<CODE>Keyword</CODE> is an atom corresponding to a directory identifier.
- (<CODE>persdbcache:keyword/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6581"></A>
-<A NAME="IDX6582"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>keyword/1:</B>
-<DD><A NAME="IDX6583"></A>
-
-
-<P>
-See 
-<A NAME="IDX6584"></A>
-<CODE>persdbrt</CODE>. The same conventions for location of DB files apply in both packages.
-
-
-</DL>
-
-
-
-<H2><A NAME="SEC638" HREF="ciao_toc.html#TOC638">Known bugs and planned improvements (<CODE>factsdb_rt</CODE>)</A></H2>
-
-
-<UL>
-
-<LI>
-
-The DB files for persistent predicates have to be used as such from the beginning. Using a DB file for a filed predicate first, and then using it also when making the predicate persistent won't work. Nor the other way around: using a DB file for a persistent predicate first, and then using it also when making the predicate filed.
-</UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_152.html">previous</A>, <A HREF="ciao_154.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_152.html">previous</A>, <A HREF="ciao_154.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

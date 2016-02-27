@@ -9,7 +9,6 @@
             add_vertices/3,
             add_edges/3,
             transpose/2,
-	    rooted_subgraph/3,
             point_to/3,
 	    ugraph/1
         ],
@@ -41,7 +40,8 @@
 
 ").
 
-:- use_module(library(dict), [ dic_get/3 ]).
+:- set_prolog_flag(multi_arity_warnings, off).
+
 :- use_module(library(sets), [ 
         ord_union/3, 
         ord_subtract/3,
@@ -76,11 +76,11 @@ point_to_([_|Graph], Vertex, PointedTo):-
    It can only be used one way around.  The cost is O(N^2).".
 
 transpose(Graph, Transpose) :-
-	transpose_(Graph, Base, Base, Transpose).
+	transpose(Graph, Base, Base, Transpose).
 
-transpose_([], [], Base, Base).
-transpose_([Vertex-Neibs|Graph], [Vertex-[]|RestBase], Base, Transpose) :-
-	transpose_(Graph, RestBase, Base, SoFar),
+transpose([], [], Base, Base).
+transpose([Vertex-Neibs|Graph], [Vertex-[]|RestBase], Base, Transpose) :-
+	transpose(Graph, RestBase, Base, SoFar),
 	transpose1(SoFar, Neibs, Vertex, Transpose).
 
 transpose1([], [], _, []).
@@ -172,7 +172,6 @@ vertex_units([], []).
 vertex_units([V|Vs], [V-[]|Us]) :- vertex_units(Vs, Us).
 
 
-:- push_prolog_flag(multi_arity_warnings, off).
 
 graph_union(G0, [], G) :- !, G = G0.
 graph_union([], G, G).
@@ -225,39 +224,6 @@ graph_del_vertices([V1-N1|G1], Set, [V1-N|G]) :-
 	ord_subtract(N1, Set, N),
 	graph_del_vertices(G1, Set, G).
 
-:- pop_prolog_flag(multi_arity_warnings).
-
-
-:- true pred rooted_subgraph(Graph, Sources, SubGraph)
-	: ugraph * list * var => ugraph(SubGraph)
-        # "@var{SubGraph} is the subgraph of @var{Graph} which is reachable 
-           from @var{Sources}.".
-
-rooted_subgraph(Graph,Sources,SubGraph):-
-	rooted_subgraph_(Sources,Graph,[],SubGraph).
-
-rooted_subgraph_([],_Graph,SubGraph,SubGraph).
-rooted_subgraph_([V|Vs],Graph,SubGraph0,SubGraph):-
-	lookup(SubGraph0,V,Ss,SubGraph1),
-	( SubGraph0 == SubGraph1 % visited
-	-> SubGraph2 = SubGraph0
-	 ; lookup(Graph,V,Ss,Graph1),
-	   ( Graph == Graph1 % was there
-	   -> rooted_subgraph_(Ss,Graph,SubGraph1,SubGraph2)
-	    ; SubGraph2 = SubGraph0
-	   )
-	),
-	rooted_subgraph_(Vs,Graph,SubGraph2,SubGraph).
-
-lookup([], Element, Value, [Element-Value]).
-lookup([Head-Val|Tail], Element, Value, Set) :-
-	compare(Order, Head, Element),
-	lookup_(Order, Head, Val, Tail, Element, Value, Set).
-
-lookup_(<, Head, Val, Tail, Element, Value, [Head-Val|Set]) :-
-	lookup(Tail, Element, Value, Set).
-lookup_(=, Head, Value, Tail, _, Value, [Head-Value|Tail]).
-lookup_(>, Head, Val, Tail, Element, Value, [Element-Value,Head-Val|Tail]).
 
 
 :- true pred edges(+Graph, -Edges) 
@@ -266,12 +232,12 @@ lookup_(>, Head, Val, Tail, Element, Value, [Element-Value,Head-Val|Tail]).
 
 edges([], []).
 edges([Vertex-Neibs|G], Edges) :-
-	edges_(Neibs, Vertex, Edges, MoreEdges),
+	edges(Neibs, Vertex, Edges, MoreEdges),
 	edges(G, MoreEdges).
 
-edges_([], _, Edges, Edges).
-edges_([Neib|Neibs], Vertex, [Vertex-Neib|Edges], MoreEdges) :-
-	edges_(Neibs, Vertex, Edges, MoreEdges).
+edges([], _, Edges, Edges).
+edges([Neib|Neibs], Vertex, [Vertex-Neib|Edges], MoreEdges) :-
+	edges(Neibs, Vertex, Edges, MoreEdges).
 
 :- true pred vertices(+Graph, -Vertices) 
 
@@ -283,9 +249,6 @@ vertices([Vertex-_|Graph], [Vertex|Vertices]) :- vertices(Graph, Vertices).
 % ----------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
-
-:- comment(version(1*11+64,2003/12/09,07:11*15+'CET'), "Added
-   rooted_subgraph/3.  (Francisco Bueno Carrillo)").
 
 :- comment(version(0*9+105,1999/06/04,12:24*49+'MEST'), "New
    predicates added (I needed them for a particular application). No

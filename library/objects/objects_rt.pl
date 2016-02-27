@@ -31,7 +31,7 @@
 	interface_source/1,
 	method_spec/1,
 	virtual_method_spec/1
-        ],[]).
+        ]).
 
 :- use_package(assertions).
 :- use_package(basicmodes).
@@ -42,7 +42,6 @@
 :- use_module(library(compiler),[use_module/1]).
 :- use_module(library(prolog_sys),[statistics/2,new_atom/1]).
 :- use_module(library(system),[time/1,current_host/1,get_pid/1,mktemp/2]).
-:- use_module(engine(hiord_rt), ['$meta_call'/1]).
 
 %%------------------------------------------------------------------------
 

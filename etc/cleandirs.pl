@@ -27,7 +27,7 @@ existence of a recursive /bin/rm command in your system.").
         get_char/1
                                       ]).
 :- use_module(library(aggregates), [
-        setof/3, (^)/2
+        setof/3
                                    ]).
 :- use_module(library(format), [
         format/2
@@ -43,16 +43,8 @@ existence of a recursive /bin/rm command in your system.").
         file_exists/1,
         file_property/2
                                ]).
-:- data silent/0.
 
-main(Arg):- 
-        (
-            Arg = [Directory, Action, Backups]
-        ;
-            Arg = ['--silent', Directory, Action, Backups],
-            asserta_fact(silent)
-        ),
-        !,
+main([Directory, Action, Backups]):- !,
         (
             check_right_use(Directory, Action, Backups)
         ->
@@ -109,7 +101,7 @@ second_arg(['--list','--ask','--delete']).
 third_arg(['--includebackups','--excludebackups','--onlybackups']).
 
 usage_text("
-cleandirs [--silent] <initial_dir> <delete_options> <backup_options>
+cleandirs: <initial_dir> <delete_options> <backup_options>
 cleandirs explores <initial_dir> (which should be an absolute path)
 and looks for backup files and files which can be generated from other
 files, using a plausible heuristic aimed at retaining the same amount
@@ -168,44 +160,24 @@ recurse_all_entries([File|Files], Action):-
         recurse_all_entries(Files, Action).
 recurse_all_entries([Directory|Files],Action):-
         check_file_property(Directory, directory), !,
-        ( 
-            Directory \== '..', Directory \== '.' -> 
-            check_what_to_do(Directory, Action, Erased),
-            ( 
-                Erased = no -> 
-                working_directory(Old, Old),
-                ( 
-                    file_property(Directory, linkto(_)) ->
-                    (
-                        silent -> 
-                        true
-                    ;
-                        format(
-                        "*** Skipping directory '~w/~w' (symbolic link)~n",
-                               [Old,Directory])
-                    )
-                ; 
-                    ( 
-                        directory_files(Directory, DirFiles),
-                        cd(Directory) -> 
-                        recurse_all_entries(DirFiles, Action),
-                        cd(Old)
-                    ; 
-                        (
-                            silent ->
-                            true
-                        ;
-                            format(
-                 "*** Skipping directory '~w/~w' (insuficient permissions)~n",
+        ( Directory \== '..', Directory \== '.'
+	-> check_what_to_do(Directory, Action, Erased),
+           ( Erased = no
+	   -> working_directory(Old, Old),
+	      ( file_property(Directory, linkto(_))
+	      -> format("*** Skipping directory '~w/~w' (symbolic link)~n",
+	                [Old,Directory])
+	       ; ( directory_files(Directory, DirFiles),
+		   cd(Directory)
+		 -> recurse_all_entries(DirFiles, Action),
+		    cd(Old)
+		  ; format("*** Skipping directory '~w/~w' (insuficient permissions)~n",
 		           [Old,Directory])
-                        )
-                    )
-                )
-	    ; 
-                true
-            )
-        ; 
-            true
+		 )
+	      )
+	    ; true
+	   )
+	 ; true
         ),
 	recurse_all_entries(Files, Action).
 recurse_all_entries([_File|Files], Action):-
@@ -219,12 +191,7 @@ check_file_property(File, Prop):-
 
 ignore_file(regular, File):-
 	working_directory(Old, Old),
-        (
-            silent ->
-            true
-        ;
-            format("*** Looks like a dangling symlink: '~w/~w'~n",[Old,File])
-        ),
+	format("*** Looks like a dangling symlink: '~w/~w'~n",[Old,File]),
 	fail.
 
 %% Files with a generator
@@ -246,27 +213,17 @@ decide_action_generator(File, GeneratorFile, AskRemList, Erased):-
         last_modif_time(File, TFile, TimeFile),
         last_modif_time(GeneratorFile, TGen, TimeGenerator),
         working_directory(Dir, Dir),
-        format("~w: ~n", [Dir]),
+        format("Found in ~w: ~n", [Dir]),
         format("  ~w (~w)~n", [GeneratorFile, TimeGenerator]),
         format("  ~w (~w)~n", [File, TimeFile]),
         (
             TGen > TFile ->
-            (
-                silent ->
-                true
-            ;
-                format("(~w has been modified or created after ~w)~n",
-                       [GeneratorFile, File])
-            ),
+            format("(~w has been modified or created after ~w)~n",
+                    [GeneratorFile, File]),
             erase_or_not(AskRemList, File, Erased)
         ;
-            (
-                silent ->
-                true
-            ;
-                format("(~w has been modified or created after ~w)~n",
-                         [File, GeneratorFile])
-            ),
+            format("(~w has been modified or created after ~w)~n",
+                    [File, GeneratorFile]),
             erase_or_not(AskRemList, File, Erased)
         ).
 
@@ -357,16 +314,10 @@ oldstuff('#').
  %% Sometimes <file>S1 and <file>S2 can be generated from each other,
  %% and the sizes are comparable.  I have both options, in that case.
 
-generates('.c', '.o').
-generates('.adb', '.o').
-generates('.ads', '.ali').
-generates('.pl', '.po').
 generates('', '.tar').
 generates('.tar', '').
 generates('.ltx', '.dvi').
 generates('.tex', '.dvi').
-generates('.tex', '.pdf').
-generates('.ps', '.pdf').
 generates('.tex', '.html').
 generates('.dvi', '.ps').
 generates('.tgz', '.tar').

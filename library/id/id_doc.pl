@@ -51,7 +51,7 @@ all goals deeper than 100 will fail.
 An example of code using this package would be:
 
 @begin{verbatim}
-@includeverbatim{examples/example_id.pl}
+@includeverbatim{example_id.pl}
 @end{verbatim}
 
 The order of solutions are first the shallower and then the
@@ -59,7 +59,7 @@ deeper. Solutions which are between two cutoff are given in the usual left
 to right order. For example,
 
 @begin{verbatim}
-@includeverbatim{examples/example2.pl}
+@includeverbatim{example2.pl}
 @end{verbatim}
 
 It is possible to preserve the iterative-deepening behavior for calls to

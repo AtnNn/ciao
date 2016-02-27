@@ -1,6 +1,4 @@
 /* Disallow threads in selected cases, even if set at the general settings */
-#ifndef _THREADS_H
-#define _THREADS_H
 
 #if defined(THREADS) & !defined(_CIAO_THREADS_H_)
 #define _CIAO_THREADS_H_
@@ -140,5 +138,3 @@ typedef void *(*THREAD_START)(void *);
 #define Thread_Cancel(Id) kill(Thread_Id, SIGTERM)
 #define Thread_Equal(thr1, thr2) (thr1 == thr2)
 #endif /* defined(THREADS) */
-
-#endif /* _THREADS_H */

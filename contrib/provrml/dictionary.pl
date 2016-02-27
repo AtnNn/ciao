@@ -1,8 +1,6 @@
 :- module(dictionary, [dictionary/6],
 	              [assertions,isomodes,regtypes]).
 
-:- comment(author, "G@..{o}ran Smedb@..{a}ck").
-
 :- include(library(iso)).
 
 :- use_module(library(iso_byte_char)).
@@ -11,9 +9,6 @@
 
 :- use_module(library('provrml/internal_types')).
 
-
-:- comment(version(1*9+172,2003/12/04,17:47*07+'CET'), "Added author
-info.  (Manuel Carro)").
 
 :- comment(version(0*1+0,1998/12/07,15:57*36+'MET'), "Documenting the file.
    (Goran Smedback)").
@@ -580,6 +575,6 @@ dictionary('WorldInfo',field,'SFString',title,[''],[]).
 %% Version comment prompting control for this file.
 %% Local Variables: 
 %% mode: CIAO
+%% update-version-comments: "../../version"
 %% End:
 
-:- comment(version_maintenance,dir('../../version')).

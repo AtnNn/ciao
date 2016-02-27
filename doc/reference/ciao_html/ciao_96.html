@@ -1,106 +1,62 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Pure Prolog package</TITLE>
+<TITLE>The Ciao Prolog System               - Andorra execution</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_95.html">previous</A>, <A HREF="ciao_97.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_95.html">previous</A>, <A HREF="ciao_97.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC394" HREF="ciao_toc.html#TOC394">Pure Prolog package</A></H1>
+<H1><A NAME="SEC394" HREF="ciao_toc.html#TOC394">Andorra execution</A></H1>
 <P>
-<A NAME="IDX4752"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> The CLIP Group.
+<A NAME="IDX4359"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
+<STRONG>Author(s):</STRONG> Claudio Vaucheret, Francisco Bueno.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.11#100 (2003/12/21, 20:16:33 CET)
+<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
 
 
 <P>
-This library package allows the use of 
-<A NAME="IDX4753"></A>
-<A NAME="IDX4754"></A>
-<EM>pure Prolog</EM> in a Ciao module/program. It is based on the fact that if an 
-<A NAME="IDX4755"></A>
-<A NAME="IDX4756"></A>
-<EM>engine module</EM> is imported explicitly then all of them have to be imported explicitly. The engine modules are: 
-
-<UL>
-<LI><CODE>engine(arithmetic)</CODE>
-
-section <A HREF="ciao_23.html#SEC147">Arithmetic</A>. 
-<LI><CODE>engine(atomic_basic)</CODE>
-
-section <A HREF="ciao_22.html#SEC144">Basic predicates handling names of constants</A>. 
-<LI><CODE>engine(attributes)</CODE>
-
-section <A HREF="ciao_31.html#SEC175">Attributed variables</A>. 
-<LI><CODE>engine(basic_props)</CODE>
-
-section <A HREF="ciao_18.html#SEC132">Basic data types and properties</A>. 
-<LI><CODE>engine(basiccontrol)</CODE>
-
-@xref{Control constructs/predicates}. 
-<LI><CODE>engine(data_facts)</CODE>
-
-section <A HREF="ciao_28.html#SEC164">Fast/concurrent update of facts</A>. 
-<LI><CODE>engine(exceptions)</CODE>
-
-@xref{Exception handling}. 
-<LI><CODE>engine(io_aux)</CODE>
-
-section <A HREF="ciao_30.html#SEC171">Message printing primitives</A>. 
-<LI><CODE>engine(io_basic)</CODE>
-
-section <A HREF="ciao_25.html#SEC154">Basic input/output</A>. 
-<LI><CODE>engine(prolog_flags)</CODE>
-
-section <A HREF="ciao_27.html#SEC160">Changing system behaviour and various flags</A>. 
-<LI><CODE>engine(streams_basic)</CODE>
-
-section <A HREF="ciao_24.html#SEC150">Basic file/stream handling</A>. 
-<LI><CODE>engine(system_info)</CODE>
-
-section <A HREF="ciao_32.html#SEC180">Gathering some basic internal info</A>. 
-<LI><CODE>engine(term_basic)</CODE>
-
-section <A HREF="ciao_20.html#SEC138">Basic term manipulation</A>. 
-<LI><CODE>engine(term_compare)</CODE>
-
-section <A HREF="ciao_21.html#SEC141">Comparing terms</A>. 
-<LI><CODE>engine(term_typing)</CODE>
-
-section <A HREF="ciao_19.html#SEC135">Extra-logical properties for typing</A>. 
-</UL>
-
-<P>
-Note that if any of these modules is explicitely imported in a program then the language defaults to Pure Prolog, plus the functionality added by the modules explicitely imported. 
+<STRONG>Version of last change:</STRONG> 1.7#144 (2001/11/12, 17:57:47 CET)
 
 
 <P>
-It is recommended that if you explicitely import an engine module you also use this package, which will guarantee that the predicate <CODE>true/0</CODE> is defined (note that this is the only Ciao builtin which cannot be redefined). 
+This package allows the execution under the Basic Andorra Model [War88]. The model classifies goals as a 
+<A NAME="IDX4360"></A>
+<A NAME="IDX4361"></A>
+<EM>determinate goal</EM>, if at most one clause matches the goal, or nondeterminate goal, otherwise. In this model a goal is delayed until either it becomes determinate or it becomes the leftmost goal and no determinate goal is available. The implementation of this selection rule is based on the use of attributed variables [Hol92,Hol90]. 
+
+
+<P>
+In order to test determinacy we verify only the heads of clauses and builtins in the bodies of clauses before the first cut, if any. By default, determinacy of a goal is detected dynamically: when called, if at most one clause matches, it is executed; otherwise, it is delayed. For goals delayed the test is repeated each time a variable appearing in the goal is instantiated. In addition, efficiency can be improved by using declarations that specify the determinacy conditions. These will be considered for testing instead of the generic test on all clauses that can match. 
+
+
+<P>
+As with any other Ciao package, the andorra computation rule affects only the module that uses the package. If execution passes across two modules that use the computation rule, determinate goals are run in advance <EM>within</EM> one module and also within the other module. But determinate goals of one module do not run ahead of goals of the other module. 
+
+
+<P>
+It is however possible to preserve the computation rule for calls to predicates defined in other modules. These modules should obviously also use this package. In addition <EM>all</EM> predicates from such modules should imported, i.e., the directive <CODE>:- use_module(module)</CODE>, should be used in this case instead of <CODE>:- use_module(module,[...])</CODE>. Otherwise calls to predicates outside the module will only be called when they became the leftmost goal. 
 
 
 
 <UL>
-<LI><A HREF="ciao_96.html#SEC395">Usage and interface (pure)</A>
-<LI><A HREF="ciao_96.html#SEC396">Known bugs and planned improvements (pure)</A>
+<LI><A HREF="ciao_96.html#SEC395">Usage and interface (andorra)</A>
+<LI><A HREF="ciao_96.html#SEC396">Documentation on new declarations (andorra)</A>
+<LI><A HREF="ciao_96.html#SEC397">Documentation on exports (andorra)</A>
+<LI><A HREF="ciao_96.html#SEC398">Other information (andorra)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC395" HREF="ciao_toc.html#TOC395">Usage and interface (<CODE>pure</CODE>)</A></H2>
+<H2><A NAME="SEC395" HREF="ciao_toc.html#TOC395">Usage and interface (<CODE>andorra</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -108,28 +64,196 @@ It is recommended that if you explicitely import an engine module you also use t
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_package(pure).</CODE>
+<CODE>:- use_package(andorra).</CODE>
 
 or
 
-<CODE>:- module(...,...,[pure]).</CODE>
+<CODE>:- module(...,...,[andorra]).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX4362"></A>
+<CODE>detcond/1</CODE>, 
+<A NAME="IDX4363"></A>
+<CODE>path/1</CODE>.
+
+</UL>
+
+<LI><STRONG>New operators defined:</STRONG>
+
+<A NAME="IDX4364"></A>
+<CODE>?\=/2</CODE> [700,xfx], 
+<A NAME="IDX4365"></A>
+<CODE>?=/2</CODE> [700,xfx].
+
+<LI><STRONG>New declarations defined:</STRONG>
+
+<A NAME="IDX4366"></A>
+<CODE>determinate/2</CODE>.
+
 </UL>
 
 </div class="cartouche">
 
 
 
-<H2><A NAME="SEC396" HREF="ciao_toc.html#TOC396">Known bugs and planned improvements (<CODE>pure</CODE>)</A></H2>
+<H2><A NAME="SEC396" HREF="ciao_toc.html#TOC396">Documentation on new declarations (<CODE>andorra</CODE>)</A></H2>
+<P>
+<A NAME="IDX4367"></A>
+<A NAME="IDX4368"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>determinate/2:</B>
+<DD><A NAME="IDX4369"></A>
+
+
+<P>
+:- <CODE>determinate(Pred,Cond)</CODE>.
+
+
+<P>
+Declares determinacy conditions for a predicate. Conditions <CODE>Cond</CODE> are on variables of arguments of <CODE>Pred</CODE>. For example, in: 
+
+<PRE>
+:- determinate(member(A,B,C), ( A ?= term(B,[1])  ; C?=[_|_]) ).
+
+member(A,[A|B],B).
+member(A,[B|C],[B|D]) :-
+        A==B,
+        member(A,C,D).
+</PRE>
+
+<P>
+the declaration states that a call <CODE>member(A,B,C)</CODE> is determinate when either <CODE>A</CODE> doesn't unify with the first argument of <CODE>B</CODE> or <CODE>C</CODE> doesn't unify with <CODE>[_|_]</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>determinate(Pred,Cond)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> States that the predicate <CODE>Pred</CODE> is determinate when <CODE>Cond</CODE> holds.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Pred</CODE> is a Name/Arity structure denoting a predicate name: 
+
+<PRE>
+predname(P/A) :-
+        atm(P),
+        nnegint(A).
+</PRE>
+
+ (<CODE>basic_props:predname/1</CODE>)
+
+<CODE>Cond</CODE> is a determinacy condition.
+ (<CODE>user(... /andorra_doc):detcond/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC397" HREF="ciao_toc.html#TOC397">Documentation on exports (<CODE>andorra</CODE>)</A></H2>
+<P>
+<A NAME="IDX4370"></A>
+<A NAME="IDX4371"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>detcond/1:</B>
+<DD><A NAME="IDX4372"></A>
+
+
+<P>
+Defined by: 
+
+<PRE>
+detcond(ground(X)) :-
+        var(X).
+detcond(nonvar(X)) :-
+        var(X).
+detcond(instatiated(A,Path)) :-
+        var(A),
+        list(Path,int).
+detcond(?\=(Term1,Term2)) :-
+        path(Term1),
+        path(Term2).
+detcond(?=(Term1,Term2)) :-
+        path(Term1),
+        path(Term2).
+detcond(Test) :-
+        test(Test).
+</PRE>
 
 
 <UL>
+<LI><CODE>ground/1</CODE> and <CODE>nonvar/1</CODE> have the usual meaning.
 
-<LI>
+<LI><CODE>instatiated(A,Path)</CODE> means that the subterm of <CODE>A</CODE> addressed by <CODE>Path</CODE> is not a variable. <CODE>Path</CODE> is a list of integer numbers describing a path to the subterm regarding the whole term A as a tree. For example, <CODE>instantiated(f(g(X),h(i(Z),Y)),[2,1])</CODE> tests whether <CODE>i(Z)</CODE> is not a variable.
 
-Currently, the following builtin predicates/program constructs cannot be redefined, in addition to <CODE>true/0</CODE>: <CODE>(-&#62;)/2</CODE> <CODE>(,)/2</CODE> <CODE>(+)/1</CODE> <CODE>if/3</CODE>
+<LI><CODE>Term1 ?\= Term2</CODE> means "terms <CODE>Term1</CODE> and <CODE>Term2</CODE> do not unify (when instantiated)". <CODE>Term1</CODE> and <CODE>Term2</CODE> can be either an argument of the predicate or a term <CODE>term(V,Path)</CODE>, which refers to the subterm of <CODE>V</CODE> addressed by <CODE>Path</CODE>.
+
+<LI><CODE>Term1 ?= Term2</CODE> means "terms <CODE>Term1</CODE> and <CODE>Term2</CODE> unify (when instantiated)". The same considerations above apply to <CODE>Term1</CODE> and <CODE>Term2</CODE>.
+
+<LI>any other test that does not unify variables can also be used ( <CODE>==/2</CODE>, <CODE>\==/2</CODE>, <CODE>atomic/1</CODE>).
+
+</UL>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>detcond(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a determinacy condition.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4373"></A>
+<A NAME="IDX4374"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>path/1:</B>
+<DD><A NAME="IDX4375"></A>
+
+
+<P>
+Defined by: 
+
+<PRE>
+path(X) :-
+        var(X).
+path(X) :-
+        list(X,int).
+</PRE>
+
+</DL>
+
+
+
+<H2><A NAME="SEC398" HREF="ciao_toc.html#TOC398">Other information (<CODE>andorra</CODE>)</A></H2>
+
+<P>
+The andorra transformation will include the following predicates into the code of the module that uses the package. Be careful not to define predicates by these names: 
+
+<UL>
+<LI><CODE>detcond_andorra/4</CODE>
+
+<LI><CODE>path_andorra/4</CODE>
+
+<LI><CODE>detcond_susp/4</CODE>
+
+<LI><CODE>path_susp/4</CODE>
+
+<LI><CODE>list_andorra2/5</CODE>
+
+<LI><CODE>test_andorra2/4</CODE>
+
 </UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_95.html">previous</A>, <A HREF="ciao_97.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_95.html">previous</A>, <A HREF="ciao_97.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

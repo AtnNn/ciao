@@ -1,335 +1,129 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - arc_class (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Using the persdb library</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_141.html">previous</A>, <A HREF="ciao_143.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_141.html">previous</A>, <A HREF="ciao_143.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC588" HREF="ciao_toc.html#TOC588">arc_class (library)</A></H1>
-<P>
-<A NAME="IDX6083"></A>
-
+<H1><A NAME="SEC590" HREF="ciao_toc.html#TOC590">Using the persdb library</A></H1>
 
 <P>
-<STRONG>Author(s):</STRONG> Montserrat Urraca.
-
-
-<P>
-<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
-
-
-<P>
-<STRONG>Version of last change:</STRONG> 1.9#120 (2003/12/4, 17:32:15 CET)
+Through the following examples we will try to illustrate the two mains ways of declaring and using persistent predicates: statically (the preferred method) and dynamically (necessary when the new persistent predicates have to be defined at run-time). The final example is a small application implementing a simple persistent queue. 
 
 
 
 <UL>
-<LI><A HREF="ciao_142.html#SEC589">Usage and interface (arc_class)</A>
-<LI><A HREF="ciao_142.html#SEC590">Documentation on exports (arc_class)</A>
+<LI><A HREF="ciao_142.html#SEC591">An example of persistent predicates (static version)</A>
+<LI><A HREF="ciao_142.html#SEC592">An example of persistent predicates (dynamic version)</A>
+<LI><A HREF="ciao_142.html#SEC593">A simple application / a persistent queue</A>
 </UL>
 
 
 
-<H2><A NAME="SEC589" HREF="ciao_toc.html#TOC589">Usage and interface (<CODE>arc_class</CODE>)</A></H2>
+<H2><A NAME="SEC591" HREF="ciao_toc.html#TOC591">An example of persistent predicates (static version)</A></H2>
 
-<div class="cartouche">
 
-<UL>
+<PRE>
+:- use_package(iso).
+:- use_package(persdb).
 
-<LI><STRONG>Library usage:</STRONG>
+%% Declare the directory associated to the key "db" where the
+%% persistence sets of the persistent predicates are stored:
+persistent_dir(db,'./').
 
-<CODE>:- use_module(library(arc_class)).</CODE>
+%% Declare a persistent predicate:
+:- persistent(bar/1, db).
 
-<LI><STRONG>Exports:</STRONG>
+%% Read a term, storing it in a new fact of the persistent predicate
+%% and list all the current facts of that predicate
+main:-
+     read(X),
+     assertz_fact(bar(X)),
+     findall(Y,bar(Y),L),
+     write(L).
 
+</PRE>
 
-<UL>
 
-<LI><EM>Predicates:</EM>
 
-<A NAME="IDX6084"></A>
-<CODE>coord/4</CODE>, 
-<A NAME="IDX6085"></A>
-<CODE>width/1</CODE>, 
-<A NAME="IDX6086"></A>
-<CODE>height/1</CODE>, 
-<A NAME="IDX6087"></A>
-<CODE>center/2</CODE>, 
-<A NAME="IDX6088"></A>
-<CODE>angle_start/1</CODE>, 
-<A NAME="IDX6089"></A>
-<CODE>style_type/1</CODE>, 
-<A NAME="IDX6090"></A>
-<CODE>outline_color/1</CODE>.
+<H2><A NAME="SEC592" HREF="ciao_toc.html#TOC592">An example of persistent predicates (dynamic version)</A></H2>
 
-</UL>
 
-<LI><STRONG>Other modules used:</STRONG>
+<PRE>
+:- use_package(iso).
+:- use_package(persdb).
 
+main([X]):-
+%%   Declare the directory associated to the key "db" 
+     asserta_fact(persistent_dir(db,'./')),
+%%   Declare the predicate bar/1 as dynamic (and data) at run-time  
+     data(bar/1),
+%%   Declare the predicate bar/1 as persistent at run-time  
+     make_persistent(bar/1, db),
+     assertz_fact(bar(X)),
+     findall(Y, bar(Y), L),
+     write(L).    
 
-<UL>
+</PRE>
 
-<LI><EM>System library modules:</EM>
 
-<A NAME="IDX6091"></A>
-<CODE>objects/objects_rt</CODE>.
 
-</UL>
+<H2><A NAME="SEC593" HREF="ciao_toc.html#TOC593">A simple application / a persistent queue</A></H2>
 
-</UL>
+<PRE>
+:- module(queue, [main/0],[persdb]).
 
-</div class="cartouche">
+:- use_package(iso).
 
+:- use_module(library(read)).
+:- use_module(library(write)).
+:- use_module(library(aggregates)).
 
+persistent_dir(queue_dir,'./pers').
 
-<H2><A NAME="SEC590" HREF="ciao_toc.html#TOC590">Documentation on exports (<CODE>arc_class</CODE>)</A></H2>
-<P>
-<A NAME="IDX6092"></A>
-<A NAME="IDX6093"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>coord/4:</B>
-<DD><A NAME="IDX6094"></A>
+:- persistent(queue/1, queue_dir).
 
+queue(first).
+queue(second).
 
-<P>
-<STRONG>Usage:</STRONG> <CODE>coord(+X1, +Y1, +X2, +Y2)</CODE>
+main:-
+     write('Action ( in(Term). | slip(Term) | out. | list. | halt. ): '),
+     read(A),
+     (  handle_action(A)
+     -&#62; true
+     ;  write('Unknown command.'), nl ),
+     main.
 
-<UL>
-<LI><EM>Description:</EM> <CODE>X1</CODE>, <CODE>Y1</CODE>, <CODE>X2</CODE>, and <CODE>Y2</CODE> give the coordinates of two diagonally opposite corners of a rectangular region enclosing the oval that defines the arc.
+handle_action(end_of_file) :-
+     halt.
+handle_action(halt) :-
+     halt.
+handle_action(in(Term)) :-
+     assertz_fact(queue(Term)),
+     main.
+handle_action(slip(Term)) :-
+     asserta_fact(queue(Term)),
+     main.
+handle_action(out) :-
+     (  retract_fact(queue(Term))
+     -&#62; write('Out '), write(Term)
+     ;  write('FIFO empty.') ),
+     nl,
+     main.
+handle_action(list) :-
+     findall(Term,queue(Term),Terms),
+     write('Contents: '), write(Terms), nl,
+     main.
+     
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+X1</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>+Y1</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>+X2</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>+Y2</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6095"></A>
-<A NAME="IDX6096"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>width/1:</B>
-<DD><A NAME="IDX6097"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>width(+Width)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Specifies shape's <CODE>Width</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Width</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>width(-Width)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets shape's <CODE>Width</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Width</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6098"></A>
-<A NAME="IDX6099"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>height/1:</B>
-<DD><A NAME="IDX6100"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>height(+Height)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Specifies shape's <CODE>Height</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Height</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>height(-Height)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets shape's <CODE>Height</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Height</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6101"></A>
-<A NAME="IDX6102"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>center/2:</B>
-<DD><A NAME="IDX6103"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>center(+X, +Y)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Specifies shape's center with <CODE>X</CODE> and <CODE>Y</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+X</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>+Y</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>center(-X, -Y)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets shape's center with <CODE>X</CODE> and <CODE>Y</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-X</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>-Y</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6104"></A>
-<A NAME="IDX6105"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>angle_start/1:</B>
-<DD><A NAME="IDX6106"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>angle_start(+Angle)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Angle</CODE> specifies the beginning of the angular range occupied by the arc. Degrees are given in units of degrees measured counter-clockwise from the 3-o'clock position; it may be either positive or negative.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Angle</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>angle_start(-Angle)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the value of the <CODE>Angle</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Angle</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6107"></A>
-<A NAME="IDX6108"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>style_type/1:</B>
-<DD><A NAME="IDX6109"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>style_type(+Style)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Style</CODE> specifies how to draw the arc. If type is pieslice (the default) then the arc's region is defined by a section of the oval's perimeter plus two line segments, one between the center of the oval and each end of the perimeter section. If type is chord then the arc's region is defined by a section of the oval's perimeter plus a single line segment connecting the two end points of the perimeter section. If type is arc then the arc's region consists of a section of the perimeter alone. In this last case the -fill option is ignored.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Style</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>style_type(-Style)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the <CODE>Style</CODE> of the arc.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Style</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6110"></A>
-<A NAME="IDX6111"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>outline_color/1:</B>
-<DD><A NAME="IDX6112"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>outline_color(+Color)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Color</CODE> specifies the color used for drawing the arc's outline. This option defaults to black.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Color</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>outline_color(-Color)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> It gets arc's outline <CODE>Color</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Color</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-</DL>
+</PRE>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_141.html">previous</A>, <A HREF="ciao_143.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_141.html">previous</A>, <A HREF="ciao_143.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

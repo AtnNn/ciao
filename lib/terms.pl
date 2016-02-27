@@ -2,15 +2,10 @@
 
 :- comment(title,"Term manipulation utilities").
 
-:- comment(author,"The CLIP Group").
-
-:- comment(module,"This module implements some utils to do term
-   manipulation.").
-
 %-------------------------------------------------------------------------
-
-:- pred copy_args(N,Term,Copy) : nnegint(N) # "@var{Term} and
-   @var{Copy} have the same first @var{N} arguments.".
+:- pred copy_args(N,Term,Copy) : nnegint(N)
+      # "@var{Term} and @var{Copy} have the same first @var{N}
+         arguments.".
 
 copy_args(0, _, _) :- !.
 copy_args(I, F1, F2) :-
@@ -20,9 +15,9 @@ copy_args(I, F1, F2) :-
 	copy_args(I1, F1, F2).
 
 %-------------------------------------------------------------------------
-
-:- pred arg(Term,Arg) # "@var{Arg} is an argument of @var{Term}. Gives
-   each of the arguments on backtracking.".
+:- pred arg(Term,Arg) 
+      # "@var{Arg} is an argument of @var{Term}. Gives each of the
+         arguments on backtracking.".
 
 arg(T, A) :-
         functor(T, _, N),
@@ -36,10 +31,9 @@ args(X, M, T, A) :-
         args(X1, M, T, A).
 
 %-------------------------------------------------------------------------
-
 :- comment(atom_concat(Atms,Atm),"@var{Atm} is the atom resulting from
-   concatenating all atoms in the list @var{Atms} in the order in
-   which they appear.").
+	concatenating all atoms in the list @var{Atms} in the order
+	in which they appear.").
 
 atom_concat([],'').
 atom_concat([A1|Atoms],Atom):-
@@ -53,9 +47,6 @@ atoms_concat([A1|Atoms], A2, Atom) :-
 
 % ----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
-
-:- comment(version(1*11+94,2003/12/21,18:44*37+'CET'), "Added comment
-   author and module.  (Edison Mera)").
 
 :- comment(version(1*7+141,2001/11/12,17:47*36+'CET'), "Added doc for
    all preds.  (Francisco Bueno Carrillo)").

@@ -50,15 +50,6 @@ static int bn_div_mod_quot_not_wanted(register Bignum *x, register Bignum *y, re
 # define Getshort(p,i) (((unsigned short *)(p))[(i)+1])
 #endif
 
-/* Only intended to be used outside this file -- e.g., by routines located
-   at ciao_prolog.c */
-
-ENG_INT bn_length(REGISTER Bignum *x)
-{
-  return BignumLength(x);
-}
-
-
 BOOL bn_positive(x)
      REGISTER Bignum *x;
 {
@@ -1045,14 +1036,10 @@ void bn_to_string(Arg,x,base)
   slen = (((xlen+1)*(dlen+1)) & -4)+4 + (xlen<<1);
   for (alen=Atom_Buffer_Length; slen>alen;)
     alen <<= 1;
-  /*
   if (alen>Atom_Buffer_Length)
     Atom_Buffer = (char *)checkrealloc((TAGGED *)Atom_Buffer,
 				       Atom_Buffer_Length, alen),
     Atom_Buffer_Length = alen;
-  */
-  if (alen > Atom_Buffer_Length)
-      EXPAND_ATOM_BUFFER(alen);
   c = Atom_Buffer;
   work = (unsigned short *)(c+slen-(xlen<<1));
   if (!sx)

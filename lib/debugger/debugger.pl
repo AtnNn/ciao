@@ -1,7 +1,4 @@
 :- module(debugger, [
-% jf: remove these commented lines if everything is ok - 20031122
-%	'$debugger_state'/2,'$debugger_mode'/0,'$spypoint'/3,
-%	srcdbg_spy/6,
         adjust_debugger/0,switch_off_debugger/0,
         debug_module/1, nodebug_module/1, debug_module_source/1,
         debug/0, nodebug/0, trace/0, notrace/0, 
@@ -10,16 +7,13 @@
  	debugging/0, leash/1, maxdepth/1, call_in_module/2,
         current_debugged/1, debugger_setting/2,
         reset_debugger/1, set_debugger/1, get_debugger_state/1,
-	adjust_debugger_state/2,
         retry_hook/4,
         debug_trace/1,
         do_interrupt_command/1],
 	[dcg,assertions]).
 
-:- use_module(engine('debugger_support')).
 :- use_module(library('debugger/debugger_lib'),[debugging_options/1]).
 :- use_module(engine(internals)).
-:- use_module(engine(hiord_rt), ['$nodebug_call'/1, '$meta_call'/1]).
 :- use_module(library(format)).
 :- use_module(library(ttyout)).
 :- use_module(library(read), [read/2]).
@@ -63,15 +57,6 @@
 %------------------ Version Comments ------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
-
-:- comment(version(1*11+59,2003/11/26,03:11*51+'CET'),
-   "debugger:srcdbg_spy is now defined as debugger_support:srcdbg_spy.
-   (Jesus Correas Fernandez)").
-
-:- comment(version(1*11+14,2003/04/07,21:05*35+'CEST'),
-   "initialize_debugger_state/0 moved from internals.pl and called
-   through a module initialization. srcdbg_spy/6 moved here from
-   basiccontrol.pl.  (Jose Morales)").
 
 :- comment(version(1*7+185,2002/02/04,18:45*52+'CET'), "Fixed
    print_srcdbg_info/5 to show paths in Windows mode when running in a
@@ -160,13 +145,6 @@
 % DebugFlag = trace|debug|off
 % OptDebugFlag = trace|debug|off
 
-%%:- initialization(initialize_debugger_state).
-%%:- on_abort(initialize_debugger_state).
-
-% This has to be done before any choicepoint
-initialize_debugger_state :-
-	'$debugger_state'(_, s(off,off,1000000,0,[])),
-	'$debugger_mode'.
 
 reset_debugger(State) :-
 	'$debugger_state'(State, s(off,off,1000000,0,[])),
@@ -750,8 +728,7 @@ do_once_command(_) :-
 
 %-------------------------facilities-------------------------------------
 
-% extract_info('debugger:srcdbg_spy'(Goal,Pred,Src,Ln0,Ln1,Number),
-extract_info('debugger_support:srcdbg_spy'(Goal,Pred,Src,Ln0,Ln1,Number),
+extract_info(srcdbg_spy(Goal,Pred,Src,Ln0,Ln1,Number),
 	       NewGoal,Pred,Src,Ln0,Ln1,Number):-
 	!,
 	term_to_meta(NewGoal,Goal).
@@ -1091,4 +1068,4 @@ call_in_module(Module, Goal) :-
         module_concat(Module, Goal, MGoal),
         '$meta_call'(MGoal).
 
-
+%---------------------------------------------------------------------------

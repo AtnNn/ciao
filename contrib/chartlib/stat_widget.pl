@@ -1,7 +1,5 @@
 :- module(stat_widget,[],[assertions,regtypes,isomodes]).
 
-:- comment(author, "Isabel Martín").
-
 :- export(statwidget/4).
 :- export(statwidget/5).
 
@@ -227,12 +225,4 @@ table1(Rows,CounterValue1,Interp):-
 	CounterValue2 is CounterValue1 + 1,
 	table1(Rows,CounterValue2,Interp).
 
-
-
-
-
-:- comment(version_maintenance,dir('../../version')).
-
-:- comment(version(1*9+165,2003/12/04,17:39*43+'CET'), "Added author
-info (Manuel Carro)").
 

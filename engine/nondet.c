@@ -602,14 +602,10 @@ static struct instance *current_instance_noconc(Arg)
 
   if (x2_next || x5_next) {
     ComputeA(w->local_top,w->node);
-    X(X2_CHN) = PointerToTermOrZero(x2_next);
-    X(ClockSlot) = MakeSmall(use_clock);
-    X(X5_CHN) = PointerToTermOrZero(x5_next);
-    X(RootArg) = PointerToTermOrZero(root);
-    /* Clean unused registers (JF & MCL) */
-    X(InvocationAttr) = MakeSmall(0); 
-    X(PrevDynChpt) = MakeSmall(0); 
-
+    X(2) = PointerToTermOrZero(x2_next);
+    X(4) = MakeSmall(use_clock);
+    X(5) = PointerToTermOrZero(x5_next);
+    X(6) = PointerToTermOrZero(root);
     w->next_alt = address_nd_current_instance; /* establish skeletal node */
     w->next_node = w->node;
     w->node = ChoiceCharOffset(w->node,ArityToOffset(DynamicPreserved));
@@ -690,8 +686,8 @@ BOOL next_instance(Arg,ipp)
     if (!x2_insp && !x5_insp)
 	return FALSE;
     else {
-      w->node->term[X2_CHN] = X(X2_CHN) = PointerToTermOrZero(x2_insp);
-      w->node->term[X5_CHN] = X(X5_CHN) = PointerToTermOrZero(x5_insp);
+      w->node->term[2] = X(2) = PointerToTermOrZero(x2_insp);
+      w->node->term[5] = X(5) = PointerToTermOrZero(x5_insp);
       return  TRUE;
     }
 }
@@ -861,11 +857,7 @@ static struct instance *current_instance_conc(Arg, block)
   REGISTER struct int_info *root = TagToRoot(X(2));
 
 #if defined(DEBUG)
-  if (debug_concchoicepoints) 
-    fprintf(stderr, 
-"** Entering current_instance_conc, node = %x, next_node = %x, conc. = %x\n",
-            (int)w->node, (int)w->next_node, (int)TopConcChpt
-            );
+      if (debug_conc) fprintf(stderr, "** Entering current_instance_conc\n");
 #endif
 
   do {
@@ -875,13 +867,6 @@ static struct instance *current_instance_conc(Arg, block)
  /* That was a non-blocking or concurrent predicate with no instance at all */
     if (!try_instance) {
       Wait_For_Cond_End(root->clause_insertion_cond);
-#if defined(DEBUG)
-    if (debug_concchoicepoints)
-      fprintf(stderr,
-"***(%d)(%d) Exiting current_instance_conc with failure, node = %x, next_node = %x, conc. node = %x\n",
-              (int)Thread_Id, (int)GET_INC_COUNTER,
-              (int)w->node, (int)w->next_node, (int)TopConcChpt);
-#endif
       return NULL;
     }
 
@@ -898,19 +883,10 @@ static struct instance *current_instance_conc(Arg, block)
      implies that we do not have a lock --- but then block == NON_BLOCK, and
      therefore we can return with a NULL */
      
-  if (!current_one) {
-#if defined(DEBUG)
-    if (debug_concchoicepoints)
-      fprintf(stderr,
-"***(%d)(%d) Exiting current_instance_conc with failure, node = %x, next_node = %x, conc. node = %x\n",
-              (int)Thread_Id, (int)GET_INC_COUNTER,
-              (int)w->node, (int)w->next_node, (int)TopConcChpt);
-#endif
-    return NULL;
-  }
+  if (!current_one) return NULL;
 
 #if defined(DEBUG) && defined(THREADS)
-  if (debug_concchoicepoints && 
+  if (debug_conc && 
       Cond_Lock_is_unset(root->clause_insertion_cond))
       fprintf(stderr, 
               "***%d(%d) current_instance_conc: putting chpt without locks!\n",
@@ -927,30 +903,26 @@ static struct instance *current_instance_conc(Arg, block)
     failure. */
 
 #if defined(DEBUG) && defined(THREADS)
-  if (debug_concchoicepoints)
+  if (debug_conc)
     fprintf(stderr,
-            "*** %d(%d) in c_i making chpt (now: node = %x)., inst. is %x\n",
-            (int)Thread_Id, (int)GET_INC_COUNTER, 
-            (int)w->node, (int)current_one);
+            "*** %d(%d) in c_i making chpt., inst. is %x\n",
+            (int)Thread_Id, (int)GET_INC_COUNTER, (int)current_one);
 #endif
 
     x2_next = make_handle_to(x2_n, root, X(0), X2);
     x5_next = make_handle_to(x5_n, root, X(0), X5);
     ComputeA(w->local_top,w->node);
-    X(X2_CHN) = PointerToTermOrZero(x2_next);
-    X(ClockSlot) = MakeSmall(use_clock);
-    X(X5_CHN) = PointerToTermOrZero(x5_next);
-
-    /* pass root to RETRY_INSTANCE (MCL) */
-    X(RootArg) = PointerToTermOrZero(root);  
+    X(2) = PointerToTermOrZero(x2_next);
+    X(4) = MakeSmall(use_clock);
+    X(5) = PointerToTermOrZero(x5_next);
+    X(6) = PointerToTermOrZero(root);  /* pass root to RETRY_INSTANCE (MCL) */
+    /*X(7) = block == BLOCK ? atom_block : atom_no_block;*/
     if (block == BLOCK)
       SET_BLOCKING(X(InvocationAttr));
     else
       SET_NONBLOCKING(X(InvocationAttr));
     SET_EXECUTING(X(InvocationAttr));
-
-    /* Save last dynamic top */
-    X(PrevDynChpt) = PointerToTermOrZero(TopConcChpt); 
+    X(8) = PointerToTermOrZero(TopConcChpt); /* Save last dynamic top */
     w->next_alt = address_nd_current_instance; /* establish skeletal node */
     w->next_node = w->node;
     w->node = ChoiceCharOffset(w->node,ArityToOffset(DynamicPreserved));
@@ -961,11 +933,9 @@ static struct instance *current_instance_conc(Arg, block)
     NewShadowregs(w->global_top);
 
 #if defined(DEBUG)
-    if (debug_concchoicepoints)
-      fprintf(stderr,
-"***(%d)(%d) Exiting current_instance_conc, node = %x, next_node = %x, conc. node = %x\n",
-              (int)Thread_Id, (int)GET_INC_COUNTER,
-              (int)w->node, (int)w->next_node, (int)TopConcChpt);
+    if (debug_conc)
+      fprintf(stderr, "***(%d)(%d) Exiting current_instance\n",
+              (int)Thread_Id, (int)GET_INC_COUNTER);
 #endif
 
   return current_one;
@@ -1072,21 +1042,12 @@ BOOL next_instance_conc(Arg,ipp)
     Argdecl;
     struct instance **ipp;
 {
-  REGISTER struct int_info *root = TagToRoot(X(RootArg));
-  BlockingType block;      
+  REGISTER struct int_info *root = TagToRoot(X(6));
+  BlockingType             block;/* = X(7) == atom_block ? BLOCK : NO_BLOCK;*/
   InstanceHandle *x2_ins_h, *x5_ins_h;
   BOOL next_instance_pointer;
   struct instance *x2_insp, *x5_insp;
 
-#if defined(DEBUG)
-    if (debug_concchoicepoints)
-      fprintf(stderr,
-"*** Entering next_instance_conc, node = %x, next_node = %x, conc. node = %x\n",
-              (int)w->node, (int)w->next_node, (int)TopConcChpt
-);
-#endif
-
-  /* = X(7) == atom_block ? BLOCK : NO_BLOCK;*/
   block = IS_BLOCKING(X(InvocationAttr)) ? BLOCK : NO_BLOCK; 
 
   /* When we baktrack after a call which did not finally succeed, the lock
@@ -1094,15 +1055,15 @@ BOOL next_instance_conc(Arg,ipp)
 
   if (EXECUTING(X(InvocationAttr))){
 #if defined(DEBUG)
-    if (debug_concchoicepoints)
+    if (debug_conc)
       fprintf(stderr, "*** in next_instance_conc changing to nonexecuting\n");
 #endif
     SET_NONEXECUTING(X(InvocationAttr));
     Wait_For_Cond_End(root->clause_insertion_cond);
   }
   
-  x2_ins_h = TagToInstHandle(X(X2_CHN));
-  x5_ins_h = TagToInstHandle(X(X5_CHN));
+  x2_ins_h = TagToInstHandle(X(2));
+  x5_ins_h = TagToInstHandle(X(5));
 
 /* x2_ins_h->inst_ptr and x5_ins_h->inst_ptr may be both NULL; that means no
    current instance is available.  Just wait for one.  If any of x2_insp or
@@ -1116,7 +1077,7 @@ BOOL next_instance_conc(Arg,ipp)
             (int)Thread_Id, (int)GET_INC_COUNTER);
   if (debug_conc) {
     fprintf(stderr,
-      "*** %d(%d) in next_instance_conc with x2 = %x, x5 = %x, block = %x\n",
+            "*** %d(%d) in next_instance_conc with x2 = %x, x5 = %x, block = %x\n",
             (int)Thread_Id, (int)GET_INC_COUNTER, 
             (int)x2_ins_h->inst_ptr, (int)x5_ins_h->inst_ptr, (int)block);
   }
@@ -1133,13 +1094,6 @@ BOOL next_instance_conc(Arg,ipp)
       *ipp = NULL;                                       /* Cause failure */
       /* Time for new assertions */
       Wait_For_Cond_End(root->clause_insertion_cond);
-#if defined(DEBUG)
-    if (debug_concchoicepoints)
-      fprintf(stderr,
-"***(%d)(%d) Exiting current_instance_conc with failure, node = %x, next_node = %x, conc. node = %x\n",
-              (int)Thread_Id, (int)GET_INC_COUNTER,
-              (int)w->node, (int)w->next_node, (int)TopConcChpt);
-#endif
       return FALSE;                                 /* Remove choicepoint */
     }
 
@@ -1177,16 +1131,9 @@ BOOL next_instance_conc(Arg,ipp)
      a possibly empty next instance,
      and the lock on the instance. */
 
-  w->node->term[X2_CHN] = X(X2_CHN) = PointerToTermOrZero(x2_ins_h);
-  w->node->term[X5_CHN] = X(X5_CHN) = PointerToTermOrZero(x5_ins_h);
+  w->node->term[2] = X(2) = PointerToTermOrZero(x2_ins_h);
+  w->node->term[5] = X(5) = PointerToTermOrZero(x5_ins_h);
   SET_EXECUTING(X(InvocationAttr));
-#if defined(DEBUG)
-    if (debug_concchoicepoints)
-      fprintf(stderr,
-"***(%d)(%d) Exiting current_instance_conc, node = %x, next_node = %x, conc. node = %x\n",
-              (int)Thread_Id, (int)GET_INC_COUNTER,
-              (int)w->node, (int)w->next_node, (int)TopConcChpt);
-#endif
 
   return TRUE;
 }
@@ -1435,7 +1382,7 @@ void remove_link_chains(topdynamic, chpttoclear)
   if (debug_conc)
     fprintf(stderr, "*** %d(%d) removing from %lx until %lx\n", 
             (int)Thread_Id, (int)GET_INC_COUNTER, 
-            (unsigned long)*topdynamic,
+            (unsigned long)topdynamic,
             (unsigned long)chpttoclear);
 #endif
   
@@ -1447,25 +1394,25 @@ void remove_link_chains(topdynamic, chpttoclear)
               (unsigned long)movingtop);
 #endif
 
-    Cond_Begin(TagToRoot(movingtop->term[RootArg])->clause_insertion_cond);
+    Cond_Begin(TagToRoot(movingtop->term[6])->clause_insertion_cond);
 
 #if defined(DEBUG)
-    if (TagToInstHandle(movingtop->term[X2_CHN]) == NULL)
+    if (TagToInstHandle(movingtop->term[2]) == NULL)
       fprintf(stderr, "*** %d(%d) remove_link_chains: X2 handle is NULL!!\n",
               (int)Thread_Id, (int)GET_INC_COUNTER);
-    if (TagToInstHandle(movingtop->term[X5_CHN]) == NULL)
+    if (TagToInstHandle(movingtop->term[5]) == NULL)
       fprintf(stderr, "*** %d(%d) remove_link_chains: X5 handle is NULL!!\n",              (int)Thread_Id, (int)GET_INC_COUNTER);
 #endif
-    remove_handle(TagToInstHandle(movingtop->term[X2_CHN]), 
-                  TagToRoot(movingtop->term[RootArg]),
+    remove_handle(TagToInstHandle(movingtop->term[2]), 
+                  TagToRoot(movingtop->term[6]),
                   X2);
-    remove_handle(TagToInstHandle(movingtop->term[X5_CHN]), 
-                  TagToRoot(movingtop->term[RootArg]),
+    remove_handle(TagToInstHandle(movingtop->term[5]), 
+                  TagToRoot(movingtop->term[6]),
                   X5);
 
-    Broadcast_Cond(TagToRoot(movingtop->term[RootArg])->clause_insertion_cond);
+    Broadcast_Cond(TagToRoot(movingtop->term[6])->clause_insertion_cond);
 
-    movingtop=(struct node *)TermToPointerOrNull(movingtop->term[PrevDynChpt]);
+    movingtop = (struct node *)TermToPointerOrNull(movingtop->term[8]);
   }
 #if defined(DEBUG) && defined(THREADS)
   if (debug_conc)

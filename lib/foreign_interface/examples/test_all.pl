@@ -3,14 +3,9 @@
 :- use_module(library(format)).
 
 file(addresses,'addresses/objects').
-file(any_term,'any_term/any_term').
-file(bignums,'bignums/bigints').
 file(byte_lists,'byte_lists/byte_lists').
-file(exceptions,'exceptions/exceptions_example').
-file(foreign_init,'foreign_init/foreign_init').
 file(int_lists,'int_lists/int_lists').
 file(math,'math/math').
-file(native,'native/random').
 file(strings_and_atoms,'strings_and_atoms/strings_and_atoms').
 
 test(addresses) :-
@@ -21,38 +16,7 @@ test(addresses) :-
 	format("Showing object (from C)...~n",[]),
 	show_object(O),
 	fail.
-test(addresses):- nl, nl, nl.
-
-test(any_term):- 
-	format("Testing any_term:~n~n",[]),
-        custom_create_term(7, T),
-        custom_display_term(T),
-        fail.
-test(any_term):- nl, nl, nl.
-
-test(bignums):- 
-	format("Testing bignums:~n~n",[]),
-        ToTry = [0, -0, 1, 1.0e45, 123414123512353245234524523452345],
-        member(Number, ToTry),
-        make_smart_conversion(Number, Smart, How),
-        force_string_conversion(Number, String),
-        format("Original is ~w, smart is ~w (~w), string is ~w~n",
-               [Number, Smart, How, String]),
-        fail.
-test(bignums):- nl, nl, nl.
-
-test(exceptions):- 
-	format("Testing exceptions:~n~n",[]),
-        safe_codes_to_number("1234", _),
-        safe_codes_to_number("123a", _),
-        fail.
-test(exceptions):- nl, nl, nl.
-
-test(foreign_init):- 
-	format("Testing foreign_init:~n~n",[]),
-        print_time,
-        fail.
-test(foreign_init):- nl, nl, nl.
+test(addresses).
 
 test(byte_lists) :-
 	format("Testing lists of bytes:~n~n",[]),
@@ -62,7 +26,7 @@ test(byte_lists) :-
 	format("Showing list (from C)...~n",[]),
 	byte_lists:show_list(L,List),
 	fail.
-test(byte_lists):- nl, nl, nl.
+test(byte_lists).
 
 test(int_lists) :-
 	format("Testing lists of integers:~n~n",[]),
@@ -72,17 +36,14 @@ test(int_lists) :-
 	format("Showing list (from C)...~n",[]),
 	int_lists:show_list(L,List),
 	fail.
-test(int_lists):- nl, nl, nl.
+test(int_lists).
 
 test(math) :-
 	format("Testing numbers:~n~n",[]),
 	sin(0,X),
 	sin(1,Y),
 	sin(3.1415,Z),
-	format("sin(0)=~w, sin(1)=~w, sin(3.1415)=~w.~n",[X,Y,Z]),
-        fail.
-test(math):- nl, nl, nl.
-
+	format("sin(0)=~w, sin(1)=~w, sin(3.1415)=~w.~n",[X,Y,Z]).
 
 test(strings_and_atoms) :-
 	format("Testing strings and atoms:~n~n",[]),
@@ -97,39 +58,15 @@ test(strings_and_atoms) :-
 	        "this is a string Prolog should not free"]),
 	format("~w ~w ~w ~w ~w~n",[S1,A1,S2,A2,S]),
 	show_string("hello message (Prolog string) from C."),
-	show_atom('hello message (Prolog atom) from C.'),
-        fail.
-test(strings_and_atoms):- nl, nl, nl.
-
-test(native) :-
-	format("Testing random:~n~n",[]),
-	format("set random seed to ~w~n", 10),
-	srandom(10),
-	random(X),
-	random(1,10,Y),
-	format("~w is a random number, ~w is a random number between 1 and 10~n", [X, Y]),
-	format("set random seed to ~w~n", 10),
-	srandom(10),
-	random(A),
-	random(1,10,B),
-	format("~w is a random number, ~w is a random number between 1 and 10~n", [A, B]),
-        fail.
-test(native):- nl, nl, nl.
-
+	show_atom('hello message (Prolog atom) from C.').
 
 :- include(library(foreign_interface)).
 
 :- use_module('addresses/objects').
-:- use_module('any_term/any_term').
-:- use_module('bignums/bigints').
 :- use_module('byte_lists/byte_lists').
-:- use_module('exceptions/exceptions_example').
-:- use_module('foreign_init/foreign_init').
 :- use_module('int_lists/int_lists').
 :- use_module('math/math').
-:- use_module('native/random').
 :- use_module('strings_and_atoms/strings_and_atoms').
-
 
  %% rebuild_all :-
  %% 	member(X,[addresses,byte_lists,math,strings_and_atoms]),

@@ -62,7 +62,7 @@ static void set_nondet(t,def,first)
   peformed, and using the cache not to advance in the chain of clauses from
   the beginning.  Inserting always at the end is simply not possible because
   the clause numbers to be accessed do not come ordered. The cache is used
-  only if we are inserting farther than the last clause inserted. 
+  it only if we are inserting farther than the last clause inserted. 
 
   We should check that the clause numbers have not changed --- i.e., that
   intermediate records are not erased --- as that would invalidate our

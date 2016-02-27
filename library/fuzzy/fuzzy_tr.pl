@@ -18,8 +18,7 @@
 :- data faggr/4.
 
 :- include(library('fuzzy/ops')).
-%:- include(library('clpr/ops')).
-:- include(library('clpqr-common/ops')).
+:- include(library('clpr/ops')).
 
 fuzzy_pred2(clause(H,'$add_contr'(B,T)),clause(H,NB),M):-
 	         obtain_crisp(B,BPrime,M,T),
@@ -376,14 +375,13 @@ memfunct((A,B),ListVar,Tail,M):-
 	!,
  	memfunct(A,ListVar,TListVar,M),
  	memfunct(B,TListVar,Tail,M).
-%memfunct({_A},R,R,_M).  % to manage crisp calls
+memfunct({_A},R,R,_M).  % to manage crisp calls
 memfunct(A,[X|R],R,M):-
  	functor(A,F,Ar),
  	fpredicate(F/Ar,M),!,
  	arg(Ar,A,X).
-memfunct(_,R,R,_).
-% memfunct(_,R,R,_):-
-% 	error_message("something is wrong",[]).
+memfunct(_,R,R,_):-
+	error_message("something is wrong",[]).
 
 
 fpredicate(F/Ar,M):-

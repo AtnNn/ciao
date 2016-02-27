@@ -1,9 +1,6 @@
 :- use_module(library('persdb_mysql/persdbrt_mysql')).
 :- load_compilation_module(library('persdb_sql_common/persdbtr_sql')).
 :- add_sentence_trans(sql_persistent_tr/2).
-%JCF
-:- add_goal_trans(sql_goal_tr/2).
-%JCF
 
 :- include(library(assertions)).
 :- include(library(det_hook)).
@@ -18,17 +15,14 @@
 :- discontiguous('sql_persistent_location'/2).
 
 %% Data predicates used to keep the status information about the sessions and the queries : .......
+ 
 
 %% Data predicates used by the pl2sql compiler 
-:- multifile([sql__relation/3,sql__attribute/4]).
-:- data([sql__relation/3,sql__attribute/4]).
-:- discontiguous(sql__relation/3).
-:- discontiguous(sql__attribute/4).
+:- multifile([relation/3,attribute/4]).
+:- data([relation/3,attribute/4]).
+:- discontiguous('relation'/3).
+:- discontiguous('attribute'/4).
 
-%% ---------------------------------------------------------------------------
-:- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*11+62,2003/11/27,21:24*17+'CET'), "Names of
-   multifile predicates relation/3 and attribute/4 changed to
-   sql__relation/3 and sql__attribute/4.  (Jesus Correas Fernandez)").
+
 

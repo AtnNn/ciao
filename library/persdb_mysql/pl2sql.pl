@@ -9,16 +9,13 @@
 	], [dcg]).
 
 :- use_module(library('persdb_sql_common/sqltypes'),
-	  [
-%jcf%	      sybase2sqltype/2, sybase2sqltypes_list/2, sybasetype/1,
-	      get_type/2, type_union/3, type_compatible/2
-%jcf%	      , accepted_type/2
-          ]).
+	  [sybase2sqltype/2, sybase2sqltypes_list/2, sybasetype/1,
+	   get_type/2, type_union/3, type_compatible/2, accepted_type/2]).
 :- reexport(library('persdb_sql_common/sqltypes'), [sqltype/1]).
 
 
-:- multifile [sql__relation/3, sql__attribute/4].
-:- data [sql__relation/3, sql__attribute/4].
+:- multifile [relation/3, attribute/4].
+:- data [relation/3, attribute/4].
 
 
 :- include(library(assertions)).
@@ -46,8 +43,8 @@
 
    The translator needs to know the correspondence between Prolog
    predicates and the @concept{SQL tables} in the database. To this
-   end this module exports two multifile predicates, @pred{sql__relation/3}
-   and @pred{sql__attribute/4}. See the description of these predicates for
+   end this module exports two multifile predicates, @pred{relation/3}
+   and @pred{attribute/4}. See the description of these predicates for
    details on how such correspondance is specified.
 
    The main entry points to the translator are @pred{pl2sqlstring/3}
@@ -74,9 +71,9 @@
 
 % ----------------------------------------------------------------------------
 
-:- pred sql__relation(PredName, Arity, TableName) :: atm * int * atm
+:- pred relation(PredName, Arity, TableName) :: atm * int * atm
 
-   # "This predicate, together with @pred{sql__attribute/4}, defines the
+   # "This predicate, together with @pred{attribute/4}, defines the
       correspondence between Prolog predicates and the @concept{SQL
       tables} in the database. These two relations constitute an
       extensible meta-database which maps @concept{Prolog predicate
@@ -90,7 +87,7 @@
 
 % ---------------------------------------------------------------------------
 
-:- pred sql__attribute(ANumber, TblName, AName, AType) :: int * atm * atm * sqltype 
+:- pred attribute(ANumber, TblName, AName, AType) :: int * atm * atm * sqltype 
 
    # "This predicate maps the argument positions of a Prolog predicate
       to the SQL attributes of its corresponding table. The types of
@@ -139,7 +136,7 @@ querybody(DBGoal) :-
    @begin{itemize}
 
    @item @concept{Atomic goals}, which must have been defined via
-   @pred{sql__relation/3} and @pred{sql__attribute/4} and reside in the (same)
+   @pred{relation/3} and @pred{attribute/4} and reside in the (same)
    database. Their arguments must be either ground or free
    variables. If they are ground, they must be bound to constants of
    the type declared for that argument. If an argument is a free
@@ -699,7 +696,7 @@ translate_comparison(LeftArg, RightArg, CompOp, Dict, Comparison) :-
    unique qualified relation table name.".
 
 translate_functor(Functor, Arity, rel(TableName, RangeVariable)) :-
-	sql__relation(Functor, Arity, TableName),
+	relation(Functor, Arity, TableName),
 	gensym(rel, RangeVariable).
 
 % ---------------------------------------------------------------------------
@@ -729,17 +726,17 @@ translate_arguments([Arg|Args], SQLTable, Position, SQLWhere, Dict, NewDict) :-
    attribute and the constant value.".
 
 translate_argument('$var$'(VarId), rel(SQLTable, RangeVar), Position, [], Dict, NewDict) :-
-	sql__attribute(Position, SQLTable, Attribute, Type),
+	attribute(Position, SQLTable, Attribute, Type),
 	add_to_dictionary(VarId, RangeVar, Attribute, Type, all, Dict, NewDict).
 translate_argument('$var$'(VarId), rel(SQLTable, RangeVar), Position, AttComparison, Dict, Dict) :-
 	% --- Var occurred previously - retrieve first occurrence data from dict
 	lookup(VarId, Dict, PrevRangeVar, PrevAtt, PrevType),
-	sql__attribute(Position, SQLTable, Attribute, Type),
+	attribute(Position, SQLTable, Attribute, Type),
 	check_type_compatible(PrevType, Type),
 	AttComparison = [comp(att(RangeVar, Attribute), =, att(PrevRangeVar, PrevAtt))].
 translate_argument('$const$'(Constant), rel(SQLTable, RangeVar), Position, ConstComparison, Dict, Dict) :-
 	% --- Equality comparison of constant value and attribute in table ------
-	sql__attribute(Position, SQLTable, Attribute, Type),
+	attribute(Position, SQLTable, Attribute, Type),
 	get_type('$const$'(Constant), ConstType),
 	check_type_compatible(ConstType, Type),
 	ConstComparison = [comp(att(RangeVar, Attribute), =, '$const$'(Constant))].
@@ -1159,10 +1156,6 @@ check_type_compatible(TypeA, TypeB) :-
 
 % -----------------------------------------------------------------------------
 :- comment(version_maintenance, dir('../../version')).
-
-:- comment(version(1*11+60,2003/11/27,21:23*00+'CET'), "Names of
-   multifile predicates relation/3 and attribute/4 changed to
-   sql__relation/3 and sql__attribute/4.  (Jesus Correas Fernandez)").
 
 :- comment(version(0*9+96, 1999/05/21, 19:53*48+'MEST'), "SQL strings
    (string-type attributes) are now treated as Ciao strings, and not as

@@ -19,10 +19,6 @@
 	lookup_set_extern_prototype/4],[dcg]).
 
 :- include(library(assertions)).
-
-:- comment(author, "G@..{o}ran Smedb@..{a}ck").
-
-
 :- include(library(isomodes)).
 %:- include(library(types)).
 
@@ -31,12 +27,8 @@
 %:- use_module(library(basicprops)).
 :- use_module(library(lists)).
 :- use_module(library('provrml/error')).
-:- use_module(library('provrml/internal_types'),[
-        bound/1
-                                                ]).
 :- use_module(library('provrml/io')).
 :- use_module(library('provrml/parser_util')).
-:- use_module(library('provrml/parser'), [field_Id/1]).
 :- use_module(library('provrml/dictionary')).
 :- use_module(library('provrml/dictionary_tree')).
 :- use_module(library('provrml/field_value_check'),
@@ -50,7 +42,6 @@
          indentation_list/2]).
 :- use_module(library('provrml/field_type'),
         [fieldType/1]).
-:- use_module(library('provrml/field_value'), [parse/1]).
 
 :- comment(version(0*1+0,1999/01/14,13:30*46+'MET'), "Documented.  (Goran
    Smedback)").
@@ -160,7 +151,7 @@ lookup_check_node(_In,NodeTypeId) -->
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 :- pred lookup_check_interface_fieldValue(+ParseIn,-ParseOut,+AccessType,
                                           +FieldType,+Id,+FieldValue,DCGIn,DCGOut)
-:: parse * parse * atm * term * atm * term * string * string
+:: parse * parse * atm * atm * term * atm * term * string * string
  # "The predicate formats the output for the interface part of the prototype.
     It also checks the values for the fields.".
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -208,7 +199,7 @@ lookup_get_boundary(NodeTypeId, FieldId, InitValue, Boundaries) :-
 lookup_get_boundary(_NodeTypeId, _FieldId, _InitValue,[]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-:- pred lookup_get_fieldType(+Parse,+NodeTypeId,+field_Id,-FieldType)
+:- pred lookup_get_fieldType(+Parse,+NodeTypeId,+fieldId,-FieldType)
 :: parse * atm * atm * atm
 # "The predicate will return the given field's type. It will start the search
    in the ordinar dictionary and then to the personal dictionary sarting off with 

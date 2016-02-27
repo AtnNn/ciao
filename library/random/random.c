@@ -108,9 +108,9 @@ BOOL prolog_srandom(Arg)
 void random_init(module)
      char *module;
 {
-  define_c_mod_predicate(module, "random", 1, prolog_random);
-  define_c_mod_predicate(module, "random", 3, prolog_random3);
-  define_c_mod_predicate(module, "srandom", 1, prolog_srandom);
+  define_c_mod_predicate(module, "random", prolog_random, 1);
+  define_c_mod_predicate(module, "random", prolog_random3, 3);
+  define_c_mod_predicate(module, "srandom", prolog_srandom, 1);
 }
 
 void random_end(module)

@@ -4,10 +4,8 @@
 	              [dcg, assertions]).
 
 :- use_module(engine(internals),['$predicate_property'/3,
-	term_to_meta/2,'$setarg'/4]).
-:- use_module(engine(debugger_support), ['$spypoint'/3,'$debugger_state'/2,
-	'$debugger_mode'/0]).
-:- use_module(engine(hiord_rt), ['$nodebug_call'/1]).
+	'$nodebug_call'/1,term_to_meta/2,'$spypoint'/3,'$debugger_state'/2,
+	'$setarg'/4,'$debugger_mode'/0]).
 :- use_module(library(format),[format/3]).
 :- use_module(library(write),[writeq/1, write_term/2]).
 :- use_module(library(ttyout),[ttydisplay/1,ttyflush/0,ttyget/1]).

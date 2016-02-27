@@ -2,30 +2,24 @@
 
 # This Makefile *needs* GNU make
 
-# make install          compile and install the whole Ciao system
-# 
-# make all              compile the whole Ciao system (engine, libraries, ...)
-#                       (but does not regenerate docs: see make doc below)
+# make all              compile the whole Ciao system (engine, libraries, docs)
 # make justinstall      just install the whole Ciao system (must have been
-#                       compiled before)
+#                        compiled before)
+# make install          compile and install the whole Ciao system
 #
-# make installeng	Compile and Install (or only
-# make eng              compile) the Ciao engine for this particular arch.
+# make eng              compile the Ciao engine for this particular arch.
 #			This is the only make action needed for using Ciao
 #                       executables in several architectures at once.
-# 
 # make cleanbackups     delete backup files
 # make distclean        delete all files which can be automatically generated
 # make engclean		delete all engines created
 # make totalclean       cleanbackups + distclean
 # 
-# make doc              regenerate all manuals from the sources. 
-#                       NOTE: This can only be done if lpdoc has been 
-#                       installed previously.   
+# make doc              regenerate all manuals from the sources. This can 
+#                       only be done if lpdoc has been installed previously. 
 #                       It does need not be done during a normal install, 
 #                       since the distribution comes with up to date 
 #                       documentation.
-# 
 # make installdoc       a subset of 'make install', which only installs the 
 #                       documentation. Useful after 'make doc'. 
 
@@ -154,7 +148,7 @@ libraries:
 	cd library && $(MAKE) all$(DEFAULTYPE)
 
 copysrcfiles: createsrcdir
-	cd engine && for File in *.[ch] *.pl Makefile ; \
+	cd engine && for File in *.[ch] Makefile ; \
 	do if [ ! -f $(OBJDIR)/$${File} -o $${File} -nt $(OBJDIR)/$${File} ]; \
              then rm -f $(OBJDIR)/$${File} ; cp $${File} $(OBJDIR)/$${File} ; \
 	   fi ; \
@@ -167,7 +161,6 @@ bin/$(CIAOARCH)$(CIAODEBUG):
 	$(MAKE) createsrcdir
 	cd $(OBJDIR) &&	                   \
 	   ln -s ../../engine/*.[ch] . &&   \
-	   ln -s ../../engine/*.pl . &&   \
 	   ln -s ../../engine/Makefile . && \
 	   rm -f configure.h
 
@@ -230,15 +223,12 @@ installincludes:
 	-chmod $(EXECMODE) $(INSTALLEDINCLUDEDIR)
 	-cp $(NODEBUGSRCINCLUDEDIR)/* $(INSTALLEDINCLUDEDIR)
 	-chmod $(DATAMODE) $(INSTALLEDINCLUDEDIR)/*
-	-mkdir -p $(INCLUDEROOT)
-	-ln -s $(INSTALLEDINCLUDEDIR)/ciao_prolog.h $(INCLUDEROOT)/ciao_prolog.h
 
 uninstallincludes:
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Uninstalling C include files for $(OSNAME)$(ARCHNAME)..."
 	@echo "*** ---------------------------------------------------------"
 	-rm -rf $(INSTALLEDINCLUDEDIR)
-	-rm -f $(INCLUDEROOT)/ciao_prolog.h
 
 install: all justinstall
 
@@ -323,7 +313,7 @@ tar:
 
 
 
-totalclean: cleanbackups cleangmon distclean
+totalclean: cleanbackups distclean
 
 engrealclean engclean:
 	@echo "*** ---------------------------------------------------------"
@@ -335,9 +325,6 @@ engrealclean engclean:
 cleanbackups:
 	(cd $(SRC) && find . -name '*~' -exec /bin/rm {} \;)
 	(cd $(SRC) && find $(SRC) -name '#*' -exec /bin/rm {} \;)
-
-cleangmon:
-	(cd $(SRC) && find . -name gmon.out -exec /bin/rm {} \;)
 
 cleanasrs:
 	(cd $(SRC) && find . -name '*.asr' -exec /bin/rm {} \;)

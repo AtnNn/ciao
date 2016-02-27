@@ -118,13 +118,11 @@ int readLZ(FILE *stream)
 
 #endif                                                                                                
 
-/*
 extern int getshort PROTO((FILE *file));
 extern TAGGED getlarge PROTO((Argdecl, FILE *file));
 extern ENG_INT getlong PROTO((FILE *file));
 extern ENG_FLT getdouble PROTO((FILE *file));
 extern char *getstring PROTO((FILE *file));
-*/
 
 TAGGED *qlarray=NULL;                   /* Shared, but with locked access */
 int qloffset=0, qllimit=0;                       /* Shared, locked access */
@@ -320,7 +318,7 @@ BOOL qread1(Arg,qfile,rungoal)
 	case LOAD_ATOM:
 	  Li = getshort(qfile);
 	  QLCHECK(Li);
-	  QL(Li) = init_atom_check(getstring(Arg, qfile));
+	  QL(Li) = init_atom_check(getstring(qfile));
 	  break;
 	case LOAD_FUNCTOR:
 	  Li = getshort(qfile);

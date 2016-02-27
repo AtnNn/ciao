@@ -116,43 +116,6 @@ public class PLConnection {
     }
 
     /**
-     * Creates a new <code>PLConnection</code> object that executes the
-     * Prolog server, and starts it. The connection port between Java side 
-     * and Prolog side is fixed to the corresponding argument.
-     *
-     * @param    port      Port number to be used for the internal 
-     *                     communication to Prolog side.
-     *
-     * @param    where     The command-line to start the Prolog process.
-     *                     This constructor forces that the connection be
-     *                     established to the newly created Prolog
-     *                     process, instead of waiting for any Prolog
-     *                     client that wants to connect to it.
-     *                     This constructor allows an array of strings
-     *                     for command-line arguments.
-     */
-    public PLConnection(int port, String[] where) throws PLException, IOException {
-	this.ss = new ServerSocket(port,2);
-	start(where);
-	previousConnection = this;
-    }
-
-    /**
-     * Creates a new <code>PLConnection</code> object that connects
-     * to a Prolog server at host and port given as argument.
-     *
-     * @param    host      host name where the Prolog side is 
-     *                     waiting for Java connection.
-     * @param    port      Port number to be used for the internal 
-     *                     communication to Prolog side.
-     */
-    public PLConnection(String host,int port) throws PLException, IOException {
-	start(host,port);
-	previousConnection = this;
-    }
-
-
-    /**
      * Starts a PLConnection to use the Java/Prolog
      * bidirectional interface. Starts the Prolog server
      * process and connects to it creating the sockets, and
@@ -178,7 +141,7 @@ public class PLConnection {
 	out.flush();
 // 	out.close();
 
-	bindSockets(out);
+	createSockets(out);
     }
 
     /**
@@ -208,25 +171,7 @@ public class PLConnection {
 	out.flush();
 	out.close();
 
-	bindSockets(out);
-    }
-
-    /**
-     * Starts the PLConnection for the Prolog-to-Java
-     * interface, connecting to an already executing Prolog server,
-     * listening at port given as argument.
-     *
-     * @param  port           port number to which the Prolog
-     *                        server is waiting for Java connection.
-     *
-     * @exception IOException if there are I/O problems.
-     * @exception PLException if there are problems regarding the Prolog
-     *                        process.
-     */
-    public void start(String host, int port) throws IOException, PLException {
-	plInterpreter = new PLInterpreter(this);
-
-	connectSockets(host,port);
+	createSockets(out);
     }
 
     /**
@@ -244,7 +189,8 @@ public class PLConnection {
 	int port = ss.getLocalPort();
 	System.out.println(port + ".");
 	System.out.flush();
-	bindSockets(System.out);
+// 	System.out.close();
+	createSockets(System.out);
     }
 
     /**
@@ -256,10 +202,10 @@ public class PLConnection {
     }
 
     /**
-     * This private method binds and synchronizes the sockets 
+     * This private method creates and synchronizes the sockets 
      * for communication with the Prolog process.
      */
-    private void bindSockets(PrintStream out) 
+    private void createSockets(PrintStream out) 
 	throws IOException, PLException {
     
 	// Open prolog-to-java socket.
@@ -304,60 +250,6 @@ public class PLConnection {
 	PLTerm jpSync = fromPrologJP(ID_INTERFACE);
 	//if (!jpSync.equals(JP_SYNC)) throw...
 	toPrologJP(ID_INTERFACE,JP_SYNC);
-
-	// Creating Java object server.
-	jServer = new PLJavaObjServer(this);
-    }
-
-    /**
-     * This private method creates, connects, and synchronizes the
-     * sockets for communication with the Prolog server.
-     */
-    private void connectSockets(String host,int port) 
-	throws IOException, PLException {
-    
-	// Open prolog-to-java socket.
-	//**
-	if (PLConnection.debugging)
-	    System.err.println("requesting connection...");
-	pjSocket = new Socket(host,port);
-	if (PLConnection.debugging)
-	    System.err.println("Connection accepted");
-	pjIn = new BufferedReader(new InputStreamReader(pjSocket.getInputStream()));
-	pjOut = new PrintWriter(pjSocket.getOutputStream());
-
-
-	// Creating handler threads for
-	// Prolog-to-Java communication.
-	pjWriter = new PLSocketWriter(pjOut);
-	pjReader = new PLSocketReader(pjIn, pjWriter);
-
-	// Synchronizing prolog-to-java socket.
-	toPrologPJ(ID_INTERFACE,PJ_SYNC);
-	//if (!pjSync.equals(PJ_SYNC)) throw...
-	PLTerm pjSync = fromPrologPJ();
-
-	// Starting java-to-prolog socket.
-	// TODO: both readers should use the same socket (?).
-	//       (if this is impossible, both readers should
-	//       use different port numbers.
-	if (PLConnection.debugging)
-	    System.err.println("Requesting connection...");
-	jpSocket = new Socket(host,port);
-	if (PLConnection.debugging)
-	    System.err.println("Connection accepted");
-	jpIn = new BufferedReader(new InputStreamReader(jpSocket.getInputStream()));
-	jpOut = new PrintWriter(jpSocket.getOutputStream());
-
-	// Creating handler threads for
-	// Java-to-Prolog communication.
-	jpWriter = new PLSocketWriter(jpOut);
-	jpReader = new PLMultithreadSocketReader(jpIn,jpWriter);
-
-	// Synchronizing java-to-prolog socket.
-	toPrologJP(ID_INTERFACE,JP_SYNC);
-	//if (!jpSync.equals(JP_SYNC)) throw...
-	PLTerm jpSync = fromPrologJP(ID_INTERFACE);
 
 	// Creating Java object server.
 	jServer = new PLJavaObjServer(this);
@@ -499,8 +391,6 @@ public class PLConnection {
 
 	pjSocket.close();
 	jpSocket.close();
-	if (ss != null)
-	    ss.close();
 
     }
 
@@ -532,10 +422,6 @@ public class PLConnection {
      */
     public static PLConnection getPreviousConnection() {
 	return previousConnection;
-    }
-
-    public Process getPrologProcess() {
-	return plProc;
     }
 
 }

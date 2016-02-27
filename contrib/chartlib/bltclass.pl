@@ -4,9 +4,6 @@
 
 :- module(bltclass,[],[assertions,regtypes,isomodes]).
 
-:- comment(author, "Isabel Martín").
-
-
 :- export(new_interp/1).
 %%:- export(new_interp/2).
 %%:- export(tcltk/2).
@@ -174,7 +171,7 @@ interp_file_aux(Strm,Interp) :-
 interp_file_aux(_,_). 
 	
 get_line_aux(Strm,Line) :-
-	bltclass:get_line(Strm,Line),
+	get_line(Strm,Line),
 %	inform_user([Line]),
 	( Line = end_of_file -> (!,fail) ; true).
 
@@ -439,7 +436,7 @@ core("} ").
 get_line(Stream, Line) :-
         current_input(OldIn),
         set_input(Stream),
-        bltclass:get_line(Line),
+        get_line(Line),
         set_input(OldIn).
 
 get_line(Line) :-
@@ -471,11 +468,3 @@ bltwish_interp(Interp):-
         In fact, the bltwish interpreter receives the commands through the
         socket created. @includedef{bltwish_interp/1}
 ").
-
-
-
-:- comment(version_maintenance,dir('../../version')).
-
-:- comment(version(1*9+153,2003/12/04,17:38*53+'CET'), "Added author
-info (Manuel Carro)").
-

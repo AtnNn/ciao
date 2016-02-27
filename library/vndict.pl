@@ -1,7 +1,8 @@
+
 :- module(vndict,
 	[ null_dict/1, create_dict/2,
 	  complete_dict/3, complete_vars_dict/3,
-	  prune_dict/3, sort_dict/2,
+	  prune_dict/3,
 	  dict2varnamesl/2, varnamesl2dict/2,
 	  find_name/4,
 	  rename/2,
@@ -17,9 +18,8 @@
 :- use_module(library(sets)).
 :- use_module(library(sort)).
 
-:- comment(title,"Variable name dictionaries").
-
 :- comment(author,"Francisco Bueno").
+:- comment(title,"Variable name dictionaries").
 
 %-------------------------------------------------------------------------
 :- regtype varnamedict(D) # "@var{D} is a dictionary of variable names.".
@@ -54,14 +54,6 @@ null_dict(dic([],[])).
 	# "@var{Dict} has names for all variables in @var{Term}.".
 
 create_dict(Term,Dict):- complete_dict(dic([],[]),Term,Dict).
-
-:- pred sort_dict(D,Dict) : varnamedict(D) => varnamedict(Dict)
-	# "@var{D} is sorted into @var{Dict}.".
-
-sort_dict(dic(Vs,Ns),dic(Vars,Names)):-
-	separate_lists(VNs,Vs,Ns),
-	sort(VNs,SortedVNs),
-	separate_lists(SortedVNs,Vars,Names).
 
 %----------------------------------------------------------------------------
 :- pred varnamesl2dict(VNs,Dict) : varnamesl(VNs) => varnamedict(Dict)
@@ -262,9 +254,6 @@ un_number_var_list([],[],Vars,Names,Vars,Names).
 %-------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../version')).
-
-:- comment(version(1*11+35,2003/08/28,16:15*20+'CEST'), "Added
-   sort_dict/2.  (Francisco Bueno Carrillo)").
 
 :- comment(version(0*8+19,1998/12/03,12:53*16+'MET'), "Updated type
    decls and version pointer.  (Manuel Hermenegildo)").

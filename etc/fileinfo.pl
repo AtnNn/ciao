@@ -1,7 +1,7 @@
 %% #!/bin/sh
 %% exec ciao-shell $0 "$@"
 
-%% Ciao syntax
+%% CIAO syntax
 :- use_package([assertions]).  
 
 %% ISO Compat
@@ -10,7 +10,7 @@
 :- use_module(library(format)).  
 :- use_module(library(aggregates)).  
 
-%% Ciao libraries
+%% CIAO libraries
 :- use_module(library('compiler/c_itf')).
 :- use_module(library('assertions/assrt_lib')).
 :- use_module(library('assertions/assrt_write')).
@@ -24,12 +24,12 @@
    declarations}, @concept{type declarations}, etc.) and
    @concept{printing code-related information} (@concept{imports},
    @concept{exports}, @concept{libraries used}, etc.)  on a file. The
-   file should be a single Ciao or Prolog source file. It uses the
-   Ciao compiler's pass one to do it. This program is specially useful
-   for example for checking what assertions the @concept{assertion
-   normalizer} is producing from the original assertions in the file
-   or to check what the compiler is actually seeing after some of the
-   syntactic expansions (but before goal translations). 
+   file should be a single CIAO or Prolog source file. It uses the
+   CIAO compiler's pass one to do it. This program is specially useful
+   for example to check what the compiler is actually seeing after
+   syntactic expansions, as well as for checking what assertions the
+   @concept{assertion normalizer} is producing from the original
+   assertions in the file. 
 
    @section{Usage (fileinfo)}
 
@@ -60,7 +60,7 @@ handle_args(IArgs) :-
 	( Args = [Opt1,Opt2,Main|Libs], 
 	  Opt1 = '-m' 
 	; Args = [Opt2,Main|Libs] ),
-	( Opt2 = '-a' ; Opt2 = '-c' ; Opt2 = '-f' ; Opt2 = '-e' ),
+	( Opt2 = '-a' ; Opt2 = '-c' ; Opt2 = '-e' ),
 	!,
 	(  prolog_flag(verbose_compilation,on,on)
 	-> format("{Printing info for ~w with libs ~w}~n",[Main,Libs])
@@ -85,22 +85,15 @@ usage_text("
     fileinfo -asr <filename.asr> 
        : pretty prints the contents of <filename.asr> 
 
-    fileinfo [-v] [-m] <-a|-f|-c|-e> <filename> [libdir1] ... [libdirN]
+    fileinfo [-v] [-m] <-a|-c|-e> <filename> [libdir1] ... [libdirN]
     -v : verbose output (e.g., lists all files read)
     -m : restrict info to current module
     -a : print assertions 
-    -f : print code and interface (imports/exports, etc.)
-    -c : print code only
+    -c : print code and interface (imports/exports, etc.)
     -e : print only errors - useful to check syntax of assertions in file
 
     fileinfo -h
        : print this information
-
-    Note that system lib paths *must* be given explicitly, e.g. :
-
-    fileinfo -m -c foo.pl \\
-             /home/clip/System/ciao/lib \\
-             /home/clip/System/ciao/library \\
 ").
 
 option_text("
@@ -108,14 +101,14 @@ option_text("
 
    @item If the @tt{-a} option is selected, @tt{fileinfo} prints the
    assertions (only code-oriented assertions -- not comment-oriented
-   assertions) in the file @em{after normalization}. If the @tt{-f}
+   assertions) in the file @em{after normalization}. If the @tt{-c}
    option is selected @tt{fileinfo} prints the file interface, the
-   declarations contained in the file, and the actual code. The
-   @tt{-c} option prints only the code. If the @tt{-e} option is
-   selected @tt{fileinfo} prints only any sintactic and import-export
-   errors found in the file, including the assertions.
+   declarations contained in the file, and the actual code. If the
+   @tt{-e} option is selected @tt{fileinfo} prints only any sintactic
+   and import-export errors found in the file, including the
+   assertions.
 
-   @item @tt{filename} must be the name of a Prolog or Ciao source
+   @item @tt{filename} must be the name of a Prolog or CIAO source
    file.
 
    @item This filename can be followed by other arguments which will
@@ -140,20 +133,17 @@ handle_options('-a',M,_Base) :-
 	prolog_flag(write_strings, Old, on),
 	print_assertions(M),
 	set_prolog_flag(write_strings, Old).
-handle_options('-f',M,Base) :-
-	!,
-	print_gathered_module_data(M,Base).
 handle_options('-c',M,Base) :-
 	!,
-	print_code_only(M,Base).
+	print_gathered_module_data(M,Base).
 handle_options('-e',_M,_Base).
 
 print_gathered_module_data(_M,Base) :-
 	set_prolog_flag(write_strings, on),
-	format("{Printing all code info~n",[]),
+	format("{Printing code info~n",[]),
 
-	forall((defines_module(Base,DefMod),
-          format("~w defines module ~w~n",[Base,DefMod]))),
+	defines_module(Base,DefMod),
+          format("~w defines module ~w~n",[Base,DefMod]),
 
 	forall((exports(Base,F,A,T,Met),
            format("~w exports ~w/~w (~w) meta=~w~n",[Base,F,A,T,Met]))),
@@ -173,8 +163,8 @@ print_gathered_module_data(_M,Base) :-
 	forall((adds(Base,File),
            format("~w does ensure_loaded of user file ~w~n",[Base,File]))),
 
-	forall((imports_pred(Base,M2,F,A,DefType,Met,EndFile), % M2\==builtin,M2\==internals,
-           format("~w imports ~w/~w of type ~w from ~w (~w) meta=~w~n",[Base,F,A,DefType,M2,EndFile,Met]))),
+	forall((imports_pred(Base,M2,F,A,Met), % M2\==builtin,M2\==internals,
+           format("~w imports ~w/~w from ~w meta=~w~n",[Base,F,A,M2,Met]))),
 
 	forall((imports_all(Base,M2), 
            format("~w imports all from ~w~n",[Base,M2]))),
@@ -190,11 +180,6 @@ print_gathered_module_data(_M,Base) :-
                   [Source,LB,LE,Head,Body,VNs]))),
 
         format("}~n",[]).
-
-print_code_only(_M,Base) :-
-	forall((clause_read(Base,Head,Body,VNs,Source,LB,LE),
-           format("~w (~w-~w):~n ~w :- ~w.~nDictionary:~w~n",
-                  [Source,LB,LE,Head,Body,VNs]))).
 
 forall(G) :-
 	( call(G),
@@ -240,11 +225,6 @@ unify_vars([N=V|Dict]):-
 %% ---------------------------------------------------------------------------
 
 :- comment(version_maintenance,on).
-
-:- comment(version(0*5+7,2003/07/29,18:07*56+'CEST'), "Fixed: when -f
-   was used without -m, fileinfo printed the code and interface of a
-   randomly selected module (instead of traversing all the related
-   modules of the current module).  (Jesus Correas Fernandez)").
 
 :- comment(version(0*5+6,1999/04/15,20:33*06+'MEST'), "Added @tt{-asr}
    usage.  (Manuel Hermenegildo)").

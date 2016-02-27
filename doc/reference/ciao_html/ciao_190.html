@@ -1,53 +1,272 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Find out which architecture we are running on</TITLE>
+<TITLE>The Ciao Prolog System               - table_widget1 (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_189.html">previous</A>, <A HREF="ciao_191.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_189.html">previous</A>, <A HREF="ciao_191.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC759" HREF="ciao_toc.html#TOC759">Find out which architecture we are running on</A></H1>
-
+<H1><A NAME="SEC753" HREF="ciao_toc.html#TOC753">table_widget1 (library)</A></H1>
 <P>
-<STRONG>Author(s):</STRONG> Manuel Carro, Robert Manchek.
-
-
-<P>
-<STRONG>Version:</STRONG> 0.0#6 (2001/3/26, 13:56:52 CEST)
+<A NAME="IDX7572"></A>
 
 
 <P>
-The architecure and operating system the engine is compiled for determines whether we can use or not certain libraries. This script, taken from a PVM distribution, uses a heuristic (which may need to be tuned from time to time) to find out the platform. It returns a string which is used throughout the engine (in #ifdefs) to enable/disable certain characteristics. 
+In addition to the features explained in the introduction, the predicates exported by this module depict tables in which the font weight for the table elements is bold. 
+
+
+<P>
+If the arguments are not in a correct format the exception <CODE>error8</CODE> will be thrown. 
 
 
 
 <UL>
-<LI><A HREF="ciao_190.html#SEC760">Usage (ciao_get_arch)</A>
-<LI><A HREF="ciao_190.html#SEC761">More details</A>
+<LI><A HREF="ciao_190.html#SEC754">Usage and interface (table_widget1)</A>
+<LI><A HREF="ciao_190.html#SEC755">Documentation on exports (table_widget1)</A>
+<LI><A HREF="ciao_190.html#SEC756">Documentation on internals (table_widget1)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC760" HREF="ciao_toc.html#TOC760">Usage (ciao_get_arch)</A></H2>
+<H2><A NAME="SEC754" HREF="ciao_toc.html#TOC754">Usage and interface (<CODE>table_widget1</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(table_widget1)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX7573"></A>
+<CODE>tablewidget1/4</CODE>, 
+<A NAME="IDX7574"></A>
+<CODE>tablewidget1/5</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX7575"></A>
+<CODE>table/1</CODE>, 
+<A NAME="IDX7576"></A>
+<CODE>image/1</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX7577"></A>
+<CODE>chartlib/genbar1</CODE>, 
+<A NAME="IDX7578"></A>
+<CODE>chartlib/bltclass</CODE>, 
+<A NAME="IDX7579"></A>
+<CODE>chartlib/test_format</CODE>, 
+<A NAME="IDX7580"></A>
+<CODE>chartlib/install_utils</CODE>, 
+<A NAME="IDX7581"></A>
+<CODE>lists</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC755" HREF="ciao_toc.html#TOC755">Documentation on exports (<CODE>table_widget1</CODE>)</A></H2>
+<P>
+<A NAME="IDX7582"></A>
+<A NAME="IDX7583"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>tablewidget1/4:</B>
+<DD><A NAME="IDX7584"></A>
+
+
+<P>
+<CODE>tablewidget1(Title,Header,ElementTable,Footer)</CODE>
+
+
+<P>
+Shows a regular table in a window. The user does not choose a background image. 
+
+
+<P>
+Example: 
+
+<PRE>
+tablewidget1('This is the title',
+	     'Header text',
+	     [['Number of processors','8'],['Average processors','95'],
+	         ['Average Tasks per fork','7.5']],
+	     'Footer text').
+</PRE>
+
+</DL>
+
+<P>
+<A NAME="IDX7585"></A>
+<A NAME="IDX7586"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>tablewidget1/5:</B>
+<DD><A NAME="IDX7587"></A>
+
+
+<P>
+<CODE>tablewidget1(Title,Header,ElementTable,Footer,BackgroundImage)</CODE>
+
+
+<P>
+Shows a regular table in a window. The user must set a background image. See the 
+<A NAME="IDX7588"></A>
+<CODE>image/1</CODE> type definition. 
+
+
+<P>
+Example: 
+
+<PRE>
+tablewidget1('This is the title',
+	     'Header text',
+	     [['Number of processors','8'],['Average processors','95'],
+	         ['Average Tasks per fork','7.5']],
+	     'Footer text',
+	     './images/rain.gif')
+</PRE>
+
+</DL>
+
+<P>
+<A NAME="IDX7589"></A>
+<A NAME="IDX7590"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>table/1:</B>
+<DD><A NAME="IDX7591"></A>
+
+
+<P>
+A table is a list of rows, each row must contain the same number of elements, otherwise the table wouldn't be regular and an exception will be thrown by the library. The rows list may not be empty. 
+
+<PRE>
+table([X]) :-
+        row(X).
+table([X|Xs]) :-
+        row(X),
+        table(Xs).
+</PRE>
+
+</DL>
+
+<P>
+<A NAME="IDX7592"></A>
+<A NAME="IDX7593"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>image/1:</B>
+<DD><A NAME="IDX7594"></A>
+
+
+<P>
+Some predicates allow the user to set the widget background image, whose is what this type is intended for. The user has to take into account the following restrictions: 
+
+
+
+<UL>
+
+<LI>The image must be in gif format.
+
+<LI>The file path must be absolute.
+
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC756" HREF="ciao_toc.html#TOC756">Documentation on internals (<CODE>table_widget1</CODE>)</A></H2>
+<P>
+<A NAME="IDX7595"></A>
+<A NAME="IDX7596"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>row/1:</B>
+<DD><A NAME="IDX7597"></A>
+
 
 
 <PRE>
-   Usage: ciao_get_arch
+row([X]) :-
+        cell_value(X).
+row([X|Xs]) :-
+        cell_value(X),
+        row(Xs).
 </PRE>
 
+<P>
+Each row is a list of elements whose type is 
+<A NAME="IDX7598"></A>
+<CODE>cell_value/1</CODE>. A row cannot be an empty list, as you can see in the definition type. 
 
 
-<H2><A NAME="SEC761" HREF="ciao_toc.html#TOC761">More details</A></H2>
+</DL>
 
 <P>
-Look at the script itself... 
+<A NAME="IDX7599"></A>
+<A NAME="IDX7600"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>row/1:</B>
+<DD><A NAME="IDX7601"></A>
 
+
+
+<PRE>
+row([X]) :-
+        cell_value(X).
+row([X|Xs]) :-
+        cell_value(X),
+        row(Xs).
+</PRE>
+
+<P>
+Each row is a list of elements whose type is 
+<A NAME="IDX7602"></A>
+<CODE>cell_value/1</CODE>. A row cannot be an empty list, as you can see in the definition type. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX7603"></A>
+<A NAME="IDX7604"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>cell_value/1:</B>
+<DD><A NAME="IDX7605"></A>
+
+
+<P>
+This type defines the possible values that a table element have. If any cell value is <CODE>"</CODE>, the cell will be displayed empty. 
+
+<PRE>
+cell_value(X) :-
+        atomic(X).
+</PRE>
+
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_189.html">previous</A>, <A HREF="ciao_191.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_189.html">previous</A>, <A HREF="ciao_191.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -1,3 +1,4 @@
+
 :- module(atom2term,
 	[ atom2term/2,
 	  string2term/2,
@@ -8,13 +9,8 @@
 	]).
 
 :- comment(title,"Atom to term conversion").
-
 :- comment(author,"Francisco Bueno").
 :- comment(author,"Daniel Cabeza").
-
-:- comment(module, "This module implements the predicates involved in
-   the atom to term conversion.").
-
 :- comment(bug,"This is just a quick hack written mainly for parsing 
    daVinci's messages. There should be a call to the standard reader
    to do this!").
@@ -24,7 +20,7 @@
    term resulting from parsing @var{Atom} char by char.".
 
 atom2term(Atom,Term):-
-	atom_codes(Atom,String),
+	name(Atom,String),
 	parse_term(String,Term, _), !.
 
 :- pred string2term(+String,-Term) # "Same as @pred{atom2term/2} but
@@ -47,7 +43,7 @@ parse_term0(0'[,String0,Term,String):- !,
 	parse_args0(String0,Term,[0']|String]).
 parse_term0(0'",String0,Term,String):- !,
 	parse_string(String0,Str,String),
-	atom_codes(Term,Str).
+	parse_term(Str,Term,[]).
 parse_term0(0'( , _, _, _):- !, fail.
 parse_term0(0') , _, _, _):- !, fail.
 parse_term0(0'] , _, _, _):- !, fail.
@@ -99,13 +95,6 @@ parse_string0(C,String,[C|List],String1):-
 
 % ----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
-
-:- comment(version(1*11+92,2003/12/21,02:27*29+'CET'), "Added comment
-   module.  (Edison Mera)").
-
-:- comment(version(1*9+19,2002/11/11,12:26*20+'CET'), "Changed
-   interpretation of double quoted strings so that they are not parsed
-   to terms. (Daniel Cabeza Gras)").
 
 :- comment(version(1*7+189,2002/02/14,17:16*46+'CET'), "Added cuts so
    that atom2term/2 and string2term/2 give only one solution.  (Daniel

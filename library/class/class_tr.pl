@@ -22,7 +22,7 @@
 
 :- use_module(library('compiler/c_itf')).
 :- use_module(library(lists),[append/3]).
-:- use_module(engine(internals),[module_concat/3]).
+:- use_module(engine(internals),[module_concat/3,builtin_module/1]).
 :- use_module(library('class/class_itf')).
 :- use_module(library(terms),[atom_concat/2]).
 
@@ -744,8 +744,8 @@ generate_fixed_clauses(Module,FixedClauses) :-
 	    (:- multifile     'class$constructor'/4),
 	    (:- multifile     'class$destructor'/3),
 	    (:- multifile     'class$implements'/2),
-	    (:- use_module(engine(internals), [last_module_exp/5])),
-	    (:- use_module(engine(hiord_rt), ['$meta_call'/1])),
+	    (:- use_module(engine(internals),
+               [last_module_exp/5,'$meta_call'/1])),
 	    (:- redefining(mod_exp/5)),
 	    ('$class$'(Module)),
 	    ('$force$runtime$info$'(X) :- call(X))

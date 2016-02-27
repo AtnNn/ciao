@@ -3,7 +3,7 @@ include ../../SHARED
 include $(SYSDEP_FILES)/mkf-$(CIAOARCH)
 
 PROLOGSOURCES=javasock.pl javart.pl jtopl.pl plserver.pl
-PROLOGSERVER=plserver
+PROLOGSERVER=plserver.pl
 
 all: 
 	$(SETLOCALCIAO) $(CIAOC) -c $(PROLOGSOURCES)
@@ -22,7 +22,7 @@ clean realclean:
 	cd javadoc && $(MAKE) clean
 
 distclean: realclean
-	/bin/rm -f *~ plserver
+	/bin/rm -f *~
 	cd CiaoJava && $(MAKE) distclean
 	cd examples/java2pl && $(MAKE) distclean
 	cd examples/pl2java && $(MAKE) distclean

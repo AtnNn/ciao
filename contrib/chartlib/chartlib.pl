@@ -1,9 +1,5 @@
 :- module(chartlib,[],[assertions,regtypes,isomodes]).
 
-:- comment(author, "Isabel Martín").
-
-
-
 :- comment(title, "A Chart Library").
 
 :- comment(author,"Isabel Mart@'{i}n Garc@'{i}a").
@@ -437,12 +433,4 @@
 
 
 
-
-
-
-
-:- comment(version_maintenance,dir('../../version')).
-
-:- comment(version(1*9+154,2003/12/04,17:39*03+'CET'), "Added author
-info (Manuel Carro)").
 

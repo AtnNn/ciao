@@ -1,7 +1,5 @@
 :- module(genbar1,[],[assertions,regtypes,isomodes]).
 
-:- comment(author, "Isabel Martín").
-
 :- export(barchart1/7).
 :- export(barchart1/9).
 :- export(percentbarchart1/7).
@@ -21,8 +19,6 @@
 :- use_module(library(random)).
 
 %%:- comment(author,"Isabel Mart@'{i}n").
-
-:- comment(title,"Bartchar widgets - 1").
 
 :- comment(module,"This module defines predicates to show barchart
         widgets. The three predicates exported by this module plot
@@ -725,11 +721,15 @@ axis_limit(_).
         ").
 
 
-:- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*11+137,2003/12/31,00:14*02+'CET'), "Added comment
-   title.  (Edison Mera)").
 
-:- comment(version(1*9+157,2003/12/04,17:39*18+'CET'), "Added author
-   info (Manuel Carro)").
+
+
+
+
+
+
+
+
+
 

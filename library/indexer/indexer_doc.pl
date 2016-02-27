@@ -1,108 +1,89 @@
-:- module(indexer_doc,[ ],[ assertions, regtypes ]).
 
-:- use_module(library('assertions/native_props'),[nonground/1]).
+/* Quintus Prolog Manual page
 
-:- comment(title, "Multiple Argument Indexing").
 
-:- comment(author, "Tom Howland (http://home.pacbell.net/tomjdnh/pd.html)").
+L-3-83: hash_term/2
 
-:- comment(author, "derived from work by Anil Nair").
+Synopsis: 
+       hash_term(+Term, -HashValue) 
+       Provides an efficient way to calculate an integer hash value for the
+       ground term Term. 
+Arguments: 
+       Term 
+              <term> 
+       HashValue 
+              <term> is an integer or variable 
+Description: 
+              If the first argument passed to hash_term/2 is ground, an integer hash
+              value corresponding to that term is calculated and returned in the second
+              argument. If the first argument is not ground, a new variable is returned in
+              the second argument. 
+              For example: 
 
-:- comment(author, "F. Bueno (for the Ciao package)").
+                                   | ?- hash_term(foo(name,2,module), H).
 
-:- comment(module,"This package is an extension of the idea of Prolog
-   indexing, usually performed, in a limited way, on the first
-   argument.  This package provides more powerful indexing schemes.
-   It lets you pick different arguments to index on, and provides for
-   different combinations of arguments to index on.  E.g., it will let
-   you index on the first and third argument or the second and the
-   third argument of a predicate.").
+                                  H = 1391
 
-/*
-"library(indexer)" generates index tables of the form Nth_arg-1st_arg
-to index on the Nth argument. This means that you could get redundant
-solutions. This package adds an extra unique "clause number" argument
-to each fact to get around this.
+                                  | ?- hash_term(foo(X), H).
+                                  X = _4734,
+                                  H = _4755
 
-"library(indexer)" can be used only for dynamic facts. This directory
-contains files for static rules (indexer.pl), dynamic facts
-(dynamic_indexer.pl), and module-partitioned dynamic facts
-(module_indexer.pl).
+                                  | ?-
+
+                          
+
+Tips: 
+       hash_term/2 is provided primarily as a tool for the construction of sophisticated
+       Prolog clause access schemes. Its intended use is to generate hash values for
+       ground terms that will be used with first argument clause indexing, yielding
+       compact and efficient multi-argument or deep argument indexing. 
+       hash_term/2 is most easily used when a known pattern of access to a predicate is
+       desired and both arguments of the call and arguments of the predicate are known
+       to be ground. In the following simple but typical example, hash_term/2 calls are
+       used together with Prolog's database manipulation predicates (assert/1 and
+       clause/2) to calculate and add an additional argument to the clauses actually
+       stored in the Prolog database: 
+
+
+
+                 add_pred_info(Name, Arity, Module, Info) :-
+                         hash_term([Name,Arity,Module], Hash),
+                         assert(info(Hash,Name,Arity,Module,Info)).
+
+                 get_pred_info(Name, Arity, Module, Info) :-
+                         hash_term([Name,Arity,Module], Hash),
+                         clause(info(Hash,Name,Arity,Module,Info), _).
+
+                 
+
+       This example assumes that the name, arity and module to be stored in the Prolog
+       database are ground when add_pred_info/4 is called, and that they are also ground
+       when get_pred_info/4 is called. The predicate that is actually asserted, info/5, has
+       an additional argument calculated by hash_term/2; info/5 would not normally be
+       called directly. A predicate using hash_term/2 to delete the stored information
+       would also be straightforward. 
+       If the first argument passed to hash_term/2 is not ground, hash_term/2 returns a
+       variable. Thus, if add_pred_info/4 is called with the name, arity or module not
+       ground, the info/5 information will be asserted with a variable as its first
+       argument, so it will not be indexed. If get_pred_info/4 is called with the name,
+       arity or module not ground, info/5 will simply be searched sequentially. Prolog's
+       normal semantics will be retained, although access will be considerably less
+       efficient. 
+       It is possible to use hash_term/2 in more complex indexing schemes as well by
+       checking instantiation when adding, accessing, and deleting clauses; however, it
+       is up to the user to ensure appropriate instantiation patterns in calls. The tradeoff
+       between run-time argument checking and reduced indexing effectiveness depends
+       on the degree of discrimination otherwise afforded by normal first argument
+       indexing. The efficiency gained by fast multi-argument indexing can often more
+       than make up for such additional run-time costs. 
+       It is also possible to use such indexing techniques on compiled predicates using
+       term expansion. Note that calculated hash values are not dependent on transitory
+       information like atom numbers or internal pointers. Hash values are consistent
+       across saving and restoring or multiple invocations of an application. 
+       Calculation of hash values is very fast, and indices constructed using the
+       techniques sketched above are also very compact, as the only additional cost is
+       for storing the additional (hash value) argument. When a solution to a complex
+       indexing problem can be constructed using hash_term/2 it will probably be
+       preferable to solutions using other techniques. 
 */
-
-:- comment(usage,"This facility is used as a package, thus either
-   including @lib{indexer} in the package list of the module, or by
-   using the @decl{use_package/1} declaration. The facility predicate
-   @pred{hash_term/2}, documented here, is defined in library module
-   @lib{hash}.").
-
-:- comment(doinclude,index/1).
-:- decl index(IndexSpecs) => indexspecs
-# "Declares an indexing scheme for a predicate. All specs of @var{IndexSpecs}
-   must be terms for the same predicate. Each spec declares an indexing on
-   a combination of the arguments. Indexing will be performed using any of
-   the specs in @var{IndexSpecs} (being thus interpreted as an or).
-
-   You should use a @tt{*} in an argument position if you wish to hash on 
-   the entire term in that argument. If a @tt{+} is used only one level of 
-   the term in the argument is used for hashing. An @tt{i} is used to
-   indicate that argument is already an integer, and therefore its own value
-   will be used for hashing. The argspec @tt{?} simply indicates not to use
-   the argument for indexing.
-
-   For example, the index specification:
-@begin{verbatim}
-:- index foo(+,?,*,i), foo(?,?,?,i).
-@end{verbatim}
-   declares indexing for @tt{foo/4} either on a combination of the first,
-   third, and fourht arguments, or only on the last argument, which is an
-   integer. In the first case, only the principal functor of the first 
-   argument will be used for hashing; the third argument will be used in
-   its entirety.
-
-   The argspec @tt{n} is a pragmatic extension and can not be used in 
-   conjunction with the other specifiers aside from @tt{?}. It stands for 
-   ""nonvar"" and implies that the argument will not be used for hashing,
-   since only ground terms can effectively be used in hashing. Thus, it
-   can not be used in combination with other specifiers within a particular 
-   index specification. It is often the fastest thing to use. 
-".
-
-:- regtype indexspecs(IndexSpecs)
-   # "@var{IndexSpecs} is an index specification.".
-:- comment(indexspecs/1,
-  "An index specification is defined as follows:
-   @includedef{indexspecs/1} @includedef{indexspec/1}").
-:- comment(doinclude,indexspecs/1).
-
-indexspecs(Spec) :- indexspec(Spec).
-indexspecs((Spec,Specs)) :- indexspec(Spec), indexspecs(Specs).
-
-indexspec(Spec) :- Spec=..[_F|Args], list(Args,argspec).
-
-:- regtype argspec(Spec)
-   # "@var{Spec} is an argument hash specification.".
-:- comment(argspec/1,
-  "An argument hash specification is defined as follows:
-   @includedef{argspec/1}").
-:- comment(doinclude,argspec/1).
-
-argspec(+).
-argspec(*).
-argspec(i).
-argspec(n).
-argspec(?).
-
-:- pred hash_term(T,N) : ground * var => int(N)
-	# "@var{N} is a hashing index for @var{T}.".
-:- pred hash_term(T,N) : nonground * var => var(N).
-:- comment(hash_term(Term,HashValue),
-  "Provides an efficient way to calculate an integer @var{HashValue} for a
-   ground @var{Term}.").
-:- comment(doinclude,hash_term/2).
-
-:- comment(version_maintenance,dir('../../version')).
-
-:- comment(version(1*11+101,2003/12/21,20:21*31+'CET'), "First
-   revision.  (Edison Mera)").
 

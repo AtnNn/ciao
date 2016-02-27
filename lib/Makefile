@@ -29,7 +29,7 @@ message:
 	@echo "*** ---------------------------------------------------------"
 
 autolibs: 
-	$(SRC)/etc/generate_foreign_compile_options $(MAKE) $(SRC)/makefile-sysdep $(SRC)/lib/auto_compile_options.pl
+	$(SRC)/etc/generate_foreign_compile_opts $(MAKE) $(SRC)/makefile-sysdep $(SRC)/lib/auto_compile_options.pl
 	-chmod $(DATAMODE) $(SRC)/lib/auto_compile_options.pl
 	'rm' -f all_modules all_module_messages
 # This is so that if installation is aborted, the permissions are left 

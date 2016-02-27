@@ -2,21 +2,18 @@
 	[assertions,'compiler/callback',isomodes]).
 
 :- use_module(engine(internals), [term_to_meta/2]).
-:- use_module(engine(hiord_rt), [call/1]).
 :- use_module(library(terms), [copy_args/3]).
+
 
 %% FOR TEMPORARILY PARTIALLY DOCUMENTING:
 :- use_module(library('assertions/doc_props')).
 
 :- comment(title,"Definite clause grammars (expansion)").
 
-:- comment(author, "The CLIP Group").
-
-:- comment(module, "This module implements the Definite clause
-   grammars (expansion).").
-
-% Should be something special :- meta_predicate phrase(goal,?).  :-
-meta_predicate phrase(goal,?,?).
+% Should be something special
+:- meta_predicate
+        phrase(goal,?),
+        phrase(goal,?,?).
 
 :- op(1200, xfx,[(-->)]).
 
@@ -122,8 +119,7 @@ dcg_translate_dcg_atom(X, X1, S0, S) :-
 	arg(A2, X1, S),
 	copy_args(A, X, X1).
 
-:- comment(version(1*11+87,2003/12/21,02:09*27+'CET'), "Added comment
-   author and module.  (Edison Mera)").
+
 
 :- comment(version(0*4+5,1998/2/24), "Synchronized file versions with
    global CIAO version.  (Manuel Hermenegildo)").

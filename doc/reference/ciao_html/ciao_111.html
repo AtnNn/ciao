@@ -1,168 +1,42 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Iterative-deepening execution</TITLE>
+<TITLE>The Ciao Prolog System               - The Ciao Remote Services Package</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_110.html">previous</A>, <A HREF="ciao_112.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_110.html">previous</A>, <A HREF="ciao_112.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC452" HREF="ciao_toc.html#TOC452">Iterative-deepening execution</A></H1>
+<H1><A NAME="SEC465" HREF="ciao_toc.html#TOC465">The Ciao Remote Services Package</A></H1>
 <P>
-<A NAME="IDX4976"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Claudio Vaucheret, Manuel Hermenegildo.
+<A NAME="IDX4766"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
+<STRONG>Author(s):</STRONG> Manuel Carro.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#119 (2001/8/28, 15:39:1 CEST)
+<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
 
 
 <P>
-This package applies a <EM>compiling control</EM> technique to implement 
-<A NAME="IDX4977"></A>
-<A NAME="IDX4978"></A>
-<EM>depth first iterative deepening</EM> execution [Kor85]. It changes the usual <EM>depth-first</EM> computation rule by 
-<A NAME="IDX4979"></A>
-<A NAME="IDX4980"></A>
-<EM>iterative-deepening</EM> on those predicates specifically marked. This is very useful in search problems when a 
-<A NAME="IDX4981"></A>
-complete proof procedure is needed. 
-
-
-<P>
-When this computation rule is used, first all goals are expanded only up to a given depth. If no solution is found or more solutions are needed by backtracking, the depth limit is incremented and the whole goal is repeated. Although it might seem that this approach is very inefficient because all higher levels are repeated for the deeper ones, it has been shown that is performs only about b/(b - 1) times as many operations than the corresponding breadth-first search, (where b is the branching factor of the proof tree) while the waste of memory is the same as depth first. 
-
-
-<P>
-The usage is by means of the following directive: 
-
-
-<P>
-<CODE>:- iterative(Name, FirstCut, Formula).</CODE> 
-
-
-<P>
-which states than the predicate 'Name' given in functor/arity form will be executed using iterative deepening rule starting at the depth 'FirstCut' with depth being incremented by the predicate 'Formula'. This predicate compute the new depth using the previous one. It must implement a dilating function i.e. the new depth must be greater. For example, to start with depth 5 and increment by 10 you can write: 
-
-
-<P>
-<CODE>:- iterative(p/1,5,f).</CODE> 
-
-
-<P>
-<CODE>f(X,Y) :- Y is X + 10.</CODE> 
-
-
-<P>
-or if you prefer, 
-
-
-<P>
-<CODE>:- iterative(p/1,5,(_(X,Y):- Y is X + 10)).</CODE> 
-
-
-<P>
-<A NAME="IDX4982"></A>
-<A NAME="IDX4983"></A>
-You can also use a fourth parameter to set a limiting depth. All goals below the given depth limit simply fail. Thus, with the following directive: 
-
-
-<P>
-<CODE>:- iterative(p/1,5,(_(X,Y):- Y is X + 10),100).</CODE> 
-
-
-<P>
-all goals deeper than 100 will fail. 
-
-
-<P>
-An example of code using this package would be: 
-
-
-
-<PRE>
-:- module(example_id, _,[id]).
-
-test(id) :- 
-        idchain(a,d).
-test(df) :- 
-        chain(a,d).   % loops!
-
-:- iterative(idchain/2, 3, ( _(X,Z) :- Z is X + 1) ).
-
-idchain(X,X).
-idchain(X,Y) :- 
-        arc(X,Z), 
-        idchain(Z,Y).
-
-chain(X,X).
-chain(X,Y) :- 
-        arc(X,Z), 
-        chain(Z,Y).
-
-arc(a,b).
-arc(a,d).
-arc(b,c).
-arc(c,a).
-
-</PRE>
-
-<P>
-The order of solutions are first the shallower and then the deeper. Solutions which are between two cutoff are given in the usual left to right order. For example, 
-
-
-
-<PRE>
-% OLD EXAMPLE - Won't work!
-
-:- module(_, _, [det_hook]).
-
-:- use_module(engine(internals)).
-
-pr(I, X, Y) :-
-        display(open(I)), nl,
-        '$metachoice'(C),
-        det_try(pr2(X, Y, C), (display(close_done(I)), nl), (display(close_abort(I)), nl)).
-
-pr2(X, _, _) :- X =&#60; 0, !, fail.  
-pr2(2, 2, C) :- '$metacut'(C).
-pr2(X, Y, C) :- (X = Y ; X1 is X - 1, pr2(X1, Y, C)).
-        
-test1 :-
-        pr(x, 4, X), pr(y, 4, Y), display(X), display(Y), nl, X = 1, Y = 3, !.
-
-</PRE>
-
-<P>
-It is possible to preserve the iterative-deepening behavior for calls to predicates defined in other modules. These modules should obviously also use this package. In addition <EM>all</EM> predicates from such modules should imported, i.e., the directive <CODE>:- use_module(module)</CODE>, should be used in this case instead of <CODE>:- use_module(module,[...])</CODE>. Otherwise calls to predicates outside the module will be treated in the usual way i.e. by depth-first computation. 
-
-
-<P>
-Another complete proof procedure implemented is the 
-<A NAME="IDX4984"></A>
-<CODE>bf</CODE> package (
-<A NAME="IDX4985"></A>
-breadth first execution). 
+<STRONG>Version of last change:</STRONG> 1.7#17 (2000/9/11, 16:58:15 CEST)
 
 
 
 <UL>
-<LI><A HREF="ciao_111.html#SEC453">Usage and interface (id)</A>
+<LI><A HREF="ciao_111.html#SEC466">Usage and interface (remote)</A>
+<LI><A HREF="ciao_111.html#SEC467">Documentation on exports (remote)</A>
+<LI><A HREF="ciao_111.html#SEC468">Known bugs and planned improvements (remote)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC453" HREF="ciao_toc.html#TOC453">Usage and interface (<CODE>id</CODE>)</A></H2>
+<H2><A NAME="SEC466" HREF="ciao_toc.html#TOC466">Usage and interface (<CODE>remote</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -170,16 +44,184 @@ breadth first execution).
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_package(id).</CODE>
+<CODE>:- use_module(library(remote)).</CODE>
 
-or
+<LI><STRONG>Other modules used:</STRONG>
 
-<CODE>:- module(...,...,[id]).</CODE>
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX4767"></A>
+<CODE>remote/ciao_client_rt</CODE>.
+
+</UL>
+
 </UL>
 
 </div class="cartouche">
 
+
+
+<H2><A NAME="SEC467" HREF="ciao_toc.html#TOC467">Documentation on exports (<CODE>remote</CODE>)</A></H2>
+<P>
+<A NAME="IDX4768"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>@/2:</B>
+<DD><A NAME="IDX4769"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4770"></A>
+<CODE>ciao_client_rt</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4771"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>@/2:</B>
+<DD><A NAME="IDX4772"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4773"></A>
+<CODE>ciao_client_rt</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4774"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>server_stop/1:</B>
+<DD><A NAME="IDX4775"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4776"></A>
+<CODE>ciao_client_rt</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4777"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>server_stop/1:</B>
+<DD><A NAME="IDX4778"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4779"></A>
+<CODE>ciao_client_rt</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4780"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>server_trace/1:</B>
+<DD><A NAME="IDX4781"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4782"></A>
+<CODE>ciao_client_rt</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4783"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>server_trace/1:</B>
+<DD><A NAME="IDX4784"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4785"></A>
+<CODE>ciao_client_rt</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4786"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>server_notrace/1:</B>
+<DD><A NAME="IDX4787"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4788"></A>
+<CODE>ciao_client_rt</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4789"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>server_notrace/1:</B>
+<DD><A NAME="IDX4790"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4791"></A>
+<CODE>ciao_client_rt</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+
+
+<H2><A NAME="SEC468" HREF="ciao_toc.html#TOC468">Known bugs and planned improvements (<CODE>remote</CODE>)</A></H2>
+
+
+<UL>
+
+<LI>
+
+Dynamic loading of code not yet implemented.
+
+<LI>
+
+:- remote/1 predicate declaration not yet implemented.
+
+<LI>
+
+Remote use of modules (http, ftp, ciaotp) not yet implemented.
+
+<LI>
+
+Remote creation of objects not yet implemented.
+
+<LI>
+
+Code migration not yet implemented (several algorithms possible).
+
+<LI>
+
+Evaluation of impact of marshalling and/or attribute encoding not yet done.
+
+<LI>
+
+Secure transactions not yet implemented.
+</UL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_110.html">previous</A>, <A HREF="ciao_112.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_110.html">previous</A>, <A HREF="ciao_112.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

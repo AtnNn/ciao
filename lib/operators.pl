@@ -27,7 +27,7 @@ documentation by Daniel Cabeza and Manuel Carro").
        @concept{ISO-Prolog}, it is allowed to define two operators with
        the same name, one infix and the other postfix.").
 
-:- true pred op(+int,+operator_specifier,+atm_or_atm_list) + (iso, native).
+:- true pred op(+int,+operator_specifier,+atm_or_atm_list) + iso.
 
 op(Prec, Ass, Ops) :-
 	nonvar(Ass),
@@ -80,7 +80,7 @@ do_ops([X|Xs], Left, Prec, Right, Type) :-
    instantiated at the time of the call; i.e., this predicate can be
    used to generate as well as to test.").
 
-:- true pred current_op(?int,?operator_specifier,?atm) + (iso, native).
+:- true pred current_op(?int,?operator_specifier,?atm) + iso.
 
 current_op(Prec, Ass, Op) :-
 	current_fact(current_op(Op,Left,Prec,Right,Type)),

@@ -1,14 +1,14 @@
 
-;; (define-key ciao-mode-map "\C-c\C-t" 'ciao-partially-convert-texinfo-region)
+;; (define-key ciao-mode-map "\C-c\C-t" 'ciao-convert-texinfo-region)
 
-(defun ciao-partially-convert-texinfo-region (begin end) 
+(defun ciao-convert-texinfo-region (begin end) 
 
 "Does a 90% job of converting a given region from texinfo format into
 the format accepted by the documentation strings which can be added to
-Ciao assertions and comments (and which the LPdoc automatic program
+Ciao assertions and comments (and which the lpdoc automatic program
 documenter processes). This is very useful when pasting parts of
 manuals which have been previously written in texinfo into an
-assertion in a program, for later documentation using lpdoc."
+assertion in a program, for documentation using lpdoc."
 
   (interactive "r")
   (setq region-tmp-char (point))
@@ -63,7 +63,7 @@ pasting parts of documents or manuals which have been previously
 written in LaTeX into an assertion or comment in a program, for
 documentation using lpdoc. 
 
-The conversion is necessarily incomplete, since lpdoc currently
+The conversion is necessarily inmcoplete, since lpdoc currently
 supports only a small subset of LaTeX.  After running the command you
 can look for '\\'. 
 

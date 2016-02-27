@@ -1,66 +1,55 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - The Ciao Make Package</TITLE>
+<TITLE>The Ciao Prolog System               - Terms with named arguments -records/feature terms</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_91.html">previous</A>, <A HREF="ciao_93.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_91.html">previous</A>, <A HREF="ciao_93.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC380" HREF="ciao_toc.html#TOC380">The Ciao Make Package</A></H1>
+<H1><A NAME="SEC378" HREF="ciao_toc.html#TOC378">Terms with named arguments -records/feature terms</A></H1>
 <P>
-<A NAME="IDX4415"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Manuel Hermenegildo.
+<A NAME="IDX4282"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
+<STRONG>Author(s):</STRONG> Daniel Cabeza and Manuel Hermenegildo.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.11#98 (2003/12/21, 20:10:12 CET)
+<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
 
 
 <P>
-This package is used mainly in two main ways: 
+<STRONG>Version of last change:</STRONG> 1.7#118 (2001/8/28, 15:7:22 CEST)
+
+
+<P>
+<A NAME="IDX4283"></A>
+<A NAME="IDX4284"></A>
+This library package provides syntax which allows accessing term arguments by name (these terms are sometimes also referred to as 
+<A NAME="IDX4285"></A>
+<A NAME="IDX4286"></A>
+<EM>records</EM>, and are also similar to 
+<A NAME="IDX4287"></A>
+<A NAME="IDX4288"></A>
+<EM>feature terms</EM> [AKPS92]).
 
 
 
 <UL>
-
-<LI>When writing
-
-<A NAME="IDX4416"></A>
-<CODE>Makefile</CODE>s for 
-<A NAME="IDX4417"></A>
-<CODE>lpmake</CODE>. 
-
-<LI>When writing <EM>applications</EM> which use the
-
-<A NAME="IDX4418"></A>
-<CODE>make</CODE> library. 
-
-</UL>
-
-<P>
-In both cases, this is the package that defines the syntax and meaning of the dependency rules used. 
-
-
-
-<UL>
-<LI><A HREF="ciao_92.html#SEC381">Usage and interface (make)</A>
-<LI><A HREF="ciao_92.html#SEC382">Other information (make)</A>
+<LI><A HREF="ciao_92.html#SEC379">Usage and interface (argnames)</A>
+<LI><A HREF="ciao_92.html#SEC380">Documentation on new declarations (argnames)</A>
+<LI><A HREF="ciao_92.html#SEC381">Other information (argnames)</A>
+<LI><A HREF="ciao_92.html#SEC384">Known bugs and planned improvements (argnames)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC381" HREF="ciao_toc.html#TOC381">Usage and interface (<CODE>make</CODE>)</A></H2>
+<H2><A NAME="SEC379" HREF="ciao_toc.html#TOC379">Usage and interface (<CODE>argnames</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -68,79 +57,25 @@ In both cases, this is the package that defines the syntax and meaning of the de
 
 <LI><STRONG>Library usage:</STRONG>
 
- 
+<CODE>:- use_package(argnames).</CODE>
 
+or
 
-<UL>
-
-<LI>When writing
-
-<A NAME="IDX4419"></A>
-<CODE>Makefile</CODE>s for 
-<A NAME="IDX4420"></A>
-<CODE>lpmake</CODE>, such makefiles start with: 
-
-
-<PRE>
-:- module(_,_,[make]).
-</PRE>
-
-or 
-
-
-<PRE>
-:- make(_,_).
-</PRE>
-
-(The latter uses the feature that an undefined declaration at the beginning of a file is interpreted by Ciao as a 
-<A NAME="IDX4421"></A>
-<CODE>use_module/3</CODE> including as third argument a package with the same name, in this case <CODE>make</CODE>.) 
-
-<LI>When writing <EM>applications</EM> which use the
-
-<A NAME="IDX4422"></A>
-<CODE>make</CODE> package, then it is loaded as any other package within the application. 
-
-</UL>
-
-<STRONG>Note:</STRONG> it is often useful to use the 
-<A NAME="IDX4423"></A>
-<CODE>functions</CODE> package inside a 
-<A NAME="IDX4424"></A>
-<CODE>Makefile</CODE> (or when when using the 
-<A NAME="IDX4425"></A>
-<CODE>make</CODE> library in other applications). If both 
-<A NAME="IDX4426"></A>
-<CODE>make</CODE> and 
-<A NAME="IDX4427"></A>
-<CODE>functions</CODE> are used, then 
-<A NAME="IDX4428"></A>
-<CODE>make</CODE> should appear <STRONG>before</STRONG> 
-<A NAME="IDX4429"></A>
-<CODE>functions</CODE> in the list of packages. 
+<CODE>:- module(...,...,[argnames]).</CODE>
 
 <LI><STRONG>New operators defined:</STRONG>
 
-<A NAME="IDX4430"></A>
-<CODE>::/2</CODE> [1050,xfy], 
-<A NAME="IDX4431"></A>
-<CODE>&#60;=/2</CODE> [1050,xfy], 
-<A NAME="IDX4432"></A>
-<CODE>&#60;-/2</CODE> [1050,xfy], 
-<A NAME="IDX4433"></A>
-<CODE>&#60;-/1</CODE> [1050,yf].
+<A NAME="IDX4289"></A>
+<CODE>$/2</CODE> [150,xfx], 
+<A NAME="IDX4290"></A>
+<CODE>=&#62;/2</CODE> [950,xfx], 
+<A NAME="IDX4291"></A>
+<CODE>argnames/1</CODE> [1150,fx].
 
-<LI><STRONG>Other modules used:</STRONG>
+<LI><STRONG>New declarations defined:</STRONG>
 
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX4434"></A>
-<CODE>make/make_rt</CODE>.
-
-</UL>
+<A NAME="IDX4292"></A>
+<CODE>argnames/1</CODE>.
 
 </UL>
 
@@ -148,321 +83,211 @@ or
 
 
 
-<H2><A NAME="SEC382" HREF="ciao_toc.html#TOC382">Other information (<CODE>make</CODE>)</A></H2>
+<H2><A NAME="SEC380" HREF="ciao_toc.html#TOC380">Documentation on new declarations (<CODE>argnames</CODE>)</A></H2>
+<P>
+<A NAME="IDX4293"></A>
+<A NAME="IDX4294"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>argnames/1:</B>
+<DD><A NAME="IDX4295"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>argnames(ArgNamedPredSpec)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> An
+
+<A NAME="IDX4296"></A>
+<CODE>argnames/1</CODE> declaration assigns names to the argument positions of terms (or literal/goals) which use a certain functor/arity. This allows referring to these arguments by their name rather than by their argument position. Sometimes, argument names may be clearer and easier to remember than argument positions, specially for predicates with many arguments. Also, in some cases this may allow adding arguments to certain predicates without having to change the code that uses them. These terms with named arguments are sometimes also referred to as 
+<A NAME="IDX4297"></A>
+records, and are also similar to 
+<A NAME="IDX4298"></A>
+feature terms [AKPS92]. For example, in order to write a program for the <EM>zebra</EM> puzzle we might declare: 
+
+
+
+<PRE>
+:- use_package([argnames]).
+:- argnames house(color, nation, pet, drink, car).
+</PRE>
+
+which first includes the package and then assigns a name to each of the arguments of any term (or literal/goal) with <CODE>house/5</CODE> as the main functor. 
+
+Once an 
+<A NAME="IDX4299"></A>
+<CODE>argnames/1</CODE> is given, is possible to use the names to refer to the arguments of any term (or literal/goal) which has the same main functor as that of the term which appears in the 
+<A NAME="IDX4300"></A>
+<CODE>argnames/1</CODE> declaration. This is done by first writing the functor name, then the infix operator <CODE>$</CODE>, and then, between curly brackets, zero, one, or more pairs <EM>argument-name</EM><CODE>=&#62;</CODE><EM>argument-value</EM>, separated by commas (i.e., the infix operator <CODE>=&#62;</CODE> is used between the name and the value). Again, argument names must be atomic. Argument values can be any term. Arguments which are not specified are assumed to have a value of "<CODE>_</CODE>" (i.e., they are left unconstrained). 
+
+Thus, after the declaration for <CODE>house/5</CODE> in the example above, any ocurrence in that code of, for example, <CODE>house${nation=&#62;Owns_zebra,pet=&#62;zebra}</CODE> is exactly equivalent to <CODE>house(_,Owns_zebra,zebra,_,_)</CODE>. Also, <CODE>house${}</CODE> is equivalent to <CODE>house(_,_,_,_,_)</CODE>. The actual zebra puzzle specification might include a clause such as: 
+
+
+
+<PRE>
+zebra(Owns_zebra, Drinks_water, Street) :-
+   Street = [house${},house${},house${},house${},house${}],
+   member(house${nation=&#62;Owns_zebra,pet=&#62;zebra}, Street),
+   member(house${nation=&#62;Drinks_water,drink=&#62;water}, Street),
+   member(house${drink=&#62;coffee,color=&#62;green}, Street),
+   left_right(house${color=&#62;ivory}, house${color=&#62;green}, Street),
+   member(house${car=&#62;porsche,pet=&#62;snails}, Street),
+        ...
+</PRE>
+
+Any number of 
+<A NAME="IDX4301"></A>
+<CODE>argnames/1</CODE> declarations can appear in a file, one for each functor whose arguments are to be accessed by name. As with other packages, argument name declarations are <EM>local to the file</EM> in which they appear. The 
+<A NAME="IDX4302"></A>
+<CODE>argnames/1</CODE> declarations affect only program text which appears after the declaration. It is easy to make a set of declarations affect several files for example by putting such declarations in a sepatate file which is included by all such files. 
+
+An 
+<A NAME="IDX4303"></A>
+<CODE>argnames/1</CODE> declaration does not change in any way the internal representation of the associated terms and does not affect run-time efficiency. It is simply syntactic sugar. 
+
+ 
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC381" HREF="ciao_toc.html#TOC381">Other information (<CODE>argnames</CODE>)</A></H2>
 
 <P>
  
 
 
+<P>
+Two simple examples of the use of the argnames library package follow. 
+
+
 
 <UL>
-<LI><A HREF="ciao_92.html#SEC383">The Dependency Rules</A>
-<LI><A HREF="ciao_92.html#SEC384">Specifying Paths</A>
-<LI><A HREF="ciao_92.html#SEC385">Documenting Rules</A>
-<LI><A HREF="ciao_92.html#SEC386">An Example of a Makefile</A>
+<LI><A HREF="ciao_92.html#SEC382">Using argument names in a toy database</A>
+<LI><A HREF="ciao_92.html#SEC383">Complete code for the zebra example</A>
 </UL>
 
 
 
-<H3><A NAME="SEC383" HREF="ciao_toc.html#TOC383">The Dependency Rules</A></H3>
+<H3><A NAME="SEC382" HREF="ciao_toc.html#TOC382">Using argument names in a toy database</A></H3>
 
 <P>
-The package allows defining the following types of rules: 
 
-
-<DL COMPACT>
-
-<DT><CODE><EM>TargetSuffix</EM> &#60;= <EM>SourceSuffix</EM> :: <EM>SourceRoot</EM> :- <EM>BodyLiterals</EM>.</CODE>
-<DD>
-A rule of this form declares that in order to produce the file with suffix <EM>TargetSuffix</EM> from a source file with the suffix <EM>SourceSuffix</EM> and root name <EM>SourceRoot</EM> the commands in <EM>BodyLiterals</EM> must be executed. <EM>BodyLiterals</EM> is a standard Ciao Prolog clause body, i.e., a comma-separated conjunction of literals. When writing the script, <EM>SourceRoot</EM> is typically left as a variable, to be instantiated by 
-<A NAME="IDX4435"></A>
-<CODE>lpmake</CODE> when the script is run to the root of name of the file to be processed. This allows using the value of <EM>SourceRoot</EM> in <EM>BodyLiterals</EM>. For example, the following rule: 
 
 
 <PRE>
-:- use_module(library(terms),[atom_concat/2]).
+:- module(simple_db,_,[argnames,assertions,regtypes]).
+:- use_module(library(aggregates)).
 
-dvi &#60;= tex :: FileRoot :-
-        atom_concat(['latex ',FileRoot,'.tex'],Command),
-        system(Command).
+:- comment(title,"A simple database application using argument names").
+
+:- pred product/4 :: int * string * string * int.
+
+:- argnames 
+product( id,    description,    brand,          quantity        ).
+%       ----------------------------------------------------------
+product(  1,    "Keyboard",     "Logitech",     6               ).
+product(  2,    "Mouse",        "Logitech",     5               ).
+product(  3,    "Monitor",      "Philips",      3               ).
+product(  4,    "Laptop",       "Dell",         4               ).
+
+% Compute the stock of products from a given brand.
+% Note call to findall is equivalent to: findall(Q,product(_,_,Brand,Q),L).
+brand_stock(Brand,Stock) :-
+        findall(Q,product${brand=&#62;Brand,quantity=&#62;Q},L),
+        sumlist(L,Stock).
+
+sumlist([],0).
+sumlist([X|T],S) :- 
+        sumlist(T,S1),
+        S is X + S1.
+
 </PRE>
 
-states that we can generate a file <EM>File</EM><CODE>.dvi</CODE> if we have a file named <EM>File</EM><CODE>.tex</CODE> and that the command to do so is <CODE>latex </CODE><EM>File</EM><CODE>.tex</CODE>. Thus, if this rule appears in file 
-<A NAME="IDX4436"></A>
-<CODE>Makefile.pl</CODE> and we issue the command <CODE>lpmake paper.dvi</CODE> the following occurs: 
+
+
+<H3><A NAME="SEC383" HREF="ciao_toc.html#TOC383">Complete code for the zebra example</A></H3>
+
+<P>
+
+
+
+<PRE>
+:- module(_,zebra/3,[argnames]).
+
+/*     There are five consecutive houses, each of a different
+color and inhabited by men of different nationalities. They each
+own a different pet, have a different favorite drink, and drive a
+different car.
+
+1.   The Englishman lives in the red house.
+2.   The Spaniard owns the dog.
+3.   Coffee is drunk in the green house.
+4.   The Ukrainian drinks tea.
+5.   The green house is immediately to the right of the ivory
+     house.
+6.   The Porsche driver owns snails.
+7.   The Masserati is driven by the man who lives in the yellow
+     house.
+8.   Milk is drunk in the middle house.
+9.   The Norwegian lives in the first house on the left.
+10.  The man who drives a Saab lives in the house next to the man
+     with the fox.
+11.  The Masserati is driven by the man in the house next to the
+     house where the horse is kept.
+12.  The Honda driver drinks orange juice.
+13.  The Japanese drives a Jaguar.
+14.  The Norwegian lives next to the blue house.
+
+The problem is: Who owns the Zebra?  Who drinks water?
+*/
+
+:- argnames house(color, nation, pet, drink, car).
+
+zebra(Owns_zebra, Drinks_water, Street) :-
+        Street = [house${},house${},house${},house${},house${}],
+        member(house${nation =&#62; Owns_zebra, pet =&#62; zebra}, Street),
+        member(house${nation =&#62; Drinks_water, drink =&#62; water}, Street),
+        member(house${nation =&#62; englishman, color =&#62; red}, Street),
+        member(house${nation =&#62; spaniard, pet =&#62; dog}, Street),
+        member(house${drink =&#62; coffee, color =&#62; green}, Street),
+        member(house${nation =&#62; ukrainian, drink =&#62; tea}, Street),
+        left_right(house${color =&#62; ivory}, house${color =&#62; green}, Street),
+        member(house${car =&#62; porsche, pet =&#62; snails}, Street),
+        member(house${car =&#62; masserati, color =&#62; yellow}, Street),
+        Street = [_, _, house${drink =&#62; milk}, _, _],
+        Street = [house${nation =&#62; norwegian}|_],
+        next_to(house${car =&#62; saab}, house${pet =&#62; fox}, Street),
+        next_to(house${car =&#62; masserati}, house${pet =&#62; horse}, Street),
+        member(house${car =&#62; honda, drink =&#62; orange_juice}, Street),
+        member(house${nation =&#62; japanese, car =&#62; jaguar}, Street),
+        next_to(house${nation =&#62; norwegian}, house${color =&#62; blue}, Street).
+
+member(X,[X|_]).
+member(X,[_|Y]) :- member(X,Y).
+
+left_right(L,R,[L,R|_]).
+left_right(L,R,[_|T]) :- left_right(L,R,T).
+
+next_to(X,Y,L) :- left_right(X,Y,L).
+next_to(X,Y,L) :- left_right(Y,X,L).
+
+</PRE>
+
+
+
+<H2><A NAME="SEC384" HREF="ciao_toc.html#TOC384">Known bugs and planned improvements (<CODE>argnames</CODE>)</A></H2>
 
 
 <UL>
 
-<LI>If <CODE>paper.dvi</CODE> does not exist and <CODE>paper.tex</CODE> exists, then <CODE>paper.dvi</CODE> is generated from <CODE>paper.tex</CODE> by issuing the system command <CODE>latex paper.tex</CODE>.
+<LI>
 
-<LI>If <CODE>paper.dvi</CODE> already exists, nothing is done.
-
-<LI>If <CODE>paper.tex</CODE> does not exist, an error is reported.
-
+It would be nice to add a mechanism to portray terms with named arguments in a special (user definable) way.
 </UL>
-
-<DT><CODE><EM>Target</EM> &#60;- :- <EM>BodyLiterals</EM>.</CODE>
-<DD>
-A rule of this form declares that in order to produce the file <EM>Target</EM> the commands in <EM>BodyLiterals</EM> must be executed. <EM>Target</EM> need not be a real file: it can also be simply the name of the rule, which is used to invoke it (as a procedure name). For example, the following rule, when the command <CODE>lpmake realclean</CODE> is issued, deletes temporary files in the LaTeX application: 
-
-
-<PRE>
-:- use_module(library('make/system_extra')).
-
-clean &#60;- :-
-        ls('*aux|*log|*~',Files)
-        delete_files(Files).
-</PRE>
-
-<DT><CODE><EM>Target</EM> &#60;- <EM>Deps</EM> :- <EM>BodyLiterals</EM>.</CODE>
-<DD>
-A rule of this form declares that in order to produce the file <EM>Target</EM>, first targets <EM>Deps</EM> will be called (i.e., the elements of <EM>Deps</EM> are either other targets with rules defined for them, or a file or files which are already present or which can --and will be-- generated from other available files using other rules). Then, the commands in <EM>BodyLiterals</EM> will be executed. <EM>Deps</EM> may be one target or a list of targets. For example, the following rule, when the command <CODE>lpmake realclean</CODE> is issued, cleans all the temporary files in the LaTeX application (including <CODE>.dvi</CODE> and <CODE>.ps</CODE> files). It requires that clean be executed first: 
-
-
-<PRE>
-:- use_package(functions).
-:- use_module(library('make/system_extra')).
-
-realclean &#60;- clean :-
-        delete_files(~ls('*dvi|*ps')).
-</PRE>
-
-The following rule states that in order to meet the target <CODE>view</CODE>, target <CODE>paper.ps</CODE> must be available or generated. For example, <CODE>lpmake view</CODE> can be used to call the 
-<A NAME="IDX4437"></A>
-<CODE>ghostview</CODE> visualizer on <CODE>paper.ps</CODE>. Note the use of a globally defined <EM>predicate</EM> <CODE>main</CODE> which is called in two places in the rule, and could be used in other rules in the same file (<CODE>main := paper.</CODE> is equivalent to the fact <CODE>main(paper).</CODE> --see the 
-<A NAME="IDX4438"></A>
-<CODE>functions</CODE> library): 
-
-
-<PRE>
-:- use_package(functions).
-:- use_module(library('make/system_extra')).
-:- use_module(library(terms),[atom_concat/2]).
-
-main := paper.
-
-view &#60;- ~atom_concat([~main,'.ps']) :-
-        system(~atom_concat(['ghostview ',~main,'.ps'])).
-</PRE>
-
-</DL>
-
-<P>
-In addition to these rules, the configuration file can define normal predicates in the usual way, or import predicates from other modules, all of which can be called from the bodies of the dependency rules. For example, the 
-<A NAME="IDX4439"></A>
-<CODE>system_extra</CODE> library (an extension of the 
-<A NAME="IDX4440"></A>
-<CODE>system</CODE> library) defines many system predicates in a form which makes them very useful inside 
-<A NAME="IDX4441"></A>
-<CODE>Makefile</CODE>s, specially if the 
-<A NAME="IDX4442"></A>
-<CODE>functions</CODE> package is used (see the examples below). 
-
-
-<P>
-If 
-<A NAME="IDX4443"></A>
-<CODE>lpmake</CODE> is called without an explicit target as argument, then the first target rule in the Makefile is used. This is useful in that the first rule can be seen as the default rule. 
-
-
-
-
-<H3><A NAME="SEC384" HREF="ciao_toc.html#TOC384">Specifying Paths</A></H3>
-
-<P>
-Using the 
-<A NAME="IDX4444"></A>
-<CODE>vpath/1</CODE> predicate it is possible in configuration files to define several paths in which files related to the rules can be located. In this way, not all files need to be in the same directory as the configuration file. For example: 
-
-
-
-<PRE>
-:- use_package(functions).
-
-vpath := '/home/clip/Systems/ciao/lib'.
-vpath := '/home/clip/Systems/ciao/library'.
-vpath := '/home/clip/Systems/lpdoc/lib'.
-</PRE>
-
-
-
-<H3><A NAME="SEC385" HREF="ciao_toc.html#TOC385">Documenting Rules</A></H3>
-
-<P>
-It is also possible to define documentation for the rules: 
-
-
-<DL COMPACT>
-
-<DT><CODE>target_comment(<EM>Target</EM>) :- <EM>BodyLiterals</EM>.</CODE>
-<DD>
-A rule of this form allows documenting the actions related to the target. The body (<EM>BodyLiterals</EM>) will be called in two circumstances: 
-
-
-<UL>
-
-<LI>If <EM>Target</EM> is called during execution of '<CODE>lpmake</CODE> <EM>commands</EM>'.
-
-<LI>When calling '<CODE>lpmake -h</CODE>'.
-
-</UL>
-
-Using noun forms (<EM>generation of foo</EM> instead of <EM>generating foo</EM>) in comments helps this dual purpose. For example, the following rule: 
-
-
-<PRE>
-target_comment(realclean) :- 
-        display('Cleanup of all generated files.').
-</PRE>
-
-will produce output in the two cases pointed out above. 
-
-<DT><CODE>dependency_comment(<EM>SourceSuffix</EM>,<EM>TargetSuffix</EM>,<EM>SourceRoot</EM>) :- <EM>BodyLiterals</EM>.</CODE>
-<DD>
-Same as the previous rule, but for suffix rules. See, for example, the following generic rule: 
-
-
-<PRE>
-:- use_module(library(terms),[atom_concat/2]).
-
-dependency_comment(SSuffix,TSuffix,FileBase) :- 
-        display(~atom_concat(['Generation of ',FileBase,'.',TSuffix,
-                              ' from ',FileBase,'.',SSuffix])).
-</PRE>
-
-</DL>
-
-
-
-<H3><A NAME="SEC386" HREF="ciao_toc.html#TOC386">An Example of a Makefile</A></H3>
-
-<P>
-The following is a simple example of a Makefile showing some basic functionality (this is <CODE>MakefileExample.pl</CODE> in the <CODE>example_simple</CODE> directory in the 
-<A NAME="IDX4445"></A>
-<CODE>make</CODE> library.): 
-
-
-
-<PRE>
-%% -------------------------------------------------------------------------
-:- module(_,_,[make,functions]).
-:- use_module(library('make/system_extra')).
-:- use_module(library(lists),[append/3,list_concat/2]).
-:- use_module(library(terms),[atom_concat/2]).
-
-:- discontiguous(comment/2).
-
-%% -------------------------------------------------------------------------
-%% A simple target. Defines how to produce file 'hw'.
-
-hw &#60;-  []    :-
-         writef("Hello world", hw).
-
-%% A comment describing this target (see below):
-comment(hw,['Generation of file hw']).
-
-%% -------------------------------------------------------------------------
-%% A target with a dependency. 'hwhw' requires 'hw'.
-
-hwhw &#60;- [hw] :-
-        readf(hw,Content),
-        append(Content,[0'\n|Content],DoubleContent),
-        writef(DoubleContent,hwhw).
-
-comment(hwhw,['Generation of file hwhw']).
-
-%% -------------------------------------------------------------------------
-%% A simple target. Defines how to produce file 'datafile.simple'.
-
-'datafile.simple' &#60;-  :-
-        writef("Hello world", 'datafile.simple').
-
-comment('datafile.simple',['Generation of file datafile.simple']).
-
-%% -------------------------------------------------------------------------
-%% A dependency based on suffixes: 
-%% &#60;file&#62;.double is generated always from &#60;file&#62;.simple
-
-double &#60;= simple :: Name :-
-        readf(~atom_concat([Name,'.simple']),Content),
-        append(Content,[0'\n|Content],DoubleContent),
-        writef(DoubleContent,~atom_concat([Name,'.double'])).
-
-%% -------------------------------------------------------------------------
-%% A dependency based on suffixes with a precondition.
-%% &#60;file&#62;.double is generated always from &#60;file&#62;.simple, once precond is done
-
-boo &#60;- :-
-        display((double &#60;= simple :: name &#60;- precond :- body1, body2)).
-
-%% -------------------------------------------------------------------------
-%% Example using library predicates
-
-clean &#60;-    :-
-        delete_files(~ls('*~|*.asr|*.itf|*.po')).
-
-comment(clean,['Cleanup of temporary files']).
-
-realclean &#60;- clean :-
-        delete_files(~ls('hw|hwhw|*simple|*double')).
-
-comment(realclean,['Cleanup of all generated files']).
-
-%% -------------------------------------------------------------------------
-%% Reporting progress and documenting commands: 
-%% If target_comment/1 is defined it can be used to produce user-defined 
-%% output when targets are processed and/or documentation on what each 
-%% target does (used for example when lpmake is called with -h). Using 
-%% 'generation of foo' instead of 'generating foo' in comments helps in this 
-%% dual purpose.
-%% -------------------------------------------------------------------------
-
-%% Make calls target_comment/1 for simple targets:
-target_comment(Target) :- 
-        comment(Target,Comment),
-        display(~atom_concat([~atom_concat(Comment), '\n'])).
-
-%% Similarly, make calls dependency_comment/3 for dependencies (only 
-%% during execution, not when documenting -h).
-dependency_comment(SSuffix,TSuffix,FileBase) :- 
-        display(~atom_concat(['Generation of ',FileBase,'.',TSuffix,
-                              ' from ',FileBase,'.',SSuffix])).
-
-%% -------------------------------------------------------------------------
-
-</PRE>
-
-<P>
-The following are a few commands that can be used on the previous file (see file <CODE>CommandsToTry</CODE> in the <CODE>example_simple</CODE> directory in the 
-<A NAME="IDX4446"></A>
-<CODE>make</CODE> library): 
-
-
-
-<PRE>
-
-lpmake -m MakefileExample.pl hwhw
-(Generate file hwhw --needs to generate file hw first)
-
-lpmake -m MakefileExample.pl datafile.double
-(Generate file datafile.double --needs to generate file datafile.simple first)
-
-lpmake -m MakefileExample.pl realclean
-(Cleanup)
-
-lpmake -h -m MakefileExample.pl
-(Help on general use of lpmake and commands available in MakefileExample.pl)
-
-</PRE>
-
-<P>
-See also the LaTeX example in the <CODE>example_latex</CODE> directory in the 
-<A NAME="IDX4447"></A>
-<CODE>make</CODE> library. 
-
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_91.html">previous</A>, <A HREF="ciao_93.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_91.html">previous</A>, <A HREF="ciao_93.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

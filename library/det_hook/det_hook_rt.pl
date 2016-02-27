@@ -83,7 +83,7 @@ Typically, this library is used as a package:
 callable # "@var{Action} is called, and @var{OnCut} and @var{OnFail}
 are goals to be executed when @var{Goal} is cut or when it finitely
 fails, respectively.  In order for this to work, cutting must be
-performed in a special way, by using the @pred{!!/0} predicate, also
+performed in a special way, by usin the @pred{!!/0} predicate, also
 provided by this module.".
 
 :- meta_predicate det_try(goal, goal, goal).
@@ -127,6 +127,12 @@ as the usual cut, but which also executes the goals specified as
 %% update-version-comments: "../../version"
 %% End:
 %-------------------------------------------------------------------------
+
+%% Note that the "assertions" library needs to be included in order
+%% to support ":- comment(...,...)." declarations such as these.
+%% These version comment(s) can be moved elsewhere in the file.
+%% Subsequent version comments will be placed above the last one
+%% inserted.
 
 :- comment(version(1*7+149,2001/11/19,19:17*51+'CET'), "Changed pred(0)
    to goal, use of hiord discontinued.  (Daniel Cabeza Gras)").

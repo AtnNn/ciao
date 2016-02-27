@@ -1,139 +1,343 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Using the persdb library</TITLE>
+<TITLE>The Ciao Prolog System               - Low-level Prolog to Java socket connection</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_151.html">previous</A>, <A HREF="ciao_153.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_151.html">previous</A>, <A HREF="ciao_153.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC629" HREF="ciao_toc.html#TOC629">Using the persdb library</A></H1>
-
+<H1><A NAME="SEC636" HREF="ciao_toc.html#TOC636">Low-level Prolog to Java socket connection</A></H1>
 <P>
-<STRONG>Author(s):</STRONG> The CLIP Group.
-
-
-<P>
-<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
+<A NAME="IDX6518"></A>
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.11#108 (2003/12/22, 18:3:39 CET)
+<STRONG>Author(s):</STRONG> Jes&uacute;s Correas.
 
 
 <P>
-Through the following examples we will try to illustrate the two mains ways of declaring and using persistent predicates: statically (the preferred method) and dynamically (necessary when the new persistent predicates have to be defined at run-time). The final example is a small application implementing a simple persistent queue. 
+<STRONG>Version:</STRONG> 1.8#2 (2002/6/14, 18:55:4 CEST)
+
+
+<P>
+ 
+<A NAME="IDX6519"></A>
+<A NAME="IDX6520"></A>
+This module defines a low level socket interface, to be used by javart and jtopl. Includes all the code related directly to the handling of sockets. This library should not be used by any user program, because is a very low-level connection to Java. Use 
+<A NAME="IDX6521"></A>
+<CODE>javart</CODE> (Prolog to Java low-level interface) or 
+<A NAME="IDX6522"></A>
+<CODE>jtopl</CODE> (Java to Prolog interface) libraries instead. 
 
 
 
 <UL>
-<LI><A HREF="ciao_152.html#SEC630">An example of persistent predicates (static version)</A>
-<LI><A HREF="ciao_152.html#SEC631">An example of persistent predicates (dynamic version)</A>
-<LI><A HREF="ciao_152.html#SEC632">A simple application / a persistent queue</A>
+<LI><A HREF="ciao_152.html#SEC637">Usage and interface (javasock)</A>
+<LI><A HREF="ciao_152.html#SEC638">Documentation on exports (javasock)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC630" HREF="ciao_toc.html#TOC630">An example of persistent predicates (static version)</A></H2>
+<H2><A NAME="SEC637" HREF="ciao_toc.html#TOC637">Usage and interface (<CODE>javasock</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(javasock)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
 
 
-<PRE>
-:- use_package(iso).
-:- use_package(persdb).
+<UL>
 
-%% Declare the directory associated to the key "db" where the
-%% persistence sets of the persistent predicates are stored:
-persistent_dir(db,'./').
+<LI><EM>Predicates:</EM>
 
-%% Declare a persistent predicate:
-:- persistent(bar/1, db).
+<A NAME="IDX6523"></A>
+<CODE>start_socket_interface/2</CODE>, 
+<A NAME="IDX6524"></A>
+<CODE>stop_socket_interface/0</CODE>, 
+<A NAME="IDX6525"></A>
+<CODE>join_socket_interface/0</CODE>, 
+<A NAME="IDX6526"></A>
+<CODE>java_query/2</CODE>, 
+<A NAME="IDX6527"></A>
+<CODE>java_response/2</CODE>, 
+<A NAME="IDX6528"></A>
+<CODE>prolog_query/2</CODE>, 
+<A NAME="IDX6529"></A>
+<CODE>prolog_response/2</CODE>, 
+<A NAME="IDX6530"></A>
+<CODE>java_stream/4</CODE>, 
+<A NAME="IDX6531"></A>
+<CODE>java_debug/1</CODE>.
 
-%% Read a term, storing it in a new fact of the persistent predicate
-%% and list all the current facts of that predicate
-main:-
-         read(X),
-         assertz_fact(bar(X)),
-         findall(Y,bar(Y),L),
-         write(L).
+</UL>
 
-erase_all :-
-        retractall_fact(bar(_)).
-
-</PRE>
-
-
-
-<H2><A NAME="SEC631" HREF="ciao_toc.html#TOC631">An example of persistent predicates (dynamic version)</A></H2>
-
-
-<PRE>
-:- use_package(iso).
-:- use_package(persdb).
-
-main([X]):-
-%%   Declare the directory associated to the key "db" 
-     asserta_fact(persistent_dir(db,'./')),
-%%   Declare the predicate bar/1 as dynamic (and data) at run-time  
-     data(bar/1),
-%%   Declare the predicate bar/1 as persistent at run-time  
-     make_persistent(bar/1, db),
-     assertz_fact(bar(X)),
-     findall(Y, bar(Y), L),
-     write(L).    
-
-</PRE>
+<LI><STRONG>Other modules used:</STRONG>
 
 
+<UL>
 
-<H2><A NAME="SEC632" HREF="ciao_toc.html#TOC632">A simple application / a persistent queue</A></H2>
+<LI><EM>System library modules:</EM>
 
-<PRE>
-:- module(queue, [main/0],[persdb]).
+<A NAME="IDX6532"></A>
+<CODE>fastrw</CODE>, 
+<A NAME="IDX6533"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX6534"></A>
+<CODE>sockets/sockets</CODE>, 
+<A NAME="IDX6535"></A>
+<CODE>dynamic</CODE>, 
+<A NAME="IDX6536"></A>
+<CODE>format</CODE>, 
+<A NAME="IDX6537"></A>
+<CODE>concurrency/concurrency</CODE>, 
+<A NAME="IDX6538"></A>
+<CODE>javall/jtopl</CODE>.
 
-:- use_package(iso).
+</UL>
 
-:- use_module(library(read)).
-:- use_module(library(write)).
-:- use_module(library(aggregates)).
+</UL>
 
-persistent_dir(queue_dir,'./pers').
+</div class="cartouche">
 
-:- persistent(queue/1, queue_dir).
 
-queue(first).
-queue(second).
 
-main:-
-     write('Action ( in(Term). | slip(Term) | out. | list. | halt. ): '),
-     read(A),
-     (  handle_action(A)
-     -&#62; main
-     ;  write('Unknown command.'), nl, main ).
+<H2><A NAME="SEC638" HREF="ciao_toc.html#TOC638">Documentation on exports (<CODE>javasock</CODE>)</A></H2>
+<P>
+<A NAME="IDX6539"></A>
+<A NAME="IDX6540"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>start_socket_interface/2:</B>
+<DD><A NAME="IDX6541"></A>
 
-handle_action(end_of_file) :-
-     halt.
-handle_action(halt) :-
-     halt.
-handle_action(in(Term)) :-
-     assertz_fact(queue(Term)).
-handle_action(slip(Term)) :-
-     asserta_fact(queue(Term)).
-handle_action(out) :-
-     (  retract_fact(queue(Term))
-     -&#62; write('Out '), write(Term)
-     ;  write('FIFO empty.') ),
-     nl.
-handle_action(list) :-
-     findall(Term,queue(Term),Terms),
-     write('Contents: '), write(Terms), nl.
-     
 
-</PRE>
+<P>
+<STRONG>Usage:</STRONG> <CODE>start_socket_interface(+Address,+Stream)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Given an address in format 'node:port', creates the sockets to connect to the java process, and starts the threads needed to handle the connection.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Address</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>+Stream</CODE> is an open stream.
+ (<CODE>streams_basic:stream/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6542"></A>
+<A NAME="IDX6543"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>stop_socket_interface/0:</B>
+<DD><A NAME="IDX6544"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Closes the sockets to disconnect from the java process, and waits until the threads that handle the connection terminate.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6545"></A>
+<A NAME="IDX6546"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>join_socket_interface/0:</B>
+<DD><A NAME="IDX6547"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Waits until the threads that handle the connection terminate.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6548"></A>
+<A NAME="IDX6549"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_query/2:</B>
+<DD><A NAME="IDX6550"></A>
+
+
+<P>
+The predicate is of type <EM>concurrent</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_query(ThreadId,Query)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Data predicate containing the queries to be sent to Java. First argument is the Prolog thread Id, and second argument is the query to send to Java.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>ThreadId</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Query</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6551"></A>
+<A NAME="IDX6552"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_response/2:</B>
+<DD><A NAME="IDX6553"></A>
+
+
+<P>
+The predicate is of type <EM>concurrent</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_response(Id,Response)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Data predicate that stores the responses to requests received from Java. First argument corresponds to the Prolog thread Id; second argument corresponds to the response itself.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Id</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Response</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6554"></A>
+<A NAME="IDX6555"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>prolog_query/2:</B>
+<DD><A NAME="IDX6556"></A>
+
+
+<P>
+The predicate is of type <EM>concurrent</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>prolog_query(Id,Query)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Data predicate that keeps a queue of the queries requested to Prolog side from Java side.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Id</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>Query</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6557"></A>
+<A NAME="IDX6558"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>prolog_response/2:</B>
+<DD><A NAME="IDX6559"></A>
+
+
+<P>
+The predicate is of type <EM>concurrent</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>prolog_response(Id,Response)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Data predicate that keeps a queue of the responses to queries requested to Prolog side from Java side.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Id</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>Response</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6560"></A>
+<A NAME="IDX6561"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_stream/4:</B>
+<DD><A NAME="IDX6562"></A>
+
+
+<P>
+The predicate is of type <EM>data</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_stream(PJStream,JPStream,Address,Stream)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Stores the identifiers of the streams used. A fact is asserted when the connection to the Java process is established. It Contains prolog-to-java and java-to-prolog streams, and the network address where the Java process is running. Last argument represents the Java process standard input stream.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>PJStream</CODE> is a compound term.
+ (<CODE>basic_props:struct/1</CODE>)
+
+<CODE>JPStream</CODE> is a compound term.
+ (<CODE>basic_props:struct/1</CODE>)
+
+<CODE>Address</CODE> is a valid host name.
+ (<CODE>javasock:machine_name/1</CODE>)
+
+<CODE>Stream</CODE> is an open stream.
+ (<CODE>streams_basic:stream/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6563"></A>
+<A NAME="IDX6564"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_debug/1:</B>
+<DD><A NAME="IDX6565"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_151.html">previous</A>, <A HREF="ciao_153.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_151.html">previous</A>, <A HREF="ciao_153.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

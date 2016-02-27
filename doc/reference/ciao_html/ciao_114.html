@@ -1,64 +1,43 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Fuzzy Prolog</TITLE>
+<TITLE>The Ciao Prolog System               - Foreign Language Interface Properties</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_113.html">previous</A>, <A HREF="ciao_115.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_113.html">previous</A>, <A HREF="ciao_115.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC464" HREF="ciao_toc.html#TOC464">Fuzzy Prolog</A></H1>
+<H1><A NAME="SEC490" HREF="ciao_toc.html#TOC490">Foreign Language Interface Properties</A></H1>
 <P>
-<A NAME="IDX4988"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Claudio Vaucheret, Sergio Guadarrama, Francisco Bueno.
+<A NAME="IDX4808"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
+<STRONG>Author(s):</STRONG> Jose Morales, Manuel Carro.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#199 (2002/4/18, 18:5:46 CEST)
+<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
 
 
 <P>
-This package impements an extension of prolog to deal with uncertainty. We implement a fuzzy prolog that models interval-valued fuzzy logic. This approach is more general than other fuzzy prologs in two aspects: 
-
-
-
-<OL>
-<LI>Truth values are sub-intervals on [0,1]. In fact, it could be a finite union of sub-intervals, as we will see below. Having a unique truth value is a particular case modeled with a unitary interval.
-
-<LI>Truth values are propagated through the rules by means of a set of <EM>aggregation operators</EM>. The definition of an <EM>aggregation operator</EM> is a generalization that subsumes conjunctive operators (triangular norms as min, prod, etc.), disjunctive operators (triangular co-norms as max, sum, etc.), average operators (averages as arithmetic average, cuasi-linear average, etc.) and hybrid operators (combinations of previous operators).
-
-</OL>
-
-<P>
-We add uncertainty using CLP(R) instead of implementing a new fuzzy resolution as other fuzzy prologs. In this way, we use the original inference mechanism of Prolog, and we use the constraints and its operations provided by CLP(R) to handle the concept of partial truth. We represent intervals as constrains over real numbers and <EM>aggregation operators</EM> as operations with constraints. 
-
-
-<P>
-Each fuzzy predicate has an additional argument which represents its truth value. We use ":~" instead of ":-" to distinguish fuzzy clauses from prolog clauses. In fuzzy clauses, truth values are obtained via an aggregation operator. There is also some syntactic sugar for defining fuzzy predicates with certain membership functions, the fuzzy counterparts of crisp predicates, and the fuzzy negation of a fuzzy predicate. 
+<STRONG>Version of last change:</STRONG> 1.7#77 (2001/3/26, 18:45:31 CEST)
 
 
 
 <UL>
-<LI><A HREF="ciao_114.html#SEC465">Usage and interface (fuzzy)</A>
-<LI><A HREF="ciao_114.html#SEC466">Documentation on new declarations (fuzzy)</A>
-<LI><A HREF="ciao_114.html#SEC467">Documentation on exports (fuzzy)</A>
-<LI><A HREF="ciao_114.html#SEC468">Other information (fuzzy)</A>
-<LI><A HREF="ciao_114.html#SEC469">Known bugs and planned improvements (fuzzy)</A>
+<LI><A HREF="ciao_114.html#SEC491">Usage and interface (foreign_interface_properties)</A>
+<LI><A HREF="ciao_114.html#SEC492">Documentation on exports (foreign_interface_properties)</A>
+<LI><A HREF="ciao_114.html#SEC493">Documentation on internals (foreign_interface_properties)</A>
+<LI><A HREF="ciao_114.html#SEC494">Known bugs and planned improvements (foreign_interface_properties)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC465" HREF="ciao_toc.html#TOC465">Usage and interface (<CODE>fuzzy</CODE>)</A></H2>
+<H2><A NAME="SEC491" HREF="ciao_toc.html#TOC491">Usage and interface (<CODE>foreign_interface_properties</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -66,79 +45,46 @@ Each fuzzy predicate has an additional argument which represents its truth value
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_package(fuzzy).</CODE>
-
-or
-
-<CODE>:- module(...,...,[fuzzy]).</CODE>
+<CODE>:- use_module(library(foreign_interface_properties)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
 
 <UL>
 
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX4989"></A>
-<CODE>:#/2</CODE>, 
-<A NAME="IDX4990"></A>
-<CODE>fuzzy_predicate/1</CODE>, 
-<A NAME="IDX4991"></A>
-<CODE>fuzzy/1</CODE>, 
-<A NAME="IDX4992"></A>
-<CODE>fnot/1</CODE>, 
-<A NAME="IDX4993"></A>
-<CODE>:~/2</CODE>, 
-<A NAME="IDX4994"></A>
-<CODE>=&#62;/4</CODE>.
-
 <LI><EM>Properties:</EM>
 
-<A NAME="IDX4995"></A>
-<CODE>fuzzybody/1</CODE>.
+<A NAME="IDX4809"></A>
+<CODE>native/1</CODE>, 
+<A NAME="IDX4810"></A>
+<CODE>native/2</CODE>, 
+<A NAME="IDX4811"></A>
+<CODE>size_of/3</CODE>, 
+<A NAME="IDX4812"></A>
+<CODE>foreign/1</CODE>, 
+<A NAME="IDX4813"></A>
+<CODE>foreign/2</CODE>, 
+<A NAME="IDX4814"></A>
+<CODE>returns/2</CODE>, 
+<A NAME="IDX4815"></A>
+<CODE>do_not_free/2</CODE>.
 
 <LI><EM>Regular Types:</EM>
 
-<A NAME="IDX4996"></A>
-<CODE>faggregator/1</CODE>.
+<A NAME="IDX4816"></A>
+<CODE>int_list/1</CODE>, 
+<A NAME="IDX4817"></A>
+<CODE>byte_list/1</CODE>, 
+<A NAME="IDX4818"></A>
+<CODE>byte/1</CODE>, 
+<A NAME="IDX4819"></A>
+<CODE>null/1</CODE>, 
+<A NAME="IDX4820"></A>
+<CODE>address/1</CODE>, 
+<A NAME="IDX4821"></A>
+<CODE>any_term/1</CODE>.
 
 </UL>
-
-<LI><STRONG>New operators defined:</STRONG>
-
-<A NAME="IDX4997"></A>
-<CODE>:~/2</CODE> [1200,xfx], 
-<A NAME="IDX4998"></A>
-<CODE>:~/1</CODE> [1200,xf], 
-<A NAME="IDX4999"></A>
-<CODE>:=/2</CODE> [1200,xfx], 
-<A NAME="IDX5000"></A>
-<CODE>:=/1</CODE> [1200,xf], 
-<A NAME="IDX5001"></A>
-<CODE>:#/2</CODE> [1200,xfx], 
-<A NAME="IDX5002"></A>
-<CODE>=&#62;/1</CODE> [1175,fx], 
-<A NAME="IDX5003"></A>
-<CODE>fnot/1</CODE> [1150,fx], 
-<A NAME="IDX5004"></A>
-<CODE>aggr/1</CODE> [1150,fx], 
-<A NAME="IDX5005"></A>
-<CODE>##/2</CODE> [1120,xfy], 
-<A NAME="IDX5006"></A>
-<CODE>&#60;#/2</CODE> [1120,xfy], 
-<A NAME="IDX5007"></A>
-<CODE>#&#62;/2</CODE> [1120,xfy], 
-<A NAME="IDX5008"></A>
-<CODE>fuzzy/1</CODE> [1150,fx], 
-<A NAME="IDX5009"></A>
-<CODE>fuzzy_predicate/1</CODE> [1190,fx], 
-<A NAME="IDX5010"></A>
-<CODE>fuzzy_discrete/1</CODE> [1190,fx].
-
-<LI><STRONG>New declarations defined:</STRONG>
-
-<A NAME="IDX5011"></A>
-<CODE>aggr/1</CODE>.
 
 </UL>
 
@@ -146,394 +92,563 @@ or
 
 
 
-<H2><A NAME="SEC466" HREF="ciao_toc.html#TOC466">Documentation on new declarations (<CODE>fuzzy</CODE>)</A></H2>
+<H2><A NAME="SEC492" HREF="ciao_toc.html#TOC492">Documentation on exports (<CODE>foreign_interface_properties</CODE>)</A></H2>
 <P>
-<A NAME="IDX5012"></A>
-<A NAME="IDX5013"></A>
+<A NAME="IDX4822"></A>
+<A NAME="IDX4823"></A>
 <DL>
-<DT><span class="define">DECLARATION:</span> <B>aggr/1:</B>
-<DD><A NAME="IDX5014"></A>
+<DT><span class="define">REGTYPE:</span> <B>int_list/1:</B>
+<DD><A NAME="IDX4824"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> :- <CODE>aggr(Name)</CODE>.
+<STRONG>Usage:</STRONG> <CODE>int_list(List)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Declares <CODE>Name</CODE> an aggregator. Its binary definition has to be provided. For example:
+<LI><EM>Description:</EM> <CODE>List</CODE> is a list of integers.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4825"></A>
+<A NAME="IDX4826"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>byte_list/1:</B>
+<DD><A NAME="IDX4827"></A>
 
 
-<PRE>
-:- aggr myaggr.
+<P>
+<STRONG>Usage:</STRONG> <CODE>byte_list(List)</CODE>
 
-myaggr(X,Y,Z):- Z .=. X*Y.
-</PRE>
+<UL>
+<LI><EM>Description:</EM> <CODE>List</CODE> is a list of bytes.
 
-defines an aggregator identical to <CODE>prod</CODE>. 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4828"></A>
+<A NAME="IDX4829"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>byte/1:</B>
+<DD><A NAME="IDX4830"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>byte(Byte)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Byte</CODE> is a byte.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4831"></A>
+<A NAME="IDX4832"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>null/1:</B>
+<DD><A NAME="IDX4833"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>null(Address)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Address</CODE> is a null adress.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4834"></A>
+<A NAME="IDX4835"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>address/1:</B>
+<DD><A NAME="IDX4836"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>address(Address)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Address</CODE> is a memory address.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4837"></A>
+<A NAME="IDX4838"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>any_term/1:</B>
+<DD><A NAME="IDX4839"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>any_term(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is any term. The foreign interface passes it to C functions as a general term.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4840"></A>
+<A NAME="IDX4841"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>native/1:</B>
+<DD><A NAME="IDX4842"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>native(Name)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The Prolog predicate
+
+<A NAME="IDX4843"></A>
+<CODE>Name</CODE> is implemented using the function <CODE>Name</CODE>. The implementation is not a common C one, but it accesses directly the internal Ciao Prolog data structures and functions, and therefore no glue code is generated for it. 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4844"></A>
+<A NAME="IDX4845"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>native/2:</B>
+<DD><A NAME="IDX4846"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>native(PrologName,ForeignName)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The Prolog predicate
+
+<A NAME="IDX4847"></A>
+<CODE>PrologName</CODE> is implemented using the function prolog_<CODE>ForeignName</CODE>. The same considerations as above example are to be applied. 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4848"></A>
+<A NAME="IDX4849"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>size_of/3:</B>
+<DD><A NAME="IDX4850"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>size_of(Name,ListVar,SizeVar)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> For predicate <CODE>Name</CODE>, the size of the argument of type
+
+<A NAME="IDX4851"></A>
+<CODE>byte_list/1</CODE>, <CODE>ListVar</CODE>, is given by the argument of type integer <CODE>SizeVar</CODE>. 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4852"></A>
+<A NAME="IDX4853"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>foreign/1:</B>
+<DD><A NAME="IDX4854"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>foreign(Name)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The Prolog predicate
+
+<A NAME="IDX4855"></A>
+<CODE>Name</CODE> is implemented using the foreign function <CODE>Name</CODE>. 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4856"></A>
+<A NAME="IDX4857"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>foreign/2:</B>
+<DD><A NAME="IDX4858"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>foreign(PrologName,ForeignName)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The Prolog predicate
+
+<A NAME="IDX4859"></A>
+<CODE>PrologName</CODE> is implemented using the foreign function <CODE>ForeignName</CODE>. 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4860"></A>
+<A NAME="IDX4861"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>returns/2:</B>
+<DD><A NAME="IDX4862"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>returns(Name,Var)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The result of the foreign function that implements the Prolog predicate
+
+<A NAME="IDX4863"></A>
+<CODE>Name</CODE> is unified with the Prolog variable <CODE>Var</CODE>. Cannot be used without 
+<A NAME="IDX4864"></A>
+<CODE>foreign/1</CODE> or 
+<A NAME="IDX4865"></A>
+<CODE>foreign/2</CODE>. 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4866"></A>
+<A NAME="IDX4867"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>do_not_free/2:</B>
+<DD><A NAME="IDX4868"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>do_not_free(Name,Var)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> For predicate <CODE>Name</CODE>, the C argument passed to (returned from) the foreign function will not be freed after calling the foreign function.
+
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC493" HREF="ciao_toc.html#TOC493">Documentation on internals (<CODE>foreign_interface_properties</CODE>)</A></H2>
+<P>
+<A NAME="IDX4869"></A>
+<A NAME="IDX4870"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>use_foreign_source/1:</B>
+<DD><A NAME="IDX4871"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>use_foreign_source(Files)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Files</CODE> is the (list of) foreign file(s) that will be linked with the glue-code file.
+
 <LI><EM>The following properties hold at call time:</EM>
 
-<CODE>Name</CODE> is an atomic term (an atom or a number).
- (<CODE>basic_props:constant/1</CODE>)
+<CODE>Files</CODE> is an atom or a list of atoms.
+ (<CODE>basic_props:atm_or_atm_list/1</CODE>)
 </UL>
 
 </DL>
 
-
-
-<H2><A NAME="SEC467" HREF="ciao_toc.html#TOC467">Documentation on exports (<CODE>fuzzy</CODE>)</A></H2>
 <P>
-<A NAME="IDX5015"></A>
-<A NAME="IDX5016"></A>
+<A NAME="IDX4872"></A>
+<A NAME="IDX4873"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>:#/2:</B>
-<DD><A NAME="IDX5017"></A>
+<DT><span class="define">DECLARATION:</span> <B>use_foreign_source/2:</B>
+<DD><A NAME="IDX4874"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>:#(Name, Decl)</CODE>
+<STRONG>Usage:</STRONG> :- <CODE>use_foreign_source(OsArch,Files)</CODE>.
 
 <UL>
-<LI><EM>Description:</EM> Defines fuzzy predicate <CODE>Name</CODE> from the declaration <CODE>Decl</CODE>.
+<LI><EM>Description:</EM> <CODE>Files</CODE> are the OS and architecture dependant foreign files. This allows compiling and linking different files depending on the O.S. and architecture.
 
-<LI><EM>The following properties hold upon exit:</EM>
+<LI><EM>The following properties hold at call time:</EM>
 
-<CODE>Name</CODE> is a Name/Arity structure denoting a predicate name: 
+<CODE>OsArch</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 
-<PRE>
-predname(P/A) :-
-        atm(P),
-        nnegint(A).
-</PRE>
-
- (<CODE>basic_props:predname/1</CODE>)
-
-<CODE>Decl</CODE> is one of the following three: 
-
-<PRE>
-fuzzydecl(fuzzy_predicate(_1)).
-fuzzydecl(fuzzy(_1)).
-fuzzydecl(fnot(_1)).
-</PRE>
-
- (<CODE>user(... /fuzzy_doc):fuzzydecl/1</CODE>)
+<CODE>Files</CODE> is an atom or a list of atoms.
+ (<CODE>basic_props:atm_or_atm_list/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5018"></A>
-<A NAME="IDX5019"></A>
+<A NAME="IDX4875"></A>
+<A NAME="IDX4876"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>fuzzy_predicate/1:</B>
-<DD><A NAME="IDX5020"></A>
+<DT><span class="define">DECLARATION:</span> <B>use_foreign_library/1:</B>
+<DD><A NAME="IDX4877"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>fuzzy_predicate(Domain)</CODE>
+<STRONG>Usage:</STRONG> :- <CODE>use_foreign_library(Libs)</CODE>.
 
 <UL>
-<LI><EM>Description:</EM> Defines a fuzzy predicate with piecewise linear continuous membership function. This is given by <CODE>Domain</CODE>, which is a list of pairs of domain-truth values, in increasing order and exhaustive. For example:
+<LI><EM>Description:</EM> <CODE>Libs</CODE> is the (list of) external library(es) needed to link the C files. Only the short name of the library (i.e., what would follow the <CODE>-l</CODE> in the linker is needed.
 
+<LI><EM>The following properties hold at call time:</EM>
 
-<PRE>
-young :# fuzzy_predicate([(0,1),(35,1),(45,0),(120,0)]).
-</PRE>
-
-defines the predicate: 
-
-<PRE>
-young(X,1):- X .&#62;=. 0, X .&#60;. 35.
-young(X,M):- X .&#62;=. 35, X .&#60;. 45, 10*M .=. 45-X.
-young(X,0):- X .&#62;=. 45, X .=&#60;. 120. 
-</PRE>
-
- 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Domain</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
+<CODE>Libs</CODE> is an atom or a list of atoms.
+ (<CODE>basic_props:atm_or_atm_list/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5021"></A>
-<A NAME="IDX5022"></A>
+<A NAME="IDX4878"></A>
+<A NAME="IDX4879"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>fuzzy/1:</B>
-<DD><A NAME="IDX5023"></A>
+<DT><span class="define">DECLARATION:</span> <B>use_foreign_library/2:</B>
+<DD><A NAME="IDX4880"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>fuzzy(Name)</CODE>
+<STRONG>Usage:</STRONG> :- <CODE>use_foreign_library(OsArch,Libs)</CODE>.
 
 <UL>
-<LI><EM>Description:</EM> Defines a fuzzy predicate as the fuzzy counterpart of a crisp predicate <CODE>Name</CODE>. For example,
+<LI><EM>Description:</EM> <CODE>Libs</CODE> are the OS and architecture dependant libraries.
 
+<LI><EM>The following properties hold at call time:</EM>
 
-<PRE>
-p_f :# fuzzy p/2
-</PRE>
+<CODE>OsArch</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 
-defines a new fuzzy predicate <CODE>p_f/3</CODE> (the last argument is the truth value) with truth value equal to 0 if <CODE>p/2</CODE> fails and 1 otherwise. 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Name</CODE> is a Name/Arity structure denoting a predicate name: 
-
-<PRE>
-predname(P/A) :-
-        atm(P),
-        nnegint(A).
-</PRE>
-
- (<CODE>basic_props:predname/1</CODE>)
+<CODE>Libs</CODE> is an atom or a list of atoms.
+ (<CODE>basic_props:atm_or_atm_list/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5024"></A>
-<A NAME="IDX5025"></A>
+<A NAME="IDX4881"></A>
+<A NAME="IDX4882"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>fnot/1:</B>
-<DD><A NAME="IDX5026"></A>
+<DT><span class="define">DECLARATION:</span> <B>extra_compiler_opts/1:</B>
+<DD><A NAME="IDX4883"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>fnot(Name)</CODE>
+<STRONG>Usage:</STRONG> :- <CODE>extra_compiler_opts(Opts)</CODE>.
 
 <UL>
-<LI><EM>Description:</EM> Defines a fuzzy predicate as the fuzzy negation of another fuzzy predicate <CODE>Name</CODE>. For example,
+<LI><EM>Description:</EM> <CODE>Opts</CODE> is the list of additional compiler options (e.g., optimization options) that will be used during the compilation.
 
+<LI><EM>The following properties hold at call time:</EM>
 
-<PRE>
-notp_f :# fnot p_f/3
-</PRE>
-
-defines the predicate: 
-
-<PRE>
-notp_f(X,Y,M) :-
-        p_f(X,Y,Mp),
-        M .=. 1 - Mp.
-</PRE>
-
- 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Name</CODE> is a Name/Arity structure denoting a predicate name: 
-
-<PRE>
-predname(P/A) :-
-        atm(P),
-        nnegint(A).
-</PRE>
-
- (<CODE>basic_props:predname/1</CODE>)
+<CODE>Opts</CODE> is an atom or a list of atoms.
+ (<CODE>basic_props:atm_or_atm_list/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5027"></A>
-<A NAME="IDX5028"></A>
+<A NAME="IDX4884"></A>
+<A NAME="IDX4885"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>:~/2:</B>
-<DD><A NAME="IDX5029"></A>
+<DT><span class="define">DECLARATION:</span> <B>extra_compiler_opts/2:</B>
+<DD><A NAME="IDX4886"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>:~(Head, Body)</CODE>
+<STRONG>Usage:</STRONG> :- <CODE>extra_compiler_opts(OsArch,Opts)</CODE>.
 
 <UL>
-<LI><EM>Description:</EM> Defines a fuzzy clause for a fuzzy predicate. The clause contains calls to either fuzzy or crisp predicates. Calls to crisp predicates are automatically fuzzified. The last argument of <CODE>Head</CODE> is the truth value of the clause, which is obtained as the aggregation of the truth values of the body goals. An example:
+<LI><EM>Description:</EM> <CODE>Opts</CODE> are the OS and architecture dependant additional compiler options.
 
+<LI><EM>The following properties hold at call time:</EM>
 
-<PRE>
-:- module(young2,_,[fuzzy]).
+<CODE>OsArch</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 
-young_couple(X,Y,Mu) :~ min
-        age(X,X1),
-        age(Y,Y1),
-        young(X1,MuX),
-        young(Y1,MuY).
-
-age(john,37).
-age(rose,39).
-
-young :# fuzzy_predicate([(0,1),(35,1),(45,0),(120,0)]).
-
-</PRE>
-
-so that: 
-
-<PRE>
-?- young_couple(john,rose,M).
-
-M .=. 0.6 ? 
-</PRE>
-
- 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Head</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
-
-<CODE>Body</CODE> is a clause body plus an optional aggregation operator.
- (<CODE>user(... /fuzzy_doc):fuzzybody/1</CODE>)
+<CODE>Opts</CODE> is an atom or a list of atoms.
+ (<CODE>basic_props:atm_or_atm_list/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5030"></A>
-<A NAME="IDX5031"></A>
+<A NAME="IDX4887"></A>
+<A NAME="IDX4888"></A>
 <DL>
-<DT><span class="define">PROPERTY:</span> <B>fuzzybody/1:</B>
-<DD><A NAME="IDX5032"></A>
+<DT><span class="define">DECLARATION:</span> <B>use_compiler/1:</B>
+<DD><A NAME="IDX4889"></A>
 
 
 <P>
-A clause body, optionally prefixed by the name of an aggregation operator. The agregators currently provided are listed under <CODE>faggregator/1</CODE>. By default, the aggregator used is <CODE>min</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>fuzzybody(B)</CODE>
+<STRONG>Usage:</STRONG> :- <CODE>use_compiler(Compiler)</CODE>.
 
 <UL>
-<LI><EM>Description:</EM> <CODE>B</CODE> is a clause body plus an optional aggregation operator.
+<LI><EM>Description:</EM> <CODE>Compiler</CODE> is the compiler to use in this file. When this option is used, the default (Ciao-provided) compiler options are not used; those specified in
 
+<A NAME="IDX4890"></A>
+<CODE>extra_compiler_options</CODE> are used instead. 
+<LI><EM>The following properties hold at call time:</EM>
+
+<CODE>Compiler</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5033"></A>
-<A NAME="IDX5034"></A>
+<A NAME="IDX4891"></A>
+<A NAME="IDX4892"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>faggregator/1:</B>
-<DD><A NAME="IDX5035"></A>
+<DT><span class="define">DECLARATION:</span> <B>use_compiler/2:</B>
+<DD><A NAME="IDX4893"></A>
 
 
 <P>
-The first three are, respectively, the T-norms: minimum, product, and Lukasiewicz's. The last three are their corresponding T-conorms. Aggregators can be defined by the user, see <CODE>aggr/1</CODE>. 
-
-<PRE>
-faggregator(min).
-faggregator(prod).
-faggregator(luka).
-faggregator(max).
-faggregator(dprod).
-faggregator(dluka).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>faggregator(Aggr)</CODE>
+<STRONG>Usage:</STRONG> :- <CODE>use_compiler(OsArch,Compiler)</CODE>.
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Aggr</CODE> is an aggregator which is cumulative, i.e., its application to several values by iterating pairwise the binary operation is safe.
+<LI><EM>Description:</EM> <CODE>Compiler</CODE> is the compiler to use in this file when compiling for the architecture <CODE>OsArch</CODE>. The option management is the same as in
 
+<A NAME="IDX4894"></A>
+<CODE>use_compiler/2</CODE>. 
+<LI><EM>The following properties hold at call time:</EM>
+
+<CODE>OsArch</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Compiler</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5036"></A>
-<A NAME="IDX5037"></A>
+<A NAME="IDX4895"></A>
+<A NAME="IDX4896"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>=&#62;/4:</B>
-<DD><A NAME="IDX5038"></A>
+<DT><span class="define">DECLARATION:</span> <B>extra_linker_opts/1:</B>
+<DD><A NAME="IDX4897"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>=&#62;(Aggr, A, B, Truth)</CODE>
+<STRONG>Usage:</STRONG> :- <CODE>extra_linker_opts(Opts)</CODE>.
 
 <UL>
-<LI><EM>Description:</EM> The fuzzy implication <CODE>A =&#62; B</CODE> defined by aggregator <CODE>Aggr</CODE>, resulting in the truth value <CODE>Truth</CODE>.
+<LI><EM>Description:</EM> <CODE>Opts</CODE> is the list of additional linker options that will be used during the linkage.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<LI><EM>The following properties hold at call time:</EM>
 
-<CODE>Aggr</CODE> is an aggregator which is cumulative, i.e., its application to several values by iterating pairwise the binary operation is safe.
- (<CODE>user(... /fuzzy_doc):faggregator/1</CODE>)
+<CODE>Opts</CODE> is an atom or a list of atoms.
+ (<CODE>basic_props:atm_or_atm_list/1</CODE>)
+</UL>
 
-<CODE>A</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
+</DL>
 
-<CODE>B</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
+<P>
+<A NAME="IDX4898"></A>
+<A NAME="IDX4899"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>extra_linker_opts/2:</B>
+<DD><A NAME="IDX4900"></A>
 
-<CODE>Truth</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>extra_linker_opts(OsArch,Opts)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Opts</CODE> are the OS and architecture dependant additional linker options.
+
+<LI><EM>The following properties hold at call time:</EM>
+
+<CODE>OsArch</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Opts</CODE> is an atom or a list of atoms.
+ (<CODE>basic_props:atm_or_atm_list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4901"></A>
+<A NAME="IDX4902"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>use_linker/1:</B>
+<DD><A NAME="IDX4903"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>use_linker(Linker)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Linker</CODE> is the linker to use in this file. When this option is used, the default (Ciao-provided) linker options are not used; those specified in
+
+<A NAME="IDX4904"></A>
+<CODE>extra_linker_options/1</CODE> are used instead. 
+<LI><EM>The following properties hold at call time:</EM>
+
+<CODE>Linker</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4905"></A>
+<A NAME="IDX4906"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>use_linker/2:</B>
+<DD><A NAME="IDX4907"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>use_linker(OsArch,Linker)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Compiler</CODE> is the linker to use in this file when compiling for the architecture <CODE>OsArch</CODE>. The option management is the same as in
+
+<A NAME="IDX4908"></A>
+<CODE>use_compiler/2</CODE>. 
+<LI><EM>The following properties hold at call time:</EM>
+
+<CODE>OsArch</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Linker</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 </UL>
 
 </DL>
 
 
 
-<H2><A NAME="SEC468" HREF="ciao_toc.html#TOC468">Other information (<CODE>fuzzy</CODE>)</A></H2>
-
-<P>
-An example program: 
-
-<PRE>
-:- module(dicesum5,_,[fuzzy]).
-
-% this example tries to measure which is the possibility
-% that a couple of values, obtained throwing two loaded dice, sum 5. Let
-% us suppose we only know that one die is loaded to obtain a small value
-% and the other is loaded to obtain a large value. 
-%
-% the query is  ? sum(5,M)
-%
-
-small :# fuzzy_predicate([(1,1),(2,1),(3,0.7),(4,0.3),(5,0),(6,0)]).
-large :# fuzzy_predicate([(1,0),(2,0),(3,0.3),(4,0.7),(5,1),(6,1)]).
-
-die1(X,M) :~
-        small(X,M).
-
-die2(X,M) :~
-        large(X,M).
-
-two_dice(X,Y,M):~ prod
-        die1(X,M1),
-        die2(Y,M2).
-
-sum(2,M) :~  
-        two_dice(1,1,M1).
-
-sum(5,M) :~ dprod
-        two_dice(4,1,M1),
-        two_dice(1,4,M2),
-        two_dice(3,2,M3),
-        two_dice(2,3,M4).
-
-</PRE>
-
-<P>
-There are more examples in the subdirectory <CODE>fuzzy/examples</CODE> of the distribution. 
-
-
-
-
-<H2><A NAME="SEC469" HREF="ciao_toc.html#TOC469">Known bugs and planned improvements (<CODE>fuzzy</CODE>)</A></H2>
+<H2><A NAME="SEC494" HREF="ciao_toc.html#TOC494">Known bugs and planned improvements (<CODE>foreign_interface_properties</CODE>)</A></H2>
 
 
 <UL>
 
 <LI>
 
-General aggregations defined by users.
-
-<LI>
-
-Inconsistent behaviour of meta-calls in fuzzy clauses.
-
-<LI>
-
-Some meta-predicate constructions need be added, specially for 'disjunctive' fuzzy clauses, e.g., <CODE>sum/2</CODE> in the dice example.
+The <CODE>size_of/3</CODE> property has an empty definition
 </UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_113.html">previous</A>, <A HREF="ciao_115.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_113.html">previous</A>, <A HREF="ciao_115.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -1,303 +1,151 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - dictionary_tree (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Beyond installation</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_214.html">previous</A>, <A HREF="ciao_216.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_214.html">previous</A>, <A HREF="ciao_216.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC842" HREF="ciao_toc.html#TOC842">dictionary_tree (library)</A></H1>
-<P>
-<A NAME="IDX8585"></A>
-
+<H1><A NAME="SEC838" HREF="ciao_toc.html#TOC838">Beyond installation</A></H1>
 
 <P>
-<STRONG>Author(s):</STRONG> G&ouml;ran Smedb&auml;ck.
+<STRONG>Author(s):</STRONG> Manuel Carro, Daniel Cabeza, Manuel Hermenegildo.
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
+<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.9#173 (2003/12/4, 17:47:16 CET)
+<STRONG>Version of last change:</STRONG> 1.7#55 (2001/1/26, 17:36:30 CET)
 
 
 <P>
-This module offers a dynamic tree structured dictionary a bit combined with predicates that gives it the useability to be the dictionary for the parser.
+ 
 
 
 
 <UL>
-<LI><A HREF="ciao_215.html#SEC843">Usage and interface (dictionary_tree)</A>
-<LI><A HREF="ciao_215.html#SEC844">Documentation on exports (dictionary_tree)</A>
+<LI><A HREF="ciao_215.html#SEC839">Architecture-specific notes and limitations</A>
+<LI><A HREF="ciao_215.html#SEC840">Keeping up to date with the Ciao users mailing list</A>
+<LI><A HREF="ciao_215.html#SEC841">Downloading new versions</A>
+<LI><A HREF="ciao_215.html#SEC842">Reporting bugs</A>
 </UL>
 
 
 
-<H2><A NAME="SEC843" HREF="ciao_toc.html#TOC843">Usage and interface (<CODE>dictionary_tree</CODE>)</A></H2>
-
-<div class="cartouche">
-
-<UL>
-
-<LI><STRONG>Library usage:</STRONG>
-
-<CODE>:- use_module(library(dictionary_tree)).</CODE>
-
-<LI><STRONG>Exports:</STRONG>
-
-
-<UL>
-
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX8586"></A>
-<CODE>create_dictionaries/1</CODE>, 
-<A NAME="IDX8587"></A>
-<CODE>is_dictionaries/1</CODE>, 
-<A NAME="IDX8588"></A>
-<CODE>get_definition_dictionary/2</CODE>, 
-<A NAME="IDX8589"></A>
-<CODE>get_prototype_dictionary/2</CODE>, 
-<A NAME="IDX8590"></A>
-<CODE>dictionary_insert/5</CODE>, 
-<A NAME="IDX8591"></A>
-<CODE>dictionary_lookup/5</CODE>, 
-<A NAME="IDX8592"></A>
-<CODE>merge_tree/2</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX8593"></A>
-<CODE>aggregates</CODE>, 
-<A NAME="IDX8594"></A>
-<CODE>dynamic</CODE>, 
-<A NAME="IDX8595"></A>
-<CODE>iso_misc</CODE>, 
-<A NAME="IDX8596"></A>
-<CODE>iso_byte_char</CODE>, 
-<A NAME="IDX8597"></A>
-<CODE>iso_incomplete</CODE>, 
-<A NAME="IDX8598"></A>
-<CODE>operators</CODE>, 
-<A NAME="IDX8599"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX8600"></A>
-<CODE>write</CODE>, 
-<A NAME="IDX8601"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX8602"></A>
-<CODE>provrml/internal_types</CODE>.
-
-</UL>
-
-</UL>
-
-</div class="cartouche">
-
-
-
-<H2><A NAME="SEC844" HREF="ciao_toc.html#TOC844">Documentation on exports (<CODE>dictionary_tree</CODE>)</A></H2>
-<P>
-<A NAME="IDX8603"></A>
-<A NAME="IDX8604"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>create_dictionaries/1:</B>
-<DD><A NAME="IDX8605"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>create_dictionaries(-Dictionary)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Returns a dictionary. A general name was used if the user would like to change the code to include more dictionaries.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Dictionary</CODE> is a dictionary.
- (<CODE>internal_types:dictionary/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX8606"></A>
-<A NAME="IDX8607"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>is_dictionaries/1:</B>
-<DD><A NAME="IDX8608"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>is_dictionaries(?Dictionary)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Is the argument a dictionary is solved by this predicate.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>?Dictionary</CODE> is a dictionary.
- (<CODE>internal_types:dictionary/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX8609"></A>
-<A NAME="IDX8610"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>get_definition_dictionary/2:</B>
-<DD><A NAME="IDX8611"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>get_definition_dictionary(+Dictionary, -Tree)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Returns the definition dictionary (for the moment there is only one dictionary), which is a tree representation.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Dictionary</CODE> is a dictionary.
- (<CODE>internal_types:dictionary/1</CODE>)
-
-<CODE>-Tree</CODE> is a tree structure.
- (<CODE>internal_types:tree/1</CODE>)
-</UL>
-
-</DL>
+<H2><A NAME="SEC839" HREF="ciao_toc.html#TOC839">Architecture-specific notes and limitations</A></H2>
 
 <P>
 <A NAME="IDX8612"></A>
 <A NAME="IDX8613"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>get_prototype_dictionary/2:</B>
-<DD><A NAME="IDX8614"></A>
+Ciao makes use of advanced characteristics of modern architectures and operating systems such as multithreading, shared memory, sockets, locks, dynamic load libraries, etc., some of which are sometimes not present in a given system and others may be implemented in very different ways across the different systems. As a result, currently not all Ciao features are available in all supported operating systems. Sometimes this is because not all the required features are present in all the OS flavors supported and sometimes because we simply have not had the time to port them yet. 
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>get_prototype_dictionary(+Dictionary, -Tree)</CODE>
+The current state of matters is as follows: 
 
-<UL>
-<LI><EM>Description:</EM> Returns the prototype dictionary (for the moment there is only one dictionary), which is a tree representation.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<DL COMPACT>
 
-<CODE>+Dictionary</CODE> is a dictionary.
- (<CODE>internal_types:dictionary/1</CODE>)
-
-<CODE>-Tree</CODE> is a tree structure.
- (<CODE>internal_types:tree/1</CODE>)
-</UL>
-
+<DT>Mac OS X (Darwin):
+<DD>
+multithreading, shared DB access, and locking working. 
+<DT>LINUX:
+<DD>
+multithreading, shared DB access, and locking working. 
+<DT>Solaris:
+<DD>
+multithreading, shared DB access, and locking working. 
+<DT>IRIX:
+<DD>
+multithreading, shared DB access, and locking working. 
+<DT>SunOS 4:
+<DD>
+multithreading, shared DB access, and locking NOT working. 
+<DT>Win 95/98/NT/2000:
+<DD>
+multithreading, shared DB access, and locking working. Dynamic linking of object code (C) libraries NOT working. 
 </DL>
 
 <P>
+The features that do not work are disabled at compile time. 
+
+
+
+
+<H2><A NAME="SEC840" HREF="ciao_toc.html#TOC840">Keeping up to date with the Ciao users mailing list</A></H2>
+
+<P>
+We recommend that you join the 
+<A NAME="IDX8614"></A>
 <A NAME="IDX8615"></A>
 <A NAME="IDX8616"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>dictionary_insert/5:</B>
-<DD><A NAME="IDX8617"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dictionary_insert(+Key, +Type, +Field, +Dictionary, ?Info)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The predicate will search for the place for the Key and return Info, if the element inserted had a post before (same key value) multiple else new. The dictionary is dynamic and do not need output because of using unbinded variables.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Key</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>+Type</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>+Field</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-
-<CODE>+Dictionary</CODE> is a tree structure.
- (<CODE>internal_types:tree/1</CODE>)
-
-<CODE>?Info</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
+<A NAME="IDX8617"></A>
+Ciao 
 <A NAME="IDX8618"></A>
 <A NAME="IDX8619"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>dictionary_lookup/5:</B>
-<DD><A NAME="IDX8620"></A>
+<EM>users mailing list</EM> (<CODE>ciao-users@clip.dia.fi.upm.es</CODE>), in order to receive information on new versions and solutions to problems. Simply send a message to <A HREF="mailto:ciao-users-request@clip.dia.fi.upm.es">ciao-users-request@clip.dia.fi.upm.es</A>, containing in the body only the word: 
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>dictionary_lookup(+Key, ?Type, ?Field, +Dictionary, -Info)</CODE>
+<CODE>subscribe</CODE> 
 
-<UL>
-<LI><EM>Description:</EM> The predicate will search for the Key and return Info;defined or undefined accordingly. If defined the fields will be filled as well. The predicate do not insert the element.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Key</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>?Type</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>?Field</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-
-<CODE>+Dictionary</CODE> is a dictionary.
- (<CODE>internal_types:dictionary/1</CODE>)
-
-<CODE>-Info</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
 
 <P>
+alone in one line. Messages in the list are strictly limited to issues directly related to Ciao Prolog and your email address will of course be kept strictly confidential. You mail also want to subscribe to the <CODE>comp.lang.prolog</CODE> newsgroup. 
+
+
+<P>
+There is additional info available on the Ciao system, other CLIP group software, publications on the technology underlying these systems, etc. in the CLIP group's WWW site <A HREF="http://clip.dia.fi.upm.es">http://clip.dia.fi.upm.es</A>. 
+
+
+
+
+<H2><A NAME="SEC841" HREF="ciao_toc.html#TOC841">Downloading new versions</A></H2>
+
+<P>
+Ciao and its related libraries and utilities are under constant improvement, so you should make sure that you have the latest versions of the different components, which can be dowloaded from: 
+<A NAME="IDX8620"></A>
 <A NAME="IDX8621"></A>
-<A NAME="IDX8622"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>merge_tree/2:</B>
-<DD><A NAME="IDX8623"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>merge_tree(+Tree, +Tree)</CODE>
+<A HREF="http://clip.dia.fi.upm.es/Software">http://clip.dia.fi.upm.es/Software</A> 
+
+
+
+
+<H2><A NAME="SEC842" HREF="ciao_toc.html#TOC842">Reporting bugs</A></H2>
+<P>
+<A NAME="IDX8622"></A>
+<A NAME="IDX8623"></A>
+<A NAME="IDX8624"></A>
+<A NAME="IDX8625"></A>
+
+
+<P>
+If you still have problems after downloading the latest version and reading the installation instructions you can send a message to <A HREF="mailto:ciao-bug@clip.dia.fi.upm.es">ciao-bug@clip.dia.fi.upm.es</A>. Please be as informative as possible in your messages, so that we can reproduce the bug. 
+
+
 
 <UL>
-<LI><EM>Description:</EM> The predicate can be used for adding a tree dictionary to another one (the second). It will remove equal posts but posts with a slight difference will be inserted. The resulting tree will be the second tree.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<LI>For <EM>installation problems</EM> we typically need to have the version and patch number of the Ciao package (e.g., the name of the file downloaded), the output produced by the installation process (you can capture it by redirecting the output into a file or cutting and pasting with the mouse), and the exact version of the Operating System you are using (as well as the C compiler, if you took a source distribution).
 
-<CODE>+Tree</CODE> is a tree structure.
- (<CODE>internal_types:tree/1</CODE>)
+<LI>For <EM>problems during use</EM> we also need the Ciao and OS versions and a small example of code which we can run to reproduce the bug.
 
-<CODE>+Tree</CODE> is a tree structure.
- (<CODE>internal_types:tree/1</CODE>)
 </UL>
 
-</DL>
+<P>
+ 
+
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_214.html">previous</A>, <A HREF="ciao_216.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_214.html">previous</A>, <A HREF="ciao_216.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

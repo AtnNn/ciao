@@ -4,7 +4,7 @@
         current_fact_nb/1, retract_fact_nb/1,
         close_predicate/1, open_predicate/1,
         set_fact/1, erase/1],
-        [assertions, isomodes]).
+        [assertions, isomodes, .(metadefs)]).
 
 :- comment(title,"Fast/concurrent update of facts").
 
@@ -66,7 +66,7 @@
           directive is defined as a prefix operator in the compiler.".
 
 :- use_module(engine(internals), [
-        term_to_meta/2, 
+        term_to_meta/2, '$meta_call'/1,
         '$compile_term'/2,'$current_clauses'/2,'$inserta'/2,'$insertz'/2,
         '$ptr_ref'/2,'$current_instance'/5,'$instance'/3,'$erase'/1,
         '$close_predicate'/1, '$open_predicate'/1, '$unlock_predicate'/1]).
@@ -92,9 +92,6 @@
 :- true pred asserta_fact(+callable).
 
 asserta_fact(Fact) :-
-	meta_asserta_fact(Fact).
-
-meta_asserta_fact(Fact) :-
         '$compile_term'([Fact|true], Ptr),
 	'$current_clauses'(Fact, Root),
 	'$inserta'(Root, Ptr).
@@ -151,7 +148,7 @@ assertz_fact(Fact, Ref) :-
 
 current_fact(Fact) :-
 	'$current_clauses'(Fact, Root),
-	'$current_instance'(Fact, ThisIsTrue, Root, _, block), this_is_true(ThisIsTrue),
+	'$current_instance'(Fact, true, Root, _, block),
         '$unlock_predicate'(Root).
 
 :- comment(current_fact_nb(Fact), "Behaves as @pred{current_fact/1} but
@@ -162,7 +159,7 @@ current_fact(Fact) :-
 
 current_fact_nb(Fact) :-
 	'$current_clauses'(Fact, Root),
-	'$current_instance'(Fact, ThisIsTrue, Root, _, no_block), this_is_true(ThisIsTrue),
+	'$current_instance'(Fact, true, Root, _, no_block),
         '$unlock_predicate'(Root).
 
 :- comment(current_fact(Fact,Ref), "@var{Fact} is a fact of a
@@ -178,15 +175,12 @@ current_fact_nb(Fact) :-
 
 current_fact(Fact, Ref) :-
 	'$ptr_ref'(Ptr, Ref), !,
-	'$instance'(Fact, ThisIsTrue, Ptr), this_is_true(ThisIsTrue).
+	'$instance'(Fact, true, Ptr).
 current_fact(Fact, Ref) :-
 	'$current_clauses'(Fact, Root),
-	'$current_instance'(Fact, ThisIsTrue, Root, Ptr, no_block), this_is_true(ThisIsTrue),
+	'$current_instance'(Fact, true, Root, Ptr, no_block),
         '$ptr_ref'(Ptr, Ref),
         '$unlock_predicate'(Root).
-
-% JF,TODO: remove
-this_is_true(ThisIsTrue) :- ( ThisIsTrue = true -> true ; ThisIsTrue = 'basiccontrol:true' -> true ; fail ).
 
 :- comment(retract_fact(Fact), "Unifies @var{Fact} with the first
    matching fact of a @concept{data predicate}, and then erases it.  On
@@ -200,7 +194,7 @@ this_is_true(ThisIsTrue) :- ( ThisIsTrue = true -> true ; ThisIsTrue = 'basiccon
 
 retract_fact(Fact) :-
 	'$current_clauses'(Fact, Root),
-        '$current_instance'(Fact, ThisIsTrue, Root, Ptr, block), this_is_true(ThisIsTrue),
+        '$current_instance'(Fact, true, Root, Ptr, block),
 	'$erase'(Ptr),
         '$unlock_predicate'(Root).
 
@@ -212,7 +206,7 @@ retract_fact(Fact) :-
 
 retract_fact_nb(Fact) :-
 	'$current_clauses'(Fact, Root),
-        '$current_instance'(Fact, ThisIsTrue, Root, Ptr, no_block), this_is_true(ThisIsTrue),
+        '$current_instance'(Fact, true, Root, Ptr, no_block),
 	'$erase'(Ptr),
         '$unlock_predicate'(Root).
 
@@ -223,15 +217,12 @@ retract_fact_nb(Fact) :-
 :- true pred retractall_fact(+callable). 
 
 retractall_fact(Fact) :-
-	meta_retractall_fact(Fact).
-
-meta_retractall_fact(Fact) :-
 	'$current_clauses'(Fact, Root),
-        '$current_instance'(Fact, ThisIsTrue, Root, Ptr, no_block), this_is_true(ThisIsTrue),
+        '$current_instance'(Fact, true, Root, Ptr, no_block),
 	'$erase'(Ptr),
         '$unlock_predicate'(Root),
 	fail.
-meta_retractall_fact(_).
+retractall_fact(_).
 
 :- comment(close_predicate(Pred), "@cindex{closed} Changes the behavior
    of the predicate @var{Pred} if it has been declared as a
@@ -263,8 +254,8 @@ set_fact(Fact) :-
         term_to_meta(Fact_t, Fact),
         functor(Fact_t, F, A),
         functor(Template, F, A),
-        meta_retractall_fact(Template),
-	meta_asserta_fact(Fact_t).
+        '$meta_call'(retractall_fact(Template)),
+        '$meta_call'(asserta_fact(Fact_t)).
 
 :- comment(erase(Ref), "Deletes the clause referenced by @var{Ref}.").
 
@@ -289,9 +280,6 @@ dynamic or data clause.".
 reference('$ref'(_,_)).
 
 :- comment(version_maintenance,dir('../../version')).
-
-:- comment(version(1*11+3,2003/04/07,13:48*19+'CEST'), "Minor changes
-   related to module qualification (Jose Morales)").
 
 :- comment(version(1*7+95,2001/05/02,12:18*06+'CEST'), "Documentation
    on @decl{data/1} and @decl{concurrent} declarations now appear in

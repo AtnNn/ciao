@@ -46,32 +46,32 @@ For example, here is a list of terms in standard order:
 
 % Compiled inline -- these are hooks for the interpreter.
 
-:- prop (@Term1 == @Term2) + native # "The terms @var{Term1} and @var{Term2} are
+:- prop (@Term1 == @Term2) # "The terms @var{Term1} and @var{Term2} are
    strictly identical.".
 
 X==Y :- X==Y.
 
-:- prop (@Term1 \== @Term2) + native # "The terms @var{Term1} and @var{Term2} are
+:- prop (@Term1 \== @Term2) # "The terms @var{Term1} and @var{Term2} are
    not strictly identical.".
 
 X\==Y :- X\==Y.
 
-:- prop (@Term1 @< @Term2) + native # "The term @var{Term1} precedes the term
+:- prop (@Term1 @< @Term2) # "The term @var{Term1} precedes the term
    @var{Term2} in the standard order.".
 
 X@<Y :- X@<Y.
 
-:- prop (@Term1 @=< @Term2) + native # "The term @var{Term1} precedes or is
+:- prop (@Term1 @=< @Term2) # "The term @var{Term1} precedes or is
    identical to the term @var{Term2} in the standard order.".
 
 X@=<Y :- X@=<Y.
 
-:- prop (@Term1 @> @Term2) + native # "The term @var{Term1} follows the term
+:- prop (@Term1 @> @Term2) # "The term @var{Term1} follows the term
    @var{Term2} in the standard order.".
 
 X@>Y :- X@>Y.
 
-:- prop (@Term1 @>= @Term2) + native # "The term @var{Term1} follows or is
+:- prop (@Term1 @>= @Term2) # "The term @var{Term1} follows or is
    identical to the term @var{Term2} in the standard order.".
 
 X@>=Y :- X@>=Y.
@@ -79,13 +79,9 @@ X@>=Y :- X@>=Y.
 :- comment(compare(Op,Term1,Term2) , "@var{Op} is the result of
            comparing the terms @var{Term1} and @var{Term2}.").
 
-:- true pred compare(?atm,@term,@term)
-	=> member([(=),(>),(<)]) * term * term + native.
+:- pred compare(?atm,@term,@term) => member([(=),(>),(<)]) * term * term.
 
 compare(X, Y, Z) :- compare(X, Y, Z).
 
 :- comment(version_maintenance,dir('../../version')).
-
-:- comment(version(1*11+76,2003/12/19,18:19*01+'CET'), "First
-   revision.  (Edison Mera)").
 

@@ -11,10 +11,7 @@ persistent_dir(db,'./').
 %% Read a term, storing it in a new fact of the persistent predicate
 %% and list all the current facts of that predicate
 main:-
- 	read(X),
- 	assertz_fact(bar(X)),
- 	findall(Y,bar(Y),L),
- 	write(L).
-
-erase_all :-
-	retractall_fact(bar(_)).
+     read(X),
+     assertz_fact(bar(X)),
+     findall(Y,bar(Y),L),
+     write(L).

@@ -1,5 +1,5 @@
 
-:- module(canvas,[test/0,main/0]).
+:- module(canvas,[test/0]).
 
 :- use_module(library('tcltk/tcltk')). 
 :- use_module(library(aggregates)).
@@ -10,8 +10,6 @@
 :- export(test_aux/1).
 
 % Example to probe that the returning values to prolog is correct in the third argument of the predicate tcl_eval.
-
-main:- test.
 
 test:-
 	tcl_new(Interp),

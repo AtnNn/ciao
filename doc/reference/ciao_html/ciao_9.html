@@ -1,24 +1,42 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - debugger (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Predicates controlling the interactive debugger</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_8.html">previous</A>, <A HREF="ciao_10.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_8.html">previous</A>, <A HREF="ciao_10.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC81" HREF="ciao_toc.html#TOC81">debugger (library)</A></H1>
+<H1><A NAME="SEC81" HREF="ciao_toc.html#TOC81">Predicates controlling the interactive debugger</A></H1>
 <P>
-<A NAME="IDX735"></A>
+<A NAME="IDX732"></A>
+
+
+<P>
+<STRONG>Author(s):</STRONG> A. Ciepielewski, M. Carlsson, T. Chikayama, K. Shen, D. Cabeza, M. Rodriguez.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.7#185 (2002/2/4, 18:45:52 CET)
+
+
+<P>
+This library implements predicates which are normally used in the interactive top-level shell to debug programs. A subset of them are available in the embeddable debugger.
 
 
 
 <UL>
 <LI><A HREF="ciao_9.html#SEC82">Usage and interface (debugger)</A>
 <LI><A HREF="ciao_9.html#SEC83">Documentation on exports (debugger)</A>
+<LI><A HREF="ciao_9.html#SEC84">Documentation on internals (debugger)</A>
+<LI><A HREF="ciao_9.html#SEC85">Known bugs and planned improvements (debugger)</A>
 </UL>
 
 
@@ -40,64 +58,42 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_8.html">previous</A>, <
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX736"></A>
-<CODE>adjust_debugger/0</CODE>, 
-<A NAME="IDX737"></A>
-<CODE>switch_off_debugger/0</CODE>, 
-<A NAME="IDX738"></A>
+<A NAME="IDX733"></A>
 <CODE>debug_module/1</CODE>, 
-<A NAME="IDX739"></A>
+<A NAME="IDX734"></A>
 <CODE>nodebug_module/1</CODE>, 
-<A NAME="IDX740"></A>
+<A NAME="IDX735"></A>
 <CODE>debug_module_source/1</CODE>, 
-<A NAME="IDX741"></A>
+<A NAME="IDX736"></A>
 <CODE>debug/0</CODE>, 
-<A NAME="IDX742"></A>
+<A NAME="IDX737"></A>
 <CODE>nodebug/0</CODE>, 
-<A NAME="IDX743"></A>
+<A NAME="IDX738"></A>
 <CODE>trace/0</CODE>, 
-<A NAME="IDX744"></A>
+<A NAME="IDX739"></A>
 <CODE>notrace/0</CODE>, 
-<A NAME="IDX745"></A>
+<A NAME="IDX740"></A>
 <CODE>spy/1</CODE>, 
-<A NAME="IDX746"></A>
+<A NAME="IDX741"></A>
 <CODE>nospy/1</CODE>, 
-<A NAME="IDX747"></A>
+<A NAME="IDX742"></A>
 <CODE>nospyall/0</CODE>, 
-<A NAME="IDX748"></A>
+<A NAME="IDX743"></A>
 <CODE>breakpt/6</CODE>, 
-<A NAME="IDX749"></A>
+<A NAME="IDX744"></A>
 <CODE>nobreakpt/6</CODE>, 
-<A NAME="IDX750"></A>
+<A NAME="IDX745"></A>
 <CODE>nobreakall/0</CODE>, 
-<A NAME="IDX751"></A>
+<A NAME="IDX746"></A>
 <CODE>list_breakpt/0</CODE>, 
-<A NAME="IDX752"></A>
+<A NAME="IDX747"></A>
 <CODE>debugging/0</CODE>, 
-<A NAME="IDX753"></A>
+<A NAME="IDX748"></A>
 <CODE>leash/1</CODE>, 
-<A NAME="IDX754"></A>
+<A NAME="IDX749"></A>
 <CODE>maxdepth/1</CODE>, 
-<A NAME="IDX755"></A>
-<CODE>call_in_module/2</CODE>, 
-<A NAME="IDX756"></A>
-<CODE>current_debugged/1</CODE>, 
-<A NAME="IDX757"></A>
-<CODE>debugger_setting/2</CODE>, 
-<A NAME="IDX758"></A>
-<CODE>reset_debugger/1</CODE>, 
-<A NAME="IDX759"></A>
-<CODE>set_debugger/1</CODE>, 
-<A NAME="IDX760"></A>
-<CODE>get_debugger_state/1</CODE>, 
-<A NAME="IDX761"></A>
-<CODE>adjust_debugger_state/2</CODE>, 
-<A NAME="IDX762"></A>
-<CODE>retry_hook/4</CODE>, 
-<A NAME="IDX763"></A>
-<CODE>debug_trace/1</CODE>, 
-<A NAME="IDX764"></A>
-<CODE>do_interrupt_command/1</CODE>.
+<A NAME="IDX750"></A>
+<CODE>call_in_module/2</CODE>.
 
 </UL>
 
@@ -108,21 +104,21 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_8.html">previous</A>, <
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX765"></A>
+<A NAME="IDX751"></A>
 <CODE>debugger/debugger_lib</CODE>, 
-<A NAME="IDX766"></A>
+<A NAME="IDX752"></A>
 <CODE>format</CODE>, 
-<A NAME="IDX767"></A>
+<A NAME="IDX753"></A>
 <CODE>ttyout</CODE>, 
-<A NAME="IDX768"></A>
+<A NAME="IDX754"></A>
 <CODE>read</CODE>, 
-<A NAME="IDX769"></A>
+<A NAME="IDX755"></A>
 <CODE>system</CODE>, 
-<A NAME="IDX770"></A>
+<A NAME="IDX756"></A>
 <CODE>write</CODE>, 
-<A NAME="IDX771"></A>
+<A NAME="IDX757"></A>
 <CODE>aggregates</CODE>, 
-<A NAME="IDX772"></A>
+<A NAME="IDX758"></A>
 <CODE>sort</CODE>.
 
 </UL>
@@ -135,412 +131,469 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_8.html">previous</A>, <
 
 <H2><A NAME="SEC83" HREF="ciao_toc.html#TOC83">Documentation on exports (<CODE>debugger</CODE>)</A></H2>
 <P>
-<A NAME="IDX773"></A>
-<A NAME="IDX774"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>adjust_debugger/0:</B>
-<DD><A NAME="IDX775"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX776"></A>
-<A NAME="IDX777"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>switch_off_debugger/0:</B>
-<DD><A NAME="IDX778"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX779"></A>
-<A NAME="IDX780"></A>
+<A NAME="IDX759"></A>
+<A NAME="IDX760"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>debug_module/1:</B>
-<DD><A NAME="IDX781"></A>
+<DD><A NAME="IDX761"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>debug_module(Module)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> The debugger will take into acount module <CODE>Module</CODE> (assuming it is loaded in interpreted mode). When issuing this command at the toplevel shell, the compiler is instructed also to set to <EM>interpret</EM> the loading mode of files defining that module and also to mark it as 'modified' so that (re)loading this file or a main file that uses this module will force it to be reloaded for source-level debugging.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Module</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX782"></A>
-<A NAME="IDX783"></A>
+<A NAME="IDX762"></A>
+<A NAME="IDX763"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>nodebug_module/1:</B>
-<DD><A NAME="IDX784"></A>
+<DD><A NAME="IDX764"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>nodebug_module(Module)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> The debugger will not take into acount module <CODE>Module</CODE>. When issuing this command at the toplevel shell, the compiler is instructed also to set to <EM>compile</EM> the loading mode of files defining that module.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Module</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX785"></A>
-<A NAME="IDX786"></A>
+<A NAME="IDX765"></A>
+<A NAME="IDX766"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>debug_module_source/1:</B>
-<DD><A NAME="IDX787"></A>
+<DD><A NAME="IDX767"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>debug_module_source(Module)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> The debugger will take into acount module <CODE>Module</CODE> (assuming it is is loaded in source-level debug mode). When issuing this command at the toplevel shell, the compiler is instructed also to set to <EM>interpret</EM> the loading mode of files defining that module and also to mark it as 'modified' so that (re)loading this file or a main file that uses this module will force it to be reloaded for source-level debugging.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Module</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX788"></A>
-<A NAME="IDX789"></A>
+<A NAME="IDX768"></A>
+<A NAME="IDX769"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>debug/0:</B>
-<DD><A NAME="IDX790"></A>
+<DD><A NAME="IDX770"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> 
 
+<UL>
+<LI><EM>Description:</EM> Switches the debugger on. The interpreter will stop at all ports of procedure boxes of spied predicates.
+
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX791"></A>
-<A NAME="IDX792"></A>
+<A NAME="IDX771"></A>
+<A NAME="IDX772"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>nodebug/0:</B>
-<DD><A NAME="IDX793"></A>
+<DD><A NAME="IDX773"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> 
 
+<UL>
+<LI><EM>Description:</EM> Switches the debugger off. If there are any spy-points set then they will be kept but disabled.
+
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX794"></A>
-<A NAME="IDX795"></A>
+<A NAME="IDX774"></A>
+<A NAME="IDX775"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>trace/0:</B>
-<DD><A NAME="IDX796"></A>
+<DD><A NAME="IDX776"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> 
 
+<UL>
+<LI><EM>Description:</EM> Start tracing, switching the debugger on if needed. The interpreter will stop at all leashed ports of procedure boxes of predicates either belonging to debugged modules or called from clauses of debugged modules. A message is printed at each stop point, expecting input from the user (write <CODE>h</CODE> to see the available options).
+
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX797"></A>
-<A NAME="IDX798"></A>
+<A NAME="IDX777"></A>
+<A NAME="IDX778"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>notrace/0:</B>
-<DD><A NAME="IDX799"></A>
+<DD><A NAME="IDX779"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> 
 
+<UL>
+<LI><EM>Description:</EM> Equivalent to
+
+<A NAME="IDX780"></A>
+<CODE>nodebug/0</CODE>. 
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX800"></A>
-<A NAME="IDX801"></A>
+<A NAME="IDX781"></A>
+<A NAME="IDX782"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>spy/1:</B>
-<DD><A NAME="IDX802"></A>
+<DD><A NAME="IDX783"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>spy(PredSpec)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> Set spy-points on predicates belonging to debugged modules and which match <CODE>PredSpec</CODE>, switching the debugger on if needed. This predicate is defined as a prefix operator by the toplevel.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>PredSpec</CODE> is a sequence of <CODE>multpredspec</CODE>s.
+ (<CODE>basic_props:sequence/2</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX803"></A>
-<A NAME="IDX804"></A>
+<A NAME="IDX784"></A>
+<A NAME="IDX785"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>nospy/1:</B>
-<DD><A NAME="IDX805"></A>
+<DD><A NAME="IDX786"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>nospy(PredSpec)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> Remove spy-points on predicates belonging to debugged modules which match <CODE>PredSpec</CODE>. This predicate is defined as a prefix operator by the toplevel.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>PredSpec</CODE> is a sequence of <CODE>multpredspec</CODE>s.
+ (<CODE>basic_props:sequence/2</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX806"></A>
-<A NAME="IDX807"></A>
+<A NAME="IDX787"></A>
+<A NAME="IDX788"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>nospyall/0:</B>
-<DD><A NAME="IDX808"></A>
+<DD><A NAME="IDX789"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> 
 
+<UL>
+<LI><EM>Description:</EM> Remove all spy-points.
+
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX809"></A>
-<A NAME="IDX810"></A>
+<A NAME="IDX790"></A>
+<A NAME="IDX791"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>breakpt/6:</B>
-<DD><A NAME="IDX811"></A>
+<DD><A NAME="IDX792"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>breakpt(Pred,Src,Ln0,Ln1,Number,RealLine)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> Set a
+
+<A NAME="IDX793"></A>
+<A NAME="IDX794"></A>
+<EM>breakpoint</EM> in file <CODE>Src</CODE> between lines <CODE>Ln0</CODE> and <CODE>Ln1</CODE> at the literal corresponding to the <CODE>Number</CODE>'th occurence of (predicate) name <CODE>Pred</CODE>. The pair <CODE>Ln0</CODE>-<CODE>Ln1</CODE> uniquely identifies a program clause and must correspond to the start and end line numbers for the clause. The rest of the arguments provide enough information to be able to locate the exact literal that the <CODE>RealLine</CODE> line refers to. This is normally not issued by users but rather by the 
+<A NAME="IDX795"></A>
+<CODE>emacs</CODE> mode, which automatically computes the different argument after selecting a point in the source file. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Pred</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Src</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
+
+<CODE>Ln0</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>Ln1</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>Number</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>RealLine</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX812"></A>
-<A NAME="IDX813"></A>
+<A NAME="IDX796"></A>
+<A NAME="IDX797"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>nobreakpt/6:</B>
-<DD><A NAME="IDX814"></A>
+<DD><A NAME="IDX798"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>nobreakpt(Pred,Src,Ln0,Ln1,Number,RealLine)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> Remove a breakpoint in file <CODE>Src</CODE> between lines <CODE>Ln0</CODE> and <CODE>Ln1</CODE> at the <CODE>Number</CODE>'th occurence of (predicate) name <CODE>Pred</CODE> (see
+
+<A NAME="IDX799"></A>
+<CODE>breakpt/6</CODE>). Also normally used from de 
+<A NAME="IDX800"></A>
+<CODE>emacs</CODE> mode. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Pred</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Src</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
+
+<CODE>Ln0</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>Ln1</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>Number</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>RealLine</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX815"></A>
-<A NAME="IDX816"></A>
+<A NAME="IDX801"></A>
+<A NAME="IDX802"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>nobreakall/0:</B>
-<DD><A NAME="IDX817"></A>
+<DD><A NAME="IDX803"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> 
 
+<UL>
+<LI><EM>Description:</EM> Remove all breakpoints.
+
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX818"></A>
-<A NAME="IDX819"></A>
+<A NAME="IDX804"></A>
+<A NAME="IDX805"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>list_breakpt/0:</B>
-<DD><A NAME="IDX820"></A>
+<DD><A NAME="IDX806"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> 
 
+<UL>
+<LI><EM>Description:</EM> Prints out the location of all breakpoints. The location of the breakpoints is showed usual by referring to the source file, the lines between which the predicate can be found, the predicate name and the number of ocurrence of the predicate name of the literal.
+
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX821"></A>
-<A NAME="IDX822"></A>
+<A NAME="IDX807"></A>
+<A NAME="IDX808"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>debugging/0:</B>
-<DD><A NAME="IDX823"></A>
+<DD><A NAME="IDX809"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> 
 
+<UL>
+<LI><EM>Description:</EM> Display debugger state.
+
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX824"></A>
-<A NAME="IDX825"></A>
+<A NAME="IDX810"></A>
+<A NAME="IDX811"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>leash/1:</B>
-<DD><A NAME="IDX826"></A>
+<DD><A NAME="IDX812"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>leash(Ports)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> Leash on ports <CODE>Ports</CODE>, some of <CODE>call</CODE>, <CODE>exit</CODE>, <CODE>redo</CODE>, <CODE>fail</CODE>. By default, all ports are on leash.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Ports</CODE> is a list of <CODE>port</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX827"></A>
-<A NAME="IDX828"></A>
+<A NAME="IDX813"></A>
+<A NAME="IDX814"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>maxdepth/1:</B>
-<DD><A NAME="IDX829"></A>
+<DD><A NAME="IDX815"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>maxdepth(MaxDepth)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> Set maximum invocation depth in debugging to <CODE>MaxDepth</CODE>. Calls to compiled predicates are not included in the computation of the depth.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>MaxDepth</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX830"></A>
-<A NAME="IDX831"></A>
+<A NAME="IDX816"></A>
+<A NAME="IDX817"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>call_in_module/2:</B>
-<DD><A NAME="IDX832"></A>
+<DD><A NAME="IDX818"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>call_in_module(Module,Predicate)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> Calls predicate <CODE>Predicate</CODE> belonging to module <CODE>Module</CODE>, even if that module does not export the predicate. This only works for modules which are in debug (interpreted) mode (i.e., they are not optimized).
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Module</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Predicate</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
 
 </DL>
 
+
+
+<H2><A NAME="SEC84" HREF="ciao_toc.html#TOC84">Documentation on internals (<CODE>debugger</CODE>)</A></H2>
 <P>
-<A NAME="IDX833"></A>
-<A NAME="IDX834"></A>
+<A NAME="IDX819"></A>
+<A NAME="IDX820"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>current_debugged/1:</B>
-<DD><A NAME="IDX835"></A>
+<DT><span class="define">PROPERTY:</span> <B>multpredspec/1:</B>
+<DD><A NAME="IDX821"></A>
 
 
 <P>
-No further documentation available for this predicate.
+A property, defined as follows:
 
+<PRE>
+
+<PRE>
+multpredspec(Mod:Spec) :-
+        atm(Mod),
+        multpredspec(Spec).
+multpredspec(Name/Low-High) :-
+        atm(Name),
+        int(Low),
+        int(High).
+multpredspec(Name/(Low-High)) :-
+        atm(Name),
+        int(Low),
+        int(High).
+multpredspec(Name/Arity) :-
+        atm(Name),
+        int(Arity).
+multpredspec(Name) :-
+        atm(Name).
+</PRE>
+
+</PRE>
 
 </DL>
 
-<P>
-<A NAME="IDX836"></A>
-<A NAME="IDX837"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>debugger_setting/2:</B>
-<DD><A NAME="IDX838"></A>
 
 
-<P>
-No further documentation available for this predicate.
+<H2><A NAME="SEC85" HREF="ciao_toc.html#TOC85">Known bugs and planned improvements (<CODE>debugger</CODE>)</A></H2>
 
 
-</DL>
+<UL>
 
-<P>
-<A NAME="IDX839"></A>
-<A NAME="IDX840"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>reset_debugger/1:</B>
-<DD><A NAME="IDX841"></A>
+<LI>
 
+Add an option to the emacs menu to automatically select all modules in a project.
 
-<P>
-No further documentation available for this predicate.
+<LI>
 
-
-</DL>
-
-<P>
-<A NAME="IDX842"></A>
-<A NAME="IDX843"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>set_debugger/1:</B>
-<DD><A NAME="IDX844"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX845"></A>
-<A NAME="IDX846"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>get_debugger_state/1:</B>
-<DD><A NAME="IDX847"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX848"></A>
-<A NAME="IDX849"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>adjust_debugger_state/2:</B>
-<DD><A NAME="IDX850"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX851"></A>
-<A NAME="IDX852"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>retry_hook/4:</B>
-<DD><A NAME="IDX853"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX854"></A>
-<A NAME="IDX855"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>debug_trace/1:</B>
-<DD><A NAME="IDX856"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX857"></A>
-<A NAME="IDX858"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>do_interrupt_command/1:</B>
-<DD><A NAME="IDX859"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
+Consider the possibility to show debugging messages directly in the source code emacs buffer.
+</UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_8.html">previous</A>, <A HREF="ciao_10.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_8.html">previous</A>, <A HREF="ciao_10.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

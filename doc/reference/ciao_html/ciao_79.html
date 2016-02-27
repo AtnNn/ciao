@@ -1,46 +1,33 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - File locks</TITLE>
+<TITLE>The Ciao Prolog System               - Term variables sets</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_78.html">previous</A>, <A HREF="ciao_80.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_78.html">previous</A>, <A HREF="ciao_80.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC331" HREF="ciao_toc.html#TOC331">File locks</A></H1>
+<H1><A NAME="SEC333" HREF="ciao_toc.html#TOC333">Term variables sets</A></H1>
 <P>
-<A NAME="IDX3995"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> J. Gomez, D. Cabeza, M. Carro.
+<A NAME="IDX3879"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
-
-
-<P>
-<STRONG>Version of last change:</STRONG> 1.7#159 (2001/11/27, 11:58:24 CET)
-
-
-<P>
-This module implements file locks: the ability to lock a fiel so that other processes cannot access it until the file is unlocked. <STRONG>It is, however, not working.</STRONG> The predicates do nothing. Proper implementation is planned for a near future.
+<STRONG>Version:</STRONG> 1.7#142 (2001/11/12, 17:49:44 CET)
 
 
 
 <UL>
-<LI><A HREF="ciao_79.html#SEC332">Usage and interface (file_locks)</A>
-<LI><A HREF="ciao_79.html#SEC333">Documentation on exports (file_locks)</A>
-<LI><A HREF="ciao_79.html#SEC334">Known bugs and planned improvements (file_locks)</A>
+<LI><A HREF="ciao_79.html#SEC334">Usage and interface (terms_vars)</A>
+<LI><A HREF="ciao_79.html#SEC335">Documentation on exports (terms_vars)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC332" HREF="ciao_toc.html#TOC332">Usage and interface (<CODE>file_locks</CODE>)</A></H2>
+<H2><A NAME="SEC334" HREF="ciao_toc.html#TOC334">Usage and interface (<CODE>terms_vars</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -48,7 +35,7 @@ This module implements file locks: the ability to lock a fiel so that other proc
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(file_locks)).</CODE>
+<CODE>:- use_module(library(terms_vars)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -57,10 +44,26 @@ This module implements file locks: the ability to lock a fiel so that other proc
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX3996"></A>
-<CODE>lock_file/3</CODE>, 
-<A NAME="IDX3997"></A>
-<CODE>unlock_file/2</CODE>.
+<A NAME="IDX3880"></A>
+<CODE>varset/2</CODE>, 
+<A NAME="IDX3881"></A>
+<CODE>varsbag/3</CODE>, 
+<A NAME="IDX3882"></A>
+<CODE>varset_in_args/2</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX3883"></A>
+<CODE>idlists</CODE>, 
+<A NAME="IDX3884"></A>
+<CODE>sort</CODE>.
 
 </UL>
 
@@ -70,73 +73,70 @@ This module implements file locks: the ability to lock a fiel so that other proc
 
 
 
-<H2><A NAME="SEC333" HREF="ciao_toc.html#TOC333">Documentation on exports (<CODE>file_locks</CODE>)</A></H2>
+<H2><A NAME="SEC335" HREF="ciao_toc.html#TOC335">Documentation on exports (<CODE>terms_vars</CODE>)</A></H2>
 <P>
-<A NAME="IDX3998"></A>
-<A NAME="IDX3999"></A>
+<A NAME="IDX3885"></A>
+<A NAME="IDX3886"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>lock_file/3:</B>
-<DD><A NAME="IDX4000"></A>
+<DT><span class="define">PREDICATE:</span> <B>varset/2:</B>
+<DD><A NAME="IDX3887"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>lock_file(File, LockType, Result)</CODE>
+<CODE>varset(Term,Xs)</CODE>
 
-<UL>
-<LI><EM>Description:</EM> Tries to lock <CODE>File</CODE> with <CODE>LockType</CODE> and returns the result (either <CODE>true</CODE> or <CODE>false</CODE>) in <CODE>Result</CODE>.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<P>
+<CODE>Xs</CODE> is the sorted list of all the variables in <CODE>Term</CODE>.
 
-<CODE>File</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>LockType</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>Result</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4001"></A>
-<A NAME="IDX4002"></A>
+<A NAME="IDX3888"></A>
+<A NAME="IDX3889"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>unlock_file/2:</B>
-<DD><A NAME="IDX4003"></A>
+<DT><span class="define">PREDICATE:</span> <B>varsbag/3:</B>
+<DD><A NAME="IDX3890"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>unlock_file(File, Result)</CODE>
+<CODE>varsbag(Term,Vs,Xs)</CODE>
 
-<UL>
-<LI><EM>Description:</EM> Tries to unlock <CODE>File</CODE> the result (either <CODE>true</CODE> or <CODE>false</CODE>) in <CODE>Result</CODE>.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<P>
+<CODE>Vs</CODE> is the list of all the variables in <CODE>Term</CODE> ordered as they appear in <CODE>Term</CODE> left-to-right depth-first (including duplicates) plus <CODE>Xs</CODE>.
 
-<CODE>File</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>Result</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
 
 </DL>
 
+<P>
+<A NAME="IDX3891"></A>
+<A NAME="IDX3892"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>varset_in_args/2:</B>
+<DD><A NAME="IDX3893"></A>
 
 
-<H2><A NAME="SEC334" HREF="ciao_toc.html#TOC334">Known bugs and planned improvements (<CODE>file_locks</CODE>)</A></H2>
-
+<P>
+<STRONG>Usage:</STRONG> <CODE>varset_in_args(T,LL)</CODE>
 
 <UL>
+<LI><EM>Description:</EM> Each list of <CODE>LL</CODE> contains the variables of an argument of <CODE>T</CODE>, for each argument, and in left to right order.
 
-<LI>
+<LI><EM>The following properties should hold at call time:</EM>
 
-No doing anything helpful.
+<CODE>T</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>LL</CODE> is a list of <CODE>list(var)</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
 </UL>
+
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_78.html">previous</A>, <A HREF="ciao_80.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_78.html">previous</A>, <A HREF="ciao_80.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -5,7 +5,6 @@
 
 #include <stdio.h>
 #include <unistd.h>
-#include <fcntl.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -66,29 +65,6 @@ BOOL prolog_sourcepath(Arg)
 }
 */
 
-/***********************************************************************/
-/* Functions to check types (useful to find when exceptions should be raised)*/
-/***********************************************************************/
-
-/* ISO Prolog does not allow stream aliases to be used instead of stream
-   terms in many cases.  We are relaxing this here. */
-
-BOOL is_var_or_alias_or_stream(Arg, Cell)
-     Argdecl;
-     TAGGED Cell;
-{
-    return 
-        IsVar(Cell) || 
-        (TagIsATM(Cell) &&
-         (Cell == atom_user_input ||
-          Cell == atom_user_output ||
-          Cell == atom_user_error
-          )
-         ) ||
-        (TagIsSTR(Cell) && TagToHeadfunctor(Cell) == functor_Dstream);
-}
-
-
 /*   --------------------------------------------------------------  */
 /*  USAGE:  open(+,+,-) only  */
 
@@ -98,83 +74,38 @@ BOOL prolog_open(Arg)
 {
   struct stat statbuf;
   FILE *fileptr;
-  char *modecodif, modespec[2];
+  char modespec[2];
   extern int errno;
-  enum {
-    STRANGE_SOURCE_SINK,
-    INEXISTENT_SOURCE_SINK,
-    CANNOT_OPEN,
-    SYS_ERROR,
-    FINISHED_RESOURCES
-  } what_happened;
-
 
   DEREF(X(0),X(0));
   DEREF(X(1),X(1));
-  modecodif = GetString(X(1));
-
-  modespec[0] = modecodif[0];
+  modespec[0] = GetString(X(1))[0];
   modespec[1] = 0;
-
-  fileptr = (TagIsATM(X(0))   ?  fopen(GetString(X(0)), modespec) :
-	     TagIsSmall(X(0)) ? fdopen(GetSmall(X(0)),  modespec) :
+  fileptr = (TagIsATM(X(0)) ? fopen(GetString(X(0)),modespec) :
+	     TagIsSmall(X(0)) ? fdopen(GetSmall(X(0)),modespec) :
 	     NULL);
-
-  if (fileptr==NULL) {
-    what_happened = SYS_ERROR;                            /* Just in case */
-    if (errno==ENOENT || errno==ENOTDIR || errno==ENXIO ||errno==EBADF)
-      what_happened = INEXISTENT_SOURCE_SINK;
-    else if (errno==EEXIST || errno==EISDIR || errno==EISDIR || 
-               errno==EBADF || errno==EROFS)
-      what_happened = CANNOT_OPEN;
-    else if (errno==ENOMEM || errno==EMFILE || errno==ENFILE)
-      what_happened = FINISHED_RESOURCES;
-    goto bombit;
-    } else {
-        if (fstat(fileno(fileptr), &statbuf) || 
-            (statbuf.st_mode & S_IFMT) == S_IFDIR) {
-          fclose(fileptr);
-          what_happened = CANNOT_OPEN;
-          goto bombit;
-        }
-    }
-
-  {
-    char locking = modecodif[1];
-
-    if (locking == 'l' || locking == 'b') /* file locking */ {
-      struct flock sflo;
-      int cmd = (locking == 'l' ? F_SETLK : F_SETLKW);
-
-      sflo.l_whence = 0; sflo.l_start = 0; sflo.l_len = 0;
-      sflo.l_type = 
-        (modecodif[2] == 'r' || 
-         (modecodif[2] =='\0' && modecodif[0] == 'r') ? F_RDLCK
-         : F_WRLCK);
-      if (fcntl(fileno(fileptr), cmd, &sflo) < 0) {
-        fclose(fileptr);
-        return FALSE;
-      }
-    }
-  }
-
-  return
+  if (fileptr==NULL)
+    goto bomb1;
+  else if ( fstat(fileno(fileptr), &statbuf)
+           || (statbuf.st_mode & S_IFMT) == S_IFDIR )
+    goto bomb2;
+  else
+    return
     cunify(Arg, ptr_to_stream(Arg,new_stream(X(0),modespec,fileptr)),X(2));
 
- bombit:
-  if (current_ferror_flag == atom_on)
-    switch (what_happened) {
-    case STRANGE_SOURCE_SINK:
-      BUILTIN_ERROR(DOMAIN_ERROR(SOURCE_SINK), X(0), 1)
-    case INEXISTENT_SOURCE_SINK:
-      BUILTIN_ERROR(EXISTENCE_ERROR(SOURCE_SINK), X(0), 1)
-    case CANNOT_OPEN:
-      BUILTIN_ERROR(PERMISSION_ERROR(OPEN, SOURCE_SINK),X(0),1)
-    case SYS_ERROR:
-      BUILTIN_ERROR(SYSTEM_ERROR,X(0),1)
-    case FINISHED_RESOURCES:
-      BUILTIN_ERROR(RESOURCE_ERROR,X(0),1)
-    } else return FALSE;
+ bomb2:
+  fclose(fileptr);
+  errno = EINVAL;
+ bomb1:
+  if (current_ferror_flag==atom_on)
+    {
+      if (errno == ENOENT || errno == EBADF )
+        BUILTIN_ERROR(NO_SUCH_FILE,X(0),1)
+      else
+        BUILTIN_ERROR(NO_OPEN_PERMISSION,X(0),1)
+    }
+  else
+    return FALSE;
 }
 
 
@@ -193,7 +124,7 @@ BOOL prolog_close(Arg)
 
   stream = stream_to_ptr(X(0), 'x');
   if (stream==NULL)
-    BUILTIN_ERROR(DOMAIN_ERROR(STREAM_OR_ALIAS), X(0), 1)
+    BUILTIN_ERROR(TYPE_ERROR(STREAM_OR_ALIAS),X(0),1)
 
   else if (stream==Input_Stream_Ptr)
     Input_Stream_Ptr = stream_user_input;
@@ -207,7 +138,7 @@ BOOL prolog_close(Arg)
       (stream!=stream_user_error))
     {
       if (stream->streammode != 's')        /* Not a socket -- has FILE * */
-        fclose(stream->streamfile);  /* Releases file locks automatically */
+        fclose(stream->streamfile);
       else
         close(GetInteger(stream->label));            /* Needs a lock here */
 
@@ -282,22 +213,14 @@ void ENG_perror(s)
 #endif
 }
 
+
 /*   --------------------------------------------------------------  */
 
-/* ISO Behavior (MCL): current_input and current_output shall unify its
-   argument with the current input (re. output) stream, _not_ stream_alias.
-   This is a bit relaxed here: we allow also for stream aliases to be passed
-   in and out without raising an exception.  Same goes for current_output */ 
 
 BOOL prolog_current_input(Arg)
      Argdecl;
 {
-  DEREF(X(0), X(0));
-
-  if (is_var_or_alias_or_stream(Arg, X(0)))
-    return cunify(Arg, ptr_to_stream(Arg,Input_Stream_Ptr), X(0));
-  else
-    BUILTIN_ERROR(DOMAIN_ERROR(STREAM_OR_ALIAS), X(0), 1)
+  return cunify(Arg,ptr_to_stream(Arg,Input_Stream_Ptr),X(0));
 }
 
 
@@ -308,7 +231,6 @@ BOOL prolog_set_input(Arg)
   struct stream_node *stream;
 
   DEREF(X(0),X(0));
-
   stream = stream_to_ptr_check(X(0), 'r', &errcode);
   if (stream==NULL)
     BUILTIN_ERROR(errcode,X(0),1);
@@ -323,12 +245,7 @@ BOOL prolog_set_input(Arg)
 BOOL prolog_current_output(Arg)
      Argdecl;
 {
-  DEREF(X(0), X(0));
-
-  if (is_var_or_alias_or_stream(Arg, X(0)))
-    return cunify(Arg, ptr_to_stream(Arg,Output_Stream_Ptr), X(0));
-  else
-    BUILTIN_ERROR(DOMAIN_ERROR(STREAM_OR_ALIAS), X(0), 1)
+  return cunify(Arg,ptr_to_stream(Arg,Output_Stream_Ptr),X(0));
 }
 
 
@@ -340,10 +257,9 @@ BOOL prolog_set_output(Arg)
 
   DEREF(X(0),X(0));
   stream = stream_to_ptr_check(X(0), 'w', &errcode);
-  if (stream==NULL) {
-    printf(" Returned null, errcode is %d\n", errcode);
-    BUILTIN_ERROR(errcode, X(0), 1);
-  }
+  if (stream==NULL)
+    BUILTIN_ERROR(errcode,X(0),1);
+
   Output_Stream_Ptr = stream;
   return TRUE;
 }
@@ -371,7 +287,7 @@ BOOL prolog_replace_stream(Arg)
   else if (which_atom == atom_user_input) 
     node = stream_to_ptr_check(which_stream, 'r', &errcode);    
   else       /* Not exactly: should be "alias"*/
-    BUILTIN_ERROR(DOMAIN_ERROR(STREAM_OR_ALIAS),X(0),1); 
+    BUILTIN_ERROR(TYPE_ERROR(STREAM_OR_ALIAS),X(0),1); 
   
   if (node == NULL) BUILTIN_ERROR(errcode,X(0),1);
 
@@ -401,7 +317,7 @@ BOOL prolog_get_stream(Arg)
     node = stream_user_output;
   else if (which_atom == atom_user_error)
     node = stream_user_error;
-  else BUILTIN_ERROR(DOMAIN_ERROR(STREAM_OR_ALIAS),X(0),1);
+  else BUILTIN_ERROR(TYPE_ERROR(STREAM_OR_ALIAS),X(0),1);
    
   return cunify(Arg, X(1), ptr_to_stream_noalias(Arg, node));
 

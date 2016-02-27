@@ -7,10 +7,13 @@ include ../SHARED
 CIAOCNAME=ciaoc
 ASRGEN=gen_asr
 
+# Use the latest ciaoc (renamed as ciaoc.sta) to generate a new ciaoc.
+
 compiler:
-	$(SETBOOTSTRAPCIAO) $(BOOTSTRAP_CIAOC) -s -x $(CIAOCNAME)
+	cp -f $(CIAOCNAME) $(CIAOCSTA)
+	$(SETLOCALCIAO) $(CIAOCSTA) -s -x $(CIAOCNAME)
 	$(SETLOCALCIAO) $(CIAOC) -s -x $(ASRGEN)
-	rm -f $(ASRGEN) $(ASRGEN).cpx
+	rm $(ASRGEN)
 
 install:
 	-mkdir -p $(BINDIR)
@@ -23,8 +26,6 @@ uninstall:
 	/bin/rm -f $(BINDIR)/$(CIAOCNAME) $(BINDIR)/$(CIAOCNAME)-$(VERSION) 
 
 distclean: cleantmpfiles cleanexecs
-
-realclean: cleantmpfiles
 
 cleanbackups:
 	/bin/rm -f *~ *bak
@@ -39,4 +40,3 @@ cleanexecs:
 # Include also any stray .cpx compiler (sometimes not executable!)
 	find . -name 'ciaoc.cpx' -exec /bin/rm {} \;
 	/bin/mv temp-$(STATICCOMPNAME) $(STATICCOMPNAME)
-	rm -f $(ASRGEN) $(ASRGEN).cpx

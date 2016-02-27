@@ -1,11 +1,12 @@
-:- module(lgraphs,
+
+:- module(lgraphs, 
         [ lgraph/2,
 	  vertices_edges_to_lgraph/3
         ],
         [assertions,isomodes,regtypes] ).
 
 :- comment(title,"Labeled graph-processing utilities").
-:- comment(author,"Francisco Bueno").
+:- comment(author,"F. Bueno").
 :- comment(module,"See the comments for the @lib{ugraphs} library.").
 
 :- use_module(library(sort)).
@@ -16,12 +17,11 @@
 
 lgraph(_,_).
 
-:- comment(vertices_edges_to_lgraph(Vertices0, Edges, Graph), "This
-   one is a copy of the same procedure in library(wgraphs) except for
-   the definition of min/3 (ah! - the polimorphism!).
-
-   It would only be needed if there are multi-edges, i.e., several
-   edges between the same two vertices.").
+%% This one is a copy of the same procedure in library(wgraphs) except
+%% for the definition of min/3 (ah! - the polimorphism!)
+%%
+%% It would only be needed if there are multi-edges, i.e., several edges
+%% between the same two vertices
 
 vertices_edges_to_lgraph(Vertices0, Edges, Graph) :-
 	sort(Vertices0, Vertices1),
@@ -63,7 +63,4 @@ min(_W1,W,W).
 
 % ----------------------------------------------------------------------------
 
-
-:- comment(version(1*11+134,2003/12/30,23:45*39+'CET'), "Added comment
-   for vertices_edges_to_lgraph/3.  (Edison Mera)").
 

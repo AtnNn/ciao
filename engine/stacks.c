@@ -32,7 +32,7 @@ BOOL stack_shift_usage(Arg)
      Argdecl;
 {
   TAGGED x;
-  ENG_LINT time = (stats.ss_click*1000)/stats.userclockfreq;
+  ENG_INT time = stats.ss_time*1000;
   
   MakeLST(x,MakeInteger(Arg,time),atom_nil);
   time = stats.ss_local+stats.ss_control;
@@ -115,7 +115,7 @@ void explicit_heap_overflow(Arg,pad,arity)
 
 #if defined(DEBUG)
   if (debug_gc)
-    printf("Thread %d calling explicit_heap_overflow\n", (int)Thread_Id);
+    printf("Thread %d is performing explicit_heap_overflow\n", (int)Thread_Id);
 #endif
 
   
@@ -178,16 +178,16 @@ void choice_overflow(Arg,pad)
      Argdecl;
      int pad;
 {
-  ENG_LINT click0;
+  ENG_FLT time0;
   TAGGED *choice_top;
   struct try_node *next_alt;
 
 #if defined(DEBUG)
   if (debug_gc)
-    printf("Thread %d calling choice overflow\n", (int)Thread_Id);
+    printf("Thread %d is performing choice overflow\n", (int)Thread_Id);
 #endif
 
-  click0 = userclick();
+  time0 = usertime();
 
   if (!(next_alt = w->node->next_alt)) /* ensure A', P' exist */
     w->node->next_alt = w->next_alt,
@@ -256,18 +256,18 @@ void choice_overflow(Arg,pad)
 
         while(concchpt != InitialNode) {
 #if defined(DEBUG)
-          if (debug_concchoicepoints || debug_gc)
+          if (debug_conc || debug_gc)
             printf("*** %d(%d) Changing dynamic chpt@%x\n",
                    (int)Thread_Id, (int)GET_INC_COUNTER, 
                    (unsigned int)concchpt);
 #endif
-          concchpt->term[PrevDynChpt] =
+          concchpt->term[8] =
             PointerToTermOrZero(
-                (struct node *)((char *)TermToPointerOrNull(concchpt->term[PrevDynChpt])
+                (struct node *)((char *)TermToPointerOrNull(concchpt->term[8])
                                 + reloc_factor 
                                 + (newcount-oldcount)*sizeof(TAGGED))
                 );
-          concchpt = (struct node *)TermToPointerOrNull(concchpt->term[PrevDynChpt]);
+          concchpt = (struct node *)TermToPointerOrNull(concchpt->term[8]);
         }
 #endif
       }
@@ -286,10 +286,10 @@ void choice_overflow(Arg,pad)
   w->node->next_alt = next_alt;
 
   stats.ss_control++;
-  click0 = userclick()-click0;
-  stats.startclick += click0;
-  stats.lastclick += click0;
-  stats.ss_click += click0;
+  time0 = usertime()-time0;
+  stats.starttime += time0;
+  stats.lasttime += time0;
+  stats.ss_time += time0;
 }
 
 
@@ -302,10 +302,11 @@ void stack_overflow(Arg)
   REGISTER TAGGED t1 /* , t2 */ ; /* unused */
   REGISTER TAGGED *pt1;
   REGISTER struct node *n, *n2;
-  ENG_FLT click0 = userclick();
+  ENG_FLT time0 = usertime();
   
 #if defined(DEBUG)
-  if (debug_gc) printf("Thread %d calling stack overflow\n", (int)Thread_Id);
+  if (debug_gc)
+    printf("Thread %d is performing stack overflow\n", (int)Thread_Id);
 #endif
 
   ComputeA(w->local_top,w->node);
@@ -382,10 +383,10 @@ void stack_overflow(Arg)
   Stack_End = newh+count;	/* new high bound */
   Stack_Warn = StackOffset(Stack_End,-STACKPAD);
   stats.ss_local++;
-  click0 = userclick()-click0;
-  stats.startclick += click0;
-  stats.lastclick += click0;
-  stats.ss_click += click0;
+  time0 = usertime()-time0;
+  stats.starttime += time0;
+  stats.lasttime += time0;
+  stats.ss_time += time0;
 }
 
 
@@ -411,10 +412,6 @@ void heap_overflow(Arg,pad)
   TAGGED *lowboundh;
   BOOL gc = gcexplicit;
   /*extern long gc_total_grey;*//*Now in a register*/
-
-#if defined(DEBUG)
-  if (debug_gc) printf("Thread %d calling heap_overflow\n", (int)Thread_Id);
-#endif
 
   gcexplicit = FALSE;
   calculate_segment_node(Arg);
@@ -444,7 +441,7 @@ void heap_overflow(Arg,pad)
     REGISTER TAGGED *pt1;
     REGISTER struct node *n, *n2;
     TAGGED *newh;
-    ENG_FLT click0 = userclick();
+    ENG_FLT time0 = usertime();
     
     int wake_count = HeapCharDifference(Heap_Warn_Soft,Heap_Start);
     
@@ -479,7 +476,6 @@ void heap_overflow(Arg,pad)
 	  aux_node->frame = w->frame;
 	  aux_node->next_insn = w->next_insn;
 	  aux_node->global_top = w->global_top;
-	  aux_node->local_top = w->local_top; /* segfault patch -- jf */
 	  
 				/* relocate pointers in global stk */
 	  pt1 = newh;
@@ -547,10 +543,10 @@ void heap_overflow(Arg,pad)
       else
 	Heap_Warn_Soft = Int_Heap_Warn;
       stats.ss_global++;
-      click0 = userclick()-click0;
-      stats.startclick += click0;
-      stats.lastclick += click0;
-      stats.ss_click += click0;
+      time0 = usertime()-time0;
+      stats.starttime += time0;
+      stats.lasttime += time0;
+      stats.ss_time += time0;
     }
 }
 

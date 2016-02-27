@@ -54,6 +54,8 @@ the types and modes of the C function.  A sample declaration for
      :- true pred prolog_predicate(m1(Arg1), ... mN(ArgN)) :: 
                   type1 * ... * typeN + 
                   (foreign(foreign_function_name), returns(ArgR)).
+
+     :- impl_defined([..., prolog_predicate/N, ...]).
    @end{verbatim}
 
 where @tt{m1}, ..., @tt{mN} and @tt{type1}, ..., @tt{typeN} are
@@ -100,7 +102,7 @@ left, and the corresponding C types on the right):
    @end{itemize}
 
 Strings, atoms, and lists of bytes are passed to (and from) C as
-dynamically (@tt{ciao_malloc}) created arrays of characters
+dynamically (@tt{malloc}) created arrays of characters
 (bytes). Those arrays are freed by Ciao Prolog upon return of the
 foreign function unless the property @prop{do_not_free/2} is specified
 (see examples below).  This caters for the case in which the C files
@@ -194,12 +196,6 @@ versions of these operations which can be freely intermixed.  Using
 one version or another is a matter of taste and convenience.  We list
 below the prototypes of the primitives in order of complexity.
 
-Throughout this section, @bf{true}, when referred to a boolean value,
-correspond to the integer value @tt{1}, and @bf{false} correspond to
-the integer value @tt{0}, as is customary in C boolean expressions.
-These values also available as the (predefined) constants
-@tt{ciao_true} and @tt{ciao_false}, both of type @tt{ciao_bool}.
-
 @begin{itemize} 
 @item  @tt{ciao_term ciao_var();}
 
@@ -214,11 +210,6 @@ point of view, from a C integer.
 
 	   Creates a term, representing a floating point number, from
 a floating point number.
-
-@item @tt{ciao_term ciao_put_number_chars(char *number_string);}
-
-It converts @tt{number_string} (which must a string representing a
-syntactically valid number) into a @tt{ciao_term}.  
 
 @item @tt{ciao_term ciao_atom(char *name);}
 	      
@@ -297,19 +288,13 @@ test term types.  Below, @tt{ciao_bool} is a type defined in
 
 Returns true if @tt{term} is currently an uninstantiated variable.
 
-@item @tt{ciao_bool ciao_is_number(ciao_term term);}
-
-Returns true if @tt{term} is an integer (of any length) or a floating
-point number.
-
 @item @tt{ciao_bool ciao_is_integer(ciao_term term);}
 
 Returns true if @tt{term} is instantiated to an integer.
 
-@item @tt{ciao_bool ciao_fits_in_int(ciao_term term);}
+@item @tt{ciao_bool ciao_is_number(ciao_term term);}
 
-Returns true if @tt{term} is instantiated to an integer which can be
-stored in an @tt{int}, and false otherwise.
+Returns true if @tt{term} is an integer or a floating point number.
 
 @item @tt{ciao_bool ciao_is_atom(ciao_term atom);}
 
@@ -346,31 +331,16 @@ The functions below can be used to recover the value of a
 Converts @tt{term} to an integer. @tt{ciao_is_integer(term)} must
 hold.
 
-@item @tt{ciao_bool ciao_to_integer_check(ciao_term term, int *result); }
-
-Checks whether @tt{term} fits into the size of an integer.  If so,
-true is returned and @tt{*result} is unified with the integer
-@tt{term} represents.  Otherwise, false is returned and @tt{*result}
-is not touched.
-
 @item @tt{double ciao_to_float(ciao_term term);}
 
 Converts @tt{term} to a float value. @tt{ciao_is_number(term)}
 must hold.
 
-@item @tt{char *ciao_get_number_chars(ciao_term term);}
-
-It converts @tt{ciao_term} (which must be instantiated to a number)
-into a C string representing the number in the current radix.  The
-string returned is a copy, which must (eventually) be explicitly
-deallocated by the user C code using the operation @tt{ciao_free()}
-
 @item @tt{char *ciao_atom_name(ciao_term atom);}
 
 Returns the name of the atom.  The returned string @em{is the one
-internally used by Ciao Prolog}, and should not be deallocated,
-changed or altered in any form. The advantage of using it is that it
-is fast, as no data copying is needed.
+internally used by Ciao Prolog}, and should not be changed or altered
+in any form. The advantage of using it is that it is fast.
 
 @item @tt{char *ciao_atom_name_dup(ciao_term atom);}
 
@@ -452,40 +422,15 @@ execution flow is broken at the point where
 @end{itemize} 
 
 
-@subsection{Creating and disposing of memory chunks}
-
-Memory to be used solely by the user C code can be reserved/disposed
-of using, e.g., the well-known @tt{malloc()}/@tt{free()} functions (or
-whatever other functions the user may have available).  However,
-memory explicitly allocated by Ciao Prolog and passed to C code, or
-allocated by C code and passed on to Ciao Prolog (and subject to
-garbage collection by it) should be allotted and freed (when
-necessary) by using the functions:
-
-@begin{itemize} 
-
-@item @tt{void *ciao_malloc(int size);}
-
-@item @tt{void ciao_free(void *pointer);}
-
-@end{itemize} 
-
-@noindent 
-whose behavior is similar to @tt{malloc()}/@tt{free()}, but
-which will cooordinate properly with Ciao Prolog's internal memory
-management.
-
-
 @subsection{Calling Prolog from C}
 
 It is also possible to make arbitraty calls to Prolog predicates from
-C.  There are two basic ways of make a query, depending on whether
-only one solution is needed (or if the predicate to be called is known
-to generate only one solution), or if several solutions are required.
+C.  There are two basic ways of make a query, depending if only one
+solution is needed (or if the predicate to be called is known to
+generate only one solution), or if several solutions are required.
 
-When only one solution is needed @tt{ciao_commit_call} obtains it (the
-solution obtained will obviously be the first one) and discards the
-resources used for finding it:
+ When only one solution is needed @tt{ciao_commit_call} obtains it
+(obviously, the first) and discards the resources used for finding it:
 
 @begin{itemize}
 
@@ -497,10 +442,11 @@ whether the query has succedeed or not.  In case of success, the
 
 @item @tt{ciao_bool ciao_commit_call_term(ciao_term goal);}
 
-Like @tt{ciao_commit_call()} but uses the previously built term
+ Like @tt{ciao_commit_call()} but uses the previously built term
 @tt{goal} as goal.
 
 @end{itemize}
+
 
 If more than one solution is needed, it is necessary to use the
 @tt{ciao_query} operations.  A consult begins with a
@@ -519,7 +465,7 @@ The predicate with the given name, arity and arguments (similar to the
 
 @item @tt{ciao_query *ciao_query_begin_term(ciao_term goal);}
 
-Like ciao_query_begin but using the term @tt{goal} instead.
+ Like ciao_query_begin but using the term @tt{goal} instead.
 
 @item @tt{ciao_bool ciao_query_ok(ciao_query *query);}
 
@@ -555,9 +501,32 @@ how some additional options are added to optimize the compiled code
 (only glue code, in this case) and mathematics (only in the case of
 Linux in an Intel processor).
 
+The functions imported from the C file, and exported as predicates by
+the Prolog module are stated as defined elsewhere by the directive
+
+@begin{verbatim}
+:- impl_defined([sin/2,cos/2,fabs/2]).
+@end{verbatim}
+
+so that the Prolog compiler does not complain when examining the
+Prolog file.
+
 @bf{File} @em{math.pl}:
 
-@includeverbatim{examples/math/math.pl}
+@begin{verbatim} 
+:- module(math, [sin/2, cos/2, fabs/2], 
+                [assertions, basicmodes, regtypes, foreign_interface]).
+
+:- true pred sin(in(X),go(Y)) :: num * num + (foreign,returns(Y)).
+:- true pred cos(in(X),go(Y)) :: num * num + (foreign,returns(Y)).
+:- true pred fabs(in(X),go(Y)) :: num * num + (foreign,returns(Y)).
+
+:- extra_compiler_opts(['-O2']).
+:- extra_compiler_opts('LINUXi86',['-ffast-math']).
+:- use_foreign_library([m]).
+
+:- impl_defined([sin/2,cos/2,fabs/2]).
+@end{verbatim}
 
 @subsection{Addresses and C pointers}
 
@@ -574,11 +543,47 @@ directive.
 
 @bf{File} @em{objects.pl}:
 
-@includeverbatim{examples/addresses/objects.pl}
+@begin{verbatim} 
+:- module(objects, [object/2, show_object/1],
+                   [assertions, basicmodes, regtypes, foreign_interface]).
+	 
+:- true pred object(in(N),go(Object)) :: int * address + 
+                                         (foreign,returns(Object)).
+
+:- true pred show_object(in(Object)) :: address + foreign.
+
+:- use_foreign_source(objects_c).
+:- extra_compiler_opts('-O2').
+
+:- impl_defined([object/2,show_object/1]).
+@end{verbatim}
 
 @bf{File} @em{objects_c.c}:
 
-@includeverbatim{examples/addresses/objects_c.c}
+
+@begin{verbatim} 
+#include <stdio.h>
+
+struct object @{
+  char *name;
+  char *colour;
+@};
+
+#define OBJECTS 3
+
+struct object objects[OBJECTS] =
+@{ @{\"ring\",\"golden\"@},
+  @{\"table\",\"brown\"@},
+  @{\"bottle\",\"green\"@} @};
+
+struct object *object(int n) @{
+  return &objects[n % OBJECTS];
+@}
+
+void show_object(struct object *o) @{
+  printf(\"I show you a %s %s\\n\", o->colour, o->name);
+@}
+@end{verbatim}
 
 @subsection{Lists of bytes and buffers}
 
@@ -591,21 +596,102 @@ range 0 to 255 can be passed to C as a buffer.
 
 @bf{File} @em{byte_lists.pl}:
 
-@includeverbatim{examples/byte_lists/byte_lists.pl}
+@begin{verbatim} 
+:- module(byte_lists, [obtain_list/3, show_list/2],
+                      [assertions, basicmodes, regtypes, foreign_interface]).
+	 
+:- true pred obtain_list(in(N),go(Length),go(List)) :: 
+             int * int * byte_list +
+             (foreign,size_of(List,Length)).
+:- true pred show_list(in(Length),in(List)) :: 
+             int * byte_list +
+             (foreign,size_of(List,Length)).
+
+:- use_foreign_source(bytes_op).
+
+:- impl_defined([obtain_list/3,show_list/2]).
+@end{verbatim}
 
 @bf{File} @em{bytes_op.c}:
 
-@includeverbatim{examples/byte_lists/bytes_op.c}
+@begin{verbatim} 
+#include <malloc.h>
+#include <stdio.h>
+
+void obtain_list(int n, int *l, char **s) @{
+  int i, c;
+  if (n < 0) n = 0;
+  *l = n;
+  *s = (char *)malloc(*l);
+  for (i = 0; i < *l; i++) @{
+    (*s)[i] = i;
+  @}
+@}
+
+void show_list(int l, char *s) @{
+  if (s) @{
+    int n;
+    printf(\"From C: [\");
+    for (n = 0; n < l; n++) @{
+      printf(\" %d\", s[n]);
+    @}
+    printf(\"]\\n\");
+  @} else @{
+    printf(\"From C: []\\n\");
+  @}
+@}
+@end{verbatim}
 
 @subsection{Lists of integers}
 
 @bf{File} @em{int_lists.pl}:
 
-@includeverbatim{examples/int_lists/int_lists.pl}
+@begin{verbatim} 
+:- module(int_lists, [obtain_list/3, show_list/2],
+                     [assertions, basicmodes, regtypes, foreign_interface]).
+	 
+:- true pred obtain_list(in(N),go(Length),go(List)) :: 
+             int * int * int_list +
+             (foreign,size_of(List,Length)).
+:- true pred show_list(in(Length),in(List)) :: 
+             int * int_list +
+             (foreign,size_of(List,Length)).
+
+:- use_foreign_source(ints_op).
+
+:- impl_defined([obtain_list/3,show_list/2]).
+@end{verbatim}
 
 @bf{File} @em{ints_op.c}:
 
-@includeverbatim{examples/int_lists/ints_op.c}
+@begin{verbatim} 
+#include <malloc.h>
+#include <stdio.h>
+
+void obtain_list(int n, int *l, int **s) @{
+  int i;
+  int c;
+  if (n < 0) n = 0;
+  *l = n;
+  *s = (int *)malloc((*l) * sizeof(int));
+  for (i = 0; i < *l; i++) @{
+    (*s)[i] = i;
+  @}
+@}
+
+void show_list(int l, int *s) @{
+  if (s) @{
+    int n;
+    printf(\"From C:\");
+    for (n = 0; n < l; n++) @{
+      printf(\" %d\", s[n]);
+    @}
+    printf(\".\\n\");
+  @} else @{
+    printf(\"From C: []\\n\");
+  @}
+@}
+@end{verbatim}
 
 @subsection{Strings and atoms}
 
@@ -623,11 +709,67 @@ therefore it should not be freed by Prolog.
 
 @bf{File} @em{strings_and_atoms.pl}:
 
-@includeverbatim{examples/strings_and_atoms/strings_and_atoms.pl}
+@begin{verbatim} 
+:- module(strings_and_atoms,
+          [lookup_string/2, lookup_atom/2, a_string/1, 
+           show_string/1, show_atom/1],
+          [assertions, basicmodes, regtypes, foreign_interface]).
+
+
+:- true pred a_string(go(S)) ::	string + 
+             (foreign(get_static_str),returns(S),do_not_free(S)).
+	 
+:- true pred lookup_string(in(N),go(S)) ::
+             int * string +
+             (foreign(get_str),returns(S)).
+:- true pred lookup_atom(in(N),go(S)) ::
+	     int * atm + 
+             (foreign(get_str),returns(S)).
+
+:- true pred show_string(in(S)) :: string + foreign(put_str).
+:- true pred show_atom(in(S)) :: atm + foreign(put_str).
+
+:- use_foreign_source(str_op).
+
+:- impl_defined([lookup_string/2,lookup_atom/2,
+                 show_string/1,show_atom/1, a_string/1]).
+@end{verbatim}
 
 @bf{File} @em{str_op.c}:
 
-@includeverbatim{examples/strings_and_atoms/str_op.c}
+@begin{verbatim} 
+#include <malloc.h>
+#include <stdio.h>
+
+char *get_static_str() @{
+  return \"this is a string Ciao Prolog should not free\";
+@}
+
+char *get_str(int n) @{
+  char *s;
+  int size;
+  int i;
+  int c;
+  if (n < 0) n = -n;
+  size = (n%4) + 5;
+  s = (char *)malloc(size+1);
+  for (i = 0, c = ((i + n) % ('z' - 'a' + 1)) + 'a'; i < size; i++,c++) @{
+    if (c > 'z') c = 'a'; 
+    s[i] = c;
+  @}
+  s[i] = 0;
+  return s;
+@}
+
+void put_str(char *s) @{
+  if (s) @{
+    printf(\"From C: \\\"%s\\\"\\n\", s);
+  @} else @{
+    printf(\"From C: null\\n\");
+  @}
+@}
+@end{verbatim}
+
 
 @subsection{Arbitrary Terms}
 
@@ -637,11 +779,71 @@ and how it can be manipulated there.
 
 @bf{File} @em{any_term.pl}:
 
-@includeverbatim{examples/any_term/any_term.pl}
+@begin{verbatim} 
+:- module(any_term, [custom_display_term/1, custom_create_term/2],
+                    [assertions, basicmodes, regtypes, foreign_interface]).
 
-@bf{File} @em{any_term_c.c}:
+:- true pred custom_display_term(in(X)) :: any_term + foreign.
+:- true pred custom_create_term(in(L), go(X)) :: 
+             int * any_term + (foreign,returns(X)).
 
-@includeverbatim{examples/any_term/any_term_c.c}
+:- use_foreign_source(any_term_c).
+:- extra_compiler_opts('-O2').
+
+:- impl_defined([custom_display_term/1,custom_create_term/2]).
+@end{verbatim}
+
+@bf{File} @em{any_term.c}:
+
+@begin{verbatim} 
+#include <stdio.h>
+#include \"ciao_prolog.h\"
+
+ciao_term custom_create_term(int n) @{
+  ciao_term t;
+  t = ciao_empty_list();
+  while (n > 0) @{
+    t = ciao_list(ciao_integer(n), t);
+    n--;
+  @}
+  return t;
+@}
+
+void custom_display_term(ciao_term term) @{
+  if (ciao_is_atom(term)) @{
+    printf(\"<atom name=\\\"%s\\\"/>\", ciao_atom_name(term));
+  @} else if (ciao_is_structure(term)) @{
+    int i;
+    int a;
+    a = ciao_structure_arity(term);
+    printf(\"<structure name=\\\"%s\\\" arity=\\\"%d\\\">\", 
+           ciao_structure_name(term), a);
+    for (i = 1; i <= a; i++) @{
+      printf(\"<argument number=\\\"%d\\\">\", i);
+      custom_display_term(ciao_structure_arg(term, i));
+      printf(\"</argument>\");
+    @}
+    printf(\"</structure>\");
+  @} else if (ciao_is_list(term)) @{
+    printf(\"<list>\");
+    printf(\"<head>\");
+    custom_display_term(ciao_list_head(term));
+    printf(\"</head>\");
+    printf(\"<tail>\");
+    custom_display_term(ciao_list_tail(term));
+    printf(\"</tail>\");
+    printf(\"</list>\");
+  @} else if (ciao_is_empty_list(term)) @{
+    printf(\"<empty_list/>\");
+  @} else if (ciao_is_integer(term)) @{
+    printf(\"<integer value=\\\"%d\\\"/>\", ciao_to_integer(term));
+  @} else if (ciao_is_number(term)) @{
+    printf(\"<float value=\\\"%f\\\"/>\", ciao_to_float(term));
+  @} else @{
+    printf(\"<unknown/>\");
+  @}
+@}
+@end{verbatim}
 
 @subsection{Exceptions}
 
@@ -652,28 +854,47 @@ a exception is raised.
 	
 @bf{File} @em{exceptions_example.pl}:
 	
-@includeverbatim{examples/exceptions/exceptions_example.pl}
+@begin{verbatim} 
+:- module(exceptions_example,
+          [codes_to_number_c/2, safe_codes_to_number/2],
+          [assertions, basicmodes, regtypes, foreign_interface]).
+
+:- use_module(library(format)).
+
+% If the string is not a number, an exception is raised.
+:- true pred codes_to_number_c(in(X), go(Y)) :: 
+             string * int + (foreign, returns(Y)).
+
+safe_codes_to_number(X, Y) :-
+        catch(codes_to_number_c(X, Y), Error, handle_exception(Error)).
+
+handle_exception(Error) :- format(\"Exception caught ~w~n\", [Error]).
+
+:- use_foreign_source(exceptions_c).
+:- extra_compiler_opts('-O2').
+
+:- impl_defined([codes_to_number_c/2]).
+@end{verbatim}
 
 @bf{File} @em{exceptions_c.c}:
 
-@includeverbatim{examples/exceptions/exceptions_c.c}
+@begin{verbatim} 
+#include <string.h>
+#include \"ciao_prolog.h\"
 
-@subsection{Testing number types and using unbound length integers}
-
-Unbound length integers (and, in general, any number) can be converted
-to/from @tt{ciao_terms} by using strings.  The following examples show
-two possibilities: one which tries to be as smart as possible
-(checking whether numbers fit into a machine int or not), and being
-lazy and simpler -and probably slower.
-
-@bf{File} @em{bigints.pl}:
-
-@includeverbatim{examples/bignums/bigints.pl}
-
-@bf{File} @em{bigints_c.c}:
-
-@includeverbatim{examples/bignums/bigints_c.c}
+int codes_to_number_c(char *s) @{
+  char *endptr;
+  int n;
+  n = strtol(s, &endptr, 10);
+  if (endptr == NULL || *endptr != '\\0') @{
+    ciao_raise_exception(ciao_structure(\"codes_to_number_exception\", 1, 
+                         ciao_atom(s)));
+  @}
+  return n;
+@}
+@end{verbatim}
 ").
+
 
  %% :- comment(doinclude,"ciao_term ciao_var();").
  %% :- comment("ciao_term ciao_var();", "Returns a fresh, unbound variable.").
@@ -701,13 +922,6 @@ lazy and simpler -and probably slower.
 
 
 :- comment(version_maintenance,dir('../../version')).
-
-:- comment(version(1*9+47,2003/01/07,14:22*36+'CET'), "Added
-   documentation for added functionality.  (MCL)").
-
-:- comment(version(1*9+46,2003/01/07,13:07*03+'CET'), "Added
-   documentation for new functionality regarding conversion of bignums
-   and testing for correctness of conversion.  (MCL)").
 
 :- comment(version(1*7+206,2002/04/22,21:00*27+'CEST'), "Documentation
    thouroughly revised; many parts rewritten.  (MCL)").

@@ -1,3 +1,4 @@
+
 :- use_package([assertions,metaprops]).
 :- comment(nodoc,assertions).
 :- comment(nodoc,metaprops).
@@ -61,9 +62,4 @@
              (Property :- (Property=(X;Y),list(X),list(Y) ; list(Property)) )
 				 ).
 */
-
-:- comment(version_maintenance,dir('../version')).
-
-:- comment(version(1*11+83,2003/12/20,14:47*06+'CET'), "First
-   revision.  (Edison Mera)").
 

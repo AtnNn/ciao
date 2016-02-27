@@ -12,6 +12,7 @@
 %%------------------------------------------------------------------------
 
 :- use_module(library('compiler/c_itf')).
+:- use_module(engine(internals),[builtin_module/1]).
 
 %%------------------------------------------------------------------------
 
@@ -107,7 +108,12 @@ imports_meta_pred(ThisModule,Goal,Module) :-
 lib2module(Lib,Mod) :-
 	base_name(Lib,Path),
 	!,
-	defines_module(Path,Mod).
+	defines_module(Path,ModuleOrBuiltin),
+	( builtin_module(ModuleOrBuiltin) -> 
+	  Mod = '-' 
+	; 
+	  Mod = ModuleOrBuiltin 
+	).
 
 %%------------------------------------------------------------------------
 %% 
@@ -314,9 +320,6 @@ user_goal(_).
 
 :- comment(version_maintenance,dir('../version')).
 
-
-:- comment(version(1*11+16,2003/04/08,04:35*48+'CEST'), "Removed
-   builtin_module/1 calls.  (Jose Morales)").
 
 :- comment(version(1*7+40,2001/01/05,19:07*40+'CET'), "Added hiord
 package (MCL)").

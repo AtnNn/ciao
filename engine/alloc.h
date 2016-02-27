@@ -7,9 +7,9 @@
 #define kCells   1024
 
 
-#define STATICMAXATOM 1024     /* Avoid very long atoms inside the engine */
+#define STATICMAXATOM 512 /* Do not create very long atoms inside the engine */
 
-#define USE_DYNAMIC_ATOM_SIZE                               /* By default */
+#define USE_DYNAMIC_ATOM_SIZE
 
 #if defined(USE_DYNAMIC_ATOM_SIZE) 
 # define MAXATOM  Atom_Buffer_Length
@@ -49,7 +49,7 @@
 
 #define INC_MEM_PROG(size) \
     if (debug_mem) \
-      printf(stderr, "Program memory increased by %ld bytes\n", \
+      printf("Program memory increased by %ld bytes\n", \
              (long int)size);\
     mem_prog_count = mem_prog_count + (size) 
 

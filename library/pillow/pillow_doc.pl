@@ -40,22 +40,3 @@
 
 :- include(library(pillow)).
 
-
-%% *** Delete this comment after reading: it is only a reminder! ***
-%% 
-%% The "assertions" library needs to be included in order to support
-%% ":- comment(...,...)." declarations such as below, i.e., insert: 
-%% 
-%% :- module(_,_,[assertions]).
-%% 
-%% At the beginning of the file:
-%% The following version comment(s) can be moved elsewhere in the 
-%% file. Subsequent version comments will always be placed above 
-%% the last one inserted.
-
-
-:- comment(version_maintenance,dir('../../version')).
-
-:- comment(version(1*11+107,2003/12/22,17:59*44+'CET'), "First
-   revision.  (Edison Mera)").
-

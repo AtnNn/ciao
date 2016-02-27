@@ -3,7 +3,6 @@
 
 :- use_module(library(sort),[sort/2]).
 :- use_module(engine(term_basic),[(=)/2]).
-:- use_module(engine(basiccontrol)).
 
 %-----------------------------------------------------------------------------
 :- comment(xrefs2graph/2,"Converts a graph of xrefs to a dlgraph in the

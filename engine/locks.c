@@ -3,8 +3,8 @@
  * Author          : Manuel Carro
  * Created On      : Wed Nov 19 20:03:55 1997
  * Last Modified By: MCL
- * Last Modified On: Wed Feb 26 17:50:06 2003
- * Update Count    : 239
+ * Last Modified On: Mon Feb 12 14:56:46 2001
+ * Update Count    : 232
  * Status          : Unknown, Use with caution!
  */
 
@@ -183,7 +183,7 @@ BOOL prolog_unlock_predicate(Arg)
      executing. */
 
   if (root->behavior_on_failure != DYNAMIC){
-    SET_NONEXECUTING((TopConcChpt->term[InvocationAttr])); 
+    SET_NONEXECUTING(TopConcChpt->term[InvocationAttr]); 
     Wait_For_Cond_End(root->clause_insertion_cond);
   }
 

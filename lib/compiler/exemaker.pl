@@ -6,12 +6,14 @@
          dynamic_search_path/1],
         [assertions]).
 
-:- use_module(library('compiler/c_itf_internal'),
+:- use_module(library('compiler/c_itf'),
         [handle_exc/1,
          process_file/7,
          process_files_from/7,
          false/1,
+         old_file_extension/2,
          make_po_file/1,
+         get_so_name/2,
          base_name/2,
          file_data/3,
          module_error/1,
@@ -23,13 +25,8 @@
          def_multifile/4,
          addmodule_inc/3,
          decl/2]).
-:- use_module(engine(internals),
-	[po_filename/2,
-	 so_filename/2,
-	 itf_filename/2]).
 :- use_module(library(system),
-        [file_exists/1,
-	 modif_time0/2,
+        [file_exists/1, 
          fmode/2,
          chmod/2,
          mktemp/2,
@@ -101,9 +98,13 @@ make_exec_prot(_, _) :-
 	retractall_fact(needs_interface(_, _)), % JFMC
         cleanup_c_itf_data.
 
+% JFMC
 treat_file(Base) :-
-        treat_so_lib(Base), % JFMC
+        treat_so_lib(Base),
+	fail.
+treat_file(Base) :-
         make_po_file(Base).
+
 
 stopOnlib(Base) :-
         current_prolog_flag(check_libraries, off),
@@ -113,7 +114,7 @@ stopOnlib(Base) :-
 skipOnlib(Base) :-
         current_prolog_flag(check_libraries, off),
         is_lib(Base),
-        so_filename(Base, SoName),
+        get_so_name(Base, SoName),
         ( file_exists(SoName) -> assertz_fact(has_so_file(Base)) ; true ).
 
 is_lib_no_engine(Base) :-
@@ -127,12 +128,12 @@ is_lib(Base) :-
         atom_concat(Dir,Name,Base),
         atom_concat('/lib',_,Name). % Directories stating by lib in Ciao
 
+% JFMC
 redo_po(Base) :-
-	po_filename(Base, PoName),
-	modif_time0(PoName, PoTime),
-	itf_filename(Base, ItfName),
-	modif_time0(ItfName, ItfTime),
-	PoTime < ItfTime.
+        treat_so_lib(Base),
+	fail.
+redo_po(Base) :-
+	old_file_extension(Base, '.po').
 
 :- data has_so_file/1, needs_interface/2. % JFMC
         
@@ -141,10 +142,9 @@ treat_so_lib(Base) :-
 	  do_interface(Decls) ->  % JFMC
 	    assertz_fact(needs_interface(Base, Decls)),
 	    assertz_fact(has_so_file(Base))
-	; so_filename(Base, SoName),
-	  file_exists(SoName) ->
-	    assertz_fact(has_so_file(Base))
-	; true
+	; get_so_name(Base, SoName),
+	  file_exists(SoName),
+	  assertz_fact(has_so_file(Base))
 	).
 
 compute_main_def(user(_), _, void) :- !.
@@ -262,20 +262,20 @@ sta_eager_lazy([B|Bs]) :-
 
 %%% --- Compiling changed files, computing info to make executable --- %%%
 
-compute_exec_data([], [], 'basiccontrol:fail').
+compute_exec_data([], [], fail).
 compute_exec_data([Base|Bases], ExFs, Lds) :- % both .so and .po - JFMC
         defines_module(Base, Module),
         load_type(Base, LdType),
-	po_filename(Base, PoName),
+	atom_concat(Base, '.po', PoName),
         ( has_so_file(Base) ->
           ( LdType = static ->
               base_name(File, Base),
-              ExFs = [PoName|ExFs_], Lds = 'basiccontrol:,'('internals:load_so'(Module, File), Lds_)
+              ExFs = [PoName|ExFs_], Lds = (load_so(Module, File), Lds_)
           ; LdType = dynamic ->
               ExFs = ExFs_, Lds = Lds_
           ; LdType = eager ->
               base_name(File, Base),
-              ExFs = ExFs_, Lds = 'basiccontrol:,'('internals:load_so'(Module, File), 'basiccontrol:,'('internals:load_po'(File), Lds_))
+              ExFs = ExFs_, Lds = (load_so(Module, File), load_po(File), Lds_)
           ; LdType = lazy ->
               make_lo(Module, Base, LoName),
               ExFs = [LoName|ExFs_], Lds = Lds_
@@ -286,7 +286,7 @@ compute_exec_data([Base|Bases], ExFs, Lds) :- % both .so and .po - JFMC
 	    ExFs = ExFs_, Lds = Lds_
 	  ; LdType = eager ->
 	    base_name(File, Base),
-	    ExFs = ExFs_, Lds = 'basiccontrol:,'('internals:load_po'(File), Lds_)
+	    ExFs = ExFs_, Lds = (load_po(File), Lds_)
 	  ; LdType = lazy ->
 	    make_lo(Module, Base, LoName),
 	    ExFs = [LoName|ExFs_], Lds = Lds_
@@ -300,7 +300,7 @@ make_lo(Module, Base, LoFile) :-
         base_name(File, Base), !,
         verbose_message(['{Making lazyloader file for ',Module]),
         compute_required_loads(Base, Loads0, Pred),
-        Loads = ('internals:load_lib_lazy'(Module, File), Loads0),
+        Loads = (load_lib_lazy(Module, File), Loads0),
         temp_filename(LoFile),
         delete_on_ctrlc(LoFile, Ref),
         open(LoFile, write, Out),
@@ -317,7 +317,7 @@ compute_required_loads(B0, Loads, Pred) :-
         retract_fact(requires_file1(B0,B)), !,
         defines_module(B, M),
         base_name(File, B), !,
-        Loads = 'basiccontrol:,'('internals:load_lib_lazy'(M, File), Loads_),
+        Loads = (load_lib_lazy(M, File), Loads_),
         compute_required_loads(B0, Loads_, Pred).
 compute_required_loads(_B0, Pred, Pred). % Incomplete structure
 
@@ -329,7 +329,7 @@ compile_stumps(Base, Module, Loads, Pred) :-
           addmodule_inc(Meta, A, A1),
           module_concat(Module, F, MF),
           functor(Pred, MF, A1),
-          compile_clause('multifile:stump'(Module, Pred), 'basiccontrol:true'),
+          compile_clause('multifile:stump'(Module, Pred), true),
           compile_clause(Pred, Loads),
         fail.
 compile_stumps(_, _, _, _).
@@ -352,7 +352,7 @@ create_init(Module, ExecMode, MainDef, Loads, TmpPoFile) :-
         Mode = ql(unprofiled),
         set_compiler_mode(Mode),
         set_compiler_out(Out),
-        compile_clause('internals:main_module'(Module), 'basiccontrol:true'), % used in engine(internals)
+        compile_clause(main_module(Module),true), % used in engine(internals)
         compile_loads(ExecMode, Loads),
         compile_main_def(MainDef),
         cleanup_compilation_data,
@@ -360,18 +360,18 @@ create_init(Module, ExecMode, MainDef, Loads, TmpPoFile) :-
         erase(Ref),
         verbose_message('}').
 
-compile_loads(static, 'basiccontrol:fail') :- !.
-compile_loads(lazyload, 'basiccontrol:fail') :- !.
+compile_loads(static, fail) :- !.
+compile_loads(lazyload, fail) :- !.
 compile_loads(_, _) :-
-        proc_declaration(multifile, 'multifile:$load_libs',
-                                    'multifile:$load_libs', 0),
+        proc_declaration(multifile, 'multifile:load_libs',
+                                    'multifile:load_libs', 0),
         fail.
 compile_loads(eagerload, _):-
-	compile_clause('multifile:$load_libs', 'basiccontrol:,'('multifile:$ldlibs'(_), 'basiccontrol:fail')),
+	compile_clause('multifile:load_libs', (ldlibs(_), fail)),
 	fail.
 compile_loads(_, Loads):-
-        Loads \== 'basiccontrol:fail', !,
-	compile_clause('multifile:$load_libs', Loads).
+        Loads \== fail, !,
+	compile_clause('multifile:load_libs', Loads).
 compile_loads(_, _).
 
 compile_main_def(void).
@@ -404,9 +404,7 @@ create_exec(ExecName, Base, PoFiles) :-
  % possibilities in order to find out which engine has to be
  % concatenated to the Ciao executable.
 copy_header(none) :- !, % OPA
-	absolute_file_name(library('compiler/header'), '', '', '.', AbsoluteFileName, _, _),
-	copy_stdout(AbsoluteFileName).
-%MIER	copy_stdout(library('compiler/header')).
+	copy_stdout(library('compiler/header')).
 copy_header(TargetEng) :-
         ciaolibdir(LibDir),
         determine_engine_name(TargetEng, EngName, Where),
@@ -470,10 +468,7 @@ generate_batch('Win32', ExecName):- !, % Untangle file name
         ),
         atom_concat(Base, BatExt, BatName),
         ( file_exists(BatName) -> delete_file(BatName) ; true ),
-
-	absolute_file_name(library('compiler/bat_skel'), '', '', '.', AbsoluteFileName, _, _),
-        file_to_string(AbsoluteFileName, BatSkel),
-%MIER        file_to_string(library('compiler/bat_skel'), BatSkel),
+        file_to_string(library('compiler/bat_skel'), BatSkel),
         append(Head, "/path/to/ciao/application"||Tail, BatSkel),
         !,
         % working_directory(D, D),
@@ -561,9 +556,9 @@ create_main(Base, PublishMod, MainFile) :-
 %                Specific_code, ExeFacts),
         findall(exe(Pred,Pred), actmod_serves(Base, Pred), ExeFacts),
         temp_filename(MainFile),
-        itf_filename(MainFile, ItfFile),
+        atom_concat(MainFile, '.itf', ItfFile),
         assertz_fact(tmp_file(ItfFile)),
-        po_filename(MainFile, PoFile),
+        atom_concat(MainFile, '.po', PoFile),
         assertz_fact(tmp_file(PoFile)),
         file_terms(MainFile, [
           :-(use_package([])),
@@ -601,9 +596,6 @@ verbose_message(M) :-
 % ------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
-
-:- comment(version(1*11+11,2003/04/07,19:01*26+'CEST'), "Added module
-   qualification of predicates in emitted clauses.  (Jose Morales)").
 
 :- comment(version(1*7+184,2002/01/31,19:49*14+'CET'), ".bat files are
 generated in Windows (MCL)").

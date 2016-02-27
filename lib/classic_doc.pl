@@ -1,9 +1,8 @@
+
 :- use_package(assertions).
 :- comment(nodoc,assertions).
 
 :- comment(title,"Classic Prolog package").
-
-:- comment(author, "The CLIP Group").
 
 :- comment(module,"This library package allows the use of certain Prolog
    features which have become sort of 'classical' from many Prolog 
@@ -12,8 +11,3 @@
    predicates, and the following chapters describe them.").
 
 :- include(library(classic)).
-
-:- comment(version_maintenance,dir('../version')).
-
-:- comment(version(1*11+85,2003/12/21,02:00*26+'CET'), "Added comment
-   author.  (Edison Mera)").

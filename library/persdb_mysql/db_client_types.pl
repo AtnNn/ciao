@@ -16,9 +16,6 @@
 
 :- comment(author,"D. Cabeza, M. Carro, I. Caballero, and M. Hermenegildo.").
 
-:- comment(module,"This module implement the types for the low level
-   interface to SQL databases").
-
 % ----------------------------------------------------------------------------
 
 :- regtype socketname(IPP) # "@var{IPP} is a structure describing a complete TCP/IP port address.".
@@ -96,8 +93,4 @@ tuple(T) :-
 
 :- comment(tuple/1,"@includedef{tuple/1}").
 
-:- comment(version_maintenance,dir('../../version')).
-
-:- comment(version(1*11+109,2003/12/22,18:08*09+'CET'), "Added comment
-   module.  (Edison Mera)").
 

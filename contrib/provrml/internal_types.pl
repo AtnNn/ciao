@@ -7,12 +7,7 @@
 	 tree/1,
 	 whitespace/1],[assertions,isomodes,regtypes]).
 
-:- comment(author, "G@..{o}ran Smedb@..{a}ck").
-
 %:- use_module(library(basicprops)).
-
-:- comment(version(1*9+177,2003/12/04,17:48*37+'CET'), "Added author
-info.  (Manuel Carro)").
 
 :- comment(version(0*1+2,1998/12/17,12:37*23+'MET'), "Commenting (Goran
    Smedback)").
@@ -158,6 +153,6 @@ whitespace(w(Row,Indentation)) :-
 %% Version comment prompting control for this file.
 %% Local Variables: 
 %% mode: CIAO
+%% update-version-comments: "../../version"
 %% End:
 
-:- comment(version_maintenance,dir('../../version')).

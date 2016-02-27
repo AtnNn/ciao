@@ -2,7 +2,6 @@
         asserta_fact/1, 
         assertz_fact/1, 
         retract_fact/1,
-	retractall_fact/1,
         init_persdb/0, 
         initialize_db/0,
         make_persistent/2,
@@ -12,7 +11,6 @@
 :- redefining(asserta_fact/1).
 :- redefining(assertz_fact/1).
 :- redefining(retract_fact/1).
-:- redefining(retractall_fact/1).
 
 :- multifile('$is_persistent'/2).
 :- data '$is_persistent'/2.

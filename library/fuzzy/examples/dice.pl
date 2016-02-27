@@ -1,6 +1,5 @@
 :- module(dice,_,[fuzzy]).
 
-
 small :# fuzzy_predicate([(1,1),(2,1),(3,0.7),(4,0.3),(5,0),(6,0)]).
 large :# fuzzy_predicate([(1,0),(2,0),(3,0.3),(4,0.7),(5,1),(6,1)]).
 

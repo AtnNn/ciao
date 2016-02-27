@@ -52,7 +52,6 @@
 #define TrailPop(P)		(*--(P))
 #define TrailNext(P)		(*(P)++)
 #define TrailPush(P,X)		(*(P)++ = (X))
-#define TrailPushCheck(P,X)     trail_push_check(Arg,X)
 
 
 

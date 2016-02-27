@@ -6,8 +6,7 @@ include $(SYSDEP_FILES)/mkf-$(CIAOARCH)
 
 # Beware: these must be .pl files: otherwise they may be eliminated on cleanup
 # get_version taken out
-PLUTILITIES=fileinfo get_deps pldiff viewpo lpmake cleandirs fix_size \
-            show_asr compiler_output
+PLUTILITIES=fileinfo get_deps pldiff viewpo lpmake cleandirs fix_size show_asr
 SHSCRIPTS=ciao_get_arch collect_modules
 
 .SUFFIXES: .pl

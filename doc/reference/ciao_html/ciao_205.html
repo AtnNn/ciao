@@ -1,67 +1,39 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - gengraph2 (library)</TITLE>
+<TITLE>The Ciao Prolog System               - internal_types (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_204.html">previous</A>, <A HREF="ciao_206.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_204.html">previous</A>, <A HREF="ciao_206.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC809" HREF="ciao_toc.html#TOC809">gengraph2 (library)</A></H1>
+<H1><A NAME="SEC800" HREF="ciao_toc.html#TOC800">internal_types (library)</A></H1>
 <P>
-<A NAME="IDX8293"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Isabel Martín.
+<A NAME="IDX7979"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
+<STRONG>Version:</STRONG> 0.1#2 (1998/12/17, 12:37:23 MET)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.9#162 (2003/12/4, 17:39:33 CET)
-
-
-<P>
-This module defines predicates which show line graph widgets. All eight predicates exported by this module plot two-variable data. Each point is defined by its X-Y coordinate values. Every predicate share the following features: 
+These are the internal data types used in the predicates. They are only used to simplify this documentation and make it more understandable. 
+ 
+Implemented by G&ouml;ran Smedb&auml;ck 
 
 
 
 <UL>
-
-<LI>A dataset is defined by three lists xvector, yvector and attributes. The arguments named <CODE>XVectors</CODE> (or <CODE>XVs</CODE>), <CODE>YVectors</CODE> (or <CODE>YVs</CODE>) and <CODE>LAtts</CODE><A NAME="DOCF6" HREF="ciao_foot.html#FOOT6">(6)</A> contain this information. Those arguments must be lists whose elements are also lists. The first dataset is defined by the firts element of the three lists, the second dataset is defined by the second element of the three lists and so on.
-
-<LI>Numeric values for the vector elements are needed. We will use two vectors to represent the X-Y coordinates of each set of data plotted. In these predicates the vectors can have different number of points. However, the number of elements in xvector and yvector that pertain to a certain dataset must be, obviously, equal.
-
-<LI>The active line color is blue, which means that when you select a legend element, the corresponding line turns into navyblue.
-
-<LI>The user can either select the appearance for the lines and the points or not. See the
-
-<A NAME="IDX8294"></A>
-<CODE>attributes/1</CODE> type definition. Thus, the user can call each predicate in different ways ways. 
-
-<LI>The graph has a legend and one entry (symbol and label) per dataset.
-
-<LI>If you do not want to display text in the elements header, barchart title, xaxis title, yaxis title or footer, simply give <CODE>"</CODE> as the value of the argument.
-
-<LI>The predicates check whether the format of the arguments is correct as well. The testing process involves some verifications. If one or both vectors are empty, the exception <CODE>error2</CODE> will be thrown. If the vectors contains elements but are not correct, the exception <CODE>error4</CODE> will be thrown.
-
-</UL>
-
-
-<UL>
-<LI><A HREF="ciao_205.html#SEC810">Usage and interface (gengraph2)</A>
-<LI><A HREF="ciao_205.html#SEC811">Documentation on exports (gengraph2)</A>
+<LI><A HREF="ciao_205.html#SEC801">Usage and interface (internal_types)</A>
+<LI><A HREF="ciao_205.html#SEC802">Documentation on exports (internal_types)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC810" HREF="ciao_toc.html#TOC810">Usage and interface (<CODE>gengraph2</CODE>)</A></H2>
+<H2><A NAME="SEC801" HREF="ciao_toc.html#TOC801">Usage and interface (<CODE>internal_types</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -69,57 +41,29 @@ This module defines predicates which show line graph widgets. All eight predicat
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(gengraph2)).</CODE>
+<CODE>:- use_module(library(internal_types)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
 
 <UL>
 
-<LI><EM>Predicates:</EM>
+<LI><EM>Regular Types:</EM>
 
-<A NAME="IDX8295"></A>
-<CODE>graph_b2/9</CODE>, 
-<A NAME="IDX8296"></A>
-<CODE>graph_b2/13</CODE>, 
-<A NAME="IDX8297"></A>
-<CODE>graph_w2/9</CODE>, 
-<A NAME="IDX8298"></A>
-<CODE>graph_w2/13</CODE>, 
-<A NAME="IDX8299"></A>
-<CODE>scattergraph_b2/8</CODE>, 
-<A NAME="IDX8300"></A>
-<CODE>scattergraph_b2/12</CODE>, 
-<A NAME="IDX8301"></A>
-<CODE>scattergraph_w2/8</CODE>, 
-<A NAME="IDX8302"></A>
-<CODE>scattergraph_w2/12</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX8303"></A>
-<CODE>chartlib/gengraph1</CODE>, 
-<A NAME="IDX8304"></A>
-<CODE>chartlib/genbar1</CODE>, 
-<A NAME="IDX8305"></A>
-<CODE>chartlib/bltclass</CODE>, 
-<A NAME="IDX8306"></A>
-<CODE>chartlib/color_pattern</CODE>, 
-<A NAME="IDX8307"></A>
-<CODE>chartlib/test_format</CODE>, 
-<A NAME="IDX8308"></A>
-<CODE>chartlib/install_utils</CODE>, 
-<A NAME="IDX8309"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX8310"></A>
-<CODE>random/random</CODE>.
+<A NAME="IDX7980"></A>
+<CODE>bound/1</CODE>, 
+<A NAME="IDX7981"></A>
+<CODE>bound_double/1</CODE>, 
+<A NAME="IDX7982"></A>
+<CODE>dictionary/1</CODE>, 
+<A NAME="IDX7983"></A>
+<CODE>environment/1</CODE>, 
+<A NAME="IDX7984"></A>
+<CODE>parse/1</CODE>, 
+<A NAME="IDX7985"></A>
+<CODE>tree/1</CODE>, 
+<A NAME="IDX7986"></A>
+<CODE>whitespace/1</CODE>.
 
 </UL>
 
@@ -129,376 +73,203 @@ This module defines predicates which show line graph widgets. All eight predicat
 
 
 
-<H2><A NAME="SEC811" HREF="ciao_toc.html#TOC811">Documentation on exports (<CODE>gengraph2</CODE>)</A></H2>
+<H2><A NAME="SEC802" HREF="ciao_toc.html#TOC802">Documentation on exports (<CODE>internal_types</CODE>)</A></H2>
 <P>
-<A NAME="IDX8311"></A>
-<A NAME="IDX8312"></A>
+<A NAME="IDX7987"></A>
+<A NAME="IDX7988"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>graph_b2/9:</B>
-<DD><A NAME="IDX8313"></A>
+<DT><span class="define">REGTYPE:</span> <B>bound/1:</B>
+<DD><A NAME="IDX7989"></A>
 
 
 <P>
-<CODE>graph_b2(Header, GTitle, XTitle, XVectors, YTitle, YVectors, LAtts, Footer, Sm)</CODE>
-
-
-<P>
-Besides the features mentioned at the begining of the module chapter, the displayed graph generated calling this predicate has the following distinguish characteristics: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>The axis limits are determined from the data.
-
-</UL>
-
-<P>
-Example: 
-
-
+Min is a number or an atom that indicates the minimal value, Max indicates the maximal. 
 
 <PRE>
-graph_b2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[20,30,59],[25,50]],
-  'yaxixtitle',
-  [[10,35,40],[25,50]],
-  [['line1','Blue','Yellow'],['line2']],
-  'footer',
-  'natural').
+bound(bound(Min,Max)) :-
+        atm(Min),
+        atm(Max).
 </PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>bound(Bound)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Bound</CODE> is a variable interval.
+
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8314"></A>
-<A NAME="IDX8315"></A>
+<A NAME="IDX7990"></A>
+<A NAME="IDX7991"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>graph_b2/13:</B>
-<DD><A NAME="IDX8316"></A>
+<DT><span class="define">REGTYPE:</span> <B>bound_double/1:</B>
+<DD><A NAME="IDX7992"></A>
 
 
 <P>
-<CODE>graph_b2(Header, GT, XT, XVs, XMax, XMin, YT, YVs, YMax, YMin, LAtts, Footer, Smooth)</CODE>
-
-
-<P>
-In addition to the features brought up at the begining of the module chapter, this graph has the following: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>You can set the maximum and minimum values for the graph axes.
-
-</UL>
-
-<P>
-Example: 
-
-
+Min is a number or an atom that indicates the minimal value, Max indicates the maximal. The first two for some value and the second pair for some other. Typically used for types that are compound, e.g., rotationvalue. 
 
 <PRE>
-graph_b2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[20,10,59],[15,30,35]],
-  50,
-  _,
-  'yaxixtitle',
-  [[10,35,40],[25,50,60]],
-  50.5,
-  _,
-  [['line1','Blue','Yellow'],['line','MediumTurquoise','Plum']],
-  'footer',
-  'step').
+bound_double(bound(Min0,Max0,Min1,Max1)) :-
+        atm(Min0),
+        atm(Max0),
+        atm(Min1),
+        atm(Max1).
 </PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>bound_double(Bound)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Bound</CODE> is a variable interval.
+
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8317"></A>
-<A NAME="IDX8318"></A>
+<A NAME="IDX7993"></A>
+<A NAME="IDX7994"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>graph_w2/9:</B>
-<DD><A NAME="IDX8319"></A>
+<DT><span class="define">REGTYPE:</span> <B>dictionary/1:</B>
+<DD><A NAME="IDX7995"></A>
 
 
 <P>
-<CODE>graph_w2(Header, GT, XT, XVectors, YTitle, YVectors, LAtts, Footer, Smooth)</CODE>
-
-
-<P>
-This predicate is quite similar to 
-<A NAME="IDX8320"></A>
-<CODE>graph_b2/9</CODE>. The difference lies in the graph appearance, as you can see below. 
-
-
-
-<UL>
-
-<LI>The plotting area background color is white.
-
-<LI>The cross hairs color is black.
-
-</UL>
-
-<P>
-Example: 
-
-
+Dic is a tree structure and is used as the internal representation of the dictionary. 
 
 <PRE>
-graph_w2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[10,30,59],[25,50]],
-  'yaxixtitle',
-  [[10,35,40],[25,40]],
-  [['element1','Blue','DarkOrchid'],['element2','DarkOliveGreen',
-    'Firebrick']],
-  'footer',
-  'natural').
+dictionary(dic(Dic)) :-
+        tree(Dic).
 </PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dictionary(Dictionary)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Dictionary</CODE> is a dictionary.
+
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8321"></A>
-<A NAME="IDX8322"></A>
+<A NAME="IDX7996"></A>
+<A NAME="IDX7997"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>graph_w2/13:</B>
-<DD><A NAME="IDX8323"></A>
+<DT><span class="define">REGTYPE:</span> <B>environment/1:</B>
+<DD><A NAME="IDX7998"></A>
 
 
 <P>
-<CODE>graph_w2(Header, GT, XT, XV, XMax, XMin, YT, YVs, YMax, YMin, LAtts, Footer, Smooth)</CODE>
-
-
-<P>
-This predicate is comparable to 
-<A NAME="IDX8324"></A>
-<CODE>graph_b2/13</CODE>. The differences lie in the plot background color and in the cross hairs color, wich are white and black respectively. 
-
-
-<P>
-Example: 
+EnvironmentType one of 'DEF','PROTO','EXTERNPROTO' with the name Name. Whitespace is a structure with whitespace information. 
 
 <PRE>
-graph_w2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[10,30,59],[10,35,40]],
-  80,
-  _,
-  'yaxixtitle',
-  [[10,35,40],[25,50,60]],
-  50,
-  _,
-  [['element1','Blue','Green'],['element2','Turquoise','Black']],
-  'footer',
-  'linear').
+environment(env(Env,Name,WhiteSpace)) :-
+        atm(Env),
+        atm(Name),
+        whitespace(WhiteSpace).
 </PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>environment(Environment)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Environment</CODE> is an environment structure.
+
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8325"></A>
-<A NAME="IDX8326"></A>
+<A NAME="IDX7999"></A>
+<A NAME="IDX8000"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>scattergraph_b2/8:</B>
-<DD><A NAME="IDX8327"></A>
+<DT><span class="define">REGTYPE:</span> <B>parse/1:</B>
+<DD><A NAME="IDX8001"></A>
 
 
 <P>
-<CODE>scattergraph_b2(Header, GT, XT, XVectors, YT, YVectors, PAtts, Footer)</CODE>
-
-
-<P>
-Apart from the features brought up at the beginning of the chapter, the scatter graph displayed when invoking this predicate has the following features: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>The axis limits are determined from the data.
-
-</UL>
-
-<P>
-Example: 
+In is the list of tokens to parse and Out is the resulting list after the parsing. Env is of type env and is the environment-structure.The dictinonary Dic contains created information and structures. 
 
 <PRE>
-scattergraph_b2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[10,15,20],[8,30,40]],
-  'yaxixtitle',
-  [[10,35,20],[15,11,21]],
-  [['element1','Blue','Yellow'],['element2','MediumTurquoise','Plum']],
-  'footer').
+parse(parse(In,Out,Env,Dic)) :-
+        list(In),
+        list(Out),
+        environment(Env),
+        dictionary(Dic).
 </PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>parse(Parse)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Parse</CODE> is a parse structure.
+
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8328"></A>
-<A NAME="IDX8329"></A>
+<A NAME="IDX8002"></A>
+<A NAME="IDX8003"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>scattergraph_b2/12:</B>
-<DD><A NAME="IDX8330"></A>
+<DT><span class="define">REGTYPE:</span> <B>tree/1:</B>
+<DD><A NAME="IDX8004"></A>
 
 
 <P>
-<CODE>scattergraph_b2(Header, GT, XT, XVs, XMax, XMin, YT, YVs, YMax, YMin, PAtts, Footer)</CODE>
-
-
-<P>
-The particular features related to this predicate are described below: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>You can set the minimum and maximum limits of the axes. Data outside the limits will not be plotted.
-
-</UL>
-
-<P>
-Example: 
+Key is the search-key, Leaf is the information, Left and Right are more dictionary posts, where Left have less Key-value. 
 
 <PRE>
-scattergraph_b2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[20,30,50],[18,40,59]],
-  50,
-  _,
-  'yaxixtitle',
-  [[10,35,40],[25,50,60]],
-  50,
-  _,
-  [['point dataset1'],['point dataset2']],
-  'footer').
+tree(tree(Key,Leaf,Left,Right)) :-
+        atm(Key),
+        leaf(Leaf),
+        tree(Left),
+        tree(Right).
 </PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>tree(Tree)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Tree</CODE> is a tree structure.
+
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8331"></A>
-<A NAME="IDX8332"></A>
+<A NAME="IDX8005"></A>
+<A NAME="IDX8006"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>scattergraph_w2/8:</B>
-<DD><A NAME="IDX8333"></A>
+<DT><span class="define">REGTYPE:</span> <B>whitespace/1:</B>
+<DD><A NAME="IDX8007"></A>
 
 
 <P>
-<CODE>scattergraph_w2(Header, GTitle, XTitle, XVs, YTitle, YVs, PAtts, Footer)</CODE>
-
-
-<P>
-This predicate is quite similar to 
-<A NAME="IDX8334"></A>
-<CODE>scattergraph_w1/8</CODE> except in the following: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>If the user do not provide the colors of the points, they will be chosen among the lighter ones.
-
-</UL>
-
-<P>
-Example: 
+The Row and Indentation information. The row information used when parsing the VRML code to give accurate error position and the indentation is used when generating VRML code from terms. 
 
 <PRE>
-scattergraph_w2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[20,30,40,15,30,35,20,30]],
-  'yaxixtitle',
-  [[10,30,40,25,20,25,20,25]],
-  [['set1','cross',4]],
-  'footer').
+whitespace(w(Row,Indentation)) :-
+        number(Row),
+        number(Indentation).
 </PRE>
 
 <P>
- 
-
-
-</DL>
-
-<P>
-<A NAME="IDX8335"></A>
-<A NAME="IDX8336"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>scattergraph_w2/12:</B>
-<DD><A NAME="IDX8337"></A>
-
-
-<P>
-<CODE>scattergraph_w2(Header, GT, XT, XVs, XMax, XMin, YT, YVs, YMax, YMin, PAtts, Footer)</CODE>
-
-
-<P>
-This predicate is comparable to 
-<A NAME="IDX8338"></A>
-<CODE>scattergraph_w2/13</CODE>, the differences between them are listed below: 
-
-
+<STRONG>Usage:</STRONG> <CODE>whitespace(Whitespace)</CODE>
 
 <UL>
-
-<LI>The plotting area background color is white.
-
-<LI>The cross hairs color is black.
+<LI><EM>Description:</EM> <CODE>Whitespace</CODE> is a whitespace structure.
 
 </UL>
-
-<P>
-Example: 
-
-<PRE>
-scattergraph_w2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[20,10,59],[15,30,50]],
-  150,
-  5,
-  'yaxixtitle',
-  [[10,35,40],[25,20,60]],
-  _,
-  -10,
-  [['e1','Blue','Yellow'],['e2','MediumTurquoise','Plum']],
-  'footer').
-</PRE>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_204.html">previous</A>, <A HREF="ciao_206.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_204.html">previous</A>, <A HREF="ciao_206.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

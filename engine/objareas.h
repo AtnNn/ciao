@@ -131,7 +131,7 @@ struct stream_node {
   int pending_char;                                      /* From peek'ing */
   unsigned int isatty:1;
   unsigned int socket_eof:1;
-  /*  unsigned int socket_is_unbuffered:1; -- Not used (DCG) */
+  unsigned int socket_is_unbuffered:1;
   ENG_INT last_nl_pos;
   ENG_INT nl_count;
   ENG_INT char_count;
@@ -319,24 +319,17 @@ extern struct sw_on_key *prolog_atoms;
 extern CInfo builtintab[];
 
 struct statistics {
-  ENG_LINT ss_click;		             /* time spent stack_shifting */
+  ENG_FLT ss_time;		             /* time spent stack_shifting */
   ENG_INT ss_global;		                       /* # global shifts */
   ENG_INT ss_local;		                       /* # local shifts  */
   ENG_INT ss_control;	                        /* # control/trail shifts */
-  ENG_LINT gc_click;		                 /* Total GC clicks (sec) */
+  ENG_FLT gc_time;		                   /* Total GC time (sec) */
   ENG_INT gc_count;		                 /* # garbage collections */
   ENG_INT gc_acc;		            /* Total reclaimed heap space */
-  ENG_LINT startclick;
-  ENG_LINT lastclick;
-  ENG_LINT startwallclick;
-  ENG_LINT lastwallclick;
-  ENG_LINT startuserclick;
-  ENG_LINT lastuserclick;
-  ENG_LINT startsystemclick;
-  ENG_LINT lastsystemclick;
-  ENG_LINT wallclockfreq;
-  ENG_LINT userclockfreq;
-  ENG_LINT systemclockfreq;
+  ENG_FLT starttime;
+  ENG_FLT lasttime;
+  ENG_FLT startwalltime;
+  ENG_FLT lastwalltime;
 };
 
 extern struct statistics stats;                        /* Shared, I guess */

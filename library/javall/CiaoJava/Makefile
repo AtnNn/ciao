@@ -2,13 +2,11 @@ JAVASOURCES=*.java
 JAVACLASSES=*.class
 JAVAC=javac
 JAVAFLAGS=
-include ../../../SETTINGS
 
 all: classes
 
 classes:
 	-$(JAVAC) $(JAVAFLAGS) $(JAVASOURCES)
-	-chmod $(DATAMODE) $(JAVACLASSES)
 
 clean realclean:
 	/bin/rm -f $(JAVACLASSES)

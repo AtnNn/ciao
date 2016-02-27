@@ -1,46 +1,33 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Atom to term conversion</TITLE>
+<TITLE>The Ciao Prolog System               - errhandle (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_71.html">previous</A>, <A HREF="ciao_73.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_71.html">previous</A>, <A HREF="ciao_73.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC306" HREF="ciao_toc.html#TOC306">Atom to term conversion</A></H1>
+<H1><A NAME="SEC309" HREF="ciao_toc.html#TOC309">errhandle (library)</A></H1>
 <P>
-<A NAME="IDX3868"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Francisco Bueno, Daniel Cabeza.
+<A NAME="IDX3766"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
-
-
-<P>
-<STRONG>Version of last change:</STRONG> 1.11#92 (2003/12/21, 2:27:29 CET)
-
-
-<P>
-This module implements the predicates involved in the atom to term conversion.
+<STRONG>Version:</STRONG> 0.4#5 (1998/2/24)
 
 
 
 <UL>
-<LI><A HREF="ciao_72.html#SEC307">Usage and interface (atom2term)</A>
-<LI><A HREF="ciao_72.html#SEC308">Documentation on exports (atom2term)</A>
-<LI><A HREF="ciao_72.html#SEC309">Known bugs and planned improvements (atom2term)</A>
+<LI><A HREF="ciao_72.html#SEC310">Usage and interface (errhandle)</A>
+<LI><A HREF="ciao_72.html#SEC311">Documentation on exports (errhandle)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC307" HREF="ciao_toc.html#TOC307">Usage and interface (<CODE>atom2term</CODE>)</A></H2>
+<H2><A NAME="SEC310" HREF="ciao_toc.html#TOC310">Usage and interface (<CODE>errhandle</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -48,7 +35,7 @@ This module implements the predicates involved in the atom to term conversion.
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(atom2term)).</CODE>
+<CODE>:- use_module(library(errhandle)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -57,12 +44,10 @@ This module implements the predicates involved in the atom to term conversion.
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX3869"></A>
-<CODE>atom2term/2</CODE>, 
-<A NAME="IDX3870"></A>
-<CODE>string2term/2</CODE>, 
-<A NAME="IDX3871"></A>
-<CODE>parse_term/3</CODE>.
+<A NAME="IDX3767"></A>
+<CODE>error_protect/1</CODE>, 
+<A NAME="IDX3768"></A>
+<CODE>handle_error/2</CODE>.
 
 </UL>
 
@@ -72,76 +57,40 @@ This module implements the predicates involved in the atom to term conversion.
 
 
 
-<H2><A NAME="SEC308" HREF="ciao_toc.html#TOC308">Documentation on exports (<CODE>atom2term</CODE>)</A></H2>
+<H2><A NAME="SEC311" HREF="ciao_toc.html#TOC311">Documentation on exports (<CODE>errhandle</CODE>)</A></H2>
 <P>
-<A NAME="IDX3872"></A>
-<A NAME="IDX3873"></A>
+<A NAME="IDX3769"></A>
+<A NAME="IDX3770"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>atom2term/2:</B>
-<DD><A NAME="IDX3874"></A>
+<DT><span class="define">PREDICATE:</span> <B>error_protect/1:</B>
+<DD><A NAME="IDX3771"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>atom2term(+Atom, -Term)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> Convert an atom into a term. <CODE>Atom</CODE> is an atom, but must have term syntax. <CODE>Term</CODE> is a term resulting from parsing <CODE>Atom</CODE> char by char.
 
-</UL>
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>error_protect(goal)</CODE>.
+
 
 </DL>
 
 <P>
-<A NAME="IDX3875"></A>
-<A NAME="IDX3876"></A>
+<A NAME="IDX3772"></A>
+<A NAME="IDX3773"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>string2term/2:</B>
-<DD><A NAME="IDX3877"></A>
+<DT><span class="define">PREDICATE:</span> <B>handle_error/2:</B>
+<DD><A NAME="IDX3774"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>string2term(+String, -Term)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> Same as
-
-<A NAME="IDX3878"></A>
-<CODE>atom2term/2</CODE> but first argument is a string (containing a term). 
-</UL>
 
 </DL>
-
-<P>
-<A NAME="IDX3879"></A>
-<A NAME="IDX3880"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>parse_term/3:</B>
-<DD><A NAME="IDX3881"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>parse_term(+String, -Term, ?Dummy)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>String</CODE> is parsed into <CODE>Term</CODE> upto <CODE>Dummy</CODE> (which is the non-parsed rest of the list).
-
-</UL>
-
-</DL>
-
-
-
-<H2><A NAME="SEC309" HREF="ciao_toc.html#TOC309">Known bugs and planned improvements (<CODE>atom2term</CODE>)</A></H2>
-
-
-<UL>
-
-<LI>
-
-This is just a quick hack written mainly for parsing daVinci's messages. There should be a call to the standard reader to do this!
-</UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_71.html">previous</A>, <A HREF="ciao_73.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_71.html">previous</A>, <A HREF="ciao_73.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

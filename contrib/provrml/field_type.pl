@@ -1,10 +1,5 @@
 :- module(field_type, [fieldType/1],[assertions,isomodes]).
 
-:- comment(author, "G@..{o}ran Smedb@..{a}ck").
-
-
-:- comment(version(1*9+174,2003/12/04,17:47*35+'CET'), "Added author
-info.  (Manuel Carro)").
 
 :- comment(version(0*1+0,1998/12/09,13:30*46+'MET'), "Documented.  (Goran
    Smedback)").
@@ -44,7 +39,6 @@ fieldType('SFVec3f').
 %% Version comment prompting control for this file.
 %% Local Variables: 
 %% mode: CIAO
+%% update-version-comments: "../../version"
 %% End:
-
-:- comment(version_maintenance,dir('../../version')).
 

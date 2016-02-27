@@ -1,64 +1,37 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Java to Prolog interface</TITLE>
+<TITLE>The Ciao Prolog System               - wgraphs (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_161.html">previous</A>, <A HREF="ciao_163.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_161.html">previous</A>, <A HREF="ciao_163.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC677" HREF="ciao_toc.html#TOC677">Java to Prolog interface</A></H1>
+<H1><A NAME="SEC665" HREF="ciao_toc.html#TOC665">wgraphs (library)</A></H1>
 <P>
-<A NAME="IDX7140"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Jes&uacute;s Correas.
+<A NAME="IDX6860"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
+<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.9#65 (2003/3/14, 12:48:10 CET)
-
-
-<P>
- 
-<A NAME="IDX7141"></A>
-<A NAME="IDX7142"></A>
-This module defines the Prolog side of the Java to Prolog interface. This side of the interface only has one public predicate: a server that listens at the socket connection with Java, and executes the commands received from the Java side. 
-
-
-<P>
-In order to evaluate the goals received from the Java side, this module can work in two ways: executing them in the same engine, or starting a thread for each goal. The easiest way is to launch them in the same engine, but the goals must be evaluated sequentially: once a goal provides the first solution, all the subsequent goals must be finished before this goal can backtrack to provide another solution. The Prolog side of this interface works as a top-level, and the goals partially evaluated are not independent. 
-
-
-<P>
-The solution of this goal dependence is to evaluate the goals in a different prolog engine. Although Ciao includes a mechanism to evaluate goals in different engines, the approach used in this interface is to launch each goal in a different thread. 
-
-
-<P>
-The decision of what kind of goal evaluation is selected is done by the Java side. Each evaluation type has its own command terms, so the Java side can choose the type it needs. 
-
-
-<P>
-A Prolog server starts by calling the <CODE>prolog_server/0</CODE> predicate, or by calling <CODE>prolog_server/1</CODE> predicate and providing the port number as argument. The user predicates and libraries to be called from Java must be included in the executable file, or be accesible using the built-in predicates dealing with code loading. 
+<STRONG>Version of last change:</STRONG> 0.4#5 (1998/2/24)
 
 
 
 <UL>
-<LI><A HREF="ciao_162.html#SEC678">Usage and interface (jtopl)</A>
-<LI><A HREF="ciao_162.html#SEC679">Documentation on exports (jtopl)</A>
+<LI><A HREF="ciao_162.html#SEC666">Usage and interface (wgraphs)</A>
+<LI><A HREF="ciao_162.html#SEC667">Documentation on exports (wgraphs)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC678" HREF="ciao_toc.html#TOC678">Usage and interface (<CODE>jtopl</CODE>)</A></H2>
+<H2><A NAME="SEC666" HREF="ciao_toc.html#TOC666">Usage and interface (<CODE>wgraphs</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -66,7 +39,7 @@ A Prolog server starts by calling the <CODE>prolog_server/0</CODE> predicate, or
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(jtopl)).</CODE>
+<CODE>:- use_module(library(wgraphs)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -75,20 +48,8 @@ A Prolog server starts by calling the <CODE>prolog_server/0</CODE> predicate, or
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7143"></A>
-<CODE>prolog_server/0</CODE>, 
-<A NAME="IDX7144"></A>
-<CODE>prolog_server/1</CODE>, 
-<A NAME="IDX7145"></A>
-<CODE>prolog_server/2</CODE>, 
-<A NAME="IDX7146"></A>
-<CODE>shell_s/0</CODE>, 
-<A NAME="IDX7147"></A>
-<CODE>query_solutions/2</CODE>, 
-<A NAME="IDX7148"></A>
-<CODE>query_requests/2</CODE>, 
-<A NAME="IDX7149"></A>
-<CODE>running_queries/2</CODE>.
+<A NAME="IDX6861"></A>
+<CODE>vertices_edges_to_wgraph/3</CODE>.
 
 </UL>
 
@@ -99,28 +60,10 @@ A Prolog server starts by calling the <CODE>prolog_server/0</CODE> predicate, or
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7150"></A>
-<CODE>concurrency/concurrency</CODE>, 
-<A NAME="IDX7151"></A>
-<CODE>system</CODE>, 
-<A NAME="IDX7152"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX7153"></A>
-<CODE>write</CODE>, 
-<A NAME="IDX7154"></A>
-<CODE>dynamic</CODE>, 
-<A NAME="IDX7155"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX7156"></A>
-<CODE>format</CODE>, 
-<A NAME="IDX7157"></A>
-<CODE>compiler/compiler</CODE>, 
-<A NAME="IDX7158"></A>
-<CODE>atom2term</CODE>, 
-<A NAME="IDX7159"></A>
-<CODE>javall/javasock</CODE>, 
-<A NAME="IDX7160"></A>
-<CODE>prolog_sys</CODE>.
+<A NAME="IDX6862"></A>
+<CODE>sets</CODE>, 
+<A NAME="IDX6863"></A>
+<CODE>sort</CODE>.
 
 </UL>
 
@@ -130,158 +73,22 @@ A Prolog server starts by calling the <CODE>prolog_server/0</CODE> predicate, or
 
 
 
-<H2><A NAME="SEC679" HREF="ciao_toc.html#TOC679">Documentation on exports (<CODE>jtopl</CODE>)</A></H2>
+<H2><A NAME="SEC667" HREF="ciao_toc.html#TOC667">Documentation on exports (<CODE>wgraphs</CODE>)</A></H2>
 <P>
-<A NAME="IDX7161"></A>
-<A NAME="IDX7162"></A>
+<A NAME="IDX6864"></A>
+<A NAME="IDX6865"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>prolog_server/0:</B>
-<DD><A NAME="IDX7163"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> Prolog server entry point. Reads from the standard input the node name and port number where the java client resides, and starts the prolog server listening at the jp socket. This predicate acts as a server: it includes an endless read-process loop until the <CODE>prolog_halt</CODE> command is received.
-
-However, from the low-level communication point of view, this Prolog server actually works as a client of the Java side. This means that Java side waits at the given port to a Prolog server trying to create a socket; Prolog side connects to that port, and then waits for Java requests (acting as a 'logical' server). To use this Prolog server as a real server waiting for connections at a given port, use <CODE>prolog_server/1</CODE>. 
-
-<A NAME="IDX7164"></A>
-<A NAME="IDX7165"></A>
- 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7166"></A>
-<A NAME="IDX7167"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>prolog_server/1:</B>
-<DD><A NAME="IDX7168"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> Waits for incoming Java connections to act as a Prolog goal server for Java requests.This is the only <CODE>prolog_server/*</CODE> predicate that works as a true server: given a port number, waits for a connection from Java and then serves Java requests. When a termination request is received, finishes the connection to Java and waits next Java connection request. This behaviour is different with respect to previous versions of this library. To work as before, use <CODE>prolog_server/2</CODE>.
-
-Although it currently does not support simultaneous Java connections, some work is being done in that direction. 
-<A NAME="IDX7169"></A>
-<A NAME="IDX7170"></A>
- 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>Arg1</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7171"></A>
-<A NAME="IDX7172"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>prolog_server/2:</B>
-<DD><A NAME="IDX7173"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> Prolog server entry point. Given a network <CODE>node</CODE> and a <CODE>port</CODE> number, starts the prolog server trying to connect to Java side at that <CODE>node:port</CODE> address, and then waits for Java requests. This predicate acts as a server: it includes an endless read-process loop until the <CODE>prolog_halt</CODE> command is received.
-
-However, from the low-level communication point of view, this Prolog server actually works as a client of the Java side. This means that Java side waits at the given port to a Prolog server trying to create a socket; Prolog side connects to that port, and then waits for Java requests (acting as a 'logical' server). To use this Prolog server as a real server waiting for connections at a given port, use <CODE>prolog_server/1</CODE>. 
-<A NAME="IDX7174"></A>
-<A NAME="IDX7175"></A>
- 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>Arg1</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>Arg2</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7176"></A>
-<A NAME="IDX7177"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>shell_s/0:</B>
-<DD><A NAME="IDX7178"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> Command execution loop. This predicate is called when the connection to Java is established, and performs an endless loop processing the commands received. This predicate is only intended to be used by the Prolog to Java interface and it should not be used by a user program.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7179"></A>
-<A NAME="IDX7180"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>query_solutions/2:</B>
-<DD><A NAME="IDX7181"></A>
+<DT><span class="define">PREDICATE:</span> <B>vertices_edges_to_wgraph/3:</B>
+<DD><A NAME="IDX6866"></A>
 
 
 <P>
 No further documentation available for this predicate.
-
-
-<P>
-The predicate is of type <EM>concurrent</EM>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX7182"></A>
-<A NAME="IDX7183"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>query_requests/2:</B>
-<DD><A NAME="IDX7184"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-<P>
-The predicate is of type <EM>concurrent</EM>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX7185"></A>
-<A NAME="IDX7186"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>running_queries/2:</B>
-<DD><A NAME="IDX7187"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-<P>
-The predicate is of type <EM>concurrent</EM>.
 
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_161.html">previous</A>, <A HREF="ciao_163.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_161.html">previous</A>, <A HREF="ciao_163.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

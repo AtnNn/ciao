@@ -1,7 +1,5 @@
 :- module(genmultibar,[],[assertions,regtypes,isomodes]).
 
-:- comment(author, "Isabel Martín").
-
 :- export(multibarchart/8).
 :- export(multibarchart/10).
 
@@ -650,12 +648,4 @@ xelement(Label):-
 ").
 
 
-
-
-
-
-:- comment(version_maintenance,dir('../../version')).
-
-:- comment(version(1*9+163,2003/12/04,17:39*35+'CET'), "Added author
-info (Manuel Carro)").
 

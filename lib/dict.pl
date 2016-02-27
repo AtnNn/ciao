@@ -6,9 +6,6 @@
 	       [assertions]).
 
 :- comment(title,"Dictionaries").
-
-:- comment(author, "The CLIP Group").
-
 :- comment(module,"This module provides predicates for implementing
    dictionaries. Such dictionaries are currently implemented as
    ordered binary trees of key-value pairs.").
@@ -90,9 +87,6 @@ dic_replace_(>, Key, Val, _, Val1, L, R1, Val1, L, R2) :-
 %% mode: CIAO
 %% update-version-comments: "../version"
 %% End:
-
-:- comment(version(1*11+116,2003/12/22,18:52*05+'CET'), "Added comment
-   author.  (Edison Mera)").
 
 :- comment(version(1*7+139,2001/11/12,17:24*35+'CET'), "Added
    documentation for each predicate.  (Francisco Bueno Carrillo)").

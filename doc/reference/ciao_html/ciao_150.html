@@ -1,45 +1,182 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - PiLLoW types</TITLE>
+<TITLE>The Ciao Prolog System               - Low-level Prolog to Java interface</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_149.html">previous</A>, <A HREF="ciao_151.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_149.html">previous</A>, <A HREF="ciao_151.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC614" HREF="ciao_toc.html#TOC614">PiLLoW types</A></H1>
+<H1><A NAME="SEC624" HREF="ciao_toc.html#TOC624">Low-level Prolog to Java interface</A></H1>
 <P>
-<A NAME="IDX6318"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza.
+<A NAME="IDX6346"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#143 (2003/12/31, 16:44:44 CET)
+<STRONG>Author(s):</STRONG> Jes&uacute;s Correas.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.11#131 (2003/12/30, 22:44:12 CET)
+<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
 
 
 <P>
-Here are defined the regular types used in the documentation of the predicates of the PiLLoW package.
+<STRONG>Version of last change:</STRONG> 1.7#74 (2001/3/26, 12:12:29 CEST)
+
+
+<P>
+ 
+
+
+<P>
+This module defines the low level Prolog to Java interface. This interface allows a Prolog program to start a Java process, create Java objects, invoke methods, set/get attributes (fields), and handle Java events. 
+
+
+<P>
+This interface only works with JDK version 1.2 or higher. 
+
+
+<P>
+Although the Java side interface is explained in Javadoc format (it is available at library/javall/javadoc/ in your Ciao installation), the general interface structure is detailed here. 
 
 
 
 <UL>
-<LI><A HREF="ciao_150.html#SEC615">Usage and interface (pillow_types)</A>
-<LI><A HREF="ciao_150.html#SEC616">Documentation on exports (pillow_types)</A>
+<LI><A HREF="ciao_150.html#SEC625">Low-Level Prolog to Java Interface Structure</A>
+<LI><A HREF="ciao_150.html#SEC628">Java event handling from Prolog</A>
+<LI><A HREF="ciao_150.html#SEC629">Java exception handling from Prolog</A>
+<LI><A HREF="ciao_150.html#SEC630">Usage and interface (javart)</A>
+<LI><A HREF="ciao_150.html#SEC631">Documentation on exports (javart)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC615" HREF="ciao_toc.html#TOC615">Usage and interface (<CODE>pillow_types</CODE>)</A></H2>
+<H2><A NAME="SEC625" HREF="ciao_toc.html#TOC625">Low-Level Prolog to Java Interface Structure</A></H2>
+<P>
+<A NAME="IDX6347"></A>
+<A NAME="IDX6348"></A>
+This low-level prolog to java interface is made up of two parts: a Prolog part and a Java part, running in separate processes. The Prolog part receives requests from a Prolog program and sends them to the Java part through a socket. The Java part receives requests from the socket and performs the actions included in the requests. 
+
+
+<P>
+If an event is thrown in the java side, an asynchronous message must be sent away to the prolog side, in order to launch a prolog goal to handle the event. This asynchronous communication is made by the means of a second socket. The nature of this communication needs the use of threads both in java and prolog: to deal with the 'sequential program flow,' and other threads for event handling. 
+
+
+<P>
+In both sides the threads are automatically created by the context of the objects we use. The user must be aware that different requests to the other side of the interface could run concurrently. 
+ 
+
+
+
+<UL>
+<LI><A HREF="ciao_150.html#SEC626">Prolog side of the Java interface</A>
+<LI><A HREF="ciao_150.html#SEC627">Java side</A>
+</UL>
+
+
+
+<H3><A NAME="SEC626" HREF="ciao_toc.html#TOC626">Prolog side of the Java interface</A></H3>
+<P>
+<A NAME="IDX6349"></A>
+<A NAME="IDX6350"></A>
+The prolog side receives the actions to do in the java side from the user program, and sends them to the java side through the socket connection. When the action is done in the java side, the result is returned to the user program, or the action fails if there is any problem in the java side. 
+
+
+<P>
+Prolog data representation of java elements is very simple in this low-level interface. Java primitive types such as integers and characters are translated into Prolog terms, and even some Java objects are translated that way (e. g. Java strings). Java objects are represented in Prolog as compound terms with a reference to identify the corresponding Java object. Data conversion is made automatically when the interface is used, so the Prolog user programs do not have to deal with the complexity of this tasks. 
+
+
+
+
+<H3><A NAME="SEC627" HREF="ciao_toc.html#TOC627">Java side</A></H3>
+<P>
+<A NAME="IDX6351"></A>
+<A NAME="IDX6352"></A>
+The java side of this layer is more complex than the prolog side. The tasks this part have to deal to are the following: 
+
+
+
+<UL>
+
+<LI>Wait for requests from the prolog side.
+
+<LI>Translate the prolog terms received in a 'serialized' form in a more useful java representation.
+
+<LI>Interpret the requests received from the prolog side.
+
+<LI>Handle the set of objects created by or derived from the requests received from de prolog side.
+
+<LI>Handle the events raised in the java side, and launch the listeners added in the prolog side.
+
+<LI>Handle the exceptions raised in the java side, and send to the prolog side.
+
+</UL>
+
+<P>
+In the implementation of the java side, two items must be carefully designed: the handling of java objects, and the representation of prolog data structures. The last item is specially important because all the interactions between prolog and java are made using prolog structures, an easy way to standardize the different data management of both languages. Even the requests themselves are encapsulated using prolog structures. The overload of this encapsulation is not significant in terms of socket traffic, due to the optimal implementation of the prolog serialized term. 
+
+
+<P>
+The java side must handle the objects created from the prolog side dinamically, and these objects must be accessed as fast as possible from the set of objects. The java API provides a powerful implementation of Hash tables that achieves all the requirements of our implementation. 
+
+
+<P>
+On the other hand, the java representation of prolog terms is made using the inheritance of java classes. In the java side exists a representation of a generic prolog term, implemented as an abstract class in java. Variables, atoms, compound terms, lists, and numeric terms are classes in the java side which inherit from the term class. Java objects can be seen also under the prolog representation as compound terms, where the single argument corresponds to the Hash key of the actual java object in the Hash table referred to before. This behaviour makes the handling of mixed java and prolog elements easy. Prolog goals are represented in the java side as objects which contain a prolog compound term with the term representing the goal. This case will be seen more in depth next, when the java to prolog is explained. 
+
+
+
+
+<H2><A NAME="SEC628" HREF="ciao_toc.html#TOC628">Java event handling from Prolog</A></H2>
+<P>
+<A NAME="IDX6353"></A>
+<A NAME="IDX6354"></A>
+Java event handling is based on a delegation model since version 1.1.x. This approach to event handling is very powerful and elegant, but a user program cannot handle all the events that can arise on a given object: for each kind of event, a listener must be implemented and added specifically. However, the Java 2 API includes a special listener (<CODE>AWTEventListener</CODE>) that can manage the internal java event queue. 
+
+
+<P>
+The prolog to java interface has been designed to emulate the java event handler, and is also based on event objects and listeners. The low level prolog to java interface implements its own event manager, to handle those events that have prolog listeners associated to the object that raises the event. From the prolog side can be added listeners to objects for specific events. The java side includes a list of goals to launch from the object and event type. 
+
+
+<P>
+Due to the events nature, the event handler must work in a separate thread to manage the events asynchronously. The java side has its own mechanisms to work this way. The prolog side must be implemented specially for event handling using threads. The communication between java and prolog is also asynchronous, and an additional socket stream is used to avoid interferences with the main socket stream. The event stream will work in this implementation only in one way: from java to prolog. If an event handler needs to send back requests to java, it will use the main socket stream, just like the requests sent directly from a prolog program. 
+
+
+<P>
+The internal process of register a Prolog event handler to a Java event is shown in the next figure: 
+
+
+<P>
+<IMG SRC="autofigip2jbn-events-pl-reg.jpg" ALT="Image:autofigip2jbn-events-pl-reg.jpg"> 
+
+
+<P>
+When an event raises, the low-level Prolog to Java interface has to send to the Prolog user program the goal to evaluate. Graphically, the complete process takes the tasks involved in the following figure: 
+
+
+<P>
+<IMG SRC="autofigip2jbn-events-pl-fire.jpg" ALT="Image:autofigip2jbn-events-pl-fire.jpg"> 
+ 
+
+
+
+
+<H2><A NAME="SEC629" HREF="ciao_toc.html#TOC629">Java exception handling from Prolog</A></H2>
+<P>
+<A NAME="IDX6355"></A>
+<A NAME="IDX6356"></A>
+Java exception handling is very similar to the peer prolog handling: it includes some specific statements to trap exceptions from user code. In the java side, the exceptions can be originated from an incorrect request, or can be originated in the code called from the request. Both exception types will be sent to prolog using the main socket stream, allowing the prolog program manage the exception. However, the first kind of exceptions are prefixed, so the user program can distinguish them from the second type of exceptions. 
+
+
+<P>
+In order to handle exceptions properly using the prolog to java and java to prolog interfaces simultaneously, in both sides of the interface will be filtered those exceptions coming from their own side: this avoids an endless loop of exceptions bouncing from one side to another. 
+
+
+
+
+<H2><A NAME="SEC630" HREF="ciao_toc.html#TOC630">Usage and interface (<CODE>javart</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -47,43 +184,86 @@ Here are defined the regular types used in the documentation of the predicates o
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(pillow_types)).</CODE>
+<CODE>:- use_module(library(javart)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
 
 <UL>
 
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX6357"></A>
+<CODE>java_start/0</CODE>, 
+<A NAME="IDX6358"></A>
+<CODE>java_start/1</CODE>, 
+<A NAME="IDX6359"></A>
+<CODE>java_start/2</CODE>, 
+<A NAME="IDX6360"></A>
+<CODE>java_stop/0</CODE>, 
+<A NAME="IDX6361"></A>
+<CODE>java_connect/2</CODE>, 
+<A NAME="IDX6362"></A>
+<CODE>java_disconnect/0</CODE>, 
+<A NAME="IDX6363"></A>
+<CODE>java_use_module/1</CODE>, 
+<A NAME="IDX6364"></A>
+<CODE>java_create_object/2</CODE>, 
+<A NAME="IDX6365"></A>
+<CODE>java_delete_object/1</CODE>, 
+<A NAME="IDX6366"></A>
+<CODE>java_invoke_method/2</CODE>, 
+<A NAME="IDX6367"></A>
+<CODE>java_get_value/2</CODE>, 
+<A NAME="IDX6368"></A>
+<CODE>java_set_value/2</CODE>, 
+<A NAME="IDX6369"></A>
+<CODE>java_add_listener/3</CODE>, 
+<A NAME="IDX6370"></A>
+<CODE>java_remove_listener/3</CODE>.
+
 <LI><EM>Regular Types:</EM>
 
-<A NAME="IDX6319"></A>
-<CODE>canonic_html_term/1</CODE>, 
-<A NAME="IDX6320"></A>
-<CODE>canonic_xml_term/1</CODE>, 
-<A NAME="IDX6321"></A>
-<CODE>html_term/1</CODE>, 
-<A NAME="IDX6322"></A>
-<CODE>form_dict/1</CODE>, 
-<A NAME="IDX6323"></A>
-<CODE>form_assignment/1</CODE>, 
-<A NAME="IDX6324"></A>
-<CODE>form_value/1</CODE>, 
-<A NAME="IDX6325"></A>
-<CODE>value_dict/1</CODE>, 
-<A NAME="IDX6326"></A>
-<CODE>url_term/1</CODE>, 
-<A NAME="IDX6327"></A>
-<CODE>http_request_param/1</CODE>, 
-<A NAME="IDX6328"></A>
-<CODE>http_response_param/1</CODE>, 
-<A NAME="IDX6329"></A>
-<CODE>http_date/1</CODE>, 
-<A NAME="IDX6330"></A>
-<CODE>weekday/1</CODE>, 
-<A NAME="IDX6331"></A>
-<CODE>month/1</CODE>, 
-<A NAME="IDX6332"></A>
-<CODE>hms_time/1</CODE>.
+<A NAME="IDX6371"></A>
+<CODE>machine_name/1</CODE>, 
+<A NAME="IDX6372"></A>
+<CODE>java_constructor/1</CODE>, 
+<A NAME="IDX6373"></A>
+<CODE>java_object/1</CODE>, 
+<A NAME="IDX6374"></A>
+<CODE>java_event/1</CODE>, 
+<A NAME="IDX6375"></A>
+<CODE>prolog_goal/1</CODE>, 
+<A NAME="IDX6376"></A>
+<CODE>java_field/1</CODE>, 
+<A NAME="IDX6377"></A>
+<CODE>java_method/1</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX6378"></A>
+<CODE>concurrency/concurrency</CODE>, 
+<A NAME="IDX6379"></A>
+<CODE>iso_byte_char</CODE>, 
+<A NAME="IDX6380"></A>
+<CODE>format</CODE>, 
+<A NAME="IDX6381"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX6382"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX6383"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX6384"></A>
+<CODE>javall/javasock</CODE>, 
+<A NAME="IDX6385"></A>
+<CODE>system</CODE>.
 
 </UL>
 
@@ -93,660 +273,452 @@ Here are defined the regular types used in the documentation of the predicates o
 
 
 
-<H2><A NAME="SEC616" HREF="ciao_toc.html#TOC616">Documentation on exports (<CODE>pillow_types</CODE>)</A></H2>
+<H2><A NAME="SEC631" HREF="ciao_toc.html#TOC631">Documentation on exports (<CODE>javart</CODE>)</A></H2>
 <P>
-<A NAME="IDX6333"></A>
-<A NAME="IDX6334"></A>
+<A NAME="IDX6386"></A>
+<A NAME="IDX6387"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>canonic_html_term/1:</B>
-<DD><A NAME="IDX6335"></A>
+<DT><span class="define">PREDICATE:</span> <B>java_start/0:</B>
+<DD><A NAME="IDX6388"></A>
 
 
 <P>
-A term representing HTML code in canonical, structured way. It is a list of terms defined by the following predicate: 
+No further documentation available for this predicate.
 
-<PRE>
-canonic_html_item(comment(S)) :-
-        string(S).
-canonic_html_item(declare(S)) :-
-        string(S).
-canonic_html_item(env(Tag,Atts,Terms)) :-
-        atm(Tag),
-        list(Atts,tag_attrib),
-        canonic_html_term(Terms).
-canonic_html_item($(Tag,Atts)) :-
-        atm(Tag),
-        list(Atts,tag_attrib).
-canonic_html_item(S) :-
-        string(S).
-</PRE>
-
-
-<PRE>
-tag_attrib(Att) :-
-        atm(Att).
-tag_attrib(Att=Val) :-
-        atm(Att),
-        string(Val).
-</PRE>
-
-<P>
-Each structure represents one HTML construction: 
-<DL COMPACT>
-
-<DT><STRONG>env(</STRONG><EM>tag</EM><STRONG>,</STRONG><EM>attribs</EM><STRONG>,</STRONG><EM>terms</EM><STRONG>)</STRONG>
-<DD>
-An HTML environment, with name <EM>tag</EM>, list of attributes <EM>attribs</EM> and contents <EM>terms</EM>. 
-
-<DT><STRONG>$(</STRONG><EM>tag</EM><STRONG>,</STRONG><EM>attribs</EM><STRONG>)</STRONG>
-<DD>
-An HTML element of name <EM>tag</EM> and list of attributes <EM>attribs</EM>. <CODE>($)/2</CODE> is defined by the pillow package as an infix, binary operator. 
-
-<DT><STRONG>comment(</STRONG><EM>string</EM><STRONG>)</STRONG>
-<DD>
-An HTML comment (translates to/from <CODE>&#60;!--</CODE><EM>string</EM><CODE>--&#62;</CODE>). 
-
-<DT><STRONG>declare(</STRONG><EM>string</EM><STRONG>)</STRONG>
-<DD>
-An HTML declaration, they are used only in the header (translates to/from <CODE>&#60;!</CODE><EM>string</EM><CODE>&#62;</CODE>). 
-
-<DT><EM>string</EM>
-<DD>
-Normal text is represented as a list of character codes. 
 
 </DL>
 
 <P>
-For example, the term 
-
-<PRE>
-env(a,[href="www.therainforestsite.com"],
-      ["Visit ",img$[src="TRFS.gif"]])
-</PRE>
-
-<P>
-is output to (or parsed from): 
-
-<PRE>
-&#60;a href="www.therainforestsite.com"&#62;Visit &#60;img src="TRFS.gif"&#62;&#60;/a&#62;
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>canonic_html_term(HTMLTerm)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>HTMLTerm</CODE> is a term representing HTML code in canonical form.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6336"></A>
-<A NAME="IDX6337"></A>
+<A NAME="IDX6389"></A>
+<A NAME="IDX6390"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>canonic_xml_term/1:</B>
-<DD><A NAME="IDX6338"></A>
+<DT><span class="define">PREDICATE:</span> <B>java_start/1:</B>
+<DD><A NAME="IDX6391"></A>
 
 
 <P>
-A term representing XML code in canonical, structured way. It is a list of terms defined by the following predicate (see 
-<A NAME="IDX6339"></A>
-<CODE>tag_attrib/1</CODE> definition in 
-<A NAME="IDX6340"></A>
-<CODE>canonic_html_term/1</CODE>): 
-
-<PRE>
-canonic_xml_item(Term) :-
-        canonic_html_item(Term).
-canonic_xml_item(xmldecl(Atts)) :-
-        list(Atts,tag_attrib).
-canonic_xml_item(env(Tag,Atts,Terms)) :-
-        atm(Tag),
-        list(Atts,tag_attrib),
-        canonic_xml_term(Terms).
-canonic_xml_item(elem(Tag,Atts)) :-
-        atm(Tag),
-        list(Atts,tag_attrib).
-</PRE>
-
-<P>
-In addition to the structures defined by 
-<A NAME="IDX6341"></A>
-<CODE>canonic_html_term/1</CODE> (the <CODE>($)/2</CODE> structure appears only in malformed XML code), the following structures can be used: 
-<DL COMPACT>
-
-<DT><STRONG>elem(</STRONG><EM>tag</EM><STRONG>,</STRONG><EM>atts</EM><STRONG>)</STRONG>
-<DD>
-Specifies an XML empty element of name <EM>tag</EM> and list of attributes <EM>atts</EM>. For example, the term 
-
-<PRE>
-elem(arc,[weigh="3",begin="n1",end="n2"])
-</PRE>
-
-is output to (or parsed from): 
-
-<PRE>
-&#60;arc weigh="3" begin="n1" end="n2"/&#62;
-</PRE>
-
-<DT><STRONG>xmldecl(</STRONG><EM>atts</EM><STRONG>)</STRONG>
-<DD>
-Specifies an XML declaration with attributes <EM>atts</EM> (translates to/from <CODE>&#60;?xml </CODE><EM>atts</EM><CODE>?&#62;</CODE>) 
-
-</DL>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>canonic_xml_term(XMLTerm)</CODE>
+<STRONG>Usage:</STRONG> <CODE>java_start(+classpath)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>XMLTerm</CODE> is a term representing XML code in canonical form.
+<LI><EM>Description:</EM> Starts the Java server on the local machine, connects to it, and starts the event handling thread. The Java server is started using the classpath received as argument.
 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+classpath</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6342"></A>
-<A NAME="IDX6343"></A>
+<A NAME="IDX6392"></A>
+<A NAME="IDX6393"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>html_term/1:</B>
-<DD><A NAME="IDX6344"></A>
+<DT><span class="define">PREDICATE:</span> <B>java_start/2:</B>
+<DD><A NAME="IDX6394"></A>
 
 
 <P>
-A term which represents HTML or XML code in a structured way. In addition to the structures defined by 
-<A NAME="IDX6345"></A>
-<CODE>canonic_html_term/1</CODE> or 
-<A NAME="IDX6346"></A>
-<CODE>canonic_xml_term/1</CODE>, the following structures can be used: 
-<DL COMPACT>
-
-<DT><STRONG>begin(</STRONG><EM>tag</EM><STRONG>,</STRONG><EM>atts</EM><STRONG>)</STRONG>
-<DD>
-It translates to the start of an HTML environment of name <EM>tag</EM> and attributes <EM>atts</EM>. There exists also a <STRONG>begin(<EM>tag</EM>)</STRONG> structure. Useful, in conjunction with the next structure, when including in a document output generated by an existing piece of code (e.g. <EM>tag</EM> = <CODE>pre</CODE>). Its use is otherwise discouraged. 
-
-<DT><STRONG>end(</STRONG><EM>tag</EM><STRONG>)</STRONG>
-<DD>
-Translates to the end of an HTML environment of name <EM>tag</EM>. 
-
-<DT><STRONG>start</STRONG>
-<DD>
-Used at the beginning of a document (translates to <CODE>&#60;html&#62;</CODE>). 
-
-<DT><STRONG>end</STRONG>
-<DD>
-Used at the end of a document (translates to <CODE>&#60;/html&#62;</CODE>). 
-
-<DT><CODE>--</CODE>
-<DD>
-Produces a horizontal rule (translates to <CODE>&#60;hr&#62;</CODE>). 
-
-<DT><STRONG>\\</STRONG>
-<DD>
-Produces a line break (translates to <CODE>&#60;br&#62;</CODE>). 
-
-<DT><STRONG>$</STRONG>
-<DD>
-Produces a paragraph break (translates to <CODE>&#60;p&#62;</CODE>). 
-
-<DT><STRONG>image(</STRONG><EM>address</EM><STRONG>)</STRONG>
-<DD>
-Used to include an image of address (URL) <EM>address</EM> (equivalent to <CODE>img$[src=</CODE><EM>address</EM><CODE>]</CODE>). 
-
-<DT><STRONG>image(</STRONG><EM>address</EM><STRONG>,</STRONG><EM>atts</EM><STRONG>)</STRONG>
-<DD>
-As above with the list of attributes <EM>atts</EM>. 
-
-<DT><STRONG>ref(</STRONG><EM>address</EM><STRONG>,</STRONG><EM>text</EM><STRONG>)</STRONG>
-<DD>
-Produces a hypertext link, <EM>address</EM> is the URL of the referenced resource, <EM>text</EM> is the text of the reference (equivalent to <CODE>a([href=</CODE><EM>address</EM><CODE>],</CODE><EM>text</EM><CODE>)</CODE>). 
-
-<DT><STRONG>label(</STRONG><EM>name</EM><STRONG>,</STRONG><EM>text</EM><STRONG>)</STRONG>
-<DD>
-Labels <EM>text</EM> as a target destination with label <EM>name</EM> (equivalent to <CODE>a([name=</CODE><EM>name</EM><CODE>],</CODE><EM>text</EM><CODE>)</CODE>). 
-
-<DT><STRONG>heading(</STRONG><EM>n</EM><STRONG>,</STRONG><EM>text</EM><STRONG>)</STRONG>
-<DD>
-Produces a heading of level <EM>n</EM> (between 1 and 6), <EM>text</EM> is the text to be used as heading. Useful when one wants a heading level relative to another heading (equivalent to <CODE>h</CODE><EM>n</EM><CODE>(</CODE><EM>text</EM><CODE>)</CODE>). 
-
-<DT><STRONG>itemize(</STRONG><EM>items</EM><STRONG>)</STRONG>
-<DD>
-Produces a list of bulleted items, <EM>items</EM> is a list of corresponding HTML terms (translates to a <CODE>&#60;ul&#62;</CODE> environment). 
-
-<DT><STRONG>enumerate(</STRONG><EM>items</EM><STRONG>)</STRONG>
-<DD>
-Produces a list of numbered items, <EM>items</EM> is a list of corresponding HTML terms (translates to a <CODE>&#60;ol&#62;</CODE> environment). 
-
-<DT><STRONG>description(</STRONG><EM>defs</EM><STRONG>)</STRONG>
-<DD>
-Produces a list of defined items, <EM>defs</EM> is a list whose elements are definitions, each of them being a Prolog sequence (composed by <CODE>','/2</CODE> operators). The last element of the sequence is the definition, the other (if any) are the defined terms (translates to a <CODE>&#60;dl&#62;</CODE> environment). 
-
-<DT><STRONG>nice_itemize(</STRONG><EM>img</EM><STRONG>,</STRONG><EM>items</EM><STRONG>)</STRONG>
-<DD>
-Produces a list of bulleted items, using the image <EM>img</EM> as bullet. The predicate 
-<A NAME="IDX6347"></A>
-<CODE>icon_address/2</CODE> provides a colored bullet. 
-
-<DT><STRONG>preformatted(</STRONG><EM>text</EM><STRONG>)</STRONG>
-<DD>
-Used to include preformatted text, <EM>text</EM> is a list of HTML terms, each element of the list being a line of the resulting document (translates to a <CODE>&#60;pre&#62;</CODE> environment). 
-
-<DT><STRONG>verbatim(</STRONG><EM>text</EM><STRONG>)</STRONG>
-<DD>
-Used to include text verbatim, special HTML characters (<CODE>&#60;,&#62;,&#38;,"</CODE> and space) are translated into its quoted HTML equivalent. 
-
-<DT><STRONG>prolog_term(</STRONG><EM>term</EM><STRONG>)</STRONG>
-<DD>
-Includes any prolog term <EM>term</EM>, represented in functional notation. Variables are output as <CODE>_</CODE>. 
-
-<DT><STRONG>nl</STRONG>
-<DD>
-Used to include a newline in the HTML source (just to improve human readability). 
-
-<DT><STRONG>entity(</STRONG><EM>name</EM><STRONG>)</STRONG>
-<DD>
-Includes the entity of name <EM>name</EM> (ISO-8859-1 special character). 
-
-<DT><STRONG>start_form(</STRONG><EM>addr</EM><STRONG>,</STRONG><EM>atts</EM><STRONG>)</STRONG>
-<DD>
-Specifies the beginning of a form. <EM>addr</EM> is the address (URL) of the program that will handle the form, and <EM>atts</EM> other attributes of the form, as the method used to invoke it. If <EM>atts</EM> is not present (there is only one argument) the method defaults to POST. 
-
-<DT><STRONG>start_form</STRONG>
-<DD>
-Specifies the beginning of a form without assigning address to the handler, so that the form handler will be the cgi-bin executable producing the form. 
-
-<DT><STRONG>end_form</STRONG>
-<DD>
-Specifies the end of a form. 
-
-<DT><STRONG>checkbox(</STRONG><EM>name</EM><STRONG>,</STRONG><EM>state</EM><STRONG>)</STRONG>
-<DD>
-Specifies an input of type <CODE>checkbox</CODE> with name <EM>name</EM>, <EM>state</EM> is <CODE>on</CODE> if the checkbox is initially checked. 
-
-<DT><STRONG>radio(</STRONG><EM>name</EM><STRONG>,</STRONG><EM>value</EM><STRONG>,</STRONG><EM>selected</EM><STRONG>)</STRONG>
-<DD>
-Specifies an input of type <CODE>radio</CODE> with name <EM>name</EM> (several radio buttons which are interlocked must share their name), <EM>value</EM> is the the value returned by the button, if <EM>selected</EM>=<EM>value</EM> the button is initially checked. 
-
-<DT><STRONG>input(</STRONG><EM>type</EM><STRONG>,</STRONG><EM>atts</EM><STRONG>)</STRONG>
-<DD>
-Specifies an input of type <EM>type</EM> with a list of attributes <EM>atts</EM>. Possible values of <EM>type</EM> are <CODE>text</CODE>, <CODE>hidden</CODE>, <CODE>submit</CODE>, <CODE>reset</CODE>, ldots 
-
-<DT><STRONG>textinput(</STRONG><EM>name</EM><STRONG>,</STRONG><EM>atts</EM><STRONG>,</STRONG><EM>text</EM><STRONG>)</STRONG>
-<DD>
-Specifies an input text area of name <EM>name</EM>. <EM>text</EM> provides the default text to be shown in the area, <EM>atts</EM> a list of attributes. 
-
-<DT><STRONG>option(</STRONG><EM>name</EM><STRONG>,</STRONG><EM>val</EM><STRONG>,</STRONG><EM>options</EM><STRONG>)</STRONG>
-<DD>
-Specifies a simple option selector of name <EM>name</EM>, <EM>options</EM> is the list of available options and <EM>val</EM> is the initial selected option (if <EM>val</EM> is not in <EM>options</EM> the first item is selected by default) (translates to a <CODE>&#60;select&#62;</CODE> environment). 
-
-<DT><STRONG>menu(</STRONG><EM>name</EM><STRONG>,</STRONG><EM>atts</EM><STRONG>,</STRONG><EM>items</EM><STRONG>)</STRONG>
-<DD>
-Specifies a menu of name <EM>name</EM>, list of attributes <EM>atts</EM> and list of options <EM>items</EM>. The elements of the list <EM>items</EM> are marked with the prefix operator <CODE>$</CODE> to indicate that they are selected (translates to a <CODE>&#60;select&#62;</CODE> environment). 
-
-<DT><STRONG>form_reply</STRONG>
-<DD>
-<DT><STRONG>cgi_reply</STRONG>
-<DD>
-This two are equivalent, they do not generate HTML, rather, the CGI protocol requires this content descriptor to be used at the beginning by CGI executables (including form handlers) when replying (translates to <CODE>Content-type: text/html</CODE>). 
-
-<DT><STRONG>pr</STRONG>
-<DD>
-Includes in the page a graphical logo with the message "Developed using the PiLLoW Web programming library", which points to the manual and library source. 
-
-<DT><EM>name</EM><STRONG>(</STRONG><EM>text</EM><STRONG>)</STRONG>
-<DD>
-A term with functor <EM>name</EM>/1, different from the special functors defined herein, represents an HTML environment of name <EM>name</EM> and included text <EM>text</EM>. For example, the term 
-
-<PRE>
-   address('clip@clip.dia.fi.upm.es')
-</PRE>
-
-is translated into the HTML source 
-
-<PRE>
-   &#60;address&#62;clip@clip.dia.fi.upm.es&#60;/address&#62;
-</PRE>
-
-<DT><EM>name</EM><STRONG>(</STRONG><EM>atts</EM><STRONG>,</STRONG><EM>text</EM><STRONG>)</STRONG>
-<DD>
-A term with functor <EM>name</EM>/2, different from the special functors defined herein, represents an HTML environment of name <EM>name</EM>, attributes <EM>atts</EM> and included text <EM>text</EM>. For example, the term 
-
-<PRE>
-
-   a([href='http://www.clip.dia.fi.upm.es/'],"Clip home")
-</PRE>
-
-represents the HTML source 
-
-<PRE>
-   &#60;a href="http://www.clip.dia.fi.upm.es/"&#62;Clip home&#60;/a&#62;
-</PRE>
-
-</DL>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>html_term(HTMLTerm)</CODE>
+<STRONG>Usage:</STRONG> <CODE>java_start(+machine_name,+classpath)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>HTMLTerm</CODE> is a term representing HTML code.
+<LI><EM>Description:</EM> Starts the Java server in machine_name (using rsh!), connects to it, and starts the event handling thread. The Java server is started using the classpath received as argument.
 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+machine_name</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+
+<CODE>+classpath</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6348"></A>
-<A NAME="IDX6349"></A>
+<A NAME="IDX6395"></A>
+<A NAME="IDX6396"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>form_dict/1:</B>
-<DD><A NAME="IDX6350"></A>
+<DT><span class="define">PREDICATE:</span> <B>java_stop/0:</B>
+<DD><A NAME="IDX6397"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>form_dict(Dict)</CODE>
+<STRONG>Usage:</STRONG> 
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Dict</CODE> is a dictionary of values of the attributes of a form. It is a list of <CODE>form_assignment</CODE>
+<LI><EM>Description:</EM> Stops the interface terminating the threads that handle the socket connection, and finishing the Java interface server if it was started using java_start/n.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6351"></A>
-<A NAME="IDX6352"></A>
+<A NAME="IDX6398"></A>
+<A NAME="IDX6399"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>form_assignment/1:</B>
-<DD><A NAME="IDX6353"></A>
+<DT><span class="define">PREDICATE:</span> <B>java_connect/2:</B>
+<DD><A NAME="IDX6400"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>form_assignment(Eq)</CODE>
+<STRONG>Usage:</STRONG> <CODE>java_connect(+machine_name,+port_number)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Eq</CODE> is an assignment of value of an attribute of a form. It is defined by:
+<LI><EM>Description:</EM> Connects to an existing Java interface server running in machine_name and listening at port port_number. To connect to a Java server located in the local machine, use 'localhost' as machine_name.
 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<PRE>
-form_assignment(A=V) :-
-        atm(A),
-        form_value(V).
-</PRE>
+<CODE>+machine_name</CODE> is the network name of a machine.
+ (<CODE>javart:machine_name/1</CODE>)
 
-
-<PRE>
-form_value(A) :-
-        atm(A).
-form_value(N) :-
-        num(N).
-form_value(L) :-
-        list(L,string).
-</PRE>
-
- 
+<CODE>+port_number</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6354"></A>
-<A NAME="IDX6355"></A>
+<A NAME="IDX6401"></A>
+<A NAME="IDX6402"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>form_value/1:</B>
-<DD><A NAME="IDX6356"></A>
+<DT><span class="define">PREDICATE:</span> <B>java_disconnect/0:</B>
+<DD><A NAME="IDX6403"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>form_value(V)</CODE>
+<STRONG>Usage:</STRONG> 
 
 <UL>
-<LI><EM>Description:</EM> <CODE>V</CODE> is a value of an attribute of a form.
+<LI><EM>Description:</EM> Closes the connection with the java process, terminating the threads that handle the connection to Java. This predicate does not terminate the Java process (this is the disconnection procedure for Java servers not started from Prolog). This predicate should be used when the communication is established with java_connect/2.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6357"></A>
-<A NAME="IDX6358"></A>
+<A NAME="IDX6404"></A>
+<A NAME="IDX6405"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>value_dict/1:</B>
-<DD><A NAME="IDX6359"></A>
+<DT><span class="define">REGTYPE:</span> <B>machine_name/1:</B>
+<DD><A NAME="IDX6406"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>value_dict(Dict)</CODE>
+<STRONG>Usage:</STRONG> <CODE>machine_name(X)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Dict</CODE> is a dictionary of values. It is a list of pairs <EM>atom</EM>=<EM>constant</EM>.
+<LI><EM>Description:</EM> <CODE>X</CODE> is the network name of a machine.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6360"></A>
-<A NAME="IDX6361"></A>
+<A NAME="IDX6407"></A>
+<A NAME="IDX6408"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>url_term/1:</B>
-<DD><A NAME="IDX6362"></A>
+<DT><span class="define">REGTYPE:</span> <B>java_constructor/1:</B>
+<DD><A NAME="IDX6409"></A>
 
 
 <P>
-A term specifying an Internet Uniform Resource Locator. Currently only HTTP URLs are supported. Example: <CODE>http('www.clip.dia.fi.upm.es',80,"/Software/Ciao/")</CODE>. Defined as 
-
-<PRE>
-url_term(http(Host,Port,Document)) :-
-        atm(Host),
-        int(Port),
-        string(Document).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>url_term(URL)</CODE>
+<STRONG>Usage:</STRONG> <CODE>java_constructor(X)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>URL</CODE> specifies a URL.
+<LI><EM>Description:</EM> <CODE>X</CODE> is a java constructor (structure with functor as constructor full name, and arguments as constructor arguments).
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6363"></A>
-<A NAME="IDX6364"></A>
+<A NAME="IDX6410"></A>
+<A NAME="IDX6411"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>http_request_param/1:</B>
-<DD><A NAME="IDX6365"></A>
+<DT><span class="define">REGTYPE:</span> <B>java_object/1:</B>
+<DD><A NAME="IDX6412"></A>
 
 
 <P>
-A parameter of an HTTP request: 
+<STRONG>Usage:</STRONG> <CODE>java_object(X)</CODE>
 
 <UL>
-<LI><STRONG>head:</STRONG> Specify that the document content is not wanted.
-
-<LI><STRONG>timeout(</STRONG><EM>T</EM><STRONG>):</STRONG> <EM>T</EM> specifies the time in seconds to wait for the response. Default is 300 seconds.
-
-<LI><STRONG>if_modified_since(</STRONG><EM>Date</EM><STRONG>):</STRONG> Get document only if newer than <EM>Date</EM>. <EM>Date</EM> has the format defined by
-
-<A NAME="IDX6366"></A>
-<CODE>http_date/1</CODE>. 
-
-<LI><STRONG>user_agent(</STRONG><EM>Agent</EM><STRONG>):</STRONG> Provides a user-agent field, <EM>Agent</EM> is an atom. The string <CODE>"PiLLoW/1.1"</CODE> (or whatever version of PiLLoW is used) is appended.
-
-<LI><STRONG>authorization(</STRONG><EM>Scheme</EM>,<EM>Params</EM><STRONG>):</STRONG> To provide credentials. See RFC 1945 for details.
-
-<LI><STRONG><EM>option</EM>(</STRONG><EM>Value</EM><STRONG>):</STRONG> Any unary term, being <EM>Value</EM> an atom, can be used to provide another valid option (e.g. <CODE>from('user@machine')</CODE>).
-
-</UL>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>http_request_param(Request)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Request</CODE> is a parameter of an HTTP request.
+<LI><EM>Description:</EM> <CODE>X</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6367"></A>
-<A NAME="IDX6368"></A>
+<A NAME="IDX6413"></A>
+<A NAME="IDX6414"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>http_response_param/1:</B>
-<DD><A NAME="IDX6369"></A>
+<DT><span class="define">REGTYPE:</span> <B>java_event/1:</B>
+<DD><A NAME="IDX6415"></A>
 
 
 <P>
-A parameter of an HTTP response: 
+<STRONG>Usage:</STRONG> <CODE>java_event(X)</CODE>
 
 <UL>
-
-<LI><STRONG>content(</STRONG><EM>String</EM><STRONG>):</STRONG> <EM>String</EM> is the document content (list of bytes). If the <CODE>head</CODE> parameter of the HTTP request is used, an empty list is get here.
-
-<LI><STRONG>status(</STRONG><EM>Type,Code,Reason</EM><STRONG>):</STRONG> <EM>Type</EM> is an atom denoting the response type, <EM>Code</EM> is the status code (an integer), and <EM>Reason</EM> is a string holding the reason phrase.
-
-<LI><STRONG>message_date(</STRONG><EM>Date</EM><STRONG>):</STRONG> <EM>Date</EM> is the date of the response, with format defined by
-
-<A NAME="IDX6370"></A>
-<CODE>http_date/1</CODE>. 
-
-<LI><STRONG>location(</STRONG><EM>Loc</EM><STRONG>):</STRONG> This parameter appears when the document has moved, <EM>Loc</EM> is an atom holding the new location.
-
-<LI><STRONG>http_server(</STRONG><EM>Server</EM><STRONG>):</STRONG> <EM>Server</EM> is the server responding, as a string.
-
-<LI><STRONG>authenticate(</STRONG><EM>Params</EM><STRONG>):</STRONG> Returned if document is protected, <EM>Params</EM> is a list of chagenges. See RFC 1945 for details.
-
-<LI><STRONG>allow(</STRONG><EM>Methods</EM><STRONG>):</STRONG> <EM>Methods</EM> are the methods allowed by the server, as a list of atoms.
-
-<LI><STRONG>content_encoding(</STRONG><EM>Encoding</EM><STRONG>):</STRONG> <EM>Encoding</EM> is an atom defining the encoding.
-
-<LI><STRONG>content_length(</STRONG><EM>Length</EM><STRONG>):</STRONG> <EM>Length</EM> is the length of the document (an integer).
-
-<LI><STRONG>content_type(</STRONG><EM>Type,Subtype,Params</EM><STRONG>):</STRONG> Specifies the document content type, <EM>Type</EM> and <EM>Subtype</EM> are atoms, <EM>Params</EM> a list of parameters (e.g. <CODE>content_type(text,html,[])</CODE>).
-
-<LI><STRONG>expires(</STRONG><EM>Date</EM><STRONG>):</STRONG> <EM>Date</EM> is the date after which the entity should be considered stale. Format defined by
-
-<A NAME="IDX6371"></A>
-<CODE>http_date/1</CODE>. 
-
-<LI><STRONG>last_modified(</STRONG><EM>Date</EM><STRONG>):</STRONG> <EM>Date</EM> is the date at which the sender believes the resource was last modified. Format defined by
-
-<A NAME="IDX6372"></A>
-<CODE>http_date/1</CODE>. 
-
-<LI><STRONG>pragma(</STRONG><EM>String</EM><STRONG>):</STRONG> Miscellaneous data.
-
-<LI><STRONG><EM>header</EM>(</STRONG><EM>String</EM><STRONG>):</STRONG> Any other functor <EM>header</EM>/1 is an extension header.
-
-</UL>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>http_response_param(Response)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Response</CODE> is a parameter of an HTTP response.
+<LI><EM>Description:</EM> <CODE>X</CODE> is a java event represented as an atom with the full event constructor name (e.g., 'java.awt.event.ActionListener').
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6373"></A>
-<A NAME="IDX6374"></A>
+<A NAME="IDX6416"></A>
+<A NAME="IDX6417"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>http_date/1:</B>
-<DD><A NAME="IDX6375"></A>
+<DT><span class="define">REGTYPE:</span> <B>prolog_goal/1:</B>
+<DD><A NAME="IDX6418"></A>
 
 
 <P>
-<CODE>http_date(Date)</CODE>
-
-
-<P>
-<CODE>Date</CODE> is a term defined as 
-
-<PRE>
-http_date(date(WeekDay,Day,Month,Year,Time)) :-
-        weekday(WeekDay),
-        int(Day),
-        month(Month),
-        int(Year),
-        hms_time(Time).
-</PRE>
-
-<P>
-.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>http_date(Date)</CODE>
+<STRONG>Usage:</STRONG> <CODE>prolog_goal(X)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Date</CODE> is a term denoting a date.
+<LI><EM>Description:</EM> <CODE>X</CODE> is a prolog predicate. Prolog term that represents the goal that must be invoked when the event raises on the object. The predicate arguments can be java objects, or even the result of java methods. These java objects will be evaluated when the event raises (instead of when the listener is added). The arguments that represent java objects must be instantiated to already created objects. The variables will be kept uninstantiated when the event raises and the predicate is called.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6376"></A>
-<A NAME="IDX6377"></A>
+<A NAME="IDX6419"></A>
+<A NAME="IDX6420"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>weekday/1:</B>
-<DD><A NAME="IDX6378"></A>
+<DT><span class="define">REGTYPE:</span> <B>java_field/1:</B>
+<DD><A NAME="IDX6421"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>weekday(WeekDay)</CODE>
+<STRONG>Usage:</STRONG> <CODE>java_field(X)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>WeekDay</CODE> is a term denoting a weekday.
+<LI><EM>Description:</EM> <CODE>X</CODE> is a java field (structure on which the functor name is the field name, and the single argument is the field value).
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6379"></A>
-<A NAME="IDX6380"></A>
+<A NAME="IDX6422"></A>
+<A NAME="IDX6423"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>month/1:</B>
-<DD><A NAME="IDX6381"></A>
+<DT><span class="define">PREDICATE:</span> <B>java_use_module/1:</B>
+<DD><A NAME="IDX6424"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>month(Month)</CODE>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6425"></A>
+<A NAME="IDX6426"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_create_object/2:</B>
+<DD><A NAME="IDX6427"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_create_object(+java_constructor,-java_object)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Month</CODE> is a term denoting a month.
+<LI><EM>Description:</EM> New java object creation. The constructor must be a compound term as defined by its type, with the full class name as functor (e.g., 'java.lang.String'), and the parameters passed to the constructor as arguments of the structure.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+java_constructor</CODE> is a java constructor (structure with functor as constructor full name, and arguments as constructor arguments).
+ (<CODE>javart:java_constructor/1</CODE>)
+
+<CODE>-java_object</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
+ (<CODE>javart:java_object/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6428"></A>
+<A NAME="IDX6429"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_delete_object/1:</B>
+<DD><A NAME="IDX6430"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_delete_object(+java_object)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Java object deletion. It removes the object given as argument from the Java object table.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+java_object</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
+ (<CODE>javart:java_object/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6431"></A>
+<A NAME="IDX6432"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_invoke_method/2:</B>
+<DD><A NAME="IDX6433"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_invoke_method(+java_object,+java_method)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Invokes a java method on an object. Given a Java object reference, invokes the method represented with the second argument.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+java_object</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
+ (<CODE>javart:java_object/1</CODE>)
+
+<CODE>+java_method</CODE> is a java method (structure with functor as method name, and arguments as method ones, plus a result argument. This result argument is unified with the atom 'Yes' if the java method returns void).
+ (<CODE>javart:java_method/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6434"></A>
+<A NAME="IDX6435"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>java_method/1:</B>
+<DD><A NAME="IDX6436"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_method(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a java method (structure with functor as method name, and arguments as method ones, plus a result argument. This result argument is unified with the atom 'Yes' if the java method returns void).
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6382"></A>
-<A NAME="IDX6383"></A>
+<A NAME="IDX6437"></A>
+<A NAME="IDX6438"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>hms_time/1:</B>
-<DD><A NAME="IDX6384"></A>
+<DT><span class="define">PREDICATE:</span> <B>java_get_value/2:</B>
+<DD><A NAME="IDX6439"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>hms_time(Time)</CODE>
+<STRONG>Usage:</STRONG> <CODE>java_get_value(+java_object,+java_field)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Time</CODE> is an atom of the form <CODE>hh:mm:ss</CODE>
+<LI><EM>Description:</EM> Gets the value of a field. Given a Java object as first argument, it instantiates the variable given as second argument. This field must be uninstantiated in the java_field functor, or this predicate will fail.
 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+java_object</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
+ (<CODE>javart:java_object/1</CODE>)
+
+<CODE>+java_field</CODE> is a java field (structure on which the functor name is the field name, and the single argument is the field value).
+ (<CODE>javart:java_field/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6440"></A>
+<A NAME="IDX6441"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_set_value/2:</B>
+<DD><A NAME="IDX6442"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_set_value(+java_object,+java_field)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Sets the value of a Java object field. Given a Java object reference, it assigns the value included in the java_field compound term. The field value in the java_field structure must be instantiated.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+java_object</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
+ (<CODE>javart:java_object/1</CODE>)
+
+<CODE>+java_field</CODE> is a java field (structure on which the functor name is the field name, and the single argument is the field value).
+ (<CODE>javart:java_field/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6443"></A>
+<A NAME="IDX6444"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_add_listener/3:</B>
+<DD><A NAME="IDX6445"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>java_add_listener(?,?,goal)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_add_listener(+java_object,+java_event,+prolog_goal)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Adds a listener to an event on an object. Given a Java object reference, it registers the goal received as third argument to be launched when the Java event raises.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+java_object</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
+ (<CODE>javart:java_object/1</CODE>)
+
+<CODE>+java_event</CODE> is a java event represented as an atom with the full event constructor name (e.g., 'java.awt.event.ActionListener').
+ (<CODE>javart:java_event/1</CODE>)
+
+<CODE>+prolog_goal</CODE> is a prolog predicate. Prolog term that represents the goal that must be invoked when the event raises on the object. The predicate arguments can be java objects, or even the result of java methods. These java objects will be evaluated when the event raises (instead of when the listener is added). The arguments that represent java objects must be instantiated to already created objects. The variables will be kept uninstantiated when the event raises and the predicate is called.
+ (<CODE>javart:prolog_goal/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6446"></A>
+<A NAME="IDX6447"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_remove_listener/3:</B>
+<DD><A NAME="IDX6448"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_remove_listener(+java_object,+java_event,+prolog_goal)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> It removes a listener from an object event queue. Given a Java object reference, goal registered for the given event is removed.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+java_object</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
+ (<CODE>javart:java_object/1</CODE>)
+
+<CODE>+java_event</CODE> is a java event represented as an atom with the full event constructor name (e.g., 'java.awt.event.ActionListener').
+ (<CODE>javart:java_event/1</CODE>)
+
+<CODE>+prolog_goal</CODE> is a prolog predicate. Prolog term that represents the goal that must be invoked when the event raises on the object. The predicate arguments can be java objects, or even the result of java methods. These java objects will be evaluated when the event raises (instead of when the listener is added). The arguments that represent java objects must be instantiated to already created objects. The variables will be kept uninstantiated when the event raises and the predicate is called.
+ (<CODE>javart:prolog_goal/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_149.html">previous</A>, <A HREF="ciao_151.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_149.html">previous</A>, <A HREF="ciao_151.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -1,8 +1,5 @@
 :- module(color_pattern,[],[assertions,regtypes,isomodes]).
 
-:- comment(author, "Isabel Martín").
-
-
 :- export(color/1).
 :- export(color/2).
 :- export(pattern/1).
@@ -390,11 +387,3 @@ random_darkcolor(54,'Maroon').
 random_darkcolor(_,'SteelBlue').
 
 :- pop_prolog_flag(multi_arity_warnings).
-
-
-
-:- comment(version_maintenance,dir('../../version')).
-
-:- comment(version(1*9+156,2003/12/04,17:39*13+'CET'), "Added author
-info (Manuel Carro)").
-

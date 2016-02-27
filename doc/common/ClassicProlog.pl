@@ -4,8 +4,6 @@
 
 :- comment(title,"PART IV - Classic Prolog library (classic)").
 
-:- comment(author, "The CLIP Group").
-
 :- comment(module,"@include{ClassicProlog.lpdoc}").
 
 main.
@@ -13,7 +11,4 @@ main.
 %% --------------------------------------------------------------------------- 
 :- comment(version_maintenance,dir('../../version')).
 %% --------------------------------------------------------------------------- 
-
-:- comment(version(1*11+84,2003/12/21,01:57*34+'CET'), "Added comment
-   author.  (Edison Mera)").
 

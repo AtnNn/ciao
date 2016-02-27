@@ -1,45 +1,66 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Random numbers</TITLE>
+<TITLE>The Ciao Prolog System               - Programming MYCIN rules</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_177.html">previous</A>, <A HREF="ciao_179.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_177.html">previous</A>, <A HREF="ciao_179.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC727" HREF="ciao_toc.html#TOC727">Random numbers</A></H1>
+<H1><A NAME="SEC706" HREF="ciao_toc.html#TOC706">Programming MYCIN rules</A></H1>
 <P>
-<A NAME="IDX7663"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza.
+<A NAME="IDX7096"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
+<STRONG>Author(s):</STRONG> Angel Fernandez Pineda.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#194 (2002/4/4, 21:8:41 CEST)
+<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
 
 
 <P>
-This module provides predicates for generating pseudo-random numbers
+<STRONG>Version of last change:</STRONG> 1.5#59 (2000/2/29, 14:51:54 CET)
+
+
+<P>
+MYCIN databases are declared as Prolog modules containing mycin rules. Those rules are given a 
+<A NAME="IDX7097"></A>
+<A NAME="IDX7098"></A>
+<EM>certainty factor</EM> (<EM>CF</EM>) which denotates an expert's credibility on that rule: 
+
+<UL>
+
+<LI>A value of -1 stands for <EM>surely not</EM>.
+
+<LI>A value of 1 stands for <EM>certainly</EM>.
+
+<LI>A value of 0 stands for <EM>I don't know</EM>.
+
+</UL>
+
+<P>
+Intermediate values are allowed. 
+
+
+<P>
+Mycin rules work on a different way as Prolog clauses: a rule will never fail (in the Prolog sense), it will return a certainty value instead. As a consequence <STRONG>all</STRONG> mycin rules will be explored during inference, so the order in which rules are written is not significant. For this reason, the usage of the Prolog <EM>cut</EM> (!) is discouraged. 
 
 
 
 <UL>
-<LI><A HREF="ciao_178.html#SEC728">Usage and interface (random)</A>
-<LI><A HREF="ciao_178.html#SEC729">Documentation on exports (random)</A>
+<LI><A HREF="ciao_178.html#SEC707">Usage and interface (mycin)</A>
+<LI><A HREF="ciao_178.html#SEC708">Documentation on new declarations (mycin)</A>
+<LI><A HREF="ciao_178.html#SEC709">Known bugs and planned improvements (mycin)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC728" HREF="ciao_toc.html#TOC728">Usage and interface (<CODE>random</CODE>)</A></H2>
+<H2><A NAME="SEC707" HREF="ciao_toc.html#TOC707">Usage and interface (<CODE>mycin</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -47,23 +68,16 @@ This module provides predicates for generating pseudo-random numbers
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(random)).</CODE>
+In order to declare a mycin database you must include the following declaration as the first one in your file: 
 
-<LI><STRONG>Exports:</STRONG>
+<PRE>
+           :- mycin(MycinDataBaseName).
+</PRE>
 
+<LI><STRONG>New declarations defined:</STRONG>
 
-<UL>
-
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX7664"></A>
-<CODE>random/1</CODE>, 
-<A NAME="IDX7665"></A>
-<CODE>random/3</CODE>, 
-<A NAME="IDX7666"></A>
-<CODE>srandom/1</CODE>.
-
-</UL>
+<A NAME="IDX7099"></A>
+<CODE>export/1</CODE>.
 
 </UL>
 
@@ -71,70 +85,59 @@ This module provides predicates for generating pseudo-random numbers
 
 
 
-<H2><A NAME="SEC729" HREF="ciao_toc.html#TOC729">Documentation on exports (<CODE>random</CODE>)</A></H2>
+<H2><A NAME="SEC708" HREF="ciao_toc.html#TOC708">Documentation on new declarations (<CODE>mycin</CODE>)</A></H2>
 <P>
-<A NAME="IDX7667"></A>
-<A NAME="IDX7668"></A>
+<A NAME="IDX7100"></A>
+<A NAME="IDX7101"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>random/1:</B>
-<DD><A NAME="IDX7669"></A>
+<DT><span class="define">DECLARATION:</span> <B>export/1:</B>
+<DD><A NAME="IDX7102"></A>
 
 
 <P>
-<CODE>random(Number)</CODE>
+This directive allows a given mycin predicate to be called from Prolog programs. The way in which mycin rules are called departs from Prolog ones. For instance, the followin mycin predicate: 
+
+<PRE>
+:- export p/1.
+</PRE>
+
+<P>
+must be called from Prolog Programs as: <CODE>mycin(p(X),CF)</CODE>, where CF will be binded to the resulting 
+<A NAME="IDX7103"></A>
+certainty factor. Obviously, the variables on <EM>P/1</EM> may be instantiated as you wish. Since the Prolog predicate <EM>mycin/2</EM> may be imported from several mycin databases, it is recommended to fully qualify those predicate goals. For example : <CODE>mydatabase:mycin(p(X),CF)</CODE>. 
 
 
 <P>
-<CODE>Number</CODE> is a (pseudo-) random number in the range [0.0,1.0]
-
-
-</DL>
-
-<P>
-<A NAME="IDX7670"></A>
-<A NAME="IDX7671"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>random/3:</B>
-<DD><A NAME="IDX7672"></A>
-
-
-<P>
-<CODE>random(Low, Up, Number)</CODE>
-
-
-<P>
-<CODE>Number</CODE> is a (pseudo-) random number in the range [<CODE>Low</CODE>, <CODE>Up</CODE>]
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>random(+int, +int, -int)</CODE>
+<STRONG>Usage:</STRONG> :- <CODE>export(Spec)</CODE>.
 
 <UL>
-<LI><EM>Description:</EM> If <CODE>Low</CODE> and <CODE>Up</CODE> are integers, <CODE>Number</CODE> is an integer.
+<LI><EM>Description:</EM> <CODE>Spec</CODE> will be a callable mycin predicate.
 
 </UL>
 
 </DL>
 
-<P>
-<A NAME="IDX7673"></A>
-<A NAME="IDX7674"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>srandom/1:</B>
-<DD><A NAME="IDX7675"></A>
 
 
-<P>
-<CODE>srandom(Seed)</CODE>
+<H2><A NAME="SEC709" HREF="ciao_toc.html#TOC709">Known bugs and planned improvements (<CODE>mycin</CODE>)</A></H2>
 
 
-<P>
-Changes the sequence of pseudo-random numbers according to <CODE>Seed</CODE>. The stating sequence of numbers generated can be duplicated by calling the predicate with <CODE>Seed</CODE> unbound (the sequence depends on the OS).
+<UL>
 
+<LI>
 
-</DL>
+Not fully implemented.
+
+<LI>
+
+Dynamic mycin predicates not implemented: open question.
+
+<LI>
+
+Importation of user-defined mycin predicates requires further design. This includes importation of mycin databases from another mycin database.
+</UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_177.html">previous</A>, <A HREF="ciao_179.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_177.html">previous</A>, <A HREF="ciao_179.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

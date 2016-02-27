@@ -2,7 +2,11 @@
 	[codes_to_number_c/2,
 	 safe_codes_to_number/2
 	],
-	[foreign_interface]).
+	[assertions,
+	 basicmodes,
+	 regtypes,
+	 foreign_interface
+	]).
 
 :- use_module(library(format)).
 
@@ -17,7 +21,7 @@ handle_exception(Error) :- format("Exception caught ~w~n", [Error]).
 :- use_foreign_source(exceptions_c).
 :- extra_compiler_opts('-O2').
 
-
+:- impl_defined([codes_to_number_c/2]).
 
 
 

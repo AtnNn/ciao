@@ -1,45 +1,41 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Extendable arrays with logarithmic access time</TITLE>
+<TITLE>The Ciao Prolog System               - Variable name dictionaries</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_166.html">previous</A>, <A HREF="ciao_168.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_166.html">previous</A>, <A HREF="ciao_168.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC690" HREF="ciao_toc.html#TOC690">Extendable arrays with logarithmic access time</A></H1>
+<H1><A NAME="SEC680" HREF="ciao_toc.html#TOC680">Variable name dictionaries</A></H1>
 <P>
-<A NAME="IDX7359"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Lena Flood.
+<A NAME="IDX6979"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
+<STRONG>Author(s):</STRONG> Francisco Bueno.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.11#112 (2003/12/22, 18:18:22 CET)
+<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
 
 
 <P>
-This module implements extendable arrays with logarithmic access time. It has been adapted from shared code written by David Warren and Fernando Pereira.
+<STRONG>Version of last change:</STRONG> 0.8#19 (1998/12/3, 12:53:16 MET)
 
 
 
 <UL>
-<LI><A HREF="ciao_167.html#SEC691">Usage and interface (arrays)</A>
-<LI><A HREF="ciao_167.html#SEC692">Documentation on exports (arrays)</A>
+<LI><A HREF="ciao_167.html#SEC681">Usage and interface (vndict)</A>
+<LI><A HREF="ciao_167.html#SEC682">Documentation on exports (vndict)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC691" HREF="ciao_toc.html#TOC691">Usage and interface (<CODE>arrays</CODE>)</A></H2>
+<H2><A NAME="SEC681" HREF="ciao_toc.html#TOC681">Usage and interface (<CODE>vndict</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -47,7 +43,7 @@ This module implements extendable arrays with logarithmic access time. It has be
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(arrays)).</CODE>
+<CODE>:- use_module(library(vndict)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -56,20 +52,53 @@ This module implements extendable arrays with logarithmic access time. It has be
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7360"></A>
-<CODE>new_array/1</CODE>, 
-<A NAME="IDX7361"></A>
-<CODE>is_array/1</CODE>, 
-<A NAME="IDX7362"></A>
-<CODE>aref/3</CODE>, 
-<A NAME="IDX7363"></A>
-<CODE>arefa/3</CODE>, 
-<A NAME="IDX7364"></A>
-<CODE>arefl/3</CODE>, 
-<A NAME="IDX7365"></A>
-<CODE>aset/4</CODE>, 
-<A NAME="IDX7366"></A>
-<CODE>array_to_list/2</CODE>.
+<A NAME="IDX6980"></A>
+<CODE>create_dict/2</CODE>, 
+<A NAME="IDX6981"></A>
+<CODE>complete_dict/3</CODE>, 
+<A NAME="IDX6982"></A>
+<CODE>complete_vars_dict/3</CODE>, 
+<A NAME="IDX6983"></A>
+<CODE>prune_dict/3</CODE>, 
+<A NAME="IDX6984"></A>
+<CODE>dict2varnamesl/2</CODE>, 
+<A NAME="IDX6985"></A>
+<CODE>varnamesl2dict/2</CODE>, 
+<A NAME="IDX6986"></A>
+<CODE>find_name/4</CODE>, 
+<A NAME="IDX6987"></A>
+<CODE>rename/2</CODE>, 
+<A NAME="IDX6988"></A>
+<CODE>vars_names_dict/3</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX6989"></A>
+<CODE>null_dict/1</CODE>, 
+<A NAME="IDX6990"></A>
+<CODE>varname/1</CODE>, 
+<A NAME="IDX6991"></A>
+<CODE>varnamesl/1</CODE>, 
+<A NAME="IDX6992"></A>
+<CODE>varnamedict/1</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX6993"></A>
+<CODE>idlists</CODE>, 
+<A NAME="IDX6994"></A>
+<CODE>terms_vars</CODE>, 
+<A NAME="IDX6995"></A>
+<CODE>sets</CODE>, 
+<A NAME="IDX6996"></A>
+<CODE>sort</CODE>.
 
 </UL>
 
@@ -79,134 +108,280 @@ This module implements extendable arrays with logarithmic access time. It has be
 
 
 
-<H2><A NAME="SEC692" HREF="ciao_toc.html#TOC692">Documentation on exports (<CODE>arrays</CODE>)</A></H2>
+<H2><A NAME="SEC682" HREF="ciao_toc.html#TOC682">Documentation on exports (<CODE>vndict</CODE>)</A></H2>
 <P>
-<A NAME="IDX7367"></A>
-<A NAME="IDX7368"></A>
+<A NAME="IDX6997"></A>
+<A NAME="IDX6998"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>new_array/1:</B>
-<DD><A NAME="IDX7369"></A>
+<DT><span class="define">REGTYPE:</span> <B>null_dict/1:</B>
+<DD><A NAME="IDX6999"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>new_array(-Array)</CODE>
+<STRONG>Usage:</STRONG> <CODE>null_dict(D)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> returns an empty new array <CODE>Array</CODE>.
+<LI><EM>Description:</EM> <CODE>D</CODE> is an empty dictionary.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7370"></A>
-<A NAME="IDX7371"></A>
+<A NAME="IDX7000"></A>
+<A NAME="IDX7001"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>is_array/1:</B>
-<DD><A NAME="IDX7372"></A>
+<DT><span class="define">PREDICATE:</span> <B>create_dict/2:</B>
+<DD><A NAME="IDX7002"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>is_array(+Array)</CODE>
+<STRONG>Usage:</STRONG> <CODE>create_dict(Term,Dict)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Array</CODE> actually is an array.
+<LI><EM>Description:</EM> <CODE>Dict</CODE> has names for all variables in <CODE>Term</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Term</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>Dict</CODE> is a dictionary of variable names.
+ (<CODE>vndict:varnamedict/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7003"></A>
+<A NAME="IDX7004"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>complete_dict/3:</B>
+<DD><A NAME="IDX7005"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>complete_dict(+Dict,+Term,-NewDict)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>NewDict</CODE> is <CODE>Dict</CODE> augmented with the variables of <CODE>Term</CODE> not yet in <CODE>Dict</CODE>.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7373"></A>
-<A NAME="IDX7374"></A>
+<A NAME="IDX7006"></A>
+<A NAME="IDX7007"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>aref/3:</B>
-<DD><A NAME="IDX7375"></A>
+<DT><span class="define">PREDICATE:</span> <B>complete_vars_dict/3:</B>
+<DD><A NAME="IDX7008"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>aref(+Index, +Array, ?Element)</CODE>
+<STRONG>Usage:</STRONG> <CODE>complete_vars_dict(+Dict,+Vars,-NewDict)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> unifies <CODE>Element</CODE> to <CODE>Array</CODE>[<CODE>Index</CODE>], or fails if <CODE>Array</CODE>[<CODE>Index</CODE>] has not been set.
+<LI><EM>Description:</EM> <CODE>NewDict</CODE> is <CODE>Dict</CODE> augmented with the variables of the list <CODE>Vars</CODE> not yet in <CODE>Dict</CODE>.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7376"></A>
-<A NAME="IDX7377"></A>
+<A NAME="IDX7009"></A>
+<A NAME="IDX7010"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>arefa/3:</B>
-<DD><A NAME="IDX7378"></A>
+<DT><span class="define">PREDICATE:</span> <B>prune_dict/3:</B>
+<DD><A NAME="IDX7011"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>arefa(+Index, +Array, ?Element)</CODE>
+<STRONG>Usage:</STRONG> <CODE>prune_dict(+Term,+Dict,-NewDict)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> is as <CODE>aref/3</CODE>, except that it unifies <CODE>Element</CODE> with a new array if <CODE>Array</CODE>[<CODE>Index</CODE>] is undefined. This is useful for multidimensional arrays implemented as arrays of arrays.
+<LI><EM>Description:</EM> <CODE>NewDict</CODE> is <CODE>Dict</CODE> reduced to just the variables of <CODE>Term</CODE>.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7379"></A>
-<A NAME="IDX7380"></A>
+<A NAME="IDX7012"></A>
+<A NAME="IDX7013"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>arefl/3:</B>
-<DD><A NAME="IDX7381"></A>
+<DT><span class="define">PREDICATE:</span> <B>dict2varnamesl/2:</B>
+<DD><A NAME="IDX7014"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>arefl(+Index, +Array, ?Element)</CODE>
+<STRONG>Usage:</STRONG> <CODE>dict2varnamesl(Dict,VNs)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> is as <CODE>aref/3</CODE>, except that <CODE>Element</CODE> appears as <CODE>[]</CODE> for undefined cells. Thus, <CODE>arefl(_,_,[])</CODE> always succeeds no matter what you give in the first or second args.
+<LI><EM>Description:</EM> Translates <CODE>Dict</CODE> to <CODE>VNs</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Dict</CODE> is a dictionary of variable names.
+ (<CODE>vndict:varnamedict/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>VNs</CODE> is a list of <CODE>Name=Var</CODE>, for a variable <CODE>Var</CODE> and its name <CODE>Name</CODE>.
+ (<CODE>vndict:varnamesl/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7015"></A>
+<A NAME="IDX7016"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>varnamesl2dict/2:</B>
+<DD><A NAME="IDX7017"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>varnamesl2dict(VNs,Dict)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Translates <CODE>VNs</CODE> to <CODE>Dict</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>VNs</CODE> is a list of <CODE>Name=Var</CODE>, for a variable <CODE>Var</CODE> and its name <CODE>Name</CODE>.
+ (<CODE>vndict:varnamesl/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>Dict</CODE> is a dictionary of variable names.
+ (<CODE>vndict:varnamedict/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7018"></A>
+<A NAME="IDX7019"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>find_name/4:</B>
+<DD><A NAME="IDX7020"></A>
+
+
+<P>
+<CODE>find_name(Vars,Names,V,Name)</CODE>
+
+
+<P>
+Given that <CODE>vars_names_dict(Dict,Vars,Names)</CODE> holds, it acts as <CODE>rename(X,Dict)</CODE>, but the name of <CODE>X</CODE> is given as <CODE>Name</CODE> instead of unified with it.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7021"></A>
+<A NAME="IDX7022"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>rename/2:</B>
+<DD><A NAME="IDX7023"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>rename(Term,Dict)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Unifies each variable in <CODE>Term</CODE> with its name in <CODE>Dict</CODE>. If no name is found, a new name is created.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Dict</CODE> is a dictionary of variable names.
+ (<CODE>vndict:varnamedict/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7024"></A>
+<A NAME="IDX7025"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>varname/1:</B>
+<DD><A NAME="IDX7026"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>varname(N)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>N</CODE> is term representing a variable name.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7382"></A>
-<A NAME="IDX7383"></A>
+<A NAME="IDX7027"></A>
+<A NAME="IDX7028"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>aset/4:</B>
-<DD><A NAME="IDX7384"></A>
+<DT><span class="define">REGTYPE:</span> <B>varnamesl/1:</B>
+<DD><A NAME="IDX7029"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>aset(+Index, +Array, Element, -NewArray)</CODE>
+<STRONG>Usage:</STRONG> <CODE>varnamesl(D)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> unifies <CODE>NewArray</CODE> with the result of setting <CODE>Array</CODE>[<CODE>Index</CODE>] to <CODE>Element</CODE>.
+<LI><EM>Description:</EM> <CODE>D</CODE> is a list of <CODE>Name=Var</CODE>, for a variable <CODE>Var</CODE> and its name <CODE>Name</CODE>.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7385"></A>
-<A NAME="IDX7386"></A>
+<A NAME="IDX7030"></A>
+<A NAME="IDX7031"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>array_to_list/2:</B>
-<DD><A NAME="IDX7387"></A>
+<DT><span class="define">REGTYPE:</span> <B>varnamedict/1:</B>
+<DD><A NAME="IDX7032"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>array_to_list(+Array, -List)</CODE>
+<STRONG>Usage:</STRONG> <CODE>varnamedict(D)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> returns a <CODE>List</CODE> of pairs Index-Element of all the elements of <CODE>Array</CODE> that have been set.
+<LI><EM>Description:</EM> <CODE>D</CODE> is a dictionary of variable names.
 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7033"></A>
+<A NAME="IDX7034"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>vars_names_dict/3:</B>
+<DD><A NAME="IDX7035"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>vars_names_dict(Dict,Vars,Names)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Varss</CODE> is a sorted list of variables, and <CODE>Names</CODE> is a list of their names, which correspond in the same order.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Dict</CODE> is a dictionary of variable names.
+ (<CODE>vndict:varnamedict/1</CODE>)
+
+<CODE>Vars</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+
+<CODE>Names</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_166.html">previous</A>, <A HREF="ciao_168.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_166.html">previous</A>, <A HREF="ciao_168.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

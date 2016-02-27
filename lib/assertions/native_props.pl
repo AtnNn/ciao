@@ -1,15 +1,12 @@
 :- module(native_props,
-        [  covered/2
-	 , linear/1
+        [  linear/1
          , mshare/1
-         , nonground/1
          , fails/1
          , not_fails/1
          , possibly_fails/1
          , covered/1
          , not_covered/1 
          , is_det/1
-         , non_det/1
          , possibly_nondet/1
          , mut_exclusive/1
          , not_mut_exclusive/1
@@ -17,25 +14,15 @@
          , size_ub/2
          , steps_lb/2 
          , steps_ub/2  
-         , steps/2  
-         , finite_solutions/1
-         , terminates/1
+	 , sideff_pure/1
+	 , sideff_soft/1
+	 , sideff_hard/1
         ],
         [assertions]).
 
 :- reexport(library('andprolog/andprolog_rt'),[indep/1,indep/2]).
 :- comment(doinclude,indep/1).
 :- comment(doinclude,indep/2).
-
-%% :- reexport(engine(term_typing),[ground/1,nonvar/1,var/1]).
-%% :- comment(doinclude,ground/1).
-%% :- comment(doinclude,nonvar/1).
-%% :- comment(doinclude,var/1).
-%% 
-%% :- reexport(engine(basic_props),[regtype/1, native/2, native/1, sideff/2,
-%%         term/1, int/1, nnegint/1, flt/1, num/1, atm/1, struct/1, gnd/1]).
-
-:- reexport(library(terms_check),[instance/2]).
 
 :- use_module(library(terms_vars),[varsbag/3]).
 :- use_module(library(sort),[sort/2]).
@@ -59,24 +46,12 @@
 
    Note the different names of the library and the package.").
 
-% --------------------------------------------------------------------------
-
-:- comment(covered(X,Y), "All variables occuring in @var{X} occur also
-   in @var{Y}.").
-
-:- true prop covered(X,Y) + native # "@var{X} is covered by @var{Y}.".
-
-covered(X,Y):-
-	varsbag(X,VarsX,[]),
-	varsbag(Y,VarsY,[]),
-	sublist(VarsX,VarsY).
-
 :- comment(linear(X), "@var{X} is bound to a term which is linear,
    i.e., if it contains any variables, such variables appear only once
    in the term. For example, @tt{[1,2,3]} and @tt{f(A,B)} are linear
    terms, while @tt{f(A,A)} is not.").
 
-:- true prop linear(X) + native
+:- prop linear(X)
 # "@var{X} is instantiated to a linear term.".
 
 linear(T):-
@@ -95,27 +70,23 @@ linear(T):-
    @prop{ground/1}, @prop{indep/1} and @prop{indep/2} properties,
    which are easier to read.").
 
-:- prop mshare(X) + native(sharing(X))
+:- prop mshare(X) 
 # "The sharing pattern is @tt{@var{X}}.".
 
 :- impl_defined(mshare/1).
 
-:- prop nonground(X) + native(not_ground(X))
-# "@tt{@var{X}} is not ground.".
-
-:- impl_defined(nonground/1).
-
 :- comment(fails(X), "Calls of the form @var{X} fail.").
 
-:- true prop fails(X) + native # "Calls of the form @var{X} fail.".
+:- prop fails(X)
+# "Calls of the form @var{X} fail.".
 
 :- impl_defined(fails/1).
 
 :- comment(not_fails(X), "Calls of the form @var{X} produce at least
-   one solution, or not terminate @cite{non-failure-iclp97}.").
+  one solution, or not terminate @cite{non-failure-iclp97}.").
 
-:- true prop not_fails(X) + native # 
-	"All the calls of the form @var{X} do not fail.".
+:- prop not_fails(X)
+# "All the calls of the form @var{X} do not fail.".
 
 :- impl_defined(not_fails/1).
 
@@ -153,14 +124,6 @@ deterministic, i.e. produce at most one solution, or not terminate.").
 # "All calls of the form @var{X} are deterministic.".
 
 :- impl_defined(is_det/1).
-
-:- comment(non_det(X), "All calls of the form @var{X} are not
-deterministic, i.e., produce several solutions.").
-
-:- prop non_det(X)
-# "All calls of the form @var{X} are not deterministic.".
-
-:- impl_defined(non_det/1).
 
 :- comment(possibly_nondet(X), "Non-determinism is not ensured for all
 calls of the form @var{X}. In other words, nothing can be ensured
@@ -249,15 +212,6 @@ the expression @var{Y} @cite{caslog,granularity-jsc}").
 %% # "The maximum computation time spent by calls of the form @var{X} is
 %%    given by the expression @var{Y}.".
 
-:- comment(steps(X, Y), "The time (in resolution steps) spent by any
-call of the form @var{X} is given by the expression @var{Y}").
-
-:- prop steps(X,Y) 
-# "@var{Y} is the cost (number of resolution steps) of any call of the form
-@var{X}.".
-
-:- impl_defined(steps/2).
-
 :- prop sideff_pure(X) 
 # "@var{X} is pure, i.e., has no side-effects.".
 
@@ -275,43 +229,9 @@ call of the form @var{X} is given by the expression @var{Y}").
 
 :- impl_defined(sideff_hard/1).
 
-:- comment(finite_solutions(X), "Calls of the form @var{X} produce a
-   finite number of solutions @cite{non-failure-iclp97}.").
-
-:- prop finite_solutions(X) # 
-	"All the calls of the form @var{X} have a finite number of
-         solutions.".
-
-:- impl_defined(finite_solutions/1).
-
-:- comment(terminates(X), "Calls of the form @var{X} always
-   terminate @cite{non-failure-iclp97}.").
-
-:- prop terminates(X) # 
-	"All the calls of the form @var{X} terminate.".
-
-:- impl_defined(terminates/1).
-
-% Built-in in CiaoPP
-:- prop entry_point_name/2.
-% if you change this declaration, you have to change ciaoPP:
-:- meta_predicate entry_point_name(goal,?).
-:- impl_defined(entry_point_name/2).
-:- comment(hide,entry_point_name/2).
-
 % --------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
-
-:- comment(version(1*11+144,2003/12/31,19:02*09+'CET'), "Do not
-   reexport from engine modules. Moved to the package.  (Francisco
-   Bueno Carrillo)").
-
-:- comment(version(1*11+28,2003/07/17,18:18*16+'CEST'), "Added
-   nonground/1.  (Francisco Bueno Carrillo)").
-
-:- comment(version(1*9+40,2002/12/12,20:48*37+'CET'), "Added
-   native_props to assertions package.  (Francisco Bueno Carrillo)").
 
 :- comment(version(1*5+1,1999/11/29,17:12*34+'MET'), "Changed names of
    the native properties.  (Francisco Bueno Carrillo)").

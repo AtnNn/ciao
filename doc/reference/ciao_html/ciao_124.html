@@ -1,47 +1,29 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Foreign Language Interface Properties</TITLE>
+<TITLE>The Ciao Prolog System               - button_class (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_123.html">previous</A>, <A HREF="ciao_125.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_123.html">previous</A>, <A HREF="ciao_125.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC529" HREF="ciao_toc.html#TOC529">Foreign Language Interface Properties</A></H1>
+<H1><A NAME="SEC525" HREF="ciao_toc.html#TOC525">button_class (library)</A></H1>
 <P>
 <A NAME="IDX5402"></A>
 
 
-<P>
-<STRONG>Author(s):</STRONG> Jose Morales, Manuel Carro.
-
-
-<P>
-<STRONG>Version:</STRONG> 1.11#143 (2003/12/31, 16:44:44 CET)
-
-
-<P>
-<STRONG>Version of last change:</STRONG> 1.11#105 (2003/12/22, 17:37:54 CET)
-
-
-<P>
-The foreign language interface uses some properties to specify linking regimes, foreign files to be compiled, types of data available, memory allocation policies, etc.
-
-
 
 <UL>
-<LI><A HREF="ciao_124.html#SEC530">Usage and interface (foreign_interface_properties)</A>
-<LI><A HREF="ciao_124.html#SEC531">Documentation on exports (foreign_interface_properties)</A>
-<LI><A HREF="ciao_124.html#SEC532">Documentation on internals (foreign_interface_properties)</A>
-<LI><A HREF="ciao_124.html#SEC533">Known bugs and planned improvements (foreign_interface_properties)</A>
+<LI><A HREF="ciao_124.html#SEC526">Usage and interface (button_class)</A>
+<LI><A HREF="ciao_124.html#SEC527">Documentation on exports (button_class)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC530" HREF="ciao_toc.html#TOC530">Usage and interface (<CODE>foreign_interface_properties</CODE>)</A></H2>
+<H2><A NAME="SEC526" HREF="ciao_toc.html#TOC526">Usage and interface (<CODE>button_class</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -49,44 +31,29 @@ The foreign language interface uses some properties to specify linking regimes, 
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(foreign_interface_properties)).</CODE>
+<CODE>:- use_module(library(button_class)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
 
 <UL>
 
-<LI><EM>Properties:</EM>
+<LI><EM>Predicates:</EM>
 
 <A NAME="IDX5403"></A>
-<CODE>native/1</CODE>, 
+<CODE>command_button/1</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
 <A NAME="IDX5404"></A>
-<CODE>native/2</CODE>, 
-<A NAME="IDX5405"></A>
-<CODE>size_of/3</CODE>, 
-<A NAME="IDX5406"></A>
-<CODE>foreign/1</CODE>, 
-<A NAME="IDX5407"></A>
-<CODE>foreign/2</CODE>, 
-<A NAME="IDX5408"></A>
-<CODE>returns/2</CODE>, 
-<A NAME="IDX5409"></A>
-<CODE>do_not_free/2</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX5410"></A>
-<CODE>int_list/1</CODE>, 
-<A NAME="IDX5411"></A>
-<CODE>byte_list/1</CODE>, 
-<A NAME="IDX5412"></A>
-<CODE>byte/1</CODE>, 
-<A NAME="IDX5413"></A>
-<CODE>null/1</CODE>, 
-<A NAME="IDX5414"></A>
-<CODE>address/1</CODE>, 
-<A NAME="IDX5415"></A>
-<CODE>any_term/1</CODE>.
+<CODE>objects/objects_rt</CODE>.
 
 </UL>
 
@@ -96,563 +63,42 @@ The foreign language interface uses some properties to specify linking regimes, 
 
 
 
-<H2><A NAME="SEC531" HREF="ciao_toc.html#TOC531">Documentation on exports (<CODE>foreign_interface_properties</CODE>)</A></H2>
+<H2><A NAME="SEC527" HREF="ciao_toc.html#TOC527">Documentation on exports (<CODE>button_class</CODE>)</A></H2>
 <P>
-<A NAME="IDX5416"></A>
-<A NAME="IDX5417"></A>
+<A NAME="IDX5405"></A>
+<A NAME="IDX5406"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>int_list/1:</B>
-<DD><A NAME="IDX5418"></A>
+<DT><span class="define">PREDICATE:</span> <B>command_button/1:</B>
+<DD><A NAME="IDX5407"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>int_list(List)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>command_button(+Command)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>List</CODE> is a list of integers.
+<LI><EM>Description:</EM> Sets a Tcl <CODE>Command</CODE> to be associated with the button. This <CODE>Command</CODE> is typically invoked when mouse button 1 is released over the button window.
 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Command</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>command_button(-Command)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the Tcl <CODE>Command</CODE> associated with the button.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Command</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
-
-<P>
-<A NAME="IDX5419"></A>
-<A NAME="IDX5420"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>byte_list/1:</B>
-<DD><A NAME="IDX5421"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>byte_list(List)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>List</CODE> is a list of bytes.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5422"></A>
-<A NAME="IDX5423"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>byte/1:</B>
-<DD><A NAME="IDX5424"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>byte(Byte)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Byte</CODE> is a byte.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5425"></A>
-<A NAME="IDX5426"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>null/1:</B>
-<DD><A NAME="IDX5427"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>null(Address)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Address</CODE> is a null adress.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5428"></A>
-<A NAME="IDX5429"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>address/1:</B>
-<DD><A NAME="IDX5430"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>address(Address)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Address</CODE> is a memory address.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5431"></A>
-<A NAME="IDX5432"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>any_term/1:</B>
-<DD><A NAME="IDX5433"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>any_term(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is any term. The foreign interface passes it to C functions as a general term.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5434"></A>
-<A NAME="IDX5435"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>native/1:</B>
-<DD><A NAME="IDX5436"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>native(Name)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The Prolog predicate
-
-<A NAME="IDX5437"></A>
-<CODE>Name</CODE> is implemented using the function <CODE>Name</CODE>. The implementation is not a common C one, but it accesses directly the internal Ciao Prolog data structures and functions, and therefore no glue code is generated for it. 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5438"></A>
-<A NAME="IDX5439"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>native/2:</B>
-<DD><A NAME="IDX5440"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>native(PrologName, ForeignName)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The Prolog predicate
-
-<A NAME="IDX5441"></A>
-<CODE>PrologName</CODE> is implemented using the function <CODE>ForeignName</CODE>. The same considerations as above example are to be applied. 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5442"></A>
-<A NAME="IDX5443"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>size_of/3:</B>
-<DD><A NAME="IDX5444"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>size_of(Name, ListVar, SizeVar)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> For predicate <CODE>Name</CODE>, the size of the argument of type
-
-<A NAME="IDX5445"></A>
-<CODE>byte_list/1</CODE>, <CODE>ListVar</CODE>, is given by the argument of type integer <CODE>SizeVar</CODE>. 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5446"></A>
-<A NAME="IDX5447"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>foreign/1:</B>
-<DD><A NAME="IDX5448"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>foreign(Name)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The Prolog predicate
-
-<A NAME="IDX5449"></A>
-<CODE>Name</CODE> is implemented using the foreign function <CODE>Name</CODE>. 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5450"></A>
-<A NAME="IDX5451"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>foreign/2:</B>
-<DD><A NAME="IDX5452"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>foreign(PrologName, ForeignName)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The Prolog predicate
-
-<A NAME="IDX5453"></A>
-<CODE>PrologName</CODE> is implemented using the foreign function <CODE>ForeignName</CODE>. 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5454"></A>
-<A NAME="IDX5455"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>returns/2:</B>
-<DD><A NAME="IDX5456"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>returns(Name, Var)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The result of the foreign function that implements the Prolog predicate
-
-<A NAME="IDX5457"></A>
-<CODE>Name</CODE> is unified with the Prolog variable <CODE>Var</CODE>. Cannot be used without 
-<A NAME="IDX5458"></A>
-<CODE>foreign/1</CODE> or 
-<A NAME="IDX5459"></A>
-<CODE>foreign/2</CODE>. 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5460"></A>
-<A NAME="IDX5461"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>do_not_free/2:</B>
-<DD><A NAME="IDX5462"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>do_not_free(Name, Var)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> For predicate <CODE>Name</CODE>, the C argument passed to (returned from) the foreign function will not be freed after calling the foreign function.
-
-</UL>
-
-</DL>
-
-
-
-<H2><A NAME="SEC532" HREF="ciao_toc.html#TOC532">Documentation on internals (<CODE>foreign_interface_properties</CODE>)</A></H2>
-<P>
-<A NAME="IDX5463"></A>
-<A NAME="IDX5464"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>use_foreign_source/1:</B>
-<DD><A NAME="IDX5465"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>use_foreign_source(Files)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Files</CODE> is the (list of) foreign file(s) that will be linked with the glue-code file.
-
-<LI><EM>The following properties hold at call time:</EM>
-
-<CODE>Files</CODE> is an atom or a list of atoms.
- (<CODE>basic_props:atm_or_atm_list/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5466"></A>
-<A NAME="IDX5467"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>use_foreign_source/2:</B>
-<DD><A NAME="IDX5468"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>use_foreign_source(OsArch, Files)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Files</CODE> are the OS and architecture dependant foreign files. This allows compiling and linking different files depending on the O.S. and architecture.
-
-<LI><EM>The following properties hold at call time:</EM>
-
-<CODE>OsArch</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>Files</CODE> is an atom or a list of atoms.
- (<CODE>basic_props:atm_or_atm_list/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5469"></A>
-<A NAME="IDX5470"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>use_foreign_library/1:</B>
-<DD><A NAME="IDX5471"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>use_foreign_library(Libs)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Libs</CODE> is the (list of) external library(es) needed to link the C files. Only the short name of the library (i.e., what would follow the <CODE>-l</CODE> in the linker is needed.
-
-<LI><EM>The following properties hold at call time:</EM>
-
-<CODE>Libs</CODE> is an atom or a list of atoms.
- (<CODE>basic_props:atm_or_atm_list/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5472"></A>
-<A NAME="IDX5473"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>use_foreign_library/2:</B>
-<DD><A NAME="IDX5474"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>use_foreign_library(OsArch, Libs)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Libs</CODE> are the OS and architecture dependant libraries.
-
-<LI><EM>The following properties hold at call time:</EM>
-
-<CODE>OsArch</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>Libs</CODE> is an atom or a list of atoms.
- (<CODE>basic_props:atm_or_atm_list/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5475"></A>
-<A NAME="IDX5476"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>extra_compiler_opts/1:</B>
-<DD><A NAME="IDX5477"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>extra_compiler_opts(Opts)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Opts</CODE> is the list of additional compiler options (e.g., optimization options) that will be used during the compilation.
-
-<LI><EM>The following properties hold at call time:</EM>
-
-<CODE>Opts</CODE> is an atom or a list of atoms.
- (<CODE>basic_props:atm_or_atm_list/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5478"></A>
-<A NAME="IDX5479"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>extra_compiler_opts/2:</B>
-<DD><A NAME="IDX5480"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>extra_compiler_opts(OsArch, Opts)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Opts</CODE> are the OS and architecture dependant additional compiler options.
-
-<LI><EM>The following properties hold at call time:</EM>
-
-<CODE>OsArch</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>Opts</CODE> is an atom or a list of atoms.
- (<CODE>basic_props:atm_or_atm_list/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5481"></A>
-<A NAME="IDX5482"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>use_compiler/1:</B>
-<DD><A NAME="IDX5483"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>use_compiler(Compiler)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Compiler</CODE> is the compiler to use in this file. When this option is used, the default (Ciao-provided) compiler options are not used; those specified in
-
-<A NAME="IDX5484"></A>
-<CODE>extra_compiler_options</CODE> are used instead. 
-<LI><EM>The following properties hold at call time:</EM>
-
-<CODE>Compiler</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5485"></A>
-<A NAME="IDX5486"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>use_compiler/2:</B>
-<DD><A NAME="IDX5487"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>use_compiler(OsArch, Compiler)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Compiler</CODE> is the compiler to use in this file when compiling for the architecture <CODE>OsArch</CODE>. The option management is the same as in
-
-<A NAME="IDX5488"></A>
-<CODE>use_compiler/2</CODE>. 
-<LI><EM>The following properties hold at call time:</EM>
-
-<CODE>OsArch</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>Compiler</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5489"></A>
-<A NAME="IDX5490"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>extra_linker_opts/1:</B>
-<DD><A NAME="IDX5491"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>extra_linker_opts(Opts)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Opts</CODE> is the list of additional linker options that will be used during the linkage.
-
-<LI><EM>The following properties hold at call time:</EM>
-
-<CODE>Opts</CODE> is an atom or a list of atoms.
- (<CODE>basic_props:atm_or_atm_list/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5492"></A>
-<A NAME="IDX5493"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>extra_linker_opts/2:</B>
-<DD><A NAME="IDX5494"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>extra_linker_opts(OsArch, Opts)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Opts</CODE> are the OS and architecture dependant additional linker options.
-
-<LI><EM>The following properties hold at call time:</EM>
-
-<CODE>OsArch</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>Opts</CODE> is an atom or a list of atoms.
- (<CODE>basic_props:atm_or_atm_list/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5495"></A>
-<A NAME="IDX5496"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>use_linker/1:</B>
-<DD><A NAME="IDX5497"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>use_linker(Linker)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Linker</CODE> is the linker to use in this file. When this option is used, the default (Ciao-provided) linker options are not used; those specified in
-
-<A NAME="IDX5498"></A>
-<CODE>extra_linker_options/1</CODE> are used instead. 
-<LI><EM>The following properties hold at call time:</EM>
-
-<CODE>Linker</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5499"></A>
-<A NAME="IDX5500"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>use_linker/2:</B>
-<DD><A NAME="IDX5501"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>use_linker(OsArch, Linker)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Compiler</CODE> is the linker to use in this file when compiling for the architecture <CODE>OsArch</CODE>. The option management is the same as in
-
-<A NAME="IDX5502"></A>
-<CODE>use_compiler/2</CODE>. 
-<LI><EM>The following properties hold at call time:</EM>
-
-<CODE>OsArch</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>Linker</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-
-
-<H2><A NAME="SEC533" HREF="ciao_toc.html#TOC533">Known bugs and planned improvements (<CODE>foreign_interface_properties</CODE>)</A></H2>
-
-
-<UL>
-
-<LI>
-
-The <CODE>size_of/3</CODE> property has an empty definition
-</UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_123.html">previous</A>, <A HREF="ciao_125.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_123.html">previous</A>, <A HREF="ciao_125.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

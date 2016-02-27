@@ -42,7 +42,7 @@ see(File) :-
 	    File=S -> true
 	;   current_fact(current_file_stream(File, read, S)) -> true
 	;   absolute_file_name(File, '', '', '.', AbsFileName, _, _),
-	    '$open'(AbsFileName, r, S), 
+	    '$open'(AbsFileName, read, S), 
 	    assertz_fact(current_file_stream(File, read, S))
 	),
 	set_input(S).
@@ -63,7 +63,7 @@ tell(File) :-
 	    File=S -> true
 	;   current_fact(current_file_stream(File, write, S)) -> true
 	;   absolute_file_name(File, '', '', '.', AbsFileName, _, _),
-	    '$open'(AbsFileName, w, S), 
+	    '$open'(AbsFileName, write, S), 
 	    assertz_fact(current_file_stream(File, write, S))
 	),
 	set_output(S).

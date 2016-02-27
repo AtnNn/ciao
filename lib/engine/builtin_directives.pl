@@ -85,10 +85,6 @@
 % ----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*9+29,2002/11/20,14:04*17+'CET'), "Deleted the
-   dummy @tt{main.}: it prevents proper documentation from being
-   generated!  (Manuel Hermenegildo)").
-
 :- comment(version(1*7+165,2002/01/03,17:38*59+'CET'), "Added main/0
    just to avoid documentation errors.  (MCL)").
 

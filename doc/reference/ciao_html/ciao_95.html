@@ -1,81 +1,193 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - PART VII - Ciao Prolog extensions</TITLE>
+<TITLE>The Ciao Prolog System               - Independent and-parallel execution</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_94.html">previous</A>, <A HREF="ciao_96.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_94.html">previous</A>, <A HREF="ciao_96.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC393" HREF="ciao_toc.html#TOC393">PART VII - Ciao Prolog extensions</A></H1>
+<H1><A NAME="SEC390" HREF="ciao_toc.html#TOC390">Independent and-parallel execution</A></H1>
+<P>
+<A NAME="IDX4338"></A>
+
 
 <P>
-<STRONG>Author(s):</STRONG> The CLIP Group.
+<STRONG>Author(s):</STRONG> Manuel Carro, Manuel Hermenegildo.
 
 
 <P>
-The libraries documented in this part extend the Ciao language in several different ways. The extensions include: 
+<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.7#160 (2001/11/27, 12:35:53 CET)
+
+
+<P>
+<STRONG>Note:</STRONG> This is just a partial first shot. The real library still needs to be written. Not difficult, just no time... 
+
+
+<P>
+This library will eventually allow and-parallel execution of goals in (Herbrand-)independent fashion. It resembles the execution rules of &#38;-Prolog [HG90]. Basically, goals are run in and-parallel <EM>provided that their arguments do not share bindings</EM>, i.e., are not bound to terms which contain a common variable.
+
+
 
 <UL>
+<LI><A HREF="ciao_95.html#SEC391">Usage and interface (andprolog)</A>
+<LI><A HREF="ciao_95.html#SEC392">Documentation on internals (andprolog)</A>
+<LI><A HREF="ciao_95.html#SEC393">Known bugs and planned improvements (andprolog)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC391" HREF="ciao_toc.html#TOC391">Usage and interface (<CODE>andprolog</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_package(andprolog).</CODE>
+
+or
+
+<CODE>:- module(...,...,[andprolog]).</CODE>
+
+<LI><STRONG>New operators defined:</STRONG>
+
+<A NAME="IDX4339"></A>
+<CODE>@&#38;/2</CODE> [950,xfy].
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC392" HREF="ciao_toc.html#TOC392">Documentation on internals (<CODE>andprolog</CODE>)</A></H2>
+<P>
+<A NAME="IDX4340"></A>
+<A NAME="IDX4341"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>@&#38;/2:</B>
+<DD><A NAME="IDX4342"></A>
+
+
+<P>
+<CODE>@&#38;(GoalA,GoalB)</CODE>
+
+
+<P>
+<CODE>GoalA</CODE> and <CODE>GoalB</CODE> are run in independent and-parallel fashion. This is just a first sketch, and valid only for deterministic independent goals. The use is as 
+
+
+
+<PRE>
+q:- a &#38; b.
+</PRE>
+
+<P>
+which would start <CODE>a</CODE> and <CODE>b</CODE> in separate threads (possibly in parallalel, if the machine architecture and operating system allows that), and continue when <STRONG>both</STRONG> have finished. This type of execution is safe only when <CODE>a</CODE> and <CODE>b</CODE> are independent in the sense of variable sharing. This condition can be tested with the 
+<A NAME="IDX4343"></A>
+<CODE>indep/2</CODE> predicate. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX4344"></A>
+<A NAME="IDX4345"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>active_agents/1:</B>
+<DD><A NAME="IDX4346"></A>
+
+
+<P>
+<CODE>active_agents(NumberOfAgents)</CODE>
+
+
+<P>
+Tests/sets the <CODE>NumberOfAgents</CODE> which are active looking for goals to execute. As for now, those agents are resource-consuming, even when they are just looking for work, and not executing any user goals.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4347"></A>
+<A NAME="IDX4348"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>indep/2:</B>
+<DD><A NAME="IDX4349"></A>
+
+
+<P>
+<CODE>indep(X,Y)</CODE>
+
+
+<P>
+<CODE>X</CODE> and <CODE>Y</CODE> are 
+<A NAME="IDX4350"></A>
+<A NAME="IDX4351"></A>
+<EM>independent</EM>, i.e., they are bound to terms which have no variables in common. For example, <CODE>indep(X,Y)</CODE> holds for <CODE>X=f(Z),Y=g(K)</CODE> and also for <CODE>X=f(a),Y=X</CODE> (since both <CODE>X</CODE> and <CODE>Y</CODE> are bound to ground terms). It does not hold for <CODE>X=f(Z),Y=g(Z)</CODE> and for <CODE>X=Y</CODE>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4352"></A>
+<A NAME="IDX4353"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>indep/1:</B>
+<DD><A NAME="IDX4354"></A>
+
+
+<P>
+<CODE>indep(X)</CODE>
+
+
+<P>
+<CODE>X</CODE> is a list of lists of length two, i.e., a list of the form <CODE>[[T1, T2], [T3, T4], ...]</CODE>. The variables in each pair of the list <CODE><CODE>X</CODE></CODE> are tested for independence using 
+<A NAME="IDX4355"></A>
+<CODE>indep/2</CODE>. This list-of-pairs format is the output of several independdnce analyzers for pair sharing.
+
+
+</DL>
+
+
+
+<H2><A NAME="SEC393" HREF="ciao_toc.html#TOC393">Known bugs and planned improvements (<CODE>andprolog</CODE>)</A></H2>
+
+
+<UL>
+
 <LI>
 
-<A NAME="IDX4738"></A>
-pure Prolog programming (well, this can be viewed more as a restriction than an extension); 
-<LI>
-
-<A NAME="IDX4739"></A>
-feature terms or 
-<A NAME="IDX4740"></A>
-<A NAME="IDX4741"></A>
-<EM>records</EM> (i.e., structures with names for each field); 
-<LI>
-
-<A NAME="IDX4742"></A>
-parallel programming (e.g., &#38;-Prolog style); 
-<LI>
-
-<A NAME="IDX4743"></A>
-functional syntax; 
-<LI>
-
-<A NAME="IDX4744"></A>
-higher-order library; 
-<LI>
-
-<A NAME="IDX4745"></A>
-global variables; 
-<LI><CODE>setarg</CODE> and <CODE>undo</CODE>;
+<STRONG>Beware:</STRONG> the current code is just a partial first shot. It is provided for the sole purpose of experimentation and development.
 
 <LI>
 
-<A NAME="IDX4746"></A>
-delaying predicate execution; 
+The fact that only the first solution is returned for the conjunction is due to performance issues (and lack of time), and we expect to remove it in a near future.
+
 <LI>
 
-<A NAME="IDX4747"></A>
-active modules; 
+CGEs (i.e., <CODE>=&#62;</CODE>) are not supported.
+
 <LI>
 
-<A NAME="IDX4748"></A>
-breadth-first execution; 
-<LI>
-
-<A NAME="IDX4749"></A>
-iterative deepening-based execution; 
-<LI>
-
-<A NAME="IDX4750"></A>
-constraint logic programming; 
-<LI>
-
-<A NAME="IDX4751"></A>
-object oriented programming. 
+The 
+<A NAME="IDX4356"></A>
+<CODE>indep/1</CODE>, 
+<A NAME="IDX4357"></A>
+<CODE>indep/2</CODE>, and 
+<A NAME="IDX4358"></A>
+<CODE>ground/1</CODE> tests are not very efficient; they will be replaced by native versions (taken from the &#38;-Prolog code) in the future.
 </UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_94.html">previous</A>, <A HREF="ciao_96.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_94.html">previous</A>, <A HREF="ciao_96.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

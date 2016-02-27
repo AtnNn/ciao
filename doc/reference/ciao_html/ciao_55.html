@@ -1,26 +1,22 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Quintus-like internal database</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_54.html">previous</A>, <A HREF="ciao_56.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_54.html">previous</A>, <A HREF="ciao_56.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC249" HREF="ciao_toc.html#TOC249">Quintus-like internal database</A></H1>
+<H1><A NAME="SEC251" HREF="ciao_toc.html#TOC251">Quintus-like internal database</A></H1>
 <P>
-<A NAME="IDX2974"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> The CLIP Group.
+<A NAME="IDX2876"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#90 (2003/12/21, 2:20:48 CET)
+<STRONG>Version:</STRONG> 0.4#5 (1998/2/24)
 
 
 <P>
@@ -33,13 +29,13 @@ These predicates store arbitrary terms in the database without interfering with 
 
 
 <UL>
-<LI><A HREF="ciao_55.html#SEC250">Usage and interface (old_database)</A>
-<LI><A HREF="ciao_55.html#SEC251">Documentation on exports (old_database)</A>
+<LI><A HREF="ciao_55.html#SEC252">Usage and interface (old_database)</A>
+<LI><A HREF="ciao_55.html#SEC253">Documentation on exports (old_database)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC250" HREF="ciao_toc.html#TOC250">Usage and interface (<CODE>old_database</CODE>)</A></H2>
+<H2><A NAME="SEC252" HREF="ciao_toc.html#TOC252">Usage and interface (<CODE>old_database</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -56,13 +52,13 @@ These predicates store arbitrary terms in the database without interfering with 
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX2975"></A>
+<A NAME="IDX2877"></A>
 <CODE>recorda/3</CODE>, 
-<A NAME="IDX2976"></A>
+<A NAME="IDX2878"></A>
 <CODE>recordz/3</CODE>, 
-<A NAME="IDX2977"></A>
+<A NAME="IDX2879"></A>
 <CODE>recorded/3</CODE>, 
-<A NAME="IDX2978"></A>
+<A NAME="IDX2880"></A>
 <CODE>current_key/2</CODE>.
 
 </UL>
@@ -73,120 +69,80 @@ These predicates store arbitrary terms in the database without interfering with 
 
 
 
-<H2><A NAME="SEC251" HREF="ciao_toc.html#TOC251">Documentation on exports (<CODE>old_database</CODE>)</A></H2>
+<H2><A NAME="SEC253" HREF="ciao_toc.html#TOC253">Documentation on exports (<CODE>old_database</CODE>)</A></H2>
 <P>
-<A NAME="IDX2979"></A>
-<A NAME="IDX2980"></A>
+<A NAME="IDX2881"></A>
+<A NAME="IDX2882"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>recorda/3:</B>
-<DD><A NAME="IDX2981"></A>
+<DD><A NAME="IDX2883"></A>
 
 
 <P>
-<CODE>recorda(Key, Term, Ref)</CODE>
+<CODE>recorda(+Key,?Term,-Ref)</CODE>
 
 
 <P>
 The term <CODE>Term</CODE> is recorded in the internal database as the first item for the key <CODE>Key</CODE>, where <CODE>Ref</CODE> is its implementation-defined identifier. The key must be given, and only its principal functor is significant. Any uninstantiated variables in the <CODE>Term</CODE> will be replaced by new private variables, along with copies of any subgoals blocked on these variables.
 
 
-<P>
-<STRONG>Usage:</STRONG> <CODE>recorda(+Key, ?Term, -Ref)</CODE>
-
-<UL>
-<LI><EM>The following properties hold globally:</EM>
-
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
-</UL>
-
 </DL>
 
 <P>
-<A NAME="IDX2982"></A>
-<A NAME="IDX2983"></A>
+<A NAME="IDX2884"></A>
+<A NAME="IDX2885"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>recordz/3:</B>
-<DD><A NAME="IDX2984"></A>
+<DD><A NAME="IDX2886"></A>
 
 
 <P>
-<CODE>recordz(Key, Term, Ref)</CODE>
+<CODE>recordz(+Key,?Term,-Ref)</CODE>
 
 
 <P>
 Like <CODE>recorda/3</CODE>, except that the new term becomes the <EM>last</EM> item for the key <CODE>Key</CODE>.
 
 
-<P>
-<STRONG>Usage:</STRONG> <CODE>recordz(+Key, ?Term, -Ref)</CODE>
-
-<UL>
-<LI><EM>The following properties hold globally:</EM>
-
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
-</UL>
-
 </DL>
 
 <P>
-<A NAME="IDX2985"></A>
-<A NAME="IDX2986"></A>
+<A NAME="IDX2887"></A>
+<A NAME="IDX2888"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>recorded/3:</B>
-<DD><A NAME="IDX2987"></A>
+<DD><A NAME="IDX2889"></A>
 
 
 <P>
-<CODE>recorded(Key, Term, Ref)</CODE>
+<CODE>recorded(?Key,?Term,?Ref)</CODE>
 
 
 <P>
 The internal database is searched for terms recorded under the key <CODE>Key</CODE>. These terms are successively unified with <CODE>Term</CODE> in the order they occur in the database. At the same time, <CODE>Ref</CODE> is unified with the implementation-defined identifier uniquely identifying the recorded item. If the key is instantiated to a compound term, only its principal functor is significant. If the key is uninstantiated, all terms in the database are successively unified with <CODE>Term</CODE> in the order they occur.
 
 
-<P>
-<STRONG>Usage:</STRONG> <CODE>recorded(?Key, ?Term, ?Ref)</CODE>
-
-<UL>
-<LI><EM>The following properties hold globally:</EM>
-
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
-</UL>
-
 </DL>
 
 <P>
-<A NAME="IDX2988"></A>
-<A NAME="IDX2989"></A>
+<A NAME="IDX2890"></A>
+<A NAME="IDX2891"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>current_key/2:</B>
-<DD><A NAME="IDX2990"></A>
+<DD><A NAME="IDX2892"></A>
 
 
 <P>
-<CODE>current_key(KeyName, KeyTerm)</CODE>
+<CODE>current_key(?KeyName,?KeyTerm)</CODE>
 
 
 <P>
 <CODE>KeyTerm</CODE> is the most general form of the key for a currently recorded term, and <CODE>KeyName</CODE> is the name of that key. This predicate can be used to enumerate in undefined order all keys for currently recorded terms through backtracking.
 
 
-<P>
-<STRONG>Usage:</STRONG> <CODE>current_key(?Name, ?Key)</CODE>
-
-<UL>
-<LI><EM>The following properties hold globally:</EM>
-
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
-</UL>
-
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_54.html">previous</A>, <A HREF="ciao_56.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_54.html">previous</A>, <A HREF="ciao_56.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

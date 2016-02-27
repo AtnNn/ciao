@@ -2,7 +2,7 @@
 
 main.
 
-:- comment(author,"Daniel Cabeza").
+:- comment(author,"D. Cabeza").
 :- comment(author,"Manuel C. Rodriguez").
 :- comment(author,"(A. Ciepielewski, M. Carlsson, T. Chikayama, K. Shen)").
 
@@ -726,23 +726,3 @@ changes.)
 %% much slower, since all modules would have to be explicitly marked as
 %% unloadable even if no debugging is taken place, which is burden for
 %% correct applications.
-
-
-%% *** Delete this comment after reading: it is only a reminder! ***
-%% 
-%% The "assertions" library needs to be included in order to support
-%% ":- comment(...,...)." declarations such as below, i.e., insert: 
-%% 
-%% :- module(_,_,[assertions]).
-%% 
-%% At the beginning of the file:
-%% The following version comment(s) can be moved elsewhere in the 
-%% file. Subsequent version comments will always be placed above 
-%% the last one inserted.
-
-
-:- comment(version_maintenance,dir('../../version')).
-
-:- comment(version(1*11+67,2003/12/19,16:11*38+'CET'), "Documentation
-   Revised.  (Edison Mera)").
-

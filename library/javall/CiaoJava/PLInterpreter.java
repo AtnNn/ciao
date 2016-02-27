@@ -564,19 +564,13 @@ class PLInterpreter {
       Object[] va = (Object [])v;
       PLTerm list = PLTerm.nil;
       if (va.length > 0) {
-	  PLTerm[] pva = new PLTerm[va.length];
-	  for (int i = 0; i < va.length; i++)
-	      pva[i] = prologRepr(va[i]);
-	  try {
-	      list = new PLList(pva);
-	  } catch (PLException e) {} // should not be any exception here.
-// 	try {
-// 	    list = new PLList(prologRepr(va[0]),PLTerm.nil);
-// 	} catch (PLException e) {
-// 	    // Exception not handled: 2nd argument allways is nil.
-// 	}
-//         for (int i = 1; i < va.length; i++)
-//           ((PLList)list).add(prologRepr(va[i]));
+	try {
+	    list = new PLList(prologRepr(va[0]),PLTerm.nil);
+	} catch (PLException e) {
+	    // Exception not handled: 2nd argument allways is nil.
+	}
+        for (int i = 1; i < va.length; i++)
+          ((PLList)list).add(prologRepr(va[i]));
       }
       return list;
     }

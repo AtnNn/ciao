@@ -343,16 +343,6 @@ public abstract class PLTerm extends Object {
   }
 
   /**
-   * Integer test.
-   *
-   * @return <code>true</code> if this Prolog term is an integer;
-   *         <code>false</code> otherwise.
-   */
-  public boolean isInteger() {
-    return (Type == INTEGER);
-  }
-
-  /**
    * Java exception generation.
    *
    * @param  String containing the exception text.
@@ -682,25 +672,13 @@ public abstract class PLTerm extends Object {
       case PFXC_LIST:
         PLTerm head = getTerm(in);
         PLTerm tail = getTerm(in);
-	/*jcf 27.01.03*/
-	if (tail.isString())
-	    tail = ((PLString)tail).toPLList();
-	/**/
         return new PLList(head,tail);
 
       case PFXC_STRING:
 	PLString s = new PLString(getString(in));
-	PLTerm qdr = getTerm(in);  // nil terminator is read here.
-	if (qdr.isNil())
-	    return s;
-	else {
-	    // The already read string is in fact a list of integers,
-	    // so the type must be changed:
-	    PLList l = s.toPLList();
-	    l.append(qdr);
-	    return l;
-	}
-
+	getTerm(in);  // nil terminator is read here.
+	return s;
+        
       case PFXC_INTEGER:
         return new PLInteger(getInt(in));
         

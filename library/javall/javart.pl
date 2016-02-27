@@ -23,35 +23,35 @@
 	],
 	[assertions,regtypes,isomodes]).
 
-:- comment(title,"Prolog to Java interface").
+:- comment(title,"Low-level Prolog to Java interface").
 
 :- comment(author,"Jes@'{u}s Correas").
 
 :- comment(module,"
 
-This module defines the Ciao Prolog to Java interface. This interface
+This module defines the low level Prolog to Java interface. This interface
 allows a Prolog program to start a Java process, create Java objects,
 invoke methods, set/get attributes (fields), and handle Java events.
 
 This interface only works with JDK version 1.2 or higher.
 
-Although the Java side interface is explained in Javadoc format (it is
-available at @tt{library/javall/javadoc/} in your Ciao installation),
-the general interface structure is detailed here.
+Although the Java side interface is explained in Javadoc format (it is 
+available at library/javall/javadoc/ in your Ciao installation), the
+general interface structure is detailed here.
 
-@section{Prolog to Java Interface Structure}
-@cindex{Prolog to Java Interface Structure}
-This interface is made up of two parts: a Prolog
+@section{Low-Level Prolog to Java Interface Structure}
+@cindex{Low-Level Prolog to Java Interface Structure}
+This low-level prolog to java interface is made up of two parts: a Prolog
 part and a Java part, running in separate processes. The Prolog part 
 receives requests from a Prolog program and sends them to the Java part
 through a socket. The Java part receives requests from the socket and
 performs the actions included in the requests.
 
-If an event is thrown in the Java side, an asynchronous message must
-be sent away to the Prolog side, in order to launch a Prolog goal to
-handle the event. This asynchronous communication is performed using a
-separate socket. The nature of this communication needs the use of
-threads both in Java and Prolog: to deal with the 'sequential program
+If an event is thrown in the java side, an asynchronous message must be
+sent away to the prolog side, in order to launch a prolog goal to handle
+the event. This asynchronous communication is made by the means of
+a second socket. The nature of this communication needs the use of threads
+both in java and prolog:  to deal with the 'sequential program
 flow,' and other threads for event handling.
 
 In both sides the threads are automatically created by the context of
@@ -59,63 +59,59 @@ the objects we use. The user must be aware that different requests to the
 other side of the interface could run concurrently.
 
 
-@subsection{Prolog side of the Java interface} @cindex{Prolog to Java
-Interface Structure. Prolog side} The Prolog side receives the actions
-to do in the Java side from the user program, and sends them to the
-Java process through the socket connection.  When the action is done
-in the Java side, the result is returned to the user Prolog program,
-or the action fails if there is any problem in the Java side.
+@subsection{Prolog side of the Java interface}
+@cindex{Low-Level Prolog to Java Interface Structure. Prolog side}
+The prolog side receives the actions to do in the
+java side from the user program, and sends them to the java side through the socket connection.
+When the action is done in the java side, the result is returned to the user
+program, or the action fails if there is any problem in the java side.
 
-Prolog data representation of Java elements is very simple in this
-interface. Java primitive types such as integers and characters are
-translated into the Prolog corresponding terms, and even some Java
-objects are translated in the same way (e. g. Java strings). Java
-objects are represented in Prolog as compound terms with a reference
-id to identify the corresponding Java object. Data conversion is made
-automatically when the interface is used, so the Prolog user programs
-do not have to deal with the complexity of this tasks.
+Prolog data representation of java elements is very simple in this
+low-level interface. Java primitive types such as integers and characters
+are translated into Prolog terms, and even some Java objects are translated
+that way (e. g. Java strings). Java objects are represented in Prolog as
+compound terms with a reference to identify the corresponding Java
+object. Data conversion is made automatically when the interface is used,
+so the Prolog user programs do not have to deal with the complexity of this
+tasks. 
 
 @subsection{Java side}
-@cindex{Prolog to Java Interface Structure. Java side}
-The Java side of this layer is more complex than the Prolog side. The tasks
+@cindex{Low-Level Prolog to Java Interface Structure. Java side}
+The java side of this layer is more complex than the prolog side. The tasks
 this part have to deal to are the following:
 
 @begin{itemize}
   
-@item Wait for requests from the Prolog side.
+@item Wait for requests from the prolog side.
 
-@item Translate the Prolog terms received in the Prolog 'serialized'
-	form to a more useful Java representation (see the Java
-	interface documentation available at
-	@tt{library/javall/javadoc/} in your Ciao installation for
-	details regarding Java representation of Prolog terms).
+@item Translate the prolog terms received in a 'serialized' form in a more
+         useful java representation.
 
-@item Interpret the requests received from the Prolog side, and execute them. 
+@item Interpret the requests received from the prolog side.
 
 @item Handle the set of objects created by or derived from the requests
         received from de prolog side.
 
-@item Handle the events raised in the Java side, and launch the listeners
+@item Handle the events raised in the java side, and launch the listeners
         added in the prolog side.
 
-@item Handle the exceptions raised in the Java side, and send them to
-	the Prolog side.
+@item Handle the exceptions raised in the java side, and send to the prolog
+side.
 
 @end{itemize}
 
-In the implementation of the Java side, two items must be carefully
-designed: the handling of Java objects, and the representation of
-prolog data structures. The last item is specially important because
-all the interactions between Prolog and Java are made using Prolog
-structures, an easy way to standardize the different data management
-in both sides. Even the requests themselves are encapsulated using
-Prolog structures.  The overload of this encapsulation is not
-significant in terms of socket traffic, due to the optimal
-implementation of the prolog serialized term.
+In the implementation of the java side, two items must be carefully
+designed: the handling of java objects, and the representation of prolog
+data structures. The last item is specially important because all the
+interactions between prolog and java are made using prolog structures, an
+easy way to standardize the different data management of both
+languages. Even the requests themselves are encapsulated using prolog
+structures.  The overload of this encapsulation is not significant in terms
+of socket traffic, due to the optimal implementation of the prolog serialized term.
 
-The java side must handle the objects created from the Prolog side
+The java side must handle the objects created from the prolog side
 dinamically, and these objects must be accessed as fast as possible from
-the set of objects. The Java API provides a powerful implementation of Hash
+the set of objects. The java API provides a powerful implementation of Hash
 tables that achieves all the requirements of our implementation.
 
 On the other hand, the java representation of prolog terms is made using
@@ -140,13 +136,13 @@ for each kind of event, a listener must be implemented and added
 specifically. However, the Java 2 API includes a special listener
 (@tt{AWTEventListener}) that can manage the internal java event queue.
 
-The prolog to java interface has been designed to emulate the java
-event handler, and is also based on event objects and listeners. The
-prolog to java interface implements its own event manager, to handle
-those events that have prolog listeners associated to the object that
-raises the event. From the prolog side can be added listeners to
-objects for specific events. The java side includes a list of goals to
-launch from the object and event type.
+The prolog to java interface has been designed to emulate the java event
+handler, and is also based on event objects and listeners. The low level
+prolog to java interface implements its own event manager, to handle those
+events that have prolog listeners associated to the object that raises the
+event. From the prolog side can be added listeners to objects for specific
+events. The java side includes a list of goals to launch from the object
+and event type.
 
 Due to the events nature, the event handler must work in a separate thread
 to manage the events asynchronously. The java side has its own mechanisms
@@ -161,13 +157,13 @@ like the requests sent directly from a prolog program.
 The internal process of register a Prolog event handler to a Java event is
 shown in the next figure:
 
-@image{Figs/ip2jbn-events-pl-reg}
+@image{ip2jbn-events-pl-reg}
 
-When an event raises, the Prolog to Java interface has to send to
+When an event raises, the low-level Prolog to Java interface has to send to
 the Prolog user program the goal to evaluate. Graphically, the complete
 process takes the tasks involved in the following figure: 
 
-@image{Figs/ip2jbn-events-pl-fire}
+@image{ip2jbn-events-pl-fire}
 
 
 @section{Java exception handling from Prolog}
@@ -250,23 +246,17 @@ java_event(X) :- atm(X).
 prolog_goal(X) :- callable(X).
 
 %% -----------------------------------------------------------------------
-:- pred java_start
-	# "Starts the Java server on the local machine,
-	connects to it, and starts the event handling thread.".
-%% -----------------------------------------------------------------------
-
-java_start :-
-	java_start("").
-
-%% -----------------------------------------------------------------------
-:- pred java_start(+Classpath)
+:- pred java_start(+classpath)
 	:: string # "Starts the Java server on the local machine,
 	connects to it, and starts the event handling thread. The Java
         server is started using the classpath received as argument.".
 %% -----------------------------------------------------------------------
 
+java_start :-
+	java_start("").
+
 java_start(Cp) :-
-	(is_connected_to_java ->
+	(java_stream(_,_,_,_) ->
 % exceptions are not handled properly with multiple threads.
 	 display(java_exception('Java connection already active')),nl,
 %	 throw(java_exception('Java connection already active')),
@@ -295,7 +285,7 @@ java_start(Cp) :-
 %% -----------------------------------------------------------------------
 
 java_start(Node,Cp):-
-	(is_connected_to_java ->
+	(java_stream(_,_,_,_) ->
 % exceptions are not handled properly with multiple threads.
 	 display(java_exception('Java connection already active')),nl,
 %	 throw(java_exception('Java connection already active')),
@@ -323,7 +313,7 @@ java_start(Node,Cp):-
         interface server if it was started using java_start/n.".
 %% -----------------------------------------------------------------------
 java_stop :-
-	is_connected_to_java,
+	is_connected,
 	!,
 	stop_socket_interface.
 
@@ -358,7 +348,7 @@ java_connect_stream(Node,Port,Stream) :-
         with java_connect/2.".
 %% -----------------------------------------------------------------------
 java_disconnect :-
-	is_connected_to_java,
+	is_connected,
 	!,
 	stop_socket_interface.
 
@@ -430,7 +420,7 @@ get_port(Stream,Port):-
         read(Stream, Port).
 
 %% -----------------------------------------------------------------------
-:- pred java_use_module(+Module)
+:- pred get_port(+module)
 	:: term # "Loads a module and makes it available from Java.".
 	
 %% -----------------------------------------------------------------------
@@ -448,7 +438,7 @@ java_use_module(Module):-
 %% -----------------------------------------------------------------------
 
 java_create_object(Constructor, Object):-
-	is_connected_to_java,
+	is_connected,
 	nonvar(Constructor),
 	var(Object),
 	Constructor =.. [Name | ArgList],
@@ -465,7 +455,7 @@ java_create_object(Constructor, Object):-
 %% -----------------------------------------------------------------------
 
 java_delete_object(Object) :-
-	is_connected_to_java,
+	is_connected,
 	nonvar(Object),
 	eng_goal_id(Id),
 	assertz_fact(java_query(Id,'$java_delete_object'(Object))),
@@ -482,7 +472,7 @@ java_delete_object(Object) :-
 %% -----------------------------------------------------------------------
 
 java_get_value(Object,Field) :-
-	is_connected_to_java,
+	is_connected,
         nonvar(Object),
         Field =.. [Name, Value],
 	eng_goal_id(Id),
@@ -500,7 +490,7 @@ java_get_value(Object,Field) :-
 %% -----------------------------------------------------------------------
 
 java_set_value(Object,Field) :-
-	is_connected_to_java,
+	is_connected,
         nonvar(Object),
         Field =.. [Name, Value],
 	eng_goal_id(Id),
@@ -517,7 +507,7 @@ java_set_value(Object,Field) :-
 %% -----------------------------------------------------------------------
 
 java_invoke_method(Object,Method) :-
-	is_connected_to_java,
+	is_connected,
         nonvar(Object),
         nonvar(Method),
         Method =.. [Name | ArgList],
@@ -539,7 +529,7 @@ java_invoke_method(Object,Method) :-
 :- meta_predicate java_add_listener(?,?,goal).
 
 java_add_listener(Object, Event, Goal) :-
-	is_connected_to_java,
+	is_connected,
         nonvar(Object),
         nonvar(Event),
         nonvar(Goal),
@@ -557,7 +547,7 @@ java_add_listener(Object, Event, Goal) :-
 %% -----------------------------------------------------------------------
 
 java_remove_listener(Object, Event, Goal) :-
-	is_connected_to_java,
+	is_connected,
         nonvar(Object),
         nonvar(Event),
         nonvar(Goal),
@@ -586,14 +576,25 @@ check_error('$java_exception'(E)):-
 
 check_error(_).
 
+%% -----------------------------------------------------------------------
+:- pred is_connected/0
+	# "Checks if the connection to Java is established.
+	If it is not established, an exception is thrown.".
+%% -----------------------------------------------------------------------
+is_connected :-
+	java_stream(_,_,_,_).
+
+is_connected :-
+% exceptions are not handled properly with multiple threads.
+	display(java_exception('There is no connection to Java')),nl,
+%	throw(javart('There is no connection to Java')),
+	fail.
+
 %%------------------------------------------------------------------------
 %% VERSION CONTROL
 %%------------------------------------------------------------------------
  
 :- comment(version_maintenance,dir('../../version')).
-
-:- comment(version(1*9+67,2003/03/14,12:48*36+'CET'), "Documentation
-   changes (Jesus Correas Fernandez)").
 
 :- comment(version(1*7+74,2001/03/26,12:12*29+'CEST'), "Added
    java_stop/0, inverse of java_start/1,2.  (Jesus Correas

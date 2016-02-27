@@ -106,16 +106,15 @@ if (stop_on_pred_calls) {  \
 #define LP6		(*(long *)Pplus6align)
 #define LP7		(*(long *)Pplus7)
 
-#define DISPATCH_R(Incr)	{ P += Incr; goto ReadMode; }
-#define DISPATCH_W(Incr)	{ P += Incr; goto WriteMode; }
+#define DISPATCH_R(Incr)	{ P += Incr;  goto ReadMode; }
+#define DISPATCH_W(Incr)	{ P += Incr;  goto WriteMode; }
 
-/* segfault patch -- jf */
 /*  'U' is a 'Yb(I)' expression. */
 #define GetFirstValue(U,V) \
 { \
   if (CondStackvar(U)) \
     { \
-      TrailPushCheck(w->trail_top,TagSVA(&U)); \
+      TrailPush(w->trail_top,TagSVA(&U)); \
       BindingOfStackvar(U) = V; \
     } \
   else \
@@ -223,44 +222,6 @@ if (stop_on_pred_calls) {  \
 		     S = TagToLST(t1); RC}); \
 }
 
-				/* Defs for pairs of UNIFYs */
-
-#define U1_VOID_R(I)	{ S = HeapOffset(S,I); }
-
-#define U1_VOID_W(I)	{ i=(I); do ConstrHVA(H) while (--i); }
-
-#define U1_XVAR_R(I)	{ RefHeapNext(Xb(I),S); }
-
-#define U1_XVAR_W(I)	{ LoadHVA(Xb(I),H); }
-
-#define U1_YVAR_R(I)	{ RefHeapNext(Yb(I),S); }
-
-#define U1_YVAR_W(I)	{ LoadHVA(Yb(I),H); }
-
-#define U1_XVAL_R(I)	{ RefHeapNext(t1,S); CUNIFY(Xb(I),t1) }
-#define U1_XVAL_R2(I)	{ RefHeapNext(t1,S); EUNIFY(Xb(I),t1,1) }
-#define U1_XVAL_R3(I)	{ RefHeapNext(t1,S); EUNIFY(Xb(I),t1,2) }
-
-#define U1_XVAL_W(I)	{ HeapPush(H,Xb(I)); }
-
-#define U1_YVAL_R(I)	{ RefHeapNext(t1,S); RefStack(t0,&Yb(I)); CUNIFY(t0,t1) }
-#define U1_YVAL_R2(I)	{ RefHeapNext(t1,S); RefStack(t0,&Yb(I)); EUNIFY(t0,t1,1) }
-#define U1_YVAL_R3(I)	{ RefHeapNext(t1,S); RefStack(t0,&Yb(I)); EUNIFY(t0,t1,2) }
-
-#define U1_YVAL_W(I)	{ HeapPushRefStack(H,&Yb(I)); }
-
-#define U1_YFVAL_R(I)	{ RefHeapNext(t0,S); GetFirstValue(Yb(I),t0); }
-
-#define U1_YFVAL_W(I)	{ LoadHVA(t0,H); GetFirstValue(Yb(I),t0); }
-
-#define	U1_XLVAL_W(I) { t1=Xb(I); Unify_local_value }
-
-#define	U1_XLVALC_W(I) { t1=X(I); Unify_local_value }
-
-#define	U1_YLVAL_W(I) { RefStack(t1,&Yb(I)); Unify_local_value }
-
-#define	U1_YLVALC_W(I) { RefStack(t1,&Y(I)); Unify_local_value }
-
 
 #define TRYEACH_R(List) \
 { SetAlts(List); goto tryeach_r; }
@@ -269,40 +230,10 @@ if (stop_on_pred_calls) {  \
 { SetAlts(List); goto tryeach_w; }
 
 
-#if defined(DEBUG)
-#define REPORT_CLEANUP(TopCChpt, TopNode) \
- if(debug_concchoicepoints) \
-    fprintf(stderr, "cut: removing chains (%x to %x)\n", \
-                    (int)TopCChpt, (int)TopNode);
-
-#define REPORT_CUT(NewNode) \
- if (debug_choicepoints)  \
-   fprintf(stderr, "Cutting: new chpt = %x\n", (int)NewNode);
-#else
-#define REPORT_CUT(NewNode)
-#define REPORT_CLEANUP(TopCChpt, TopNode)
-#endif
-
-#if defined(THREADS)
-#define   ConcChptCleanUp(TopCChpt, TopNode) \
-    if (ChoiceYounger(TopCChpt, TopNode)) { \
-       REPORT_CLEANUP(TopCChpt, TopNode); \
-       remove_link_chains(&TopCChpt, TopNode); \
-    } 
-#else
-#define    ConcChptCleanUp(TopCChpt, TopNode)
-#endif
-
-/* Concurrency: if we cut (therefore discarding intermediate
-   choicepoints), make sure we also get rid of the linked chains which
-   point to the pending calls to concurrent predicates. (MCL) */
-
 #define DOCUT \
 { \
-    w->node = SetB(w->next_node); \
-    SetShadowregs(B); \
-    REPORT_CUT(w->node); \
-    ConcChptCleanUp(TopConcChpt, w->node); \
+      w->node = SetB(w->next_node); \
+      SetShadowregs(B); \
 }
 
 #define PUT_YVOID \
@@ -372,7 +303,7 @@ if (stop_on_pred_calls) {  \
   w->frame = E->frame; \
 }
 
-#define CODE_PROCEED \
+#define PROCED \
 { \
   w->local_top = 0; \
   SetE(w->frame); \
@@ -418,158 +349,3 @@ if (stop_on_pred_calls) {  \
 	  SetA(E,Offset(E,EToY0+i+1)); \
 	  Setfunc(ADDR); \
 }
-
-#if defined(DEBUG)
-#define CODE_RETRY_INSTANCE_DEBUG_1 /* Extended check */ \
-{ \
-    if (debug_concchoicepoints) { \
-        if ((TagToRoot(X(RootArg))->behavior_on_failure != CONC_CLOSED) && \
-	    (IS_BLOCKING(X(InvocationAttr)))) \
-	      fprintf(stderr, \
-"**wam(): failing on a concurrent closed pred, chpt=%x, failing chpt=%x .\n", \
-                     (int)w->node,(int)TopConcChpt); \
-    } \
-    if (debug_conc) { \
-        if (TagToRoot(X(RootArg))->x2_pending_on_instance || \
-            TagToRoot(X(RootArg))->x5_pending_on_instance) \
-                fprintf(stderr,  \
-         "**wam(): failing with invokations pending from root, type = %d.\n", \
-                      (TagToRoot(X(RootArg))->behavior_on_failure)); \
-    } \
-}
-
-#define CODE_RETRY_INSTANCE_DEBUG_2 \
-{ \
-    if (debug_concchoicepoints) \
-     fprintf(stderr, "New topmost concurrent chpt = %x\n", (int)TopConcChpt); \
-}
-
-#define CODE_RETRY_INSTANCE_DEBUG_3 \
-{ \
-    if(debug_conc && TagToRoot(X(RootArg))->behavior_on_failure != DYNAMIC)  \
-        fprintf(stderr,  \
-            "*** %d(%d)  backtracking on a concurrent predicate.\n", \
-            (int)Thread_Id, (int)GET_INC_COUNTER); \
-    if(debug_concchoicepoints &&  \
-       TagToRoot(X(RootArg))->behavior_on_failure != DYNAMIC)  \
-        fprintf(stderr,  \
-                "backtracking to chpt. = %x\n", (int)w->node); \
-}
-#else 
-#define CODE_RETRY_INSTANCE_DEBUG_1
-#define CODE_RETRY_INSTANCE_DEBUG_2
-#define CODE_RETRY_INSTANCE_DEBUG_3
-#endif
-
-#define CODE_RETRY_INSTANCE \
-{ \
-	/* Take into account 'open' predicates.  (MCL) */ \
-	/* If there is *definitely* no next instance, remove choicepoint */ \
-	if ( \
-	    (TagToRoot(X(RootArg))->behavior_on_failure != DYNAMIC && \
-	     !next_instance_conc(Arg, &ins)) /* Wait and removes handle if needed */ \
-	    || \
-	    (TagToRoot(X(RootArg))->behavior_on_failure == DYNAMIC && \
-	     !next_instance(Arg, &ins)) \
-	    ) { \
-	  w->next_alt = NULL; \
-	  w->node = SetB(w->next_node); \
-	  SetShadowregs(B); \
-	} \
-	if (!ins) { /*  A conc. predicate has been closed, or a \
-	                non-blocking call was made (MCL) */ \
-          CODE_RETRY_INSTANCE_DEBUG_1; \
-	  TopConcChpt = (struct node *)TermToPointerOrNull(X(PrevDynChpt)); \
-          CODE_RETRY_INSTANCE_DEBUG_2; \
-	  goto fail;                                           /* But fail anyway */ \
-	} \
-        CODE_RETRY_INSTANCE_DEBUG_3; \
-	P = ins->emulcode; \
-	goto ReadMode; \
-}
-
-#if defined(DEBUG)
-#define CODE_NECK_DEBUG \
-{ \
-  if (debug_choicepoints) \
-    fprintf(stderr, "Storing %d registers (r) in node %x\n",  \
-                     i, (int)w->next_node); \
-}
-#else
-#define CODE_NECK_DEBUG
-#endif
-
-#define CODE_NECK \
-{ \
-	if (w->next_alt) { \
-	  SetB(w->node); \
-	  if (B->next_alt) {			/* retry */ \
-            B->next_alt = w->next_alt; \
-	  } else {			/* try */ \
-            B->next_alt = w->next_alt; /* 4 contiguous moves */ \
-            B->frame = w->frame; \
-            B->next_insn = w->next_insn; \
-            SaveLtop(B); \
-            i=B->next_alt->node_offset; \
-            if (i>ArityToOffset(0)) { \
-              i = OffsetToArity(i); \
-              SetB(w->next_node); \
-              CODE_NECK_DEBUG; \
-	      do \
-	        ChoicePush(pt1,(w->term-1)[i]); \
-	      while (--i); \
-	    } \
-	    if (ChoiceYounger(ChoiceOffset(B,CHOICEPAD),w->trail_top)) \
-	      choice_overflow(Arg,CHOICEPAD); \
-	  } \
-	  w->next_alt = NULL; \
-	  SetE(w->local_top);	/* OK even before allocate */ \
-	} \
-}
-
-#define CODE_NECK_PROCEED \
-{ \
-	if (w->next_alt) { \
-	  SetB(w->node); \
-	  if (B->next_alt) {			/* retry */ \
-	    B->next_alt = w->next_alt; \
-	  } else {			/* try */ \
-	    B->next_alt = w->next_alt; /* 4 contiguous moves */ \
-	    B->frame = w->frame; \
-	    B->next_insn = w->next_insn; \
-	    SaveLtop(B); \
-	    i=B->next_alt->node_offset; \
-	    if (i>ArityToOffset(0)) { \
-	      i = OffsetToArity(i); \
-	      SetB(w->next_node); \
-	      do \
-	        ChoicePush(pt1,(w->term-1)[i]); \
-	      while (--i); \
-	    } \
-	    if (ChoiceYounger(ChoiceOffset(B,CHOICEPAD),w->trail_top)) \
-	      choice_overflow(Arg,CHOICEPAD); \
-	  } \
-	  w->next_alt = NULL; \
-	} else \
-	  w->local_top = 0; \
-	SetE(w->frame); \
-	P = w->next_insn; \
-	goto WriteMode; \
-}
-
-#if GAUGE 
-#define CODE_COUNTED_NECK \
-{ \
-	  if (w->next_alt) { \
-	    SetB(w->node); \
-	    if (B->next_alt) { /* retry */ \
-	      INCR_COUNTER(*((ENG_INT **)P + 1)); \
-	    } else { /* try */ \
-	      INCR_COUNTER(*(ENG_INT **)P); \
-	    } \
-	  } \
-}
-#else 
-#define CODE_COUNTED_NECK
-#endif /* GAUGE */ 
-

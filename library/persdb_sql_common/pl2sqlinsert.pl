@@ -2,14 +2,14 @@
 :- include(library(assertions)).
 :- use_module(library(lists),[append/3]).
 
-:- multifile [sql__relation/3,sql__attribute/4].
-:- data [sql__relation/3,sql__attribute/4].
+:- multifile [relation/3,attribute/4].
+:- data [relation/3,attribute/4].
 
 pl2sqlInsert(ConstantTuple,SQLInsertString):-
 	ConstantTuple=..[PredName|AttrValues],
 	constants_list(AttrValues,AttrValues),
 	%% all elements must be constant to be inserted
-        sql__relation(PredName,_Arity,TableName),
+        relation(PredName,_Arity,TableName),
 	attributes_list(TableName,AList),
 	sqlInsertString(TableName,AList,AttrValues,SQLInsertString).
 
@@ -67,29 +67,37 @@ constants_list([_Head|Tail],CLTail):-
 	constants_list(Tail,CLTail).
 
 attributes_list(TableName,[]):-
-	sql__relation(_PredName,0,TableName),!.
+	relation(_PredName,0,TableName),!.
 attributes_list(TableName,List):-
-	sql__relation(_PredName,Arity,TableName), %% Arity is >0
+	relation(_PredName,Arity,TableName), %% Arity is >0
 	attrs_list(TableName,0,Arity,List).
 
 attrs_list(_TableName,Arity,Arity,[]):-
 	!.
 attrs_list(TableName,Location,Arity,[AttStringName|List]) :-
 	LocationPlus1 is Location+1,
-	sql__attribute(LocationPlus1,TableName,AttName,_AttType),
+	attribute(LocationPlus1,TableName,AttName,_AttType),
 	atom_codes(AttName,AttStringName),
 	attrs_list(TableName,LocationPlus1,Arity,List).
 
-%% ---------------------------------------------------------------------------
-:- comment(version_maintenance,dir('../../version')).
-
-:- comment(version(1*11+63,2003/11/29,02:26*35+'CET'), "Names of
-   multifile predicates relation/3 and attribute/4 changed to
-   sql__relation/3 and sql__attribute/4.  (Jesus Correas Fernandez)").
+%% The version comment(s) below can be moved elsewhere in the file.
+%% Subsequent comments will be placed above the last one inserted.
+%% Note that the "assertions" library needs to be included in order
+%% to support the ":- comment(_,_)." declarations.
 
 :- comment(version(0*1+0,1998/07/09,18:10*22+'MET DST'), "Translate an
    external Prolog predicate with constant arguments, into a SQL
    insertion sentence. Tables will be defined using relation/3,
    attribute/4. Outstanding: errors checking (Ignacio Caballero
    Blanco)").
+
+%% Version comment prompting control for this file.
+%% Local Variables: 
+%% mode: CIAO
+%% update-version-comments: "on"
+%% End:
+
+
+
+
 

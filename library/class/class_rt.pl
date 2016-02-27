@@ -43,6 +43,7 @@
 	module_concat/3,
 	term_to_meta/2,
 	last_module_exp/5,
+	'$meta_call'/1,
 	'$compile_term'/2,
 	'$current_clauses'/2,
 	'$inserta'/2,
@@ -53,7 +54,6 @@
 	'$close_predicate'/1,
 	'$open_predicate'/1,
 	'$unlock_predicate'/1]).
-:- use_module(engine(hiord_rt), ['$meta_call'/1]).
 
 %%------------------------------------------------------------------------
 %%

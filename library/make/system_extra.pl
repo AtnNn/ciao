@@ -1,4 +1,6 @@
 :- module(_,[
+	make_directory/1, 
+%%      make_dirpath/1,
 	del_dir_if_empty/1, 
 	move_files/2,move_file/2,
 	copy_files/2,copy_file/2,
@@ -10,7 +12,6 @@
 	ls/3,ls/2,
 	filter_alist_pattern/3,
 	'-'/1, do/2,
-%	finally/2,
 	set_perms/2,
 	readf/2,
 	datime_string/1,
@@ -20,20 +21,9 @@
 	call_unknown/1,
 	replace_strings_in_file/3,
 	writef/3,
-	writef/2 ],
-	[assertions,isomodes,hiord]).
-%% 	[assertions,isomodes,hiord,debug]).
+	writef/2 ],[assertions,isomodes,hiord]).
 
-:- comment(module,"This is a (temporary) extension to library
-   @lib{system} (which it reexports). It implements functionality that
-   is often convenient in @file{Makefile}s. Much of this should
-   probably end up eventually in @lib{system}, but once we have worked
-   out the best interface and, in some cases, the proper
-   implementation (the implementations in here are in some cases just
-   calls to Un*x shell primitives or commands).").
-
-:- comment(author,"M. Hermenegildo").
-
+%% The idea is that it is an extension
 :- reexport(library(system)).
 %%  [datime/9,working_directory/2,file_exists/1,
 %%   file_exists/2,file_property/2,chmod/2,system/2,delete_file/1,
@@ -53,7 +43,7 @@
 %% calls to atom_concat).
 
 %% -------------------------------------------------------------------------
-%% These are preds from the SICStus lib that probably need to be implemented 
+%% Preds from the SICSTus library that we need to implement
 %% -------------------------------------------------------------------------
 
 %% In ciao it is called pause/1.
@@ -97,6 +87,7 @@
 %% delete_file_option(recursive).
 %% delete_file_option(ignore).
 
+
 del_dir_if_empty(Dir) :-
 	working_directory(CD,CD),
 	(  file_exists(Dir)
@@ -106,6 +97,26 @@ del_dir_if_empty(Dir) :-
 	   ;  true )
 	;  true ),
 	cd(CD).
+
+:- redefining(make_directory/1). % It is defined in library(system)
+
+:- comment(make_directory(DirName),"Makes a new directory called
+   @var{DirName}.").
+
+:- true pred make_directory(+atm).
+
+%% Needs real implementation...
+make_directory(DirName) :-
+	(  file_exists(DirName)
+	-> note_message("did not create ~w (it already exists)",[DirName])
+	;  do(['mkdir ',DirName],fail) ).
+
+%% version which also creates path
+%% Needs real implementation...
+ %% make_dirpath(DirName) :-
+ %% 	(  file_exists(DirName)
+ %% 	-> note_message("did not create ~w (it already exists)",[DirName])
+ %% 	;  do(['mkdir -p ',DirName],fail) ).
 
 %% Note name and type change, and it enumerates.
 %% `environ(?VAR, ?VALUE)'
@@ -260,20 +271,20 @@ symbolic_link(Source,Dir,NewName) :-
 
 :- push_prolog_flag(multi_arity_warnings,off).
 
-:- comment(ls(Directory,Pattern,FileList), "@var{FileList} is
+:- comment(ls(Dir,Pattern,FileList), "@var{FileList} is
         the unordered list of entries (files, directories, etc.) in
         @var{Directory} whose names match @var{Pattern}.If
         @var{Directory} does not exist @var{FileList} is empty.").
 
 :- true pred ls(+atm,+pattern,-list(atm)).
 
-ls(Directory,Pattern,SFileList) :-
-	file_exists(Directory),
+ls(Dir,Pattern,SFileList) :-
+	file_exists(Dir),
 	!,
-	directory_files(Directory,Files),
+	directory_files(Dir,Files),
 	filter_alist_pattern(Files,Pattern,FileList),
 	sort(FileList,SFileList).
-ls(_Directory,_Pattern,[]).
+ls(_Dir,_Pattern,[]).
 
 
 :- comment(ls(Pattern,FileList), 
@@ -309,44 +320,27 @@ filter_alist_pattern([_T|Ts],Pattern,NTs) :-
 :- meta_predicate(-(goal)).
 
 -(G) :- G, !.
--(G) :- warning_message("in -/1, could not complete goal ~w",[G]).
-
-:- pred finally(Goal,Finally) # "Try with the Goal @var{Goal}, but always
-   continues with the evaluation of @var{Finally}, then fail if @var{Goal} fail.".
-
-finally(Goal, Finally) :-
-	(Goal -> Ok = 1; Ok = 0),
-	Finally,
-	Ok = 1.
-
-set_perms(Files,perm(User,Group,Others)) :-
-	convert_permissions(User,Group,Others,Perms),
-	!,
-	set_perms_(Files,Perms).
-set_perms(_Files,Perms) :-
-	error_message(
-	  "invalid permission '~w' (should be perm(User,Group,Others))",
-  	  [Perms]). 
+-(G) :- warning_message("could not complete goal ~w",[G]).
 
 %% Files can have paths
-set_perms_([],_P) :-
+set_perms([],_Perms) :-
 	!.
-set_perms_([File|Files],P) :-
+set_perms([File|Files],Perms) :-
 	!,
-	set_perms_(File,P),
-	set_perms_(Files,P).
-set_perms_(File,P) :-
+	set_perms(File,Perms),
+	set_perms(Files,Perms).
+set_perms(File,perm(User,Group,Others)) :-
 	(  file_exists(File)
-	-> no_path_file_name(File,FileName),
+	-> convert_permissions(User,Group,Others,P),
+	   no_path_file_name(File,FileName),
 	   atom_concat(Path,FileName,File),
 	   (  Path = ''
 	   -> chmod(File,P)
 	   ;  working_directory(WD,WD),
 	      cd(Path),
-	      finally(
-		chmod(FileName,P),
-	        cd(WD)) )
-	;  error_message("file '~w' not found",[File]) ).
+	      chmod(FileName,P),
+	      cd(WD) )
+	;  error_message("file ~w not found",[File]) ).
 
 convert_permissions(U,G,O,P) :-
 	valid_mode(U,NU),
@@ -486,7 +480,7 @@ datime_string(datime(Year,Month,Day,Hour,Min,Sec),T) :-
 	list_concat([ DayS, "/", MonthS, "/", YearS, " ", HourS, ":",
 	              MinS,  ":", SecS ], T).
 
-:- meta_predicate(all_values(pred(1),?)).
+%% :- meta_predicate(all_values(pred(1),?)).
 %% 
 %% all_values(PredName,Values) :-
 %% 	findall(T,call_unknown(PredName(T)),Values).
@@ -495,22 +489,15 @@ datime_string(datime(Year,Month,Day,Hour,Min,Sec),T) :-
 all_values(PredName,Values) :-
 	findall(T,call_unknown(PredName(T)),Values).
 
-%% Defined in make
 :- meta_predicate call_unknown(goal).
 
 % Complication is so that flag is left as it was also upon failure.
 call_unknown(G) :-
 	prolog_flag(unknown,Old,fail),
-	prolog_flag(quiet,QOld,error),
-	(  %% nl, display('*** Calling (unknown): '), display(G), nl,
-	   %% %% call(_:G), 
+	(  %% call(_:G), 
 	   call(G),
-	   %% display('*** ...success with '), display(G), nl,
-	   prolog_flag(unknown,_,Old),
-	   prolog_flag(quiet,_,QOld)
+	   prolog_flag(unknown,_,Old)
 	;  prolog_flag(unknown,_,Old),
-	   prolog_flag(quiet,_,QOld),
-	   %% display('*** ...failure.'), nl,
 	   fail ).
 
 no_tr_nl(L,NL) :- 
@@ -534,7 +521,7 @@ writef(Codes,File) :-
 	writef(Codes,write,File).
 
 writef(Codes,_Mode,_File) :- 
-	( \+ ( Codes = [_|_] ; Codes = [] ) ),
+	( \+ Codes = [_|_] ),
 	!,
 	throw(error(domain_error(string,Codes),writef/3-1)).
 writef(_Codes,Mode,_File) :- 
@@ -558,11 +545,7 @@ codes_to_stream([H|T],O) :-
 	codes_to_stream(T,O).
 
 replace_strings([],O,O).
-%replace_strings([S1-S2|Ss],I,O) :-
-%	replace_string(I,S1,S2,TO),
-%	replace_strings(Ss,TO,O).
-
-replace_strings([[S1,S2]|Ss],I,O) :-
+replace_strings([S1-S2|Ss],I,O) :-
 	replace_string(I,S1,S2,TO),
 	replace_strings(Ss,TO,O).
 
@@ -570,8 +553,6 @@ replace_string(_I,S1,_S2,_TO) :-
 	atom(S1),
 	!,
 	throw(error(domain_error(string,atom),replace_string/4-2)).
-replace_string(I,S1,"",TO) :-
-	do_replace_string(I,S1,"",TO).
 replace_string(_I,_S1,S2,_TO) :-
 	atom(S2),
 	!,
@@ -600,31 +581,8 @@ match([H|T],[H|IT],RI) :-
  
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*11+43,2003/09/19,18:35*22+'CEST'), "Now the
-   writef predicate can receive empty strings.  (Edison Mera)").
-
-:- comment(version(1*11+42,2003/09/19,17:33*43+'CEST'), "Corrected a
-   malfunction with replace_strings_in_file predicate.  Now lets to
-   change a string by an empty string.  Also the separator - has been
-   changed by a list of 2 elements [,].  (Edison Mera)").
-
-:- comment(version(1*11+33,2003/07/29,17:32*51+'CEST'), "Corrected a
-   minor inconsistency in the documentation of ls/3. (Edison Mera)").
-
-:- comment(version(1*11+30,2003/07/23,12:34*03+'CEST'), "Corrected a
-   bug in @pred{set_perms}.  @pred{finally} added.  (Edison Mera)").
-
-:- comment(version(1*11+29,2003/07/22,16:53*59+'CEST'), "Better error
-   handling in @pred{set_perms}.  (Manuel Hermenegildo)").
-
-:- comment(version(1*9+24,2002/11/20,12:52*12+'CET'), "Improvements to
-   in @lib{system_extra}: eliminated @tt{make_directory} (now in
-   @lib{system}), improved documentation slightly, and several other
-   minor changes to adapt to new version of make.  (Manuel
-   Hermenegildo)").
-
 :- comment(version(1*7+180,2002/01/25,20:08*39+'Hora estándar
-   romance'), "Moved cyg2win/3 to system.pl (MCL)").
+   romance'), "Moved cyg2win/3 to system.pl ()").
 
 :- comment(version(1*7+170,2002/01/03,18:17*59+'CET'), "Removed
    make_dirpath (real implementation now in system.pl) (MCL)").

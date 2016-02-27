@@ -1,10 +1,6 @@
 :- module(generator, [generator/2,nodeDeclaration/4], 
 	             [assertions,isomodes,dcg,regtypes]).
 
-:- comment(author, "G@..{o}ran Smedb@..{a}ck").
-
-
-
 :- include(library(iso)).
 :- use_module(library(iso_byte_char)).
 %:- use_module(library(basicprops)).
@@ -368,9 +364,9 @@ scriptGut(In,Out) -->
 %% Version comment prompting control for this file.
 %% Local Variables: 
 %% mode: CIAO
+%% update-version-comments: "off"
 %% End:
 
 
 
 
-:- comment(version_maintenance,dir('../../version')).

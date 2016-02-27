@@ -7,7 +7,7 @@
                      ], [assertions]).
 
 
-:- use_module(library('compiler/c_itf_internal')).
+:- use_module(library('compiler/c_itf')).
 
 
 make_po([]) :- !.
@@ -16,6 +16,10 @@ make_po([File|Files]) :- !,
         make_po(Files).
 make_po(File) :-
         catch(make_po1(File), Error, handle_exc(Error)).
+
+make_po1(File) :-
+        process_file(File, po, any, make_po_file, false, false,
+                     old_file_extension('.po')).
 
 :- meta_predicate use_module(addmodule).
 
@@ -29,9 +33,22 @@ use_module(File, Imports, ByThisModule) :-
         check_static_module(File).
 
 ensure_loaded(File) :-
-        cleanup_c_itf_data,
-	use_mod_user(File),
+        process_files_from(File, in, any, load_compile, static_base,
+                           false, needs_reload),
+	( make_delayed_dynlinks -> true % JFMC
+	; message(['{Dynamic link failed}']),
+	  fail
+	), !,
+        do_file_initialization(File),
         check_static_module(File).
+ensure_loaded(_) :- !, % JFMC
+	discard_delayed_dynlinks,
+	fail.
+
+do_file_initialization(File) :-
+        base_name(File, Base),
+        defines_module(Base, Module),
+        do_initialization(Module).
 
 check_static_module(File) :-
         base_name(File, Base),
@@ -42,7 +59,10 @@ check_static_module(File) :-
 check_static_module(_).
 
 unload(File) :-
-	unload_mod(File).
+        opt_suffix(Opt, Opt),
+        absolute_file_name(File, Opt, '.pl', '.', _, Base, _),
+        retract_fact(module_loaded(Module, Base, _, _)),
+        abolish_module(Module).
 
 set_debug_mode(File) :-
         absolute_file_name(File, Source),

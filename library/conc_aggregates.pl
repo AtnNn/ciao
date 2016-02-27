@@ -91,21 +91,3 @@ list_all_sols(-Term, Id, SoFar, Rest):-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-%% *** Delete this comment after reading: it is only a reminder! ***
-%% 
-%% The "assertions" library needs to be included in order to support
-%% ":- comment(...,...)." declarations such as below, i.e., insert: 
-%% 
-%% :- module(_,_,[assertions]).
-%% 
-%% At the beginning of the file:
-%% The following version comment(s) can be moved elsewhere in the 
-%% file. Subsequent version comments will always be placed above 
-%% the last one inserted.
-
-
-:- comment(version_maintenance,dir('../version')).
-
-:- comment(version(1*11+97,2003/12/21,20:07*18+'CET'), "Added comment
-   version_maintenance.  (Edison Mera)").
-

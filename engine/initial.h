@@ -210,5 +210,11 @@ extern BOOL nd_predicate_property PROTO((struct worker *w));
 extern BOOL nd_current_stream PROTO((struct worker *w));
 extern BOOL nd_atom_concat PROTO((struct worker *w));
 
-struct definition *define_c_mod_predicate(char *module, char  *pname, int arity, BOOL (*procedure)());
+
+
+struct definition *define_c_mod_predicate(char *module, 
+                                          char  *pname, 
+                                          BOOL (*procedure)(), 
+                                          int arity);
+/* JFMC */
 void undefine_c_mod_predicate(char *module, char *pname, int arity); 

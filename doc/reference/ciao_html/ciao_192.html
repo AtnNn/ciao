@@ -1,59 +1,149 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Compile Ciao in an arbitrary subdirectory</TITLE>
+<TITLE>The Ciao Prolog System               - table_widget3 (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_191.html">previous</A>, <A HREF="ciao_193.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_191.html">previous</A>, <A HREF="ciao_193.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC764" HREF="ciao_toc.html#TOC764">Compile Ciao in an arbitrary subdirectory</A></H1>
-
+<H1><A NAME="SEC760" HREF="ciao_toc.html#TOC760">table_widget3 (library)</A></H1>
 <P>
-<STRONG>Author(s):</STRONG> M. Carro.
-
-
-<P>
-<STRONG>Version:</STRONG> 0.1 (2003/7/24, 15:53:34 CEST)
+<A NAME="IDX7622"></A>
 
 
 <P>
-A simple bash script for 
-<A NAME="IDX7880"></A>
-compile the whole Ciao distribution, in order to test automatically whether something is broken. 
+The predicates exported by this module display data in a regular table, as we brought up in the introduction. Both predicates have in common that the font weight for the elements placed in the first column is bold and the remaining elements are in medium font weight. 
+
+
+<P>
+If the arguments are not in a correct format the exception <CODE>error8</CODE> will be thrown. 
 
 
 
 <UL>
-<LI><A HREF="ciao_192.html#SEC765">Usage (com)</A>
-<LI><A HREF="ciao_190.html#SEC761">More details</A>
+<LI><A HREF="ciao_192.html#SEC761">Usage and interface (table_widget3)</A>
+<LI><A HREF="ciao_192.html#SEC762">Documentation on exports (table_widget3)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC765" HREF="ciao_toc.html#TOC765">Usage (com)</A></H2>
+<H2><A NAME="SEC761" HREF="ciao_toc.html#TOC761">Usage and interface (<CODE>table_widget3</CODE>)</A></H2>
 
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(table_widget3)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX7623"></A>
+<CODE>tablewidget3/4</CODE>, 
+<A NAME="IDX7624"></A>
+<CODE>tablewidget3/5</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX7625"></A>
+<CODE>chartlib/genbar1</CODE>, 
+<A NAME="IDX7626"></A>
+<CODE>chartlib/bltclass</CODE>, 
+<A NAME="IDX7627"></A>
+<CODE>chartlib/table_widget1</CODE>, 
+<A NAME="IDX7628"></A>
+<CODE>chartlib/test_format</CODE>, 
+<A NAME="IDX7629"></A>
+<CODE>chartlib/install_utils</CODE>, 
+<A NAME="IDX7630"></A>
+<CODE>lists</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC762" HREF="ciao_toc.html#TOC762">Documentation on exports (<CODE>table_widget3</CODE>)</A></H2>
+<P>
+<A NAME="IDX7631"></A>
+<A NAME="IDX7632"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>tablewidget3/4:</B>
+<DD><A NAME="IDX7633"></A>
+
+
+<P>
+<CODE>tablewidget3(Title,Header,ElementTable,Footer)</CODE>
+
+
+<P>
+Shows a regular table in a window. The user does not choose a background image. 
+
+
+<P>
+Example: 
 
 <PRE>
-   Usage: auto_compile_ciao ciaodir_name destdir_name
+tablewidget3('This is the title',
+	     'Header text',
+	     [['Number of processors','8'],['Average processors','95'],
+	       ['Tasks per fork','7.5']],
+	     'Footer text').
 </PRE>
 
-
-
-<H2><A NAME="SEC766" HREF="ciao_toc.html#TOC766">More details</A></H2>
+</DL>
 
 <P>
-The script copies the ciao distribution passed on as first argument to a subdirectory of the directory name passed as second argument. The subdirectory is always the same, in order to speed up tests made repeteadly in a distribution. It also deletes from the destination files which do not appear any longer in the sources, and tries not to copy files which will eventually be generated or deleted prior to compilation. 
+<A NAME="IDX7634"></A>
+<A NAME="IDX7635"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>tablewidget3/5:</B>
+<DD><A NAME="IDX7636"></A>
 
 
 <P>
-After that, the <CODE>SETTINGS</CODE> file is updated to reflect the new location, the sources are cleaned up, and a regular compilation is started. 
+<CODE>tablewidget3(Title,Header,ElementTable,Footer,BackgroundImage)</CODE>
 
+
+<P>
+Shows a regular table in a window. The user must set a background image. 
+
+
+<P>
+Example: 
+
+<PRE>
+tablewidget3('This is the title',
+	     'Header text',
+	     [['Number of processors','8'],['Average processors','95'],
+	         ['Average Tasks per fork','7.5']],
+	     'Footer text',
+	     './images/rain.gif')
+</PRE>
+
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_191.html">previous</A>, <A HREF="ciao_193.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_191.html">previous</A>, <A HREF="ciao_193.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

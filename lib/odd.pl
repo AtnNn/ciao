@@ -38,10 +38,8 @@ setarg(I, F, X):-
 @tt{call(@var{Goal})} is executed on backtracking.  This is a major
 change to the normal @concept{control} of Ciao Prolog execution.".
 
-:- meta_predicate undo(goal).
-
-undo('$:'(Goal)):-
-        '$undo_goal'('hiord_rt:call'(Goal)).
+undo(X):-
+        '$undo_goal'(call(X)).
 
 
 % call_residue_top_list(Limit, Res) :-		% for debugger/toplevel

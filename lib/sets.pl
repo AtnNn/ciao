@@ -1,3 +1,4 @@
+
 :- module(sets,
 	[ insert/3, ord_delete/3,
 	  ord_member/2, ord_test_member/3, ord_subtract/3,
@@ -12,19 +13,14 @@
 
 :- use_module(library(sort)).
 
-:- comment(title, "Set Operations").
+:- comment(module,
+	"This module implements set operations. Sets are just ordered lists.").
 
-:- comment(author, "Lena Flood").
-
-:- comment(module, "This module implements set operations. Sets are
-   just ordered lists.").
-
-:- pred insert(+Set1, +Element, -Set2) # "It is true when @var{Set2}
-   is @var{Set1} with @var{Element} inserted in it, preserving the
-   order.".
-
-% Author : Lena Flood %
-% Updated: 9 September 1988 %
+:- pred insert(+Set1, +Element, -Set2)
+	# "It is true when @var{Set2} is @var{Set1} with @var{Element} 
+	   inserted in it, preserving the order.".
+%   Author : Lena Flood							      %
+%   Updated: 9 September 1988						      %
 
 insert([], Element, [Element]).
 insert([Head|Tail], Element, Set) :-
@@ -334,9 +330,6 @@ setproduct_([Head|Tail], X, [Set|TailX], Tl) :-
 %% ---------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../version')).
-
-:- comment(version(1*11+115,2003/12/22,18:32*34+'CET'), "Added comment
-   title and author.  (Edison Mera)").
 
 :- comment(version(0*9+17,1999/03/23,20:57*20+'MET'), "Fixed minor
    typo in assertion for @pred{insert/3}.  (Manuel Hermenegildo)").

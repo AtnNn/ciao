@@ -439,7 +439,7 @@ handle_args_('-x', Args) :- !,
         set_prolog_flag(check_libraries, on),
         handle_args(Args).
 handle_args_('-u', [CFile|Args]) :- !,
-        use_module(CFile, all, c_itf_internal),
+        use_module(CFile, all, c_itf),
         handle_args(Args).
 handle_args_('-u', []) :-
         usage.

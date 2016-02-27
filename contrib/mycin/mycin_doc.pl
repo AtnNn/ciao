@@ -9,6 +9,8 @@
 %%
 %%------------------------------------------------------------------------
 
+:- use_package(assertions).
+
 :- comment(nodoc,assertions).
 
 :- comment(filetype,package).

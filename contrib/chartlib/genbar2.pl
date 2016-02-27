@@ -1,8 +1,5 @@
 :- module(genbar2,[],[assertions,regtypes,isomodes]).
 
-:- comment(author, "Isabel Martín").
-
-
 :- export(barchart2/7).
 :- export(barchart2/11).
 :- export(percentbarchart2/7).
@@ -16,8 +13,6 @@
 :- use_module(library('chartlib/install_utils')).
 :- use_module(library(lists)).
 :- use_module(library(random)).
-
-:- comment(title,"Bartchar widgets - 2").
 
 :- comment(module,"This module defines predicates which show barchart
         widgets. The three predicates exported by this module plot
@@ -553,12 +548,4 @@ xbarelement2([XValue,LegendElement,ForegColor,BackgColor,SPattern]):-
 
 
 
-
-
-
-
-:- comment(version_maintenance,dir('../../version')).
-
-:- comment(version(1*9+158,2003/12/04,17:39*21+'CET'), "Added author
-info (Manuel Carro)").
 

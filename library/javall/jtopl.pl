@@ -1,19 +1,18 @@
 :- module(jtopl,
 	[prolog_server/0,
 	 prolog_server/1,
-	 prolog_server/2,
 	 shell_s/0
 	],
 	[assertions,regtypes,isomodes]).
 
-:- comment(title,"Java to Prolog interface").
+:- comment(title,"Low-level Java to Prolog interface").
 
 :- comment(author,"Jes@'{u}s Correas").
 
 :- comment(module, "
-@cindex{Java to Prolog interface}
-This module defines the Prolog side of the Java to Prolog interface. This side
-of the interface only has one public predicate: a server
+@cindex{Low level Java to Prolog interface}
+This module defines a low level Java to Prolog interface. This Prolog side
+of the Java to Prolog interface only has one public predicate: a server
 that listens at the socket connection with Java, and executes the commands
 received from the Java side.
 
@@ -35,11 +34,9 @@ The decision of what kind of goal evaluation is selected is done by the
 Java side. Each evaluation type has its own command terms, so the Java side
 can choose the type it needs.
 
-A Prolog server starts by calling the @tt{prolog_server/0} predicate,
-or by calling @tt{prolog_server/1} predicate and providing the port
-number as argument. The user predicates and libraries to be called
-from Java must be included in the executable file, or be accesible
-using the built-in predicates dealing with code loading.
+A Prolog server starts by calling the @tt{prolog_server/0} predicate, or by calling @tt{prolog_server/1} predicate and providing the port number as argument. The user predicates and libraries to be called from Java must be
+included in the executable file, or be accesible using the built-in
+predicates dealing with code loading.
 
 ").
 
@@ -51,20 +48,9 @@ using the built-in predicates dealing with code loading.
 :- use_module(library(dynamic)).
 :- use_module(library(lists),[append/3]).
 :- use_module(library(format),[format/2]).
-:- use_module(library(compiler),[use_module/1]).
+:- use_module(library(compiler)).
 :- use_module(library(atom2term),[string2term/2]).
-:- use_module(library('javall/javasock'),
-	[
-	    start_socket_interface/2,
-	    bind_socket_interface/1,
-	    stop_socket_interface/0,
-	    join_socket_interface/0,
-	    prolog_query/2,
-	    prolog_response/2,
-	    java_debug/1,
-	    java_debug_redo/1,
-	    start_threads/0
-	]).
+:- use_module(library('javall/javasock')).
 :- use_module(library(prolog_sys),[new_atom/1]).
 
 %%------------------------------------------------------------------
@@ -100,7 +86,14 @@ using the built-in predicates dealing with code loading.
 %%------------------------------------------------------------------
 %% Documentation.
 %%------------------------------------------------------------------
-% Currently there is no access to internal predicates documentation. 
+:- comment(doinclude,command/1).
+:- comment(doinclude,answer/1).
+:- comment(doinclude,shell_s/0).
+:- comment(doinclude,process_command/1).
+:- comment(doinclude,solve/2).
+:- comment(doinclude,prolog_parse/2).
+:- comment(doinclude,read_command/1).
+:- comment(doinclude,write_answer/2).
 
 %%------------------------------------------------------------------
 %% REGTYPES
@@ -165,24 +158,15 @@ answer(prolog_exception(X,Y)) :- int(X), nonvar(Y).
 :- regtype prolog_query_id(X) # "@var{X} is a prolog query identifier.".
 prolog_query_id(prolog_query_id(X)) :- nonvar(X).
 
+
 %----------------------------------------------------------------------------
 :- pred prolog_server/0
-	# "Prolog server entry point. Reads from the standard input
-	  the node name and port number where the java client resides,
-	  and starts the prolog server listening at the jp
-	  socket. This predicate acts as a server: it includes an
-	  endless read-process loop until the @tt{prolog_halt} command
-	  is received.  
-
-          However, from the low-level communication point of view,
-	  this Prolog server actually works as a client of the Java
-	  side. This means that Java side waits at the given port to a
-	  Prolog server trying to create a socket; Prolog side
-	  connects to that port, and then waits for Java requests
-	  (acting as a 'logical' server). To use this Prolog server as
-	  a real server waiting for connections at a given port, use
-	  @tt{prolog_server/1}.
-
+	# "Prolog server entry point. Reads from the standard
+	  input the node name and port number where the java
+	  client resides, and starts the prolog server
+	  listening at the jp socket. This predicate acts
+	  as a server: it includes an endless read-process loop
+	  until the @tt{prolog_halt} command is received.
 @cindex{Prolog server}
 ".
 %----------------------------------------------------------------------------
@@ -196,59 +180,16 @@ prolog_server :-
 %----------------------------------------------------------------------------
 :- pred prolog_server/1
 	:: atm
-	# "Waits for incoming Java connections to act as a Prolog goal
-          server for Java requests.This is the only
-          @tt{prolog_server/*} predicate that works as a true server:
-          given a port number, waits for a connection from Java and
-          then serves Java requests. When a termination request is
-          received, finishes the connection to Java and waits next
-          Java connection request. This behaviour is different with
-          respect to previous versions of this library. To work as
-          before, use @tt{prolog_server/2}.
-
-          Although it currently does not support simultaneous Java
-          connections, some work is being done in that direction.
+	# "Prolog server entry point. Given a port number,
+	  starts the prolog server listening at the jp
+          socket. This predicate acts as a server: it
+          includes an endless read-process loop
+	  until the @tt{prolog_halt} command is received.
 @cindex{Prolog server}
 ".
 %----------------------------------------------------------------------------
 prolog_server(Port) :-
-	int(Port),
-	bind_socket_interface(Port),
-	join_socket_interface,
-%	eng_killothers,
-	!,
-	prolog_server_.
-
-prolog_server_:-
-	start_threads,
-	join_socket_interface,
-	!,
-	prolog_server_.
-
-%----------------------------------------------------------------------------
-:- pred prolog_server/2
-	:: atm * atm
-	# "Prolog server entry point. Given a network @tt{node} and a
-	  @tt{port} number, starts the prolog server trying to connect
-	  to Java side at that @tt{node:port} address, and then
-	  waits for Java requests. This predicate acts as a server:
-	  it includes an endless read-process loop until the
-	  @tt{prolog_halt} command is received. 
-
-          However, from the low-level communication point of view,
-	  this Prolog server actually works as a client of the Java
-	  side. This means that Java side waits at the given port to a
-	  Prolog server trying to create a socket; Prolog side
-	  connects to that port, and then waits for Java requests
-	  (acting as a 'logical' server). To use this Prolog server as
-	  a real server waiting for connections at a given port, use
-	  @tt{prolog_server/1}.
-@cindex{Prolog server}
-".
-%----------------------------------------------------------------------------
-prolog_server(Node,Port) :-
-	int(Port),
-	atom(Node),
+	current_host(Node),
 	start_socket_interface(Node:Port,_),
 	join_socket_interface,
 	eng_killothers.
@@ -267,19 +208,20 @@ get_port(Stream,Port):-
 
 %----------------------------------------------------------------------------
 :- pred shell_s/0 # "Command execution loop. This predicate is called
-	when the connection to Java is established, and performs an endless 
-        loop processing the commands received. This predicate is only intended
-        to be used by the Prolog to Java interface and it should not be used
-        by a user program.".
+	when the connection to Java is established, and performs an endless
+	loop processing the commands received.".
 %----------------------------------------------------------------------------
-shell_s :- 
-	read_command(Id,Command), % Gives commands on backtracking.
-	(termination_check(Command) -> 
-	 true 
-	; 
-	    process_command(Id,Command), !,
-	    %% Avoid choicepoints (none should have been pushed--just in case)
-	shell_s ), !.
+shell_s :-
+        read_command(Id,Command), % Gives commands on backtracking.
+	(termination_check(Command) ->
+	 true
+	;
+	 process_command(Id,Command),
+	 !,  %% Avoid choicepoints (none should have been pushed--just in case)
+	 shell_s
+	),
+	!.
+
 shell_s :-
 	%% The previous command has failed, a general exception is
         %% thrown and main loop is restarted.
@@ -424,9 +366,9 @@ solve2(Query,Id) :-
 %% Oops! Query launching should be intercepted, but some strange 
 %%       behaviours prevent from using intercept/3.
 %        intercept(Query, Error, assertz_fact(exception_flag(Id, Error))),
-	java_debug_redo(solve2(Query,Id)),
+	java_debug(solve2(Query,Id)),
 	Query,
-	java_debug_redo(solve2(Query,Id)),
+	java_debug(solve2(Query,Id)),
 %%
 	(current_fact_nb(exception_flag(Id, Error)) ->
 	 assertz_fact(query_solutions(Id, prolog_exception(Id, Error))),
@@ -435,9 +377,7 @@ solve2(Query,Id) :-
 	 assertz_fact(query_solutions(Id, Query))
 	),
 %%%%	check_solution(Query,Id,Error),
-	java_debug_redo('before next_request'(Query)),
 	next_request(Id,T), % if next solution requested just fails.
-	java_debug_redo('after next_request'(Query)),
 	T = terminate,
 	retract_fact_nb(running_queries(Id, Query)).
 
@@ -506,13 +446,6 @@ thread_id(Id) :-
 %%------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
-
-:- comment(version(1*9+65,2003/03/14,12:48*10+'CET'), "Documentation
-   changes (Jesus Correas Fernandez)").
-
-:- comment(version(1*9+59,2003/02/11,19:22*53+'CET'), "removing
-   internal predicates from the public documentation (Jesus Correas
-   Fernandez)").
 
 :- comment(version(1*7+125,2001/10/17,13:42*47+'CEST'), "bug fixed:
    Prolog server termination command did not stop the Prolog process.

@@ -154,35 +154,34 @@ cross_targets([(F,Ls)|More],L,Targets):-
 cross_targets([_|More],L,Fs):-
 	cross_targets(More,L,Fs).
 
+cross_autoreference([F],F,_,LabelPairs,Tail):- !,
+	LabelPairs = Tail.                      % avoid single self-reference
 cross_autoreference(Targets,F,L,LabelPairs,Tail):-
 	flag(Flag),
 	Flag1 is Flag/\3, Flag2 is Flag/\4,
-	cross_autoreference_(Flag2,Flag1,Targets,F,L,LabelPairs,Tail).
+	simplify_if(Flag1,Flag2,Targets,F,L,LabelPairs,Tail).
 
-cross_autoreference_(4,Flag1,Targets,F,L,LabelPairs,Tail):- !,
-	empty_in(Targets,Flag1,F,L,LabelPairs,Tail).
-cross_autoreference_(_Flag2,Flag1,Targets,F,L,LabelPairs,Tail):-
-	simplify_if(Flag1,Targets,F,L,LabelPairs,Tail).
-
-empty_in([],_Flag1,_F,L,LabelPairs,Tail):- !,
-	LabelPairs = [(L,[])|Tail].
-empty_in(Targets,Flag1,F,L,LabelPairs,Tail):-
-	simplify_if(Flag1,Targets,F,L,LabelPairs,Tail).
-
-simplify_if(3,Targets,_F,L,LabelPairs,Tail):-
-	empty_out(Targets,L,LabelPairs,Tail).
-simplify_if(1,Targets1,F,L,LabelPairs,Tail):-
+simplify_if(3,Flag,Targets,F,L,LabelPairs,Tail):-
+	simplify(Targets,Flag,F,L,LabelPairs,Tail).
+simplify_if(1,Flag,Targets1,F,L,LabelPairs,Tail):-
 	select(Targets1,F,_,Targets),
-	empty_out(Targets,L,LabelPairs,Tail).
-simplify_if(2,Targets1,F,L,LabelPairs,Tail):-
+	simplify(Targets,Flag,F,L,LabelPairs,Tail).
+simplify_if(2,Flag,Targets1,F,L,LabelPairs,Tail):-
 	select(Targets1,F,Targets,_),
-	empty_out(Targets,L,LabelPairs,Tail).
-simplify_if(0,_Targets1,_F,L,LabelPairs,Tail):-
-	empty_out([],L,LabelPairs,Tail).
+	simplify(Targets,Flag,F,L,LabelPairs,Tail).
+simplify_if(0,Flag,_Targets1,F,L,LabelPairs,Tail):-
+	simplify([],Flag,F,L,LabelPairs,Tail).
 
-empty_out([],_L,LabelPairs,Tail):- !,
+simplify([],Flag,_F,_L,LabelPairs,Tail):-
+	Flag =\= 4, !,                          % avoid empty refs
 	LabelPairs = Tail.
-empty_out(Targets,L,[(L,Targets)|Tail],Tail).
+simplify(Targets,_Flag,_F,L,[(L,Targets)|Tail],Tail).
+
+%% select([],_,[],[]).
+%% select([X|Xs],X,[X|In],Out):- !,
+%% 	select(Xs,X,In,Out).
+%% select([X|Xs],Y,In,[X|Out]):-
+%% 	select(Xs,Y,In,Out).
 
 select([],_,[],[]).
 select([Element|Rest],Element,[Element],Rest):- !.
@@ -192,9 +191,5 @@ select([Head|Tail],Element,More,[Head|Rest]) :-
 %-----------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
-
-:- comment(version(1*9+36,2002/12/09,13:27*10+'CET'), "Patched
-   management of the flag soliciting empty refs.  (Francisco Bueno
-   Carrillo)").
 
 %-----------------------------------------------------------------------------

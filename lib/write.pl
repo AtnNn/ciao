@@ -47,7 +47,7 @@ writeq_quick(Term) :- atomic(Term), displayq(Term).
 write_quick(Term) :- var(Term), display(Term).
 write_quick(Term) :- atomic(Term), display(Term).
 
-:- true pred write_term(@Stream, ?Term, +OptList) 
+:- pred write_term(@Stream, ?Term, +OptList) 
    => stream * term * list(write_option) +  iso
 
    # "Outputs the term @var{Term} to the stream @var{Stream}, with the
@@ -61,7 +61,7 @@ write_term(Stream, Term, OptList) :-
         write_term_internal(Term, OptList, 3),
 	set_output(Curr).
 
-:- true pred write_term(?Term, +OptList) => term * list(write_option) + iso
+:- pred write_term(?Term, +OptList) => term * list(write_option) + iso
 
    # "Behaves like @tt{current_output(S),
       write_term(S,Term,OptList)}.".
@@ -104,9 +104,9 @@ write_term_internal(Term, OptList, N) :-
  value is @tt{false}.
  
  @item @bf{portrayed(}@em{bool}@bf{):} If @em{bool} is @tt{true}, then 
- call multifile predicates @pred{portray/1} and @pred{portray_attribute/2},
+ call multifile predicates @pred{portray/1} and @pred{portray_attribute/1},
  to provide the user handlers for pretty printing some terms.
- @tt{portray_attribute/2} is called whenever an attributed variable is to be
+ @tt{portray_attribute/1} is called whenever an attributed variable is to be
  printed, @tt{portray/1} is called whenever a non-variable term is to be
  printed.  If either call succeeds, then it is assumed that the term has been
  output, else it is printed as usual.  If @em{bool} is @tt{false}, these
@@ -174,7 +174,7 @@ ignore_ops_flag(true).
 ignore_ops_flag(ops).
 ignore_ops_flag(false).
 
-:- true pred write_canonical(@Stream, ?Term) => stream * term + iso
+:- pred write_canonical(@Stream, ?Term) => stream * term + iso
        # "Behaves like @tt{write_term(Stream, Term, [quoted(true),
           ignore_ops(true)])}.  The output of this predicate can
           always be parsed by @pred{read_term/2} even if the term
@@ -188,7 +188,7 @@ write_canonical(Stream, Term) :-
         write_canonical(Term),
 	set_output(Curr).
 
-:- true pred write_canonical(?Term) => term + iso
+:- pred write_canonical(?Term) => term + iso
         # "Behaves like @tt{current_output(S), write_canonical(S,Term)}.".
 
 write_canonical(Term) :-
@@ -197,7 +197,7 @@ write_canonical(Term) :-
         Options = options(true,true,false,false,1000000),
 	write_out(Term, Options, 1200, 0, 0, '(', 2'100, _).
 
-:- true pred print(@Stream, ?Term) => stream * term
+:- pred print(@Stream, ?Term) => stream * term
         # "Behaves like @tt{write_term(Stream, Term,
            [numbervars(true), portrayed(true)])}.".
 
@@ -208,14 +208,14 @@ print(Stream, Term) :-
 	print(Term),
 	set_output(Curr).
 
-:- true pred print(?Term) => term
+:- pred print(?Term) => term
         # "Behaves like @tt{current_output(S), print(S,Term)}.".
 
 print(Term) :-
         Options = options(false,false,true,true,1000000),
 	write_out(Term, Options, 1200, 0, 0, '(', 2'100, _).
 
-:- true pred write(@Stream, ?Term) => stream * term + iso
+:- pred write(@Stream, ?Term) => stream * term + iso
         # "Behaves like @tt{write_term(Stream, Term, [numbervars(true)])}.".
 
 write(Stream, Term) :-
@@ -225,7 +225,7 @@ write(Stream, Term) :-
 	write(Term),
 	set_output(Curr).
 
-:- true pred write(?Term) => term + iso
+:- pred write(?Term) => term + iso
         # "Behaves like @tt{current_output(S), write(S,Term)}.".
 
 write(Term) :-
@@ -234,13 +234,13 @@ write(Term) :-
         Options = options(false,false,true,false,1000000),
 	write_out(Term, Options, 1200, 0, 0, '(', 2'100, _).
 
-:- true pred write_list1/1 :: list
+:- pred write_list1/1 :: list
 	# "Writes a list to current output one element in each line.".
 
 write_list1([]).
 write_list1([H|L]) :- writeq(H), nl, write_list1(L).
 
-:- true pred writeq(@Stream, ?Term) => stream * term + iso
+:- pred writeq(@Stream, ?Term) => stream * term + iso
         # "Behaves like @tt{write_term(Stream, Term, [quoted(true),
           numbervars(true)])}.".
 
@@ -251,7 +251,7 @@ writeq(Stream, Term) :-
 	writeq(Term),
 	set_output(Curr).
 
-:- true pred writeq(?Term) => term + iso
+:- pred writeq(?Term) => term + iso
         # "Behaves like @tt{current_output(S), writeq(S,Term)}.".
 
 writeq(Term) :-
@@ -329,7 +329,7 @@ variable like an unbound variable, e.g. @tt{_673}.".
 
 :- multifile portray/1.
 
-:- true pred portray(?Term)
+:- pred portray(?Term)
    # "@em{A user defined predicate.} This should either print the @var{Term}
       and succeed, or do nothing and fail.  In the latter case, the default
       printer (@tt{write/1}) will print the @var{Term}.".
@@ -570,7 +570,7 @@ put_string_code(C) :- put_code(C).
 
 /* portraying clauses */
 
-:- true pred prettyvars(?Term) => term
+:- pred prettyvars(?Term) => term
         # "Similar to @tt{numbervars(Term,0,_)}, except that singleton
  variables in @var{Term} are unified with @tt{'$VAR'('_')}, so that when the
  resulting term is output with a write option @tt{numbervars(true)}, in the
@@ -613,7 +613,7 @@ pretty_vars_([X|Xs], Y, N0) :-
 pretty_vars_(Xs, _, N0) :-
 	pretty_vars(Xs, N0).
 
-:- true pred portray_clause(?Clause) => term
+:- pred portray_clause(?Clause) => term
         # "Behaves like @tt{current_output(S), portray_clause(S,Term)}.". 
 
 % This must be careful not to bind any variables in Clause.
@@ -623,7 +623,7 @@ portray_clause(Clause) :-
 	fail.
 portray_clause(_).
 
-:- true pred portray_clause(@Stream, ?Clause) => stream * term
+:- pred portray_clause(@Stream, ?Clause) => stream * term
         # "Outputs the clause @var{Clause} onto @var{Stream}, pretty printing
  its variables and using indentation, including a period at the end. This
  predicate is used by @tt{listing/0}.". 
@@ -723,7 +723,7 @@ write_fullstop(Ci) :-
 	'list clauses'(A, L, E, _),
 	nl, tab(D).
 
-:- true pred numbervars(?Term, +N, ?M) => term * int * int
+:- pred numbervars(?Term, +N, ?M) => term * integer * integer
         # "Unifies each of the variables in term @var{Term} with a term
  of the form @tt{'$VAR'(I)} where @tt{I} is an integer from @var{N}
  onwards. @var{M} is unified with the last integer used plus 1. If the

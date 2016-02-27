@@ -1,4 +1,4 @@
-:- module(tcl_calculator,[test/0, main/0]).
+:- module(tcl_calculator,[test/0]).
 
 :- use_module(tk_calculator_aux).
 
@@ -8,7 +8,6 @@
 
 :-export(test/0).
 
-main :- test.
 test :-
         tcl_new(X),
         test_aux(X).

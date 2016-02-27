@@ -10,8 +10,7 @@
                   consult/1, compile/1, '.'/2,
                   debug_module/1, nodebug_module/1,
                   debug_module_source/1,
-		  display_debugged/0,
-		  top_prompt/2
+		  display_debugged/0
 		 ],
                  [dcg,assertions]).
 
@@ -36,12 +35,10 @@
 :- use_module(library(debugger)).
 :- use_module(library('compiler/translation'),
         [expand_term/4, add_sentence_trans/2, add_term_trans/2]).
-:- use_module(library('compiler/c_itf'), [interpret_srcdbg/1,multifile/1]).
+:- use_module(library('compiler/c_itf'), [expand_list/2,interpret_srcdbg/1,multifile/1]).
 :- use_module(engine(internals),
-        ['$bootversion'/0, '$setarg'/4,
+        [imports/5, '$bootversion'/0, '$nodebug_call'/1, '$setarg'/4,
          '$open'/3, '$abolish'/1,'$empty_gcdef_bin'/0]).
-:- use_module(engine(hiord_rt),
-	[call/1, '$nodebug_call'/1]).
 :- use_module(library(lists),[difference/3]).
 :- use_module(library(format),[format/3]).
 :- use_module(library(aggregates), [findall/3]).
@@ -62,7 +59,7 @@ main :-
         '$shell_module'(Module),
         asserta_fact(shell_module(Module)),
         '$abolish'('user:main'),
-        retract_fact('$imports'(user(_),ciaosh,main,0,_)),
+        retract_fact(imports(user(_),ciaosh,main,0,_)),
 	current_prolog_flag(argv, Args),
 	interpret_args(Args),
         displayversion,
@@ -72,47 +69,22 @@ main :-
 
 interpret_args([]) :- !,
         include_if_exists('~/.ciaorc').
-interpret_args(['-f'|R]) :- !, interpret_args(R). % fast start
-interpret_args(['--version'|_]) :- !,
+interpret_args(['-f']) :- !. % fast start
+interpret_args(['--version']) :- !,
         '$bootversion', % Display Ciao version
          halt.
-interpret_args(['-l',File|R]) :- !,
-        include_if_exists(File),
-	interpret_args(R).
-interpret_args(['-u',File|R]) :- !,
+interpret_args(['-l',File]) :- !,
+        include_if_exists(File).
+interpret_args(['-u',File]) :- !,
         include_if_exists('~/.ciaorc'),
-        use_module(File),
-	interpret_args(R).
-interpret_args(['-p',Prompt|R]) :- !,
-	top_prompt( _, Prompt ),
-	interpret_args( R ).
+        use_module(File).
 interpret_args(_WinMesh) :-
         get_os('Win32'), !, % For windows shortcuts
         include_if_exists('~/.ciaorc').
 interpret_args(_Args) :-
-%%      display('Bad options, use either none, -f, -l <File> or -u <File>'),
-        display('Bad options, none, -f, -l <File>, -u <File>, -p <Prompt>'),
+        display('Bad options, use either none, -f, -l <File> or -u <File>'),
         nl,
         fail.
-
-% interpret_args([]) :- !,
-%         include_if_exists('~/.ciaorc').
-% interpret_args(['-f']) :- !. % fast start
-% interpret_args(['--version']) :- !,
-%         '$bootversion', % Display Ciao version
-%          halt.
-% interpret_args(['-l',File]) :- !,
-%         include_if_exists(File).
-% interpret_args(['-u',File]) :- !,
-%         include_if_exists('~/.ciaorc'),
-%         use_module(File).
-% interpret_args(_WinMesh) :-
-%         get_os('Win32'), !, % For windows shortcuts
-%         include_if_exists('~/.ciaorc').
-% interpret_args(_Args) :-
-%         display('Bad options, use either none, -f, -l <File> or -u <File>'),
-%         nl,
-%         fail.
 
 include_if_exists(File) :-
         ( file_exists(File) ->
@@ -143,21 +115,7 @@ shell_env(Vars) :-
 	Query == end_of_file,
 	!.
 
-:- push_prolog_flag(multi_arity_warnings,off).
-
 :- data top_prompt/1.
-
-:- pop_prolog_flag(multi_arity_warnings).
-
-:- data top_prompt_base/1.
-
-top_prompt_base('?- ').
-
-% Actually, sets top_prompt_base, but since seen externally, used simpler name
-top_prompt( OLD , NEW ) :-
-	top_prompt_base( OLD ),
-	retract_fact( top_prompt_base( OLD ) ),
-	asserta_fact( top_prompt_base( NEW ) ).
 
 shell_query(Variables, Query) :-
         '$empty_gcdef_bin', % Really get rid of abolished predicates
@@ -342,15 +300,11 @@ dec_query_level :-
 
 set_top_prompt(0) :- !,
         retractall_fact(top_prompt(_)),
-	top_prompt_base(P),
-        asserta_fact(top_prompt(P)).
-
+        asserta_fact(top_prompt('?- ')).
 set_top_prompt(N) :-
         number_codes(N, NS),
         atom_codes(NA, NS),
-	top_prompt_base(P),
-        atom_concat(NA, ' ', NS1),
-        atom_concat(NS1, P, TP),
+        atom_concat(NA, ' ?- ', TP),
         retractall_fact(top_prompt(_)),
         asserta_fact(top_prompt(TP)).
 
@@ -390,7 +344,7 @@ shell_expand(RawQuery, VarNames, Query) :-
 include(File) :-
         absolute_file_name(File, '_opt', '.pl', '.', SourceFile, _, _),
         message(['{Including ',SourceFile]),
-        '$open'(SourceFile, r, Stream),
+        '$open'(SourceFile, read, Stream),
         include_st(Stream),
         close(Stream),
         message('}').
@@ -400,11 +354,7 @@ include_st(Stream) :-
         repeat,
 	  read_term(Stream, RawData, [variable_names(VarNames),lines(L0,L1)]),
           expand_term(RawData, ShMod, VarNames, Data0),
-	  nonvar(Data0),
-	  ( Data0 = [_|_] ->
-	      member(Data1, Data0)
-	  ; Data1 = Data0
-	  ),
+	  expand_list(Data0, Data1),
         ( Data1 = end_of_file, !
         ; interpret_data(Data1, L0, L1),
           fail).
@@ -571,14 +521,6 @@ current_source_debugged(Ss) :-
 
 %----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
-
-:- comment(version(1*9+97,2003/08/05,19:43*37+'CEST'), "Mode prompt
-   modification more standard (prompt/2).  (Manuel Hermenegildo)").
-
-:- comment(version(1*9+96,2003/08/05,18:25*28+'CEST'), "Predicate
-   set_base_prompt added. Now it is posible to change the prompt of
-   the ciao shell. Several arguments are accepted when
-   executing. (David Trallero Mena)").
 
 :- comment(version(1*7+110,2001/06/20,18:40*04+'CEST'), "Added -u option
    mainly to allow loading a module in a new shell with a click in

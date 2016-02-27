@@ -1,46 +1,37 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Fast reading and writing of terms</TITLE>
+<TITLE>The Ciao Prolog System               - File I/O utilities</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_74.html">previous</A>, <A HREF="ciao_76.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_74.html">previous</A>, <A HREF="ciao_76.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC316" HREF="ciao_toc.html#TOC316">Fast reading and writing of terms</A></H1>
+<H1><A NAME="SEC319" HREF="ciao_toc.html#TOC319">File I/O utilities</A></H1>
 <P>
-<A NAME="IDX3905"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza, Oscar Portela Arjona.
+<A NAME="IDX3825"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
+<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#16 (2000/8/29, 13:44:18 CEST)
-
-
-<P>
-This library provides predicates to support reading / writing of terms on a format designed to be handled on read faster than standard representation.
+<STRONG>Version of last change:</STRONG> 1.5#55 (2000/2/11, 21:19:43 CET)
 
 
 
 <UL>
-<LI><A HREF="ciao_75.html#SEC317">Usage and interface (fastrw)</A>
-<LI><A HREF="ciao_75.html#SEC318">Documentation on exports (fastrw)</A>
-<LI><A HREF="ciao_75.html#SEC319">Known bugs and planned improvements (fastrw)</A>
+<LI><A HREF="ciao_75.html#SEC320">Usage and interface (file_utils)</A>
+<LI><A HREF="ciao_75.html#SEC321">Documentation on exports (file_utils)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC317" HREF="ciao_toc.html#TOC317">Usage and interface (<CODE>fastrw</CODE>)</A></H2>
+<H2><A NAME="SEC320" HREF="ciao_toc.html#TOC320">Usage and interface (<CODE>file_utils</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -48,7 +39,7 @@ This library provides predicates to support reading / writing of terms on a form
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(fastrw)).</CODE>
+<CODE>:- use_module(library(file_utils)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -57,16 +48,14 @@ This library provides predicates to support reading / writing of terms on a form
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX3906"></A>
-<CODE>fast_read/1</CODE>, 
-<A NAME="IDX3907"></A>
-<CODE>fast_write/1</CODE>, 
-<A NAME="IDX3908"></A>
-<CODE>fast_read/2</CODE>, 
-<A NAME="IDX3909"></A>
-<CODE>fast_write/2</CODE>, 
-<A NAME="IDX3910"></A>
-<CODE>fast_write_to_string/3</CODE>.
+<A NAME="IDX3826"></A>
+<CODE>file_terms/2</CODE>, 
+<A NAME="IDX3827"></A>
+<CODE>copy_stdout/1</CODE>, 
+<A NAME="IDX3828"></A>
+<CODE>file_to_string/2</CODE>, 
+<A NAME="IDX3829"></A>
+<CODE>stream_to_string/2</CODE>.
 
 </UL>
 
@@ -77,8 +66,10 @@ This library provides predicates to support reading / writing of terms on a form
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX3911"></A>
-<CODE>dict</CODE>.
+<A NAME="IDX3830"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX3831"></A>
+<CODE>streams</CODE>.
 
 </UL>
 
@@ -88,126 +79,149 @@ This library provides predicates to support reading / writing of terms on a form
 
 
 
-<H2><A NAME="SEC318" HREF="ciao_toc.html#TOC318">Documentation on exports (<CODE>fastrw</CODE>)</A></H2>
+<H2><A NAME="SEC321" HREF="ciao_toc.html#TOC321">Documentation on exports (<CODE>file_utils</CODE>)</A></H2>
 <P>
-<A NAME="IDX3912"></A>
-<A NAME="IDX3913"></A>
+<A NAME="IDX3832"></A>
+<A NAME="IDX3833"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>fast_read/1:</B>
-<DD><A NAME="IDX3914"></A>
+<DT><span class="define">PREDICATE:</span> <B>file_terms/2:</B>
+<DD><A NAME="IDX3834"></A>
 
 
 <P>
-<CODE>fast_read(Term)</CODE>
-
-
-<P>
-The next term is read from current standard input and is unified with <CODE>Term</CODE>. The syntax of the term must agree with fast_read / fast_write format. If the end of the input has been reached, <CODE>Term</CODE> is unified with the term 'end_of_file'. Further calls to 
-<A NAME="IDX3915"></A>
-<CODE>fast_read/1</CODE> will then cause an error.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3916"></A>
-<A NAME="IDX3917"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>fast_write/1:</B>
-<DD><A NAME="IDX3918"></A>
-
-
-<P>
-<CODE>fast_write(Term)</CODE>
-
-
-<P>
-Output <CODE>Term</CODE> in a way that 
-<A NAME="IDX3919"></A>
-<CODE>fast_read/1</CODE> and 
-<A NAME="IDX3920"></A>
-<CODE>fast_read/2</CODE> will be able to read it back.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3921"></A>
-<A NAME="IDX3922"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>fast_read/2:</B>
-<DD><A NAME="IDX3923"></A>
-
-
-<P>
-<CODE>fast_read(Stream, Term)</CODE>
-
-
-<P>
-The next term is read from <CODE>Stream</CODE> and unified with <CODE>Term</CODE>. The syntax of the term must agree with fast_read / fast_write format. If the end of the input has been reached, <CODE>Term</CODE> is unified with the term 'end_of_file'. Further calls to 
-<A NAME="IDX3924"></A>
-<CODE>fast_read/2</CODE> will then cause an error.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3925"></A>
-<A NAME="IDX3926"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>fast_write/2:</B>
-<DD><A NAME="IDX3927"></A>
-
-
-<P>
-<CODE>fast_write(Stream, Term)</CODE>
-
-
-<P>
-Output <CODE>Term</CODE> to <CODE>Stream</CODE> in a way that 
-<A NAME="IDX3928"></A>
-<CODE>fast_read/1</CODE> and 
-<A NAME="IDX3929"></A>
-<CODE>fast_read/2</CODE> will be able to read it back.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3930"></A>
-<A NAME="IDX3931"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>fast_write_to_string/3:</B>
-<DD><A NAME="IDX3932"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-
-
-<H2><A NAME="SEC319" HREF="ciao_toc.html#TOC319">Known bugs and planned improvements (<CODE>fastrw</CODE>)</A></H2>
-
+<STRONG>Usage 1:</STRONG> <CODE>file_terms(@File,?Terms)</CODE>
 
 <UL>
+<LI><EM>Description:</EM> Transform a file <CODE>File</CODE> to/from a list of terms <CODE>Terms</CODE>.
 
-<LI>
+<LI><EM>The following properties should hold upon exit:</EM>
 
-Both 
-<A NAME="IDX3933"></A>
-<CODE>fast_read/2</CODE> and 
-<A NAME="IDX3934"></A>
-<CODE>fast_write/2</CODE> simply set the current output/input and call 
-<A NAME="IDX3935"></A>
-<CODE>fast_read/1</CODE> and 
-<A NAME="IDX3936"></A>
-<CODE>fast_write/1</CODE>. Therefore, in the event an error hapens during its execution, the current input / output streams may be left pointing to the <CODE>Stream</CODE>
+<CODE>@File</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
+
+<CODE>?Terms</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
 </UL>
 
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>file_terms(File,Terms)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Unifies <CODE>Terms</CODE> with the list of all terms in <CODE>File</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>File</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
+
+<CODE>Terms</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>File</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
+
+<CODE>Terms</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 3:</STRONG> <CODE>file_terms(File,Terms)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Writes the terms in list <CODE>Terms</CODE> (including the ending '.') onto file <CODE>File</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>File</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
+
+<CODE>Terms</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>File</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
+
+<CODE>Terms</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3835"></A>
+<A NAME="IDX3836"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>copy_stdout/1:</B>
+<DD><A NAME="IDX3837"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>copy_stdout(+File)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Copies file <CODE>File</CODE> to standard output.
+
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>+File</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3838"></A>
+<A NAME="IDX3839"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>file_to_string/2:</B>
+<DD><A NAME="IDX3840"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>file_to_string(+FileName,-String)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Reads all the characters from the file <CODE>FileName</CODE> and returns them in <CODE>String</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+FileName</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
+
+<CODE>-String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3841"></A>
+<A NAME="IDX3842"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>stream_to_string/2:</B>
+<DD><A NAME="IDX3843"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>stream_to_string(+Stream,-String)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Reads all the characters from <CODE>Stream</CODE> and returns them in <CODE>String</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Stream</CODE> is an open stream.
+ (<CODE>streams_basic:stream/1</CODE>)
+
+<CODE>-String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+</UL>
+
+</DL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_74.html">previous</A>, <A HREF="ciao_76.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_74.html">previous</A>, <A HREF="ciao_76.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

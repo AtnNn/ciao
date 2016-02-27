@@ -2,7 +2,7 @@
 
 :- comment(title, "Customizing library paths and path aliases").
 
-:- comment(author,"Daniel Cabeza").
+:- comment(author,"D.Cabeza").
 
 :- comment(module, "This library provides means for customizing, from
    environment variables, the libraries and @concept{path
@@ -53,22 +53,3 @@ record_alias([LibStr|Paths]) :-
         atom_codes(Lib, LibStr),
         asserta_fact(library_directory(Lib)),
         record_alias(Paths).
-
-%% *** Delete this comment after reading: it is only a reminder! ***
-%% 
-%% The "assertions" library needs to be included in order to support
-%% ":- comment(...,...)." declarations such as below, i.e., insert: 
-%% 
-%% :- module(_,_,[assertions]).
-%% 
-%% At the beginning of the file:
-%% The following version comment(s) can be moved elsewhere in the 
-%% file. Subsequent version comments will always be placed above 
-%% the last one inserted.
-
-
-:- comment(version_maintenance,dir('../version')).
-
-:- comment(version(1*11+66,2003/12/19,16:09*45+'CET'), "Documentation
-   Revised.  (Edison Mera)").
-
