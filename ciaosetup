@@ -333,6 +333,7 @@ Installation:
 Querying Bundles:
 
   show_bundles          Show all available bundles
+  rescan_bundles        Rescan available bundles in source
 
   gen_bundle_commit_info [internal]
 
@@ -890,6 +891,11 @@ register_command "show_bundles"
 do__show_bundles() {
     ensure_bootstrap_settings
     ( cd ${CIAODESRC}; bootlpmake show_bundles ) || return 1
+}
+
+register_command "rescan_bundles"
+do__rescan_bundles() {
+    do_boot_scan_bundles # TODO: refine
 }
 
 # ===========================================================================

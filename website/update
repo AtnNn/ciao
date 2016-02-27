@@ -47,19 +47,19 @@ setup_site_type(SiteType) :-
 	%   yes - install in clip machine
 	%   no  - do a personal instalation
 	( SiteType = 'official' ->
-	    set_param(official_site, yes),
+	    set_param(http_mode, userdir_as_root),
 	    set_param(remove_old_packages, yes),
 	    set_param(fetch_new_packages, yes)
 	; SiteType = 'testing-nofetch' ->
-	    set_param(official_site, no),
+	    set_param(http_mode, userdir_as_root),
 	    set_param(remove_old_packages, no),
 	    set_param(fetch_new_packages, no)
 	; SiteType = 'testing' ->
-	    set_param(official_site, no),
+	    set_param(http_mode, userdir_as_root),
 	    set_param(remove_old_packages, no),
 	    set_param(fetch_new_packages, yes)
 	; SiteType = 'personal' ->
-	    set_param(official_site, no),
+%	    set_param(http_mode, userdir),
 	    set_param(remove_old_packages, no),
 	    set_param(fetch_new_packages, yes)
 	; error(['Unknown site_type value ', SiteType]),
@@ -74,25 +74,25 @@ setup_site_type(SiteType) :-
 	set_param(settings_pl, ~atom_concat(~get_param(ciaodir), '/website/SETTINGS.pl')),
 	set_param(settings_skel_pl, ~atom_concat(~get_param(ciaodir), '/website/SETTINGS_skel.pl')).
 
-compute_website_params :- get_param(official_site, yes), !,
-	note(['Preparing an official website']),
-	note(['(assuming a working local installation)']),
-	% Settings for a installation in the clip machine (using latest working sources)
-	% Where the web pages will go
-	% TODO: Extract from configure!
-	set_param(disthtmldir, '/home/ciao/public_html'),
+% TODO: Missing support for user-local HTTP server (for testing)
+compute_website_params :- get_param(http_mode, userdir_as_root), !,
+	note(['Configured for HTTP access from userdir (reachable as root)']),
+	% TODO: merge with WWWDIR, extract from common configuration files
+	Home = ~fixed_absolute_file_name('$HOME'),
+	set_param(disthtmldir, ~atom_concat(Home, '/public_html')),
 	set_param(disthtmlurl, '').
-compute_website_params :-
-	note(['Preparing a local website']),
-	note(['(assuming a working local installation)']),
-	% Settings for a personal installation from current sources
-	set_param(disthtmldir, ~fixed_absolute_file_name('$HOME/public_html/ciao')),
-	( get_param(disttype, personal) ->
-	    current_env('USER', User),
-	    set_param(disthtmlurl, ~atom_concat(['/~', User, '/ciao/']))
-	; Home = ~fixed_absolute_file_name('$HOME'),
-	  set_param(disthtmlurl, ~atom_concat(['file://', Home, '/public_html/ciao/']))
-	).
+compute_website_params :- get_param(http_mode, userdir), !,
+	note(['Configured for HTTP access from userdir (tilde URL)']),
+	Home = ~fixed_absolute_file_name('$HOME'),
+	set_param(disthtmldir, ~atom_concat(Home, '/public_html')), % TODO: 
+	current_env('USER', User),
+	set_param(disthtmlurl, ~atom_concat(['/~', User, '/'])).
+compute_website_params :- % No HTTP access (using 'file://' protocol)
+	note(['Configured for filesystem based access']),
+	Home = ~fixed_absolute_file_name('$HOME'),
+	Path = ~atom_concat(Home, '/public_html/ciao'),
+	set_param(disthtmldir, Path),
+	set_param(disthtmlurl, ~atom_concat(['file://', Path, '/'])).
 
 % ---------------------------------------------------------------------------
 % Abstraction of external commands (not written in Prolog or executed
