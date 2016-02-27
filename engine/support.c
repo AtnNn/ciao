@@ -44,21 +44,8 @@ static struct sw_on_key_node *atom_gethash(register struct sw_on_key *sw,
 void failc(mesg)
      char *mesg;
 {
-  // Give an error.  We check if we were able to allocate memory at all for
-  // the user_eror stream (since we are using the same routines to allocate
-  // all memory, either tagged or not, we may have failed to allocate
-  // memory for streams).  This should not be necessary once we separate
-  // the memory management 
-
-  if (!stream_user_error) {
-    fprintf(stderr, "{ERROR: %s}\n",mesg);
-    fprintf(stderr, 
-"{Ciao was probably compiled in a machine with a different memory model}\n");
-    fprintf(stderr, 
-"{Please bear with us while we improve Ciao's memory management!}\n");
-  } else 
-    ENG_PRINTF1(stream_user_error,"{ERROR: %s}\n",mesg);
-
+  ENG_PRINTF1(stream_user_error,"{ERROR: %s}\n",mesg);
+  /*if (predicates_location != &user_predicates)*/ /* wam not initialized */
   if (!wam_initialized){
     printf("Wam not initialized, exiting!!!\n");
     at_exit(-1);

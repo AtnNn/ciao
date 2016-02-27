@@ -37,9 +37,6 @@ void ENG_init(argc, argv)
 
   compute_cwd();
   checkasserts();
-#if defined(USE_OWN_MALLOC)
-  init_own_malloc();
-#endif
   init_once();
   init_alloc(Arg);
   init_each_time(Arg);

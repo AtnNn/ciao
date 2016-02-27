@@ -89,6 +89,17 @@ static TAGGED *get_tiny_blocks()
 }
 
 
+/* Replace memcpy as old systems don't have it. */
+/*
+ENG_mem_cpy(dest, src, n)
+     REGISTER char *dest, *src;
+     REGISTER int n;
+{
+  while (--n >= 0)
+    *dest++ = *src++;
+}
+*/
+
 /* segfault patch -- jf */
 #if defined(MallocBase)     
 #define ENSURE_ADDRESSABLE(P, SIZE) \

@@ -3,15 +3,14 @@
  * AFSID           : $__Header$
  * Author          : Manuel Carro
  * Created On      : Mon Dec 15 13:50:46 1997
- * Last Modified By: Manuel Carro
- * Last Modified On: Tue Apr 25 17:56:19 2006
- * Update Count    : 1034
+ * Last Modified By: MCL
+ * Last Modified On: Fri Dec 17 17:23:42 1999
+ * Update Count    : 862
  * Status          : Seems to work correctly
  */
 
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 
 #if !defined(Win32i86)
 # include <strings.h>
@@ -23,11 +22,8 @@
 
 #include "configure.h"
 #include "termdefs.h"
-#include "streams_defs.h"
 #include "debug.h"
-
 #include "own_malloc_defs.h"
-#include "mmap_defs.h"
 
 #if defined(USE_OWN_MALLOC)
 
@@ -80,65 +76,6 @@ static void dealloc_block(MEM_BLOCK *block);
 
 #define find_mem_block(Ptr) ((MEM_BLOCK *)(ptr - HEADER_SIZE))
 
-void print_mem_map()
-{
-  MEM_BLOCK *moving = block_list;
-
-  while (moving) {
-    fprintf(stderr, "addr: \t %x \t len: \t %8d \t free: %d\n", 
-           (unsigned int)moving, 
-           moving->size,
-           moving->block_is_free);
-    moving = moving->fwd;
-  }
-}
-
-
-#if defined(HAS_MMAP)
-TAGGED *mmap_base = NULL;
-
-void init_own_malloc() {
-  TAGGED *returned_base;
-  int mmap_size = AddressableSpace;       // In bytes
-  MEM_BLOCK *new_block;
-  int fd_mmap_file = -1;
-
-  // Chunks of code identical to those in configure.c - keep them in sync!
-#if !defined(ANONYMOUS_MMAP)
-  char *mmap_file = MMAP_FILE;
-
-  if ((fd_mmap_file = open(MMAP_FILE, O_RDWR|O_CREAT)) < 0) {
-    fprintf(stderr,
-	    "\n\nPANIC: Error opening map file in own_malloc_linear.c\n\n");
-    exit(1);
-  }
-#endif
-
-  mmap_base = (TAGGED *)MallocBase; 
-  returned_base = mmap((char *)mmap_base, 
-		       mmap_size,
-		       PROT_READ|PROT_WRITE,
-		       MMAP_FLAGS, 
-		       fd_mmap_file,
-		       0);
-  if (returned_base != mmap_base) {
-    fprintf(stderr, "PANIC: cannot mmap() own memory at %p!!!\n", mmap_base);
-    fprintf(stderr, "PANIC: returned pointer is %p!!!\n", returned_base);
-    exit(-1);
-  }
-  // What follows is basically a create_new_block which allocates 
-  // all memory we can address
-  new_block = (MEM_BLOCK *)mmap_base;
-  new_block->block_is_free = TRUE;
-  new_block->size = CHARS_TO_TW(mmap_size - TW_TO_CHARS(2*HEADER_SIZE));
-  insert_block(new_block, NULL, block_list);
-  insert_free_block(new_block);
-  // print_mem_map();
-}
-#else
-void init_own_malloc() {}
-#endif
-
 /* Search for a block with memory enough. Requested size comes in TAGGED
    words.  If no block found, return NULL. */
 
@@ -190,23 +127,12 @@ static TAGGED *reserve_block(req_tagged, block)
 
   if (block->size > req_tagged + HEADER_SIZE) {
     /* Block is still free -- do not remove from free blocks list  */
-    /*    block->size -= (req_tagged + HEADER_SIZE);
+    block->size -= (req_tagged + HEADER_SIZE);
     new_block = (MEM_BLOCK *)((TAGGED *)block + HEADER_SIZE + block->size);
     new_block->block_is_free = FALSE;
     new_block->size = req_tagged;
     insert_block(new_block, block, block->fwd);
     return &(new_block->mem_ptr);
-    */
-    new_block = (MEM_BLOCK *)((TAGGED *)block + HEADER_SIZE + req_tagged);
-    new_block->size = block->size - HEADER_SIZE - req_tagged;
-    new_block->block_is_free = TRUE;
-
-    block->size = req_tagged;
-    block->block_is_free = FALSE;
-    insert_block(new_block, block, block->fwd);
-    remove_free_block(block);
-    insert_free_block(new_block);
-    return &(block->mem_ptr);
   } else {                                    /* Exactly the size we want */
     block->block_is_free = FALSE;
     remove_free_block(block);
@@ -268,11 +194,9 @@ static void remove_free_block(block)
    an ALIGNed word.  If the creation was sucessful, insert them into the
    general blocks list and into the free blocks list. */
 
-static MEM_BLOCK *create_new_block(int size_in_tagged_w)
+static MEM_BLOCK *create_new_block(size_in_tagged_w)
+     int size_in_tagged_w;
 {
-#if defined(HAS_MMAP)
-  return NULL;
-#else
   MEM_BLOCK *new_block;
 
   new_block = (MEM_BLOCK *)malloc(TW_TO_CHARS(size_in_tagged_w + HEADER_SIZE));
@@ -290,7 +214,6 @@ static MEM_BLOCK *create_new_block(int size_in_tagged_w)
   insert_block(new_block, NULL, block_list);
   insert_free_block(new_block);
   return new_block;
-#endif
 }
 
 /* Mark a block as unused.  Collapse it with the surronding ones if possible */
@@ -396,29 +319,19 @@ TAGGED *own_realloc(ptr,size)                            /* size in chars */
 
   old_block = find_mem_block(ptr);                /* Gives error messages */
   if (old_block) {
-    MEM_BLOCK *new_block = NULL;
+    MEM_BLOCK *new_block;
     TAGGED    *new_mem_area;
     int        size_in_tagged_w = CHARS_TO_TW(size);
 
-#if defined(FAST_REALLOC)
-    next_block = old_block->fwd;
-    if (next_block && next_block->block_is_free &&
-      ((TAGGED *)old_block+old_block->size+HEADER_SIZE == (TAGGED *)next_block)
-   && (old_block->size + next_block->size + HEADER_SIZE >= size_in_tagged_w)){
-      // We can use old + next!
-      dealloc_block(old_block); // Mark as free and say it is what we need
-      new_block = old_block;
-    }
-#endif
-    if ((new_block == NULL) &&   // Could not be found otherwise
-        (new_block = locate_block(size_in_tagged_w)) == NULL) {
+    if ((new_block = locate_block(size_in_tagged_w)) == NULL) {
       new_block = create_new_block(ADJUST_BLOCK(size_in_tagged_w));
-      if (new_block == NULL){ // print_mem_map();
+      if (new_block == NULL){
 #if defined(DEBUG)
         printf("own_realloc: could not reserve %d chars!\n", size);
 #endif
         return NULL;
       } 
+      /* min_mem_alloc *= 2; */
     }
     
     new_mem_area = reserve_block(size_in_tagged_w, new_block);

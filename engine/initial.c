@@ -339,9 +339,9 @@ CLOCK def_clock=0, use_clock=0;
 /* char *atom_buffer; */ /* Non shared */
 /* int atom_buffer_length; */ /* Non shared */
 
-struct stream_node *stream_user_input = NULL;                   /* Shared */
-struct stream_node *stream_user_output = NULL;                  /* Shared */
-struct stream_node *stream_user_error = NULL;                   /* Shared */
+struct stream_node *stream_user_input;                          /* Shared */
+struct stream_node *stream_user_output;                         /* Shared */
+struct stream_node *stream_user_error;                          /* Shared */
 
 
 struct stream_node *root_stream_ptr;               /* Shared and _locked_ */

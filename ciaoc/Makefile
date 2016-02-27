@@ -9,16 +9,12 @@ ASRGEN=gen_asr
 
 # Use the latest ciaoc (renamed as ciaoc.sta) to generate a new ciaoc.
 
-compiler: generate_foreign_compilation_options
+compiler:
 	cp -f $(CIAOCNAME) $(CIAOCSTA)
 	-chmod $(EXECMODE) $(CIAOCSTA)
 	$(SETLOCALCIAO) $(CIAOCSTA) -s -x $(CIAOCNAME)
 	$(SETLOCALCIAO) $(CIAOC) -s -x $(ASRGEN)
 	rm -f $(ASRGEN) $(ASRGEN).cpx
-
-generate_foreign_compilation_options:
-	$(SRC)/etc/generate_foreign_compile_options $(MAKE) $(SRC)/makefile-sysdep $(SRC)/lib/auto_compile_options.pl
-
 
 install:
 	-mkdir -p $(BINDIR)

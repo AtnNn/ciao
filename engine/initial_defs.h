@@ -25,9 +25,6 @@ void glb_init_each_time(void);
 void init_each_time(Argdecl);
 void init_kanji(void);
 void init_latin1(void);
-#if defined(USE_OWN_MALLOC)
-void init_own_malloc(void);
-#endif
 void init_once(void);
 void init_locks(void);
 void init_streams(void);

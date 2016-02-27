@@ -1,6 +1,6 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 January 2007 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 6 August 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Prolog to SQL translator</TITLE>
@@ -20,7 +20,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_151.html">previous</A>,
 
 
 <P>
-<STRONG>Version:</STRONG> 1.10#7 (2006/4/26, 19:22:13 CEST)
+<STRONG>Version:</STRONG> 1.10#1 (2004/7/29, 19:29:40 CEST)
 
 
 <P>
@@ -59,6 +59,29 @@ The main entry points to the translator are
 
 
 <PRE>
+%jcf%:- use_module(library('persdb_sql/pl2sql')).
+:- use_module(library('persdb_mysql/pl2sql')).
+%jcf%
+:- use_module(library(strings)).
+
+:- multifile [relation/3,attribute/4].
+:- data [relation/3,attribute/4].
+
+relation(product,3,'PRODUCT').
+attribute(1,'PRODUCT','ID',int).
+attribute(2,'PRODUCT','QUANTITY',int).
+attribute(3,'PRODUCT','NAME',string).
+
+main :- 
+     pl2sqlstring( f(L,K), 
+          ((product(L,N,a); product(L,N,b)),
+           \+ product(2,3,b), 
+           L + 2 &#62; avg(Y, Z^product(Z,Y,a)),
+           K is N + max(X, product(X,2,b))
+           ), T),
+     write_string(T).
+     
+%%     printqueries(T).
 
 </PRE>
 

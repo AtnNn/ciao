@@ -1234,7 +1234,7 @@ Manuel C. Rodriguez. See the changelog for details."
 ;;---------------------------------------------------------------------------
 
 ;; Do not change the two lines below (Patched by installation!):
-(defconst ciao-mode-version "1.10p7" 
+(defconst ciao-mode-version "1.10p6" 
   "This is the version number of the ciao.el file")
 
 (defconst ciao-mode-emacs-version 

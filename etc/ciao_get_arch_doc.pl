@@ -31,8 +31,6 @@ main.
 
 
 
-:- comment(version(1*10+8,2007/01/28,17:30*03+'CEST'),
-   "Options to detect and compile in 64-bit Intel architecture.").
 
 :- comment(version(0*0+6,2001/03/26,13:56*52+'CEST'), "Added FreeBSD,
 thanks to Paul Broome.  (MCL)").

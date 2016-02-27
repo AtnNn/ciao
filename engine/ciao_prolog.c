@@ -418,8 +418,7 @@ void ciao_initcode()
   default_code = (INSN *)checkalloc(32);
 
   b = call_code;
-  *b++ = CALLQ;
-  *b++ = 0;
+  *b++ = CALL;
   *(struct definition **)b = address_call;
   b += BPTP;                                                   /* padding */
   *b++ = EToY0*sizeof(TAGGED);	                     /* initial FrameSize */
@@ -454,9 +453,6 @@ void ciao_init()
 {
   /* Global initializations */
   checkasserts();
-#if defined(USE_OWN_MALLOC)
-  init_own_malloc();
-#endif
   /*init_wrb_state_list();*/
   init_goal_desc_list();
   init_once();

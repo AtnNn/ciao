@@ -408,9 +408,6 @@ int start(argc, argv)
 
     /* Global initializations */
     checkasserts();
-#if defined(USE_OWN_MALLOC)
-    init_own_malloc();
-#endif
     /*init_wrb_state_list();*/
     init_goal_desc_list();
     init_once();
