@@ -30,46 +30,41 @@
 :- comment(module,"
 
 This module defines the low level Prolog to Java interface. This interface
-allows a Prolog program to start a Java process, and create Java objects,
+allows a Prolog program to start a Java process, create Java objects,
 invoke methods, set/get attributes (fields), and handle Java events.
 
-Although the Java side interface is explained in Javadoc format, the
+This interface only works with JDK version 1.2 or higher.
+
+Although the Java side interface is explained in Javadoc format (it is 
+available at library/javall/javadoc/ in your Ciao installation), the
 general interface structure is detailed here.
 
 @section{Low-Level Prolog to Java Interface Structure}
 @cindex{Low-Level Prolog to Java Interface Structure}
 This low-level prolog to java interface is made up of two parts: a Prolog
-part and a Java part. The Prolog part receives requests from a Prolog
-program and sends them to the Java part through a socket. The Java part
-receives requests from the socket and performs the actions included in the
-requests.
+part and a Java part, running in separate processes. The Prolog part 
+receives requests from a Prolog program and sends them to the Java part
+through a socket. The Java part receives requests from the socket and
+performs the actions included in the requests.
 
 If an event is thrown in the java side, an asynchronous message must be
 sent away to the prolog side, in order to launch a prolog goal to handle
 the event. This asynchronous communication is made by the means of
 a second socket. The nature of this communication needs the use of threads
-both in java and prolog: one thread to deal with the 'sequential program
-flow,' and other thread (may be several) to do the job of event handling.
+both in java and prolog:  to deal with the 'sequential program
+flow,' and other threads for event handling.
 
-In the java side the threads are automatically created by the context of
-the objects we use: adding an event listener implies automatically that
-there will be a thread ready to launch it when the event raises.  The
-prolog side is different: there must be a thread in the low-level interface
-that listens to the asynchronous socket to launch the goals requested.
+In both sides the threads are automatically created by the context of
+the objects we use. The user must be aware that different requests to the 
+other side of the interface could run concurrently.
+
 
 @subsection{Prolog side of the Java interface}
 @cindex{Low-Level Prolog to Java Interface Structure. Prolog side}
 The prolog side receives the actions to do in the
 java side from the user program, and sends them to the java side through the socket connection.
 When the action is done in the java side, the result is returned to the user
-program, or the action fails if any problem in the java side is found.
-
-In order to send and receive prolog terms and java object references using a socket,
-this layer must transform this elements in a serialized representation,
-just like the java serialization package does. This transformation is done in
-our implementation using the @tt{fast\_read/1} and @tt{fast\_write/1} predicates
-included in Ciao, so any prolog element can be translated to and from a
-list of bytes.
+program, or the action fails if there is any problem in the java side.
 
 Prolog data representation of java elements is very simple in this
 low-level interface. Java primitive types such as integers and characters
@@ -136,7 +131,7 @@ prolog is explained.
 @cindex{Java event handling from Prolog}
 Java event handling is based on a delegation model since version
 1.1.x. This approach to event handling is very powerful and elegant, but a
-user program cannot handle all the events that can raise on a given object:
+user program cannot handle all the events that can arise on a given object:
 for each kind of event, a listener must be implemented and added
 specifically. However, the Java 2 API includes a special listener
 (@tt{AWTEventListener}) that can manage the internal java event queue.
@@ -153,7 +148,7 @@ Due to the events nature, the event handler must work in a separate thread
 to manage the events asynchronously. The java side has its own mechanisms
 to work this way. The prolog side must be implemented specially for event
 handling using threads. The communication between java and prolog is also
-asynchronous, and a additional socket stream is used to avoid interferences
+asynchronous, and an additional socket stream is used to avoid interferences
 with the main socket stream. The event stream will work in this
 implementation only in one way: from java to prolog. If an event handler
 needs to send back requests to java, it will use the main socket stream, just
@@ -164,7 +159,9 @@ shown in the next figure:
 
 @image{ip2jbn-events-pl-reg}
 
-When an event raises, the low-level Prolog to Java interface have to send to the Prolog user program the goal to evaluate. Graphically, the complete process  takes the tasks involved in the following figure:
+When an event raises, the low-level Prolog to Java interface has to send to
+the Prolog user program the goal to evaluate. Graphically, the complete
+process takes the tasks involved in the following figure: 
 
 @image{ip2jbn-events-pl-fire}
 
@@ -175,9 +172,9 @@ Java exception handling is very similar to the peer prolog handling:
 it includes some specific statements to trap exceptions from user code. In the
 java side, the exceptions can be originated from an incorrect request, or can
 be originated in the code called from the request. Both exception types will be
-sent to prolog using the main socket stream, leaving the prolog
+sent to prolog using the main socket stream, allowing the prolog
 program manage the exception. However, the first kind of exceptions are
-prefixed, so the user program can distinguish from the
+prefixed, so the user program can distinguish them from the
 second type of exceptions.
 
 In order to handle exceptions properly using the prolog to java and java to 
@@ -195,6 +192,7 @@ endless loop of exceptions bouncing from one side to another.
 :- use_module(library(write),[write/1]).
 :- use_module(library('javall/javasock')).
 :- use_module(library(system)).
+
 
 % /home/clip/Systems/ciao/lib/engine/basic_props.pl
 %% -----------------------------------------------------------------------
@@ -258,7 +256,7 @@ java_start :-
 	java_start("").
 
 java_start(Cp) :-
-	(java_stream(_,_,_) ->
+	(java_stream(_,_,_,_) ->
 % exceptions are not handled properly with multiple threads.
 	 display(java_exception('Java connection already active')),nl,
 %	 throw(java_exception('Java connection already active')),
@@ -266,14 +264,16 @@ java_start(Cp) :-
 	;
 	 true
 	), 
-	compound_classpath(Cp, Cp2),
-	append("java -classpath ", Cp2, CommandS1),
-        append(CommandS1," CiaoJava.PLJavaServer", CommandS2),
-        name(Command, CommandS2),
+%jcf%	compound_classpath(Cp, Cp2),
+	set_classpath(Cp),
+	Command = 'java CiaoJava.PLJavaServer',
+%jcf%	append("java -classpath ", Cp2, CommandS1),
+%jcf%   append(CommandS1," CiaoJava.PLJavaServer", CommandS2),
+%jcf%   name(Command, CommandS2),
 	!,
         popen(Command,read,Stream),
 	get_port(Stream,Port),
-	java_connect(localhost,Port),
+	java_connect_stream(localhost,Port,Stream),
 	!.
 
 %% -----------------------------------------------------------------------
@@ -285,7 +285,7 @@ java_start(Cp) :-
 %% -----------------------------------------------------------------------
 
 java_start(Node,Cp):-
-	(java_stream(_,_,_) ->
+	(java_stream(_,_,_,_) ->
 % exceptions are not handled properly with multiple threads.
 	 display(java_exception('Java connection already active')),nl,
 %	 throw(java_exception('Java connection already active')),
@@ -305,7 +305,7 @@ java_start(Node,Cp):-
         nl,
         popen(Command,read,Stream),
 	get_port(Stream,Port),
-	java_connect(Node,Port).
+	java_connect_stream(Node,Port,Stream).
 
 %% -----------------------------------------------------------------------
 :- pred java_stop/0 # "Stops the interface terminating the threads
@@ -325,7 +325,18 @@ java_stop :-
         machine, use 'localhost' as machine_name.". 
 %% -----------------------------------------------------------------------
 java_connect(Node,Port) :-
-	start_socket_interface(Node:Port).
+	start_socket_interface(Node:Port,_).
+
+%% -----------------------------------------------------------------------
+:- pred java_connect_stream(+machine_name,+port_number,+stream) 
+	:: machine_name * int * stream # "Connects to an existing
+	Java interface server running in machine_name, listening at port
+        port_number, and with std. input stream 'stream'. To connect to a
+        Java server located in the local machine, use 'localhost' as
+        machine_name.". 
+%% -----------------------------------------------------------------------
+java_connect_stream(Node,Port,Stream) :-
+	start_socket_interface(Node:Port,Stream).
 
 %% -----------------------------------------------------------------------
 :- pred java_disconnect/0
@@ -342,6 +353,16 @@ java_disconnect :-
 	stop_socket_interface.
 
 %% -----------------------------------------------------------------------
+:- pred set_classpath(+user_classpath)
+	:: string # "Assigns the CLASSPATH environment variable 
+        needed by Java to run the Java server and user classes.".
+%% -----------------------------------------------------------------------
+
+set_classpath(UserClasspath) :-
+	compound_classpath(UserClasspath,CPath),
+	setenvstr('CLASSPATH',CPath).
+
+%% -----------------------------------------------------------------------
 :- pred compound_classpath(+user_classpath,-new_classpath)
 	:: string * string # "Compounds a string with the classpath 
         needed by Java to run the Java server and user classes.".
@@ -351,46 +372,44 @@ compound_classpath(UserClasspath,NewClasspath) :-
         absolute_file_name(library('javall/javart'),AbsFileName),
         name(AbsFileName,AbsFileNameS),
         append(UClasspath,"/javart.pl",AbsFileNameS),
-	correct_win_path(UClasspath,CiaoClasspath),
-	addPath(CiaoClasspath,UserClasspath,NewClasspath).
+	correct_win_path(UClasspath,CiaoClasspath,System),
+	addPath(CiaoClasspath,UserClasspath,System,NewClasspath).
 
-addPath(Cp,"",Cp).
+addPath(Cp,"",_,Cp).
 
-addPath(Cp1,Cp2,Cp) :-
-	append(":",Cp2,Cp3),
-	append(Cp1,Cp3,Cp).
+addPath("",Cp,_,Cp).
 
-%% -----------------------------------------------------------------------
-:- pred correct_win_path(+ciao_classpath,-win_classpath)
-	:: string * string # "Corrects the classpath needed to run
-        the Java side of the interface in order to adapt it to
-        Windows syntax.".
-%% -----------------------------------------------------------------------
+addPath(Cp1,Cp2,windows,Cp) :-
+	change_slashes(Cp1,Cp1s),
+	change_slashes(Cp2,Cp2s),
+	append(Cp1s,[0';|Cp2s],Cp).
+%
 
-correct_win_path([Sl,Sl,L,Sl|Upath], [L,C,Bs|Wpath]) :-
-	char_code('/',Sl),
+addPath(Cp1,Cp2,other,Cp) :-
+	append(Cp1,[0':|Cp2],Cp).
+
+correct_win_path([0'/,0'c,0'y,0'g,0'd,0'r,0'i,0'v,0'e,0'/,L,0'/|Upath],[L,0':,Bs|Wpath],windows):-
+	!,
 	char_code('\\',Bs),
-	char_code(':',C),
 	member(L,"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"),
 	change_slashes(Upath, Wpath).
 
-correct_win_path(X,X).
+correct_win_path([0'/,0'/,L,0'/|Upath], [L,0':,Bs|Wpath],windows):-
+	char_code('\\',Bs),
+	member(L,"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"),
+	change_slashes(Upath, Wpath).
+
+correct_win_path(X,X,other).
 	
-%% -----------------------------------------------------------------------
-:- pred change_slashes(+ciao_classpath,-win_classpath)
-	:: string * string # "Converts Unix directory separators to
-        Windows directory separators.".
-%% -----------------------------------------------------------------------
-change_slashes([Slash|Upath],[Backslash|Wpath]):-
-	char_code('/',Slash),
-	char_code('\\',Backslash),
+change_slashes([],[]).
+
+change_slashes([0'/|Upath],[0'\\|Wpath]):-
+	!,
 	change_slashes(Upath,Wpath).
 
 change_slashes([L|Upath],[L|Wpath]):-
 	change_slashes(Upath,Wpath).
 
-change_slashes([],[]).
-	
 %% -----------------------------------------------------------------------
 :- pred get_port(+stream,-port)
 	:: atom * atom # "Gets the port number to connect to Java
@@ -563,7 +582,7 @@ check_error(_).
 	If it is not established, an exception is thrown.".
 %% -----------------------------------------------------------------------
 is_connected :-
-	java_stream(_,_,_).
+	java_stream(_,_,_,_).
 
 is_connected :-
 % exceptions are not handled properly with multiple threads.

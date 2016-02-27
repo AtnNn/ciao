@@ -3,9 +3,9 @@
 # Ciao Global Compilation/Installation SETTINGS
 # ----------------------------------------------------------------------------
 # Define this to be a directory where the sources are reachable system-wide 
-# SRC=/home/clip/public_html/Software/Ciao/ciao-1.7p194
+# SRC=/home/clip/public_html/Software/Ciao/ciao-1.7p212
 #
-SRC=/home/clip/public_html/Software/Ciao/ciao-1.7p194
+SRC=/home/clip/public_html/Software/Ciao/ciao-1.7p212
 #-----------------------------------------------------------------------------
 # Define the following to be the places under which the installation
 # will be performed:
@@ -48,6 +48,25 @@ INSTALL_PROLOG_NAME=yes
 # be set to no if emacs is not installed in the system.  It is safe to
 # leave as "yes" otherwise:
 INSTALL_EMACS_SUPPORT=yes
+
+# Set to "no" if you do not want to interface with the MySQL database.
+# If you choose to have the MySQL interfafe, you should have the MySQL
+# client part installed in the machine where you are compiling and
+# using it.  The MySQL daemon should also be up and running when using
+# the interface.  You should also know where the MySQL client
+# library is installed.  In a Linux machine you can do that by looking at
+# the output of the command "locate mysqlclient.a".  The directory
+# part of the path is what is relevant here.
+WITH_MYSQL=yes
+MYSQL_CLIENT_DIRECTORY=/usr/lib/mysql
+
+# Do you have a reasonably recent Java (i.e., jdk 1.3 or equivalent)?
+# If so you may want to compile the utilities for the Java interface.
+# These are currently under $(SRC)/library/javall, along with examples
+# and documentation.  If you do not have java you should better set
+# the option below to "no", in order to avoid compile-time error.
+# Otherwise, it is safe to set it to "yes".
+WITH_JAVA_INTERFACE=yes
 
 # If you want to compile an engine with threads capability
 # (concurrency), set the following variable to "yes".  Otherwise, set
@@ -126,14 +145,14 @@ DEBUG_LEVEL=nodebug
 # This is for locally compiling the engine in NT under Samba, ignore it
 
 ifeq ($(OSTYPE),cygwin)
-    SRC=/home/clip/public_html/Software/Ciao/ciao-1.7p194
+    SRC=/home/clip/public_html/Software/Ciao/ciao-1.7p212
     ALT=win32
     EXECSUFFIX=.exe
 endif
 
 # Same as above, old cygwin versions
 ifeq ($(OSTYPE),cygwin32)
-    SRC=/home/clip/public_html/Software/Ciao/ciao-1.7p194
+    SRC=/home/clip/public_html/Software/Ciao/ciao-1.7p212
     ALT=win32
     EXECSUFFIX=.exe
 endif

@@ -1,4 +1,4 @@
-/* Copyright (C) 1996,1997,1998, UPM-CLIP */
+/* Copyright (C) 1996,1997,1998, 1999, 2000, 2001, 2002  UPM-CLIP */
 
 #include "datadefs.h"
 #include "support.h"
@@ -187,7 +187,7 @@ struct sw_on_key *new_switch_on_key(size,otherwise)
 #endif
   for (i=0; i<size; i++)
     sw->tab.asnode[i].key = 0,
-    sw->tab.asnode[i].value.try = otherwise;
+    sw->tab.asnode[i].value.try_chain = otherwise;
   return sw;
 }
 
@@ -212,22 +212,22 @@ static void incore_puthash(psw,effar,current,def,k)
     for (i=0; i<size; i++) {
       h1 = &(*psw)->tab.asnode[i];
       if (h1->key)
-        incore_insert(&h1->value.try,effar,current,def);
+        incore_insert(&h1->value.try_chain,effar,current,def);
       else if (!otherwise){
-        incore_insert(&h1->value.try,effar,current,def);
-        otherwise = h1->value.try;
+        incore_insert(&h1->value.try_chain,effar,current,def);
+        otherwise = h1->value.try_chain;
       } else
-        h1->value.try = otherwise;
+        h1->value.try_chain = otherwise;
     }
   } else {
     h1 = incore_gethash(*psw,k);
     if (!h1->key) {
       h1->key = k;
-      h1->value.try = incore_copy(otherwise=h1->value.try);
-      incore_insert(&h1->value.try,effar,current,def);
+      h1->value.try_chain = incore_copy(otherwise=h1->value.try_chain);
+      incore_insert(&h1->value.try_chain,effar,current,def);
       if (((*psw)->count+=1)<<1 > size)
         expand_sw_on_key(psw,otherwise,TRUE);
-    } else incore_insert(&h1->value.try,effar,current,def);
+    } else incore_insert(&h1->value.try_chain,effar,current,def);
   }
 }
 
@@ -255,7 +255,7 @@ static void free_sw_on_key(sw)
   for (i=0; i<size; i++) {
     h1 = &(*sw)->tab.asnode[i];
     if (h1->key || !otherwise)
-      free_try(&h1->value.try);
+      free_try(&h1->value.try_chain);
     if (!h1->key)
       otherwise = TRUE;
   }

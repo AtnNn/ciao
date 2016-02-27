@@ -1,4 +1,4 @@
-/*             Copyright (C)1990-91-92-93-94-95 UPM-CLIP      		*/
+/*             Copyright (C)1990-2002 UPM-CLIP                  	     */
 /*                          1994-1995 Katholieke Universiteit Leuven.        */
 
 

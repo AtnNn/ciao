@@ -1,4 +1,4 @@
-/* Copyright (C) 1996,1997,1998, UPM-CLIP */
+/* Copyright (C) 1996,1997,1998,1999,2000,2001,2002 UPM-CLIP */
 
 #include "debug.h"
 #include "initial.h"
@@ -282,6 +282,7 @@ extern void failc(char *mesg);
 #define NO_WRITE_PERMISSION 4
 #define NO_SUCH_FILE 5
 #define NO_OPEN_PERMISSION 6
+#define USER_EXCEPTION 7 
 #define TYPE_ERROR(Type) (32+Type) /* includes also domain errors */
 
 /* Type codes for TYPE_ERROR  //) */

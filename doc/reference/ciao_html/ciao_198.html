@@ -1,29 +1,33 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 April 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 6 May 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - parser (library)</TITLE>
+<TITLE>The Ciao Prolog System               - lookup (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_197.html">previous</A>, <A HREF="ciao_199.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_197.html">previous</A>, <A HREF="ciao_199.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC727" HREF="ciao_toc.html#TOC727">parser (library)</A></H1>
+<H1><A NAME="SEC766" HREF="ciao_toc.html#TOC766">lookup (library)</A></H1>
 <P>
-<A NAME="IDX7265"></A>
+<A NAME="IDX7487"></A>
+
+
+<P>
+<STRONG>Version:</STRONG> 0.1 (1999/1/14, 13:30:46 MET)
 
 
 
 <UL>
-<LI><A HREF="ciao_198.html#SEC728">Usage and interface (parser)</A>
-<LI><A HREF="ciao_198.html#SEC729">Documentation on exports (parser)</A>
+<LI><A HREF="ciao_198.html#SEC767">Usage and interface (lookup)</A>
+<LI><A HREF="ciao_198.html#SEC768">Documentation on exports (lookup)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC728" HREF="ciao_toc.html#TOC728">Usage and interface (<CODE>parser</CODE>)</A></H2>
+<H2><A NAME="SEC767" HREF="ciao_toc.html#TOC767">Usage and interface (<CODE>lookup</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -31,7 +35,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_197.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(parser)).</CODE>
+<CODE>:- use_module(library(lookup)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -40,10 +44,34 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_197.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7266"></A>
-<CODE>parser/2</CODE>, 
-<A NAME="IDX7267"></A>
-<CODE>nodeDeclaration/4</CODE>.
+<A NAME="IDX7488"></A>
+<CODE>create_proto_element/3</CODE>, 
+<A NAME="IDX7489"></A>
+<CODE>get_prototype_interface/2</CODE>, 
+<A NAME="IDX7490"></A>
+<CODE>get_prototype_definition/2</CODE>, 
+<A NAME="IDX7491"></A>
+<CODE>lookup_check_node/4</CODE>, 
+<A NAME="IDX7492"></A>
+<CODE>lookup_check_field/6</CODE>, 
+<A NAME="IDX7493"></A>
+<CODE>lookup_check_interface_fieldValue/8</CODE>, 
+<A NAME="IDX7494"></A>
+<CODE>lookup_field/4</CODE>, 
+<A NAME="IDX7495"></A>
+<CODE>lookup_route/5</CODE>, 
+<A NAME="IDX7496"></A>
+<CODE>lookup_fieldTypeId/1</CODE>, 
+<A NAME="IDX7497"></A>
+<CODE>lookup_get_fieldType/4</CODE>, 
+<A NAME="IDX7498"></A>
+<CODE>lookup_field_access/4</CODE>, 
+<A NAME="IDX7499"></A>
+<CODE>lookup_set_def/3</CODE>, 
+<A NAME="IDX7500"></A>
+<CODE>lookup_set_prototype/4</CODE>, 
+<A NAME="IDX7501"></A>
+<CODE>lookup_set_extern_prototype/4</CODE>.
 
 </UL>
 
@@ -54,36 +82,42 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_197.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7268"></A>
+<A NAME="IDX7502"></A>
 <CODE>aggregates</CODE>, 
-<A NAME="IDX7269"></A>
+<A NAME="IDX7503"></A>
 <CODE>dynamic</CODE>, 
-<A NAME="IDX7270"></A>
+<A NAME="IDX7504"></A>
 <CODE>iso_misc</CODE>, 
-<A NAME="IDX7271"></A>
+<A NAME="IDX7505"></A>
 <CODE>iso_byte_char</CODE>, 
-<A NAME="IDX7272"></A>
+<A NAME="IDX7506"></A>
 <CODE>iso_incomplete</CODE>, 
-<A NAME="IDX7273"></A>
+<A NAME="IDX7507"></A>
 <CODE>operators</CODE>, 
-<A NAME="IDX7274"></A>
+<A NAME="IDX7508"></A>
 <CODE>read</CODE>, 
-<A NAME="IDX7275"></A>
+<A NAME="IDX7509"></A>
 <CODE>write</CODE>, 
-<A NAME="IDX7276"></A>
+<A NAME="IDX7510"></A>
 <CODE>lists</CODE>, 
-<A NAME="IDX7277"></A>
-<CODE>provrml/lookup</CODE>, 
-<A NAME="IDX7278"></A>
-<CODE>provrml/field_value</CODE>, 
-<A NAME="IDX7279"></A>
-<CODE>provrml/tokeniser</CODE>, 
-<A NAME="IDX7280"></A>
+<A NAME="IDX7511"></A>
+<CODE>provrml/error</CODE>, 
+<A NAME="IDX7512"></A>
+<CODE>provrml/io</CODE>, 
+<A NAME="IDX7513"></A>
 <CODE>provrml/parser_util</CODE>, 
-<A NAME="IDX7281"></A>
-<CODE>provrml/possible</CODE>, 
-<A NAME="IDX7282"></A>
-<CODE>provrml/error</CODE>.
+<A NAME="IDX7514"></A>
+<CODE>provrml/dictionary</CODE>, 
+<A NAME="IDX7515"></A>
+<CODE>provrml/dictionary_tree</CODE>, 
+<A NAME="IDX7516"></A>
+<CODE>provrml/field_value_check</CODE>, 
+<A NAME="IDX7517"></A>
+<CODE>provrml/boundary</CODE>, 
+<A NAME="IDX7518"></A>
+<CODE>provrml/generator_util</CODE>, 
+<A NAME="IDX7519"></A>
+<CODE>provrml/field_type</CODE>.
 
 </UL>
 
@@ -93,38 +127,91 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_197.html">previous</A>,
 
 
 
-<H2><A NAME="SEC729" HREF="ciao_toc.html#TOC729">Documentation on exports (<CODE>parser</CODE>)</A></H2>
+<H2><A NAME="SEC768" HREF="ciao_toc.html#TOC768">Documentation on exports (<CODE>lookup</CODE>)</A></H2>
 <P>
-<A NAME="IDX7283"></A>
-<A NAME="IDX7284"></A>
+<A NAME="IDX7520"></A>
+<A NAME="IDX7521"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>parser/2:</B>
-<DD><A NAME="IDX7285"></A>
+<DT><span class="define">PREDICATE:</span> <B>create_proto_element/3:</B>
+<DD><A NAME="IDX7522"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>parser(+VRML,-Terms)</CODE>
+<STRONG>Usage:</STRONG> <CODE>create_proto_element(+Interface,+Definition,-Proto)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> The parser uses a tokeniser to read the input text string of VRML code and returns a list with the corresponding terms. The tokens will be read in this parser as the grammar says. The parser is according to the specification of the VRML grammar, accept that it is performed over tokens in sted of the actual code.
+<LI><EM>Description:</EM> The predicate will construct a proto structure containing the interface and the definition.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+VRML</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
+<CODE>+Interface</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 
-<CODE>-Terms</CODE> is a list of <CODE>terms</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+<CODE>+Definition</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>-Proto</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7286"></A>
-<A NAME="IDX7287"></A>
+<A NAME="IDX7523"></A>
+<A NAME="IDX7524"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>nodeDeclaration/4:</B>
-<DD><A NAME="IDX7288"></A>
+<DT><span class="define">PREDICATE:</span> <B>get_prototype_interface/2:</B>
+<DD><A NAME="IDX7525"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>get_prototype_interface(+Proto,-Interface)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate will return the interface from a proto structure.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Proto</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>-Interface</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7526"></A>
+<A NAME="IDX7527"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>get_prototype_definition/2:</B>
+<DD><A NAME="IDX7528"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>get_prototype_definition(+Proto,-Definition)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate will return the definition from a proto structure.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Proto</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>-Definition</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7529"></A>
+<A NAME="IDX7530"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>lookup_check_node/4:</B>
+<DD><A NAME="IDX7531"></A>
 
 
 <P>
@@ -133,7 +220,303 @@ No further documentation available for this predicate.
 
 </DL>
 
+<P>
+<A NAME="IDX7532"></A>
+<A NAME="IDX7533"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>lookup_check_field/6:</B>
+<DD><A NAME="IDX7534"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7535"></A>
+<A NAME="IDX7536"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>lookup_check_interface_fieldValue/8:</B>
+<DD><A NAME="IDX7537"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>lookup_check_interface_fieldValue(+ParseIn,-ParseOut,+AccessType,+FieldType,+Id,+FieldValue,DCGIn,DCGOut)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate formats the output for the interface part of the prototype. It also checks the values for the fields.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+ParseIn</CODE> is a parse structure.
+ (<CODE>internal_types:parse/1</CODE>)
+
+<CODE>-ParseOut</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+AccessType</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+FieldType</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>+Id</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+FieldValue</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>DCGIn</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+
+<CODE>DCGOut</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7538"></A>
+<A NAME="IDX7539"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>lookup_field/4:</B>
+<DD><A NAME="IDX7540"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>lookup_field(+Parse,+FieldTypeId,+FieldId0,+FieldId1)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate will control that the two connected Fields are of the same type, e.g., SFColor - SFColor, MFVec3f - MFVec3f.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Parse</CODE> is a parse structure.
+ (<CODE>internal_types:parse/1</CODE>)
+
+<CODE>+FieldTypeId</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+FieldId0</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+FieldId1</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7541"></A>
+<A NAME="IDX7542"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>lookup_route/5:</B>
+<DD><A NAME="IDX7543"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>lookup_route(+Parse,+NodeTypeId0,+FieldId0,+NodeTypeId1,+FieldId1)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate will check the routing behaviour for two given fields. They will be checked according to the binding rules, like name changes access proporties. The node types for the field must of course be given for the identification.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Parse</CODE> is a parse structure.
+ (<CODE>internal_types:parse/1</CODE>)
+
+<CODE>+NodeTypeId0</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+FieldId0</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+NodeTypeId1</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+FieldId1</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7544"></A>
+<A NAME="IDX7545"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>lookup_fieldTypeId/1:</B>
+<DD><A NAME="IDX7546"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>lookup_fieldTypeId(+FieldTypeId)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate just make a check to see if the given FieldType id is among the allowed. You can not construct own ones and the check is mearly a spellcheck.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+FieldTypeId</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7547"></A>
+<A NAME="IDX7548"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>lookup_get_fieldType/4:</B>
+<DD><A NAME="IDX7549"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>lookup_get_fieldType(+Parse,+NodeTypeId,+fieldId,-FieldType)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate will return the given field's type. It will start the search in the ordinar dictionary and then to the personal dictionary sarting off with 'PROTO'. After it will go for 'DEF' and 'EXTERNPROTO'.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Parse</CODE> is a parse structure.
+ (<CODE>internal_types:parse/1</CODE>)
+
+<CODE>+NodeTypeId</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+fieldId</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>-FieldType</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7550"></A>
+<A NAME="IDX7551"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>lookup_field_access/4:</B>
+<DD><A NAME="IDX7552"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>lookup_field_access(+Parse,+NodenameId,+FieldId,+FieldId)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate will control that the access proporties are correct according to the certain rules that we have. It makes a check to see if the fields are of the same access type or if one of them is an exposedField. It is not doing a route check up to control that behaviour entirely.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Parse</CODE> is a parse structure.
+ (<CODE>internal_types:parse/1</CODE>)
+
+<CODE>+NodenameId</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+FieldId</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+FieldId</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7553"></A>
+<A NAME="IDX7554"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>lookup_set_def/3:</B>
+<DD><A NAME="IDX7555"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>lookup_set_def(+Parse,+Name,+Node)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate will enter a new post in the personal dictionary for the node definition.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Parse</CODE> is a parse structure.
+ (<CODE>internal_types:parse/1</CODE>)
+
+<CODE>+Name</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+Node</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7556"></A>
+<A NAME="IDX7557"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>lookup_set_prototype/4:</B>
+<DD><A NAME="IDX7558"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>lookup_set_prototype(+Parse,+Name,+Interface,+Definition)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate will insert the prototype definition in the personal dictionary and will give a warning if there is a multiple name given.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Parse</CODE> is a parse structure.
+ (<CODE>internal_types:parse/1</CODE>)
+
+<CODE>+Name</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+Interface</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>+Definition</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7559"></A>
+<A NAME="IDX7560"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>lookup_set_extern_prototype/4:</B>
+<DD><A NAME="IDX7561"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>lookup_set_extern_prototype(+Parse,+Name,+Interface,+Strings)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate will insert the external prototype definition in the personal dictionary and will give a warning if there is a multiple name given.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Parse</CODE> is a parse structure.
+ (<CODE>internal_types:parse/1</CODE>)
+
+<CODE>+Name</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+Interface</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>+Strings</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
+
+</DL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_197.html">previous</A>, <A HREF="ciao_199.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_197.html">previous</A>, <A HREF="ciao_199.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

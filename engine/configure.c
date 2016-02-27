@@ -1,4 +1,4 @@
-/* Copyright (C) 1996,1997,1998, UPM-CLIP */
+/* Copyright (C) 1996,1997,1998, 1999, 2000, 2001, 2002  UPM-CLIP */
 
 /* First, if we are a BSD system, a line is printed:
  *      #define ENG_BSD 1

@@ -153,36 +153,63 @@ predicate which has an infinite number of answers}.
   top level and its predicates called as usual (and they will connect
   with the server if it is running).
 
+  @subsection{Active module name servers}
+
   An application using a name server for active modules must have a file
   named @tt{webbased_common.pl} that specifies where the name server
-  resides. It must have the @tt{URL} and corresponding @tt{PATH/FILE} in the
-  file system of the server machine (the one that hosts the @tt{URL}) 
-  of the @tt{FILE} that holds the name server address.
+  resides. It must have the @tt{URL} and the path which corresponds to
+  that @tt{URL} in the file system of the server machine (the one that 
+  hosts the @tt{URL}) of the file that will hold the name server address.
 
   The current distribution provides a file @tt{webbased_common.pl} that
   can be used (after proper setting of its contents) for a server of
-  active modules for a whole instalation. Alternatively, particular 
+  active modules for a whole installation. Alternatively, particular 
   servers for each application can (or could) be set up...
 
-  The name server
-  (the file @file{examples/webbased_server.pl} can be used as server by
-  any application) has to be compiled as an active module itself:
+  The current distribution also provides a module that can be used as
+  name server by any application. It is in
+  file @file{examples/webbased_server/webbased_server.pl}.
+
+  To set up a name server edit @tt{webbased_common.pl} to change its
+  contents appropriately as described above (@tt{URL} and corresponding
+  complete file path). Then recompile this library module:
+  @begin{verbatim}
+    ciaoc -c webbased_common
+  @end{verbatim}
+  The name server has to be compiled as an active module itself:
   @begin{verbatim}
     ciaoc -a actmods/webserver_publish webbased_server
   @end{verbatim}
-  and must have access to the same @tt{webbased_common.pl} file as the
-  application that will use it. It has to be started in the server machine
+  It has to be started in the server machine
   before the application and its active modules are compiled.
 
+  Alternatively, you can copy @tt{webbased_common.pl} and use it to set
+  up name servers for particular applications. Currently, this is a bit
+  complicated. You have to ensure that the name server, the application
+  program, and all its active modules are compiled and executed with
+  the same @tt{webbased_common.pl} module. One way to do this is to
+  create a subdirectory @tt{actmods} under the directory of your application,
+  copy @tt{webbased_common.pl} to it, modify it, and then compile the
+  name server, the application program, and its active modules using a
+  library path that guarantees that your @tt{actmods} directory is located
+  by the compiler before the standard Ciao library. The same applies for
+  when running all of them if the library loading is dynamic.
+
   Addresses of active modules are saved by the name server in a subdirectory
-  of @tt{PATH} with the same name of the server (e.g.,
-  @tt{PATH/webbased_server} --see @tt{examples/actmods_db}).
+  @tt{webbased_db} of the directory where you start it
+  ---see @tt{examples/webbased_server/webbased_db/webbased_server}).
   This allows to restart the server 
   right away if it dies (since it saves its state).
   This directory should be cleaned up regularly
   of addresses of active modules which are no more active. To do this, stop
-  the server --by killing it (its pid is in @tt{PATH/FILE}) and restart it
-  after cleaning up the files in @tt{PATH/webbased_server}. 
+  the server ---by killing it (its pid is in @tt{PATH/FILE}), and restart it
+  after cleaning up the files in the above mentioned directory.
+
+  @subsection{Active modules as agents}
+
+  It is rather easy to turn Ciao active modules into agents for some kind
+  of applications. The directory @tt{examples/agents} contains a
+  (hopefully) self-explanatory example.
 
 ").
 
@@ -195,6 +222,10 @@ predicate which has an infinite number of answers}.
 
 % ----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*7+205,2002/04/22,20:52*09+'CEST'), "Added example
+   on agents. Reorganized documentation on active modules.  (Francisco
+   Bueno Carrillo)").
 
 :- comment(version(1*7+35,2000/12/28,18:20*50+'CET'), "Added the
    webbased protocol for active modules (Francisco Bueno Carrillo)").

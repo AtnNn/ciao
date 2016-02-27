@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 April 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 6 May 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Active modules (high-level distributed execution)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_100.html">previous</A>, <A HREF="ciao_102.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_100.html">previous</A>, <A HREF="ciao_102.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC384" HREF="ciao_toc.html#TOC384">Active modules (high-level distributed execution)</A></H1>
+<H1><A NAME="SEC411" HREF="ciao_toc.html#TOC411">Active modules (high-level distributed execution)</A></H1>
 <P>
-<A NAME="IDX4085"></A>
+<A NAME="IDX4332"></A>
 
 
 <P>
@@ -20,11 +20,11 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_100.html">previous</A>,
 
 
 <P>
-<STRONG>Version:</STRONG> 1.7#194 (2002/4/4, 21:8:41 CEST)
+<STRONG>Version:</STRONG> 1.7#209 (2002/4/24, 14:50:46 CEST)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#35 (2000/12/28, 18:20:50 CET)
+<STRONG>Version of last change:</STRONG> 1.7#205 (2002/4/22, 20:52:9 CEST)
 
 
 <P>
@@ -33,23 +33,23 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_100.html">previous</A>,
 
 <P>
 Active modules [CH95] provide a high-level model of 
-<A NAME="IDX4086"></A>
+<A NAME="IDX4333"></A>
 inter-process communication and 
-<A NAME="IDX4087"></A>
+<A NAME="IDX4334"></A>
 distributed execution (note that using Ciao's communication and concurrency primitives, such as sockets, concurrent predicates, etc.). An 
-<A NAME="IDX4088"></A>
-<A NAME="IDX4089"></A>
+<A NAME="IDX4335"></A>
+<A NAME="IDX4336"></A>
 <EM>active module</EM> (or an 
-<A NAME="IDX4090"></A>
-<A NAME="IDX4091"></A>
+<A NAME="IDX4337"></A>
+<A NAME="IDX4338"></A>
 <EM>active object</EM>) is an ordinary module to which computational resources are attached, and which resides at a given location on the network. Compiling an active module produces an executable which, when running, acts as a server for a number of predicates, the predicates exported by the module. Predicates exported by an active module can be accessed by a program on the network by simply "using" the module, which then imports such "remote predicates." The process of loading an active module does not involve transferring any code, but rather setting up things so that calls in the module using the active module are executed as remote procedure calls to the active module. This occurs in the same way independently of whether the active module and the using module are in the same machine or in different machines across the network. 
 
 
 <P>
 Except for having to compile it in a special way (see below), an active module is identical from the programmer point of view to an ordinary module. A program using an active module imports it and uses it in the same way as any other module, except that it uses "
-<A NAME="IDX4092"></A>
+<A NAME="IDX4339"></A>
 <CODE>use_active_module</CODE>" rather than "
-<A NAME="IDX4093"></A>
+<A NAME="IDX4340"></A>
 <CODE>use_module</CODE>" (see below). Also, an active module has an address (network address) which must be known in order to use it. In order to use an active module it is necessary to know its address: different "protocols" are provided for this purpose (see below). 
 
 
@@ -75,7 +75,7 @@ The second one is similar but saves the info in the directory in which the serve
 
 <P>
 The third one is based on a 
-<A NAME="IDX4094"></A>
+<A NAME="IDX4341"></A>
 name server for active modules. When an active module is compiled, it communicates its address to the name server. When the client of the active module wants to communicate with it, it asks the name server the active module address. This is all done transparently to the user. The name server must be running when the active module is compiled (and, of course, when the application using it is executed). The location of the name server for an application must be specified in an application file named <CODE>webbased_common.pl</CODE> (see below). 
 
 
@@ -85,7 +85,7 @@ These rendezvous methods are encoded in two modules: a first one, called <CODE>.
 
 <P>
 Active modules are compiled using the <CODE>-a</CODE> option of the Ciao compiler (this can also be done from the interactive top-level shell using 
-<A NAME="IDX4095"></A>
+<A NAME="IDX4342"></A>
 <CODE>make_actmod/2</CODE>). For example, issuing the following command: 
 
 
@@ -113,45 +113,71 @@ Now, if the server is running (e.g., <CODE>simple_server &#38;</CODE> in Un*x or
 
 <P>
 A simpler even client 
-<A NAME="IDX4096"></A>
+<A NAME="IDX4343"></A>
 <CODE>simple_client.pl</CODE> can be loaded into the top level and its predicates called as usual (and they will connect with the server if it is running). 
 
 
+
+<UL>
+<LI><A HREF="ciao_101.html#SEC412">Active module name servers</A>
+<LI><A HREF="ciao_101.html#SEC413">Active modules as agents</A>
+</UL>
+
+
+
+<H3><A NAME="SEC412" HREF="ciao_toc.html#TOC412">Active module name servers</A></H3>
+
 <P>
-An application using a name server for active modules must have a file named <CODE>webbased_common.pl</CODE> that specifies where the name server resides. It must have the <CODE>URL</CODE> and corresponding <CODE>PATH/FILE</CODE> in the file system of the server machine (the one that hosts the <CODE>URL</CODE>) of the <CODE>FILE</CODE> that holds the name server address. 
+An application using a name server for active modules must have a file named <CODE>webbased_common.pl</CODE> that specifies where the name server resides. It must have the <CODE>URL</CODE> and the path which corresponds to that <CODE>URL</CODE> in the file system of the server machine (the one that hosts the <CODE>URL</CODE>) of the file that will hold the name server address. 
 
 
 <P>
-The current distribution provides a file <CODE>webbased_common.pl</CODE> that can be used (after proper setting of its contents) for a server of active modules for a whole instalation. Alternatively, particular servers for each application can (or could) be set up... 
+The current distribution provides a file <CODE>webbased_common.pl</CODE> that can be used (after proper setting of its contents) for a server of active modules for a whole installation. Alternatively, particular servers for each application can (or could) be set up... 
 
 
 <P>
-The name server (the file 
-<A NAME="IDX4097"></A>
-<CODE>examples/webbased_server.pl</CODE> can be used as server by any application) has to be compiled as an active module itself: 
+The current distribution also provides a module that can be used as name server by any application. It is in file 
+<A NAME="IDX4344"></A>
+<CODE>examples/webbased_server/webbased_server.pl</CODE>. 
+
+
+<P>
+To set up a name server edit <CODE>webbased_common.pl</CODE> to change its contents appropriately as described above (<CODE>URL</CODE> and corresponding complete file path). Then recompile this library module: 
+
+<PRE>
+    ciaoc -c webbased_common
+</PRE>
+
+<P>
+The name server has to be compiled as an active module itself: 
 
 <PRE>
     ciaoc -a actmods/webserver_publish webbased_server
 </PRE>
 
 <P>
-and must have access to the same <CODE>webbased_common.pl</CODE> file as the application that will use it. It has to be started in the server machine before the application and its active modules are compiled. 
+It has to be started in the server machine before the application and its active modules are compiled. 
 
 
 <P>
-Addresses of active modules are saved by the name server in a subdirectory of <CODE>PATH</CODE> with the same name of the server (e.g., <CODE>PATH/webbased_server</CODE> --see <CODE>examples/actmods_db</CODE>). This allows to restart the server right away if it dies (since it saves its state). This directory should be cleaned up regularly of addresses of active modules which are no more active. To do this, stop the server --by killing it (its pid is in <CODE>PATH/FILE</CODE>) and restart it after cleaning up the files in <CODE>PATH/webbased_server</CODE>. 
+Alternatively, you can copy <CODE>webbased_common.pl</CODE> and use it to set up name servers for particular applications. Currently, this is a bit complicated. You have to ensure that the name server, the application program, and all its active modules are compiled and executed with the same <CODE>webbased_common.pl</CODE> module. One way to do this is to create a subdirectory <CODE>actmods</CODE> under the directory of your application, copy <CODE>webbased_common.pl</CODE> to it, modify it, and then compile the name server, the application program, and its active modules using a library path that guarantees that your <CODE>actmods</CODE> directory is located by the compiler before the standard Ciao library. The same applies for when running all of them if the library loading is dynamic. 
+
+
+<P>
+Addresses of active modules are saved by the name server in a subdirectory <CODE>webbased_db</CODE> of the directory where you start it --see <CODE>examples/webbased_server/webbased_db/webbased_server</CODE>). This allows to restart the server right away if it dies (since it saves its state). This directory should be cleaned up regularly of addresses of active modules which are no more active. To do this, stop the server --by killing it (its pid is in <CODE>PATH/FILE</CODE>), and restart it after cleaning up the files in the above mentioned directory. 
 
 
 
-<UL>
-<LI><A HREF="ciao_101.html#SEC385">Usage and interface (actmods)</A>
-<LI><A HREF="ciao_101.html#SEC386">Documentation on new declarations (actmods)</A>
-<LI><A HREF="ciao_101.html#SEC387">Known bugs and planned improvements (actmods)</A>
-</UL>
+
+<H3><A NAME="SEC413" HREF="ciao_toc.html#TOC413">Active modules as agents</A></H3>
+
+<P>
+It is rather easy to turn Ciao active modules into agents for some kind of applications. The directory <CODE>examples/agents</CODE> contains a (hopefully) self-explanatory example. 
 
 
 
-<H2><A NAME="SEC385" HREF="ciao_toc.html#TOC385">Usage and interface (<CODE>actmods</CODE>)</A></H2>
+
+<H2><A NAME="SEC414" HREF="ciao_toc.html#TOC414">Usage and interface (<CODE>actmods</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -167,7 +193,7 @@ or
 
 <LI><STRONG>New declarations defined:</STRONG>
 
-<A NAME="IDX4098"></A>
+<A NAME="IDX4345"></A>
 <CODE>use_active_module/2</CODE>.
 
 </UL>
@@ -176,13 +202,13 @@ or
 
 
 
-<H2><A NAME="SEC386" HREF="ciao_toc.html#TOC386">Documentation on new declarations (<CODE>actmods</CODE>)</A></H2>
+<H2><A NAME="SEC415" HREF="ciao_toc.html#TOC415">Documentation on new declarations (<CODE>actmods</CODE>)</A></H2>
 <P>
-<A NAME="IDX4099"></A>
-<A NAME="IDX4100"></A>
+<A NAME="IDX4346"></A>
+<A NAME="IDX4347"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>use_active_module/2:</B>
-<DD><A NAME="IDX4101"></A>
+<DD><A NAME="IDX4348"></A>
 
 
 <P>
@@ -204,7 +230,7 @@ or
 
 
 
-<H2><A NAME="SEC387" HREF="ciao_toc.html#TOC387">Known bugs and planned improvements (<CODE>actmods</CODE>)</A></H2>
+<H2><A NAME="SEC416" HREF="ciao_toc.html#TOC416">Known bugs and planned improvements (<CODE>actmods</CODE>)</A></H2>
 
 
 <UL>
@@ -231,6 +257,6 @@ One may want to have one name server dedicated to a single application. Currentl
 </UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_100.html">previous</A>, <A HREF="ciao_102.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_100.html">previous</A>, <A HREF="ciao_102.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

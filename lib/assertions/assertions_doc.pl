@@ -12,7 +12,7 @@
 :- comment(author, "German Puebla").
 
 :- comment(copyright,"
-Copyright @copyright{} 1989-97 The CLIP Group / UPM
+Copyright @copyright{} 1989-2002 The CLIP Group / UPM
 
 @include{Copyright.Manuals}
 ").

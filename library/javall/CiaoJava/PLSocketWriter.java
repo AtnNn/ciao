@@ -40,6 +40,7 @@ class PLSocketWriter extends Thread {
      * @param out Stream on which this handler writes the messages.
      */
     public PLSocketWriter(PrintWriter out) {
+	//	super("PLSocketWriter");
 	this.out = out;
 	msgQueue = new Vector(STARTING_CAPACITY, INCREMENT);
 	this.start();

@@ -177,6 +177,8 @@ uses_runtime_module_expansion.
 
 :- include(mexpand).
 
+redefining(_,_,_). % Avoid imported_needs_qual warnings
+
 module_warning(not_defined(F, N, M)) :- !,
         ( '$unknown'(fail,fail) -> true
         ; message(warning, ['Predicate ',~~(F/N),' undefined in module ',M])
@@ -439,6 +441,8 @@ pending_unification(A, A).		% reduced to syntactic unification
 %------ internal builtin errors ------%
 
 % Called from within the emulator
+error(7, _PredName, _PredArity, _Arg, Culprit) :- !, % user_exception 
+	throw(Culprit).
 error(Type, PredName, PredArity, Arg, Culprit) :-
         error_term(Type, Culprit, Error_Term),
         where_term(Arg, PredName, PredArity, Where_Error),
@@ -550,6 +554,9 @@ do_undefined(warning, X) :-
 % do_undefined(fail, X) :- fail.
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*7+195,2002/04/12,14:21*57+'CEST'), "Added support
+   for user exceptions (code 7) in error/5 (Jose Morales)").
 
 :- comment(version(1*7+182,2002/01/31,19:11*26+'CET'), "Changed module
    expansion to call goal expansions in between, even in runtime

@@ -7,7 +7,7 @@
                     @ref{The interactive debugger} which are also available
                     within the top-level shell)."). 
 :- comment(copyright,"
-Copyright @copyright{} 1996-99 Daniel Cabeza/The CLIP Group.
+Copyright @copyright{} 1996-2002 Daniel Cabeza/The CLIP Group.
 
 @include{Copyright.Manuals}
 ").

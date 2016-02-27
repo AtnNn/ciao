@@ -14,14 +14,14 @@ OBJFILES=wam.o format.o inout.o misc.o startgoal.o ciao.o \
 	 own_malloc_linear.o alloc.o heapgc.o indexing.o initial.o \
 	registers.o stacks.o support.o term_support.o wamsupport.o \
 	qread.o qget.o builtin.o interrupt.o gauge.o bignum.o profile.o \
-	start.o version.o
+	ciao_prolog.o start.o version.o
 
 
 MAIN_FILE=main.o 
 #MAIN_EXEC=main_exec.o version.o qinsert.o
 
 DATADEFS=datadefs.h configure.h alloc.h registers.h termdefs.h access.h locks.h objareas.h
-SUPPORT=support.h debug.h initial.h compat.h
+SUPPORT=support.h debug.h initial.h compat.h ciao_prolog.h ciao_gluecode.h threads.h task_areas.h
 
 CCOMPILATIONSUPPORT=
 
@@ -90,10 +90,10 @@ $(ENGINENAME): configure.h ciaoemulator
 
 ciaoemulator: $(OBJ)
 	$(CC) $(CONSOLEFLAG) $(LDFLAGS) $(OBJ) $(CURRLIBS) -o $(ENGINENAME)
-	chmod $(DATAMODE) *.o
+	-chmod --quiet $(DATAMODE) *.o
 	( cd $(SRC)/etc && $(MAKE) force_fix_size; )
 	$(SRC)/etc/fix_size$(EXECSUFFIX) $(ENGINENAME)
-	chmod $(EXECMODE) $(ENGINENAME)
+	-chmod --quiet $(EXECMODE) $(ENGINENAME)
 	if test ! -f $(SRCINCLUDEDIR)/configure.h ; then \
 	  for f in $(DATADEFS) $(SUPPORT) $(CCOMPILATIONSUPPORT); do \
 	    ln -s -f $(OBJDIR)/$$f $(SRCINCLUDEDIR); \
@@ -101,11 +101,12 @@ ciaoemulator: $(OBJ)
         fi
 
 
-# The dynamically linkable .so file
+# The archive to be linked with other programs
 
 libciao: $(OBJFILES)
 #	$(LD) $(LDSHARED) $(OBJFILES) -o $(CIAOLIBNAME) $(CURRLIBS)
-	ar -r libciao.a $(OBJFILES) 
+	ar -r libciao.a $(OBJFILES)
+	-@chmod $(DATAMODE) libciao.a
 
 # The big ciaoengine in object format
 

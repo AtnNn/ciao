@@ -748,6 +748,59 @@ BOOL prolog_getenvstr(Arg)
 }
 
 
+/* setenvstr(+Name,+Value) */
+
+BOOL prolog_setenvstr(Arg)
+     Argdecl;
+{
+  char *variable,                          /* The variable we want to set */
+       *s;                                 /* The value we want to assign */
+  int i,                                                  /* String index */
+      len = 8;                                           /* String length */
+  TAGGED car;                          /* Pointer to the head of the list */
+  TAGGED value;                                   /* To traverse the list */
+  int carvalue;                          /* Value of the head of the list */
+
+  DEREF(X(0),X(0));
+  DEREF(X(1),X(1));
+  
+ /* Minimal check: variable name as atom, value as string (why this
+    difference?) */ 
+
+  if (!TagIsATM(X(0)))
+    BUILTIN_ERROR(TYPE_ERROR(STRICT_ATOM),X(0),1)
+
+  if (!TagIsLST(X(1)))
+    BUILTIN_ERROR(TYPE_ERROR(CHARACTER_CODE_LIST),X(1),2)
+
+  variable = GetString(X(0));
+  value = X(1);
+  s = (char *)malloc(len*sizeof(char));
+  i = 0;
+
+  while (TagIsLST(value)){
+    DerefCar(car, value);
+    if (!TagIsSmall(car) || 
+        ((carvalue = GetSmall(car)) > 255) ||
+        carvalue < 0){
+      BUILTIN_ERROR(TYPE_ERROR(CHARACTER_CODE_LIST),X(1),2);
+    } else s[i++] = (char)carvalue;
+
+    if (i == len){ /* Length exceeded! */
+      len = len * 2;
+      s = (char *)realloc(s, len);
+    } 
+    DerefCdr(value, value);
+  }
+
+  s[i] = '\0';
+  setenv(variable, s, 1);
+  free(s);
+  return TRUE;
+}
+
+
+
 /*
    pause(+Seconds): make this process sleep for Seconds seconds
 */

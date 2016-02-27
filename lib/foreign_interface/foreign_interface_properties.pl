@@ -4,6 +4,7 @@
 	byte/1,
 	null/1,
 	address/1,
+	any_term/1,
 	native/1,
 	native/2,
 	size_of/3,
@@ -12,6 +13,8 @@
 	returns/2,
 	do_not_free/2
 	], [assertions,regtypes]).
+
+:- push_prolog_flag(multi_arity_warnings,off).
 
 :- comment(title, "Foreign Language Interface Properties").
 
@@ -60,6 +63,19 @@ Usage} for a longer explanation and some examples.").
         # "@var{Opts} are the OS and architecture dependant additional
           compiler options.".
 
+:- comment(doinclude,use_compiler/1).
+:- true decl use_compiler(Compiler) : atm # "@var{Compiler} is the
+compiler to use in this file.  When this option is used, the default
+(Ciao-provided) compiler options are not used; those specified in
+@pred{extra_compiler_options} are used instead.".
+
+:- comment(doinclude,use_compiler/2).
+
+:- true decl use_compiler(OsArch, Compiler) : atm * atm #
+"@var{Compiler} is the compiler to use in this file when compiling for
+the architecture @var{OsArch}.  The option management is the same as
+in @pred{use_compiler/2}.".
+
 :- comment(doinclude,extra_linker_opts/1).
 :- true decl extra_linker_opts(Opts) : atm_or_atm_list
         # "@var{Opts} is the list of additional linker options that will be 
@@ -70,6 +86,21 @@ Usage} for a longer explanation and some examples.").
         # "@var{Opts} are the OS and architecture dependant additional linker
           options.".
 
+:- comment(doinclude,use_linker/1).
+:- true decl use_linker(Linker) : atm
+        # "@var{Linker} is the linker to use in this file. When this option is used, the default
+(Ciao-provided) linker options are not used; those specified in
+@pred{extra_linker_options/1} are used instead.".
+
+:- comment(doinclude,use_linker/2).
+:- true decl use_linker(OsArch, Linker) : atm * atm
+        # "@var{Compiler} is the linker to use in this file when compiling for the architecture @var{OsArch}.   The option management is the same as
+in @pred{use_compiler/2}.". 
+
+
+:- regtype any_term(X) # "@var{X} is any term. The foreign interface passes it to C functions as a general term.".
+
+any_term(_).
 
 :- regtype address(Address) # "@var{Address} is a memory address.".
 
@@ -115,6 +146,13 @@ size_of(_,_,_).
 do_not_free(_,_).
 
 
+:- prop ttr(Name,Var,TTr)
+ # "For predicate @var{Name}, the C argument will be translated ussing @tt{TTr}
+    as term translator.".
+
+ttr(_,_,_).
+
+
 :- prop returns(Name,Var)
  # "The result of the foreign function that implements the Prolog predicate
     @pred{Name} is unified with the Prolog variable @var{Var}. Cannot be
@@ -123,7 +161,11 @@ do_not_free(_,_).
 returns(_,_).
 
 
-:- push_prolog_flag(multi_arity_warnings,off).
+:- prop needs_state(Name)
+ # "The foreign function which implementes the predicate @pred{Name} needs 
+    a @tt{ciao_state} as its first argument.".
+
+needs_state(_).
 
 
 :- prop foreign(Name)

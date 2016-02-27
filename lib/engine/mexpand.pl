@@ -90,20 +90,36 @@ atom_expansion(A, F, N, M, QM, NA, RM) :-
 unqualified_atom_expansion(A, F, N, M, NA, RM) :-
         multifile(M, F, N), !,
         module_concat(multifile, A, NA),
-        RM = M.
+        RM = M,
+        check_if_imported(M, F, N).
 unqualified_atom_expansion(A, F, N, M, NA, RM) :-
         ( defines(M, F, N) ->  % local defined have priority
               module_concat(M, A, NA),
-              RM = M
-        ; imports(M,_IM, F, N, EM) ->
+              RM = M,
+              check_if_imported(M, F, N)
+        ; imports(M, IM, F, N, EM) ->
               module_concat(EM, A, NA),
-              RM = EM
+              RM = EM,
+              check_if_reimported(M, IM, F, N)
         ; ( M = user(_) -> true
           ; module_warning(not_defined(F, N, M))
           ),
           module_concat(M, A, NA),
           RM = M
         ).
+
+check_if_imported(M, F, N) :- 
+        \+ redefining(M, F, N),
+        imports(M, IM, F, N, _) ->
+          module_warning(imported_needs_qual(F, N, IM))
+        ; true.
+
+check_if_reimported(M, IM, F, N) :-
+        \+ redefining(M, F, N),
+        imports(M, IM0, F, N, _),
+        IM0 \== IM ->
+          module_warning(imported_needs_qual(F, N, IM0, IM))
+        ; true.
 
 atom_expansion_here(A, F, N, M, NA) :-
         multifile(M, F, N), !,

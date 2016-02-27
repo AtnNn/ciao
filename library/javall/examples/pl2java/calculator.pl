@@ -32,7 +32,8 @@ operator("+").
 number_editing(false).
 
 main:-
-	calculator.
+	calculator,
+	pause(3600).
 
 calculator:-
 	java_start,

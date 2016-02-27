@@ -1,38 +1,60 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 April 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 6 May 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - genbar3 (library)</TITLE>
+<TITLE>The Ciao Prolog System               - genbar2 (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_174.html">previous</A>, <A HREF="ciao_176.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_174.html">previous</A>, <A HREF="ciao_176.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC653" HREF="ciao_toc.html#TOC653">genbar3 (library)</A></H1>
+<H1><A NAME="SEC692" HREF="ciao_toc.html#TOC692">genbar2 (library)</A></H1>
 <P>
-<A NAME="IDX6531"></A>
-
-
-<P>
-This module defines predicates which depict barchart widgets. The three predicates exported by this module plot two-variable data as regular bars in a window and are similar to those exported in the genbar1 module except in that these defined in this module do not display a legend. Thus, not all the argument types are equal. 
+<A NAME="IDX6801"></A>
 
 
 <P>
-The predicates test whether the format of the arguments is correct. If one or both vectors are empty, the exception <CODE>error2</CODE> will be thrown. If the vectors contain elements but are not correct, the exception <CODE>error1</CODE> or <CODE>error3</CODE> will be thrown, depending on the error type. <CODE>error1</CODE> means that <CODE>XVector</CODE> and <CODE>YVector</CODE> do not contain the same number of elements and <CODE>error3</CODE> indicates that not all the <CODE>XVector</CODE> elements contain a correct number of attributes . 
+This module defines predicates which show barchart widgets. The three predicates exported by this module plot two-variable data as regular bars in a window. They all share the following features: 
 
 
 
 <UL>
-<LI><A HREF="ciao_175.html#SEC654">Usage and interface (genbar3)</A>
-<LI><A HREF="ciao_175.html#SEC655">Documentation on exports (genbar3)</A>
-<LI><A HREF="ciao_175.html#SEC656">Documentation on internals (genbar3)</A>
+
+<LI>Numeric values for the x axis are needed, otherwise it does not work properly. See
+
+<A NAME="IDX6802"></A>
+<CODE>xbarelement2/1</CODE> definition type. 
+
+<LI>The bar position is proportional to the x-coordinate value.
+
+<LI>The user can either select the appearance of the bars (background color, foreground color and stipple style) or not. See the
+
+<A NAME="IDX6803"></A>
+<CODE>xbarelement2/1</CODE> type definition. Thus, the user can call each predicate in two ways. 
+
+<LI>The bar chart has a legend and one entry (symbol and label) per bar.
+
+<LI>If you do not want to display text in the elements header, barchart title, x axis title, y axis title or footer, simply type <CODE>"</CODE> as the value of the argument.
+
+<LI>The predicates test whether the format of the arguments is correct. If one or both vectors are empty, the exception <CODE>error2</CODE> will be thrown. If the vectors contain elements but are not correct, the exception <CODE>error1</CODE> or <CODE>error3</CODE> will be thrown, depending on the error type. <CODE>error1</CODE> means that <CODE>XVector</CODE> and <CODE>YVector</CODE> does not contain the same number of elements and <CODE>error3</CODE> indicates that not all the <CODE>XVector</CODE> elements contain a correct number of attributes .
+
+</UL>
+
+<P>
+Particular features will be pointed out in the corresponding predicate. 
+
+
+
+<UL>
+<LI><A HREF="ciao_175.html#SEC693">Usage and interface (genbar2)</A>
+<LI><A HREF="ciao_175.html#SEC694">Documentation on exports (genbar2)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC654" HREF="ciao_toc.html#TOC654">Usage and interface (<CODE>genbar3</CODE>)</A></H2>
+<H2><A NAME="SEC693" HREF="ciao_toc.html#TOC693">Usage and interface (<CODE>genbar2</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -40,7 +62,7 @@ The predicates test whether the format of the arguments is correct. If one or bo
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(genbar3)).</CODE>
+<CODE>:- use_module(library(genbar2)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -49,12 +71,17 @@ The predicates test whether the format of the arguments is correct. If one or bo
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6532"></A>
-<CODE>barchart3/7</CODE>, 
-<A NAME="IDX6533"></A>
-<CODE>barchart3/9</CODE>, 
-<A NAME="IDX6534"></A>
-<CODE>percentbarchart3/7</CODE>.
+<A NAME="IDX6804"></A>
+<CODE>barchart2/7</CODE>, 
+<A NAME="IDX6805"></A>
+<CODE>barchart2/11</CODE>, 
+<A NAME="IDX6806"></A>
+<CODE>percentbarchart2/7</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX6807"></A>
+<CODE>xbarelement2/1</CODE>.
 
 </UL>
 
@@ -65,19 +92,19 @@ The predicates test whether the format of the arguments is correct. If one or bo
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX6535"></A>
+<A NAME="IDX6808"></A>
 <CODE>chartlib/genbar1</CODE>, 
-<A NAME="IDX6536"></A>
+<A NAME="IDX6809"></A>
 <CODE>chartlib/bltclass</CODE>, 
-<A NAME="IDX6537"></A>
+<A NAME="IDX6810"></A>
 <CODE>chartlib/color_pattern</CODE>, 
-<A NAME="IDX6538"></A>
+<A NAME="IDX6811"></A>
 <CODE>chartlib/test_format</CODE>, 
-<A NAME="IDX6539"></A>
+<A NAME="IDX6812"></A>
 <CODE>chartlib/install_utils</CODE>, 
-<A NAME="IDX6540"></A>
+<A NAME="IDX6813"></A>
 <CODE>lists</CODE>, 
-<A NAME="IDX6541"></A>
+<A NAME="IDX6814"></A>
 <CODE>random/random</CODE>.
 
 </UL>
@@ -88,33 +115,34 @@ The predicates test whether the format of the arguments is correct. If one or bo
 
 
 
-<H2><A NAME="SEC655" HREF="ciao_toc.html#TOC655">Documentation on exports (<CODE>genbar3</CODE>)</A></H2>
+<H2><A NAME="SEC694" HREF="ciao_toc.html#TOC694">Documentation on exports (<CODE>genbar2</CODE>)</A></H2>
 <P>
-<A NAME="IDX6542"></A>
-<A NAME="IDX6543"></A>
+<A NAME="IDX6815"></A>
+<A NAME="IDX6816"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>barchart3/7:</B>
-<DD><A NAME="IDX6544"></A>
+<DT><span class="define">PREDICATE:</span> <B>barchart2/7:</B>
+<DD><A NAME="IDX6817"></A>
 
 
 <P>
-<CODE>barchart3(Header,BarchartTitle,XTitle,XVector,YTitle,YVector,Footer)</CODE>
+<CODE>barchart2(Header,BarchartTitle,XTitle,XVector,YTitle,YVector,Footer)</CODE>
 
 
 <P>
-As we mentioned in the above paragraph, this predicate is comparable to 
-<A NAME="IDX6545"></A>
-<CODE>barchart1/8</CODE> except in the <CODE>XVector</CODE> argument type. 
+The maximum and minimum limits for axes are determined from the data. 
 
 
 <P>
 Example: 
 
+
+
 <PRE>
-barchart3('This is the header text',
-  'Barchart without legend',
+barchart2('This is the header text',
+  'Barchart with legend',
   'My xaxistitle',
-  [['bar1'],['bar2']],
+  [ [1,'bar1','Blue','Yellow','pattern1'],
+       [2,'bar2','MediumTurquoise','Plum','pattern5'] ],
   'My yaxixtitle',
   [20,10],
   'This is the footer text').
@@ -123,124 +151,129 @@ barchart3('This is the header text',
 </DL>
 
 <P>
-<A NAME="IDX6546"></A>
-<A NAME="IDX6547"></A>
+<A NAME="IDX6818"></A>
+<A NAME="IDX6819"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>barchart3/9:</B>
-<DD><A NAME="IDX6548"></A>
+<DT><span class="define">PREDICATE:</span> <B>barchart2/11:</B>
+<DD><A NAME="IDX6820"></A>
 
 
 <P>
-<CODE>barchart3(Header,BTitle,XTitle,XVector,YTitle,YVector,YMax,YMin,Footer)</CODE>
+<CODE>barchart2(Header,BT,XT,XVector,XMax,XMin,YT,YVector,YMax,YMin,Footer)</CODE>
 
 
 <P>
-As we mentioned, this predicate is quite similar to the 
-<A NAME="IDX6549"></A>
-<CODE>barchart1/10</CODE> except in the <CODE>XVector</CODE> argument type, because the yielded bar chart lacks of legend. 
+You can set the minimum and maximum limits of the axes. Data outside the limits will not be plotted. Each limit, as you can check looking at the 
+<A NAME="IDX6821"></A>
+<CODE>axis_limit/1</CODE> definition, is a number. If the argument is a variable the limit will be calculated from the data (i.e., if <CODE>YMax</CODE> value is YValueMax the maximum y axis limit will calculated using the largest data value). 
+ 
+Example: 
+
+
+
+<PRE>
+barchart2('This is the header text',
+  'Barchart with legend',
+  'My xaxistitle',
+  [ [1,'bar1',Color1,Color2,Pattern1],
+         [2,'bar2',Color3,Color4,Pattern2] ],
+  10,
+  -10,
+  'My yaxixtitle',
+  [20,10],
+  100,
+  -10,
+  'The limits for the axes are set by the user').
+</PRE>
+
+</DL>
+
+<P>
+<A NAME="IDX6822"></A>
+<A NAME="IDX6823"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>percentbarchart2/7:</B>
+<DD><A NAME="IDX6824"></A>
+
+
+<P>
+<CODE>percentbarchart2(Header,BTitle,XTitle,XVector,YTitle,YVector,Footer)</CODE>
+
+
+<P>
+The y axis maximum coordinate value is 100. The x axis limits are autoarrange. 
 
 
 <P>
 Example: 
 
+
+
 <PRE>
-barchart3('This is the header text',
-  'Barchart without legend',
+percentbarchart2('This is a special barchart to represent percentages',
+  'Barchart with legend',
   'My xaxistitle',
-  [['bar1'],['bar2']],
+  [ [1,'bar1','Blue','Yellow','pattern1'],
+          [2,'bar2','MediumTurquoise','Plum','pattern5'] ],
   'My yaxixtitle',
-  30,
-  5,
-  [20,10],
+  [80,10],
   'This is the footer text').
 </PRE>
 
 </DL>
 
 <P>
-<A NAME="IDX6550"></A>
-<A NAME="IDX6551"></A>
+<A NAME="IDX6825"></A>
+<A NAME="IDX6826"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>percentbarchart3/7:</B>
-<DD><A NAME="IDX6552"></A>
-
-
-<P>
-<CODE>percentbarchart3(Header,BTitle,XTitle,XVector,YTitle,YVector,Footer)</CODE>
-
-
-<P>
-The <CODE>y</CODE> axis maximum coordinate value is 100. The x axis limits are autoarrange. 
-
-
-<P>
-Example: 
+<DT><span class="define">REGTYPE:</span> <B>xbarelement2/1:</B>
+<DD><A NAME="IDX6827"></A>
 
 
 
 <PRE>
-percentbarchart3('This is a special barchart to represent percentages',
-          'Barchart without legend',
-          'My xaxistitle',
-          [ ['pr1','Blue','Yellow','pattern1'],
-            ['pr2','MediumTurquoise','Plum','pattern5'] ],
-          'My yaxixtitle',
-          [80,10],
-          'This is the footer text').
-</PRE>
-
-</DL>
-
-
-
-<H2><A NAME="SEC656" HREF="ciao_toc.html#TOC656">Documentation on internals (<CODE>genbar3</CODE>)</A></H2>
-<P>
-<A NAME="IDX6553"></A>
-<A NAME="IDX6554"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>xbarelement3/1:</B>
-<DD><A NAME="IDX6555"></A>
-
-
-
-<PRE>
-xbarelement3([XValue]) :-
-        atomic(XValue).
-xbarelement3([XValue,ForegColor,BackgColor,StipplePattern]) :-
-        atomic(XValue),
+xbarelement2([XValue,LegendElement]) :-
+        number(XValue),
+        atomic(LegendElement).
+xbarelement2([XValue,LegendElement,ForegColor,BackgColor,SPattern]) :-
+        number(XValue),
+        atomic(LegendElement),
         color(ForegColor),
         color(BackgColor),
-        pattern(StipplePattern).
+        pattern(SPattern).
 </PRE>
 
 <P>
 Defines the attributes of the bar. 
+
+
 <DL COMPACT>
 
 <DT><CODE>XValue</CODE>
 <DD>
-bar label. Although <CODE>XValue</CODE> values may be numbers, the will be treated as labels. Different elements with the same label will produce different bars. 
+x-coordinate position of the bar. Different elements with the same abscissas will produce overlapped bars. 
+
+<DT><CODE>LegendElement</CODE>
+<DD>
+Element legend name. It may be a number or an atom and equal or different to the XValue. Every <CODE>LegendElement</CODE> value of the list must be unique. 
 
 <DT><CODE>ForegColor</CODE>
 <DD>
-It sets the Foreground color of the bar. Its value must be a valid color, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a color chosen by the library. 
+Is the Foreground color of the bar. Its value must be a valid color, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a color chosen by the library. 
 
 <DT><CODE>BackgColor</CODE>
 <DD>
-It sets the Background color of the bar. Its value must be a valid color, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a color chosen by the library. 
+Is the Background color of the bar. Its value must be a valid color, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a color chosen by the library. 
 
 <DT><CODE>SPattern</CODE>
 <DD>
-It sets the stipple of the bar. Its value must be a valid pattern, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a pattern chosen by the library. 
+Is the stipple of the bar. Its value must be a valid pattern, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a pattern chosen by the library. 
 
 </DL>
-<P>
- 
-
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_174.html">previous</A>, <A HREF="ciao_176.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_174.html">previous</A>, <A HREF="ciao_176.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

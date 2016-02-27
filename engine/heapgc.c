@@ -1,4 +1,4 @@
-/* Copyright (C) 1996,1997,1998, UPM-CLIP */
+/* Copyright (C) 1996,1997,1998, 1999, 2000, 2001, 2002  UPM-CLIP */
 
 /* #defines MUST precede #includes here. */
 #define SEGMENTED_GC 1
@@ -44,7 +44,7 @@ BOOL gc_usage(Arg)
 {
   ENG_INT t;
   TAGGED x;
-  
+
   t= stats.gc_time*1000;
   MakeLST(x,MakeInteger(Arg,t),atom_nil);
   t= stats.gc_acc*sizeof(TAGGED);
@@ -68,7 +68,7 @@ BOOL gc_trace(Arg)
   /*TAGGED new; */ /* unused */
 
     Unify_constant(current_gctrace,X(0));
-    DEREF(current_gctrace,X(1)); 
+    DEREF(current_gctrace,X(1));
     return TRUE;
 }
 
@@ -78,7 +78,7 @@ BOOL gc_margin(Arg)
   /*TAGGED new; */ /*unused*/
 
     Unify_constant(current_gcmargin,X(0));
-    DEREF(current_gcmargin,X(1)); 
+    DEREF(current_gcmargin,X(1));
     return TRUE;
 }
 
@@ -109,7 +109,7 @@ TAGGED *gc_trail_start;
 
 static TAGGED *gc_heap_start;
 static struct frame *gc_stack_start;
-static long gcgrey;  
+static long gcgrey;
 static long total_found;
 static TAGGED cvas_found;
 
@@ -139,7 +139,7 @@ static void shuntVariables(Arg)
     int i;
     TAGGED *limit;
     struct frame *frame;
-  
+
     while (ChoiceYounger(cp,Gc_Choice_Start)) {
       limit = TagToPointer(prevcp->trail_top);
       while (TrailYounger(pt,limit)) {
@@ -175,7 +175,7 @@ static void shuntVariables(Arg)
       pt = prevcp->global_top;
       while (HeapYounger(cp->global_top,pt)) {
         TAGGED v = *pt++;
-        
+
         if (v&QMask) pt += LargeArity(v);
         else if (!gc_IsMarked(v)) {
           if (v==Tag(CVA,pt-1))
@@ -201,7 +201,7 @@ static void shuntVariables(Arg)
 	
       pt = cp->term+OffsetToArity(alt->node_offset);
       while (pt!=cp->term) {
-        --pt; 
+        --pt;
         gc_shuntVariable(*pt);
       }
     }
@@ -243,7 +243,7 @@ static void markTrail(Arg)
 				/* mark newly bound CVAs */
   while (wake_count>0){
     REGISTER TAGGED v= TrailPop(tr);
-    
+
     if (TagIsCVA(v))
       --wake_count,
 	markVariable(Arg, tr);
@@ -255,7 +255,7 @@ static void markTrail(Arg)
     while (TrailYounger(tr,Gc_Trail_Start)) {
       REGISTER TAGGED v = TrailPop(tr);
       TAGGED *p = TagToPointer(v);
-      
+
       if (v!=0 && !gc_IsMarked(v) &&
           ((IsHeapVar(v) && !OffHeaptop(p,Gc_Heap_Start)) ||
            (IsStackVar(v) && !OffStacktop(p,Gc_Stack_Start)))) {
@@ -287,7 +287,7 @@ static void markFrames(Arg, frame,l)
 	while (ev!=frame->term)
 	  {
 	    REGISTER TAGGED v;
-	    
+	
 	    StackDecr(ev);
 	    if (gc_IsMarked(v= *ev)) return;
 	    if (IsHeapTerm(v))
@@ -301,7 +301,7 @@ static void markFrames(Arg, frame,l)
 }
 
 /* A choicepoint slot is marked iff it contains a heap reference. */
-/* A trail slot is marked iff it contains 
+/* A trail slot is marked iff it contains
    an unbound constrained variable reference or a goal.
 */
 static void markChoicepoints(Arg)
@@ -334,15 +334,15 @@ static void markChoicepoints(Arg)
       while (TrailYounger(tr,limit))
 	{
 	  REGISTER TAGGED v = TrailPop(tr);
-	  
+	
 	  if (v==(TAGGED)NULL || gc_IsMarked(v))
 	    ;
 	  else if (!IsVar(v))
 	    markVariable(Arg, tr);
 #ifdef EARLY_RESET
-	  else if (TagIsCVA(v)) 
+	  else if (TagIsCVA(v))
 	    {
-	      if (!gc_IsMarked(CTagToCVA(v))) 
+	      if (!gc_IsMarked(CTagToCVA(v)))
 		CTagToCVA(v)= v, markVariable(Arg, tr), *tr= 0;
 	    }
 	  else
@@ -351,7 +351,7 @@ static void markChoicepoints(Arg)
 		CTagToPointer(v)= v, *tr= 0;
 	    }
 #else
-	  else if (TagIsCVA(v)) 
+	  else if (TagIsCVA(v))
 	    markVariable(Arg, tr);
 #endif
 	}
@@ -368,7 +368,7 @@ void compressTrail(Arg,from_gc)
     REGISTER struct node *cp = Gc_Aux_Node;
     REGISTER struct node *prevcp = w->node;
     REGISTER struct try_node *alt = fail_alt;
-  
+
     while (ChoiceYounger(cp,Gc_Choice_Start)) {
       gc_ReverseChoice(cp,prevcp,alt);
     }
@@ -416,8 +416,8 @@ static void markVariable(Arg, start)
       {
       case SVA: /* No pointers from heap to stack */
 	SERIOUS_FAULT("GC: stack variable in heap");
-      case CVA:			/* new 3-field CVA */
-				/* N.B. there can be LST pointers to the second cell as well */
+      case CVA: /* new 3-field CVA */
+                /* N.B. there can be LST pointers to the second cell as well */
 	if (!gc_IsForM(*(next+2)))
 	  {			/* no marking in progress as CVA nor as LST */
 				/* treat as 3-cell tuple */
@@ -433,7 +433,7 @@ static void markVariable(Arg, start)
       case LST:
 	if (gc_IsFirst(*(next+1)) ||
 	    (gc_IsMarked(*next) &&
-	    gc_IsMarked(*(next+1)))) 
+	    gc_IsMarked(*(next+1))))
           goto backward;
 	gc_MarkF(PreHeapRead(next));
 	gc_Reverse(current,next);
@@ -444,14 +444,14 @@ static void markVariable(Arg, start)
 	else if (*next&QMask)	/* box */
 	  {
 	    int ar = LargeArity(*next);
-	    
+	
 	    gc_MarkM(*next);
 	    Total_Found += ar+1;
 	  }
 	else if (!gc_IsFirst(*(next+1)))
 	  {
 	    REGISTER int n;
-	    
+	
 	    for (n = Arity(*next); n>0; --n)
 	      gc_MarkF(PreHeapRead(next));
 	    gc_Reverse(current,next);
@@ -521,7 +521,7 @@ static void sweepTrail(Arg)
 	  (IsStackVar(v) && !OffStacktop(p,Gc_Stack_Start)))
 	{
 	  REGISTER TAGGED *p1= TagToPointer(*p);
-	  
+	
 	  if (IsHeapTerm(*p) &&
 	      gc_IsMarked(*p) &&
 	      OffHeaptop(p1,Gc_Heap_Start))
@@ -538,7 +538,7 @@ static void sweepTrail(Arg)
 #endif
     }
 }
- 
+
 static void sweepFrames(Arg, frame,l)
      Argdecl;
      struct frame *frame;
@@ -553,7 +553,7 @@ static void sweepFrames(Arg, frame,l)
 	while (ev!=frame->term)
 	  {
 	    REGISTER TAGGED v, *p;
-	    
+	
             StackDecr(ev);
 	    if( !gc_IsMarked(v= *ev) ) return;
 	    gc_UnmarkM(*ev);
@@ -586,7 +586,7 @@ static void sweepChoicepoints(Arg)
 	  {
 	    REGISTER TAGGED v= cp->term[i];
 	    REGISTER TAGGED *p= TagToPointer(v);
-	    
+	
 	    gc_UnmarkM(cp->term[i]);
 	    if (IsHeapTerm(v)
 #if defined(SEGMENTED_GC)
@@ -631,7 +631,7 @@ static void compressHeap(Arg)
 		  garbage_words += extra;
 	      }
 	    else
-	      extra = 0; 
+	      extra = 0;
 	    if (gc_IsMarked(cv))
 	      {
 		if (garbage_words)
@@ -646,7 +646,7 @@ static void compressHeap(Arg)
 		if (IsHeapTerm(cv))
 		  {
 		    REGISTER TAGGED *p= TagToPointer(cv);
-		    
+		
 		    if (HeapYounger(curr,p)
 #if defined(SEGMENTED_GC)
 			&& OffHeaptop(p,Gc_Heap_Start)
@@ -681,7 +681,7 @@ static void compressHeap(Arg)
 	    gc_UnmarkM(cv);  /* M and F-flags off */
 	    {
 	      REGISTER TAGGED *p= TagToPointer(cv);
-	      
+	
 	      if (IsHeapTerm(cv) && HeapYounger(p,curr))
 		{		
 		  /* move the current cell and insert into the reloc.chain */
@@ -708,7 +708,7 @@ static void compressHeap(Arg)
     w->global_top = dest;
 }
 
-   
+
 /**** The main garbage collection routine *****/
 
 void GarbageCollect(Arg)
@@ -752,7 +752,7 @@ void GarbageCollect(Arg)
     }
 
     t1= usertime();
-    
+
     /* push special REGISTERS on the trail stack */
     TrailPush(w->trail_top,Current_Debugger_State);
 
@@ -782,10 +782,10 @@ void GarbageCollect(Arg)
     shuntVariables(Arg);
     #endif
   */
-  
+
     markTrail(Arg);
     markChoicepoints(Arg);
-    compressTrail(Arg,TRUE); 
+    compressTrail(Arg,TRUE);
 
     Gc_Total_Grey += Gcgrey;
     t1 = (t2= usertime())-t1;

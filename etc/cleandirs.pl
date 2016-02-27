@@ -249,16 +249,16 @@ erase_or_not('--ask',  File, Perhaps):-
         ;
             (
                 Answer = y ->
-                erase(File),
+                erase_it(File),
                 Perhaps = yes
             ;
                 Perhaps = no
             )
         ).
-erase_or_not('--delete', File, yes):- erase(File).
+erase_or_not('--delete', File, yes):- erase_it(File).
 
 
-erase(File):-
+erase_it(File):-
         (
             file_property(File, type(directory)) ->
             atom_concat('/bin/rm -rf ', File, Command),

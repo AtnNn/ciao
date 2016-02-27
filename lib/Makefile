@@ -51,9 +51,9 @@ install:
 	mkdir -p $(STDLIBDIR)
 	-chmod $(EXECMODE) $(STDLIBDIR)
 	-cp -pR $(ALLFILES) $(STDLIBDIR)
-	(cd $(STDLIBDIR) && find . -type d -exec chmod $(EXECMODE) {} \; )
-	(cd $(STDLIBDIR) && find . ! -type d -exec chmod $(DATAMODE) {} \; )
-	(cd $(STDLIBDIR) && find . -name '*~' -exec 'rm' -f {} \; )
+	-(cd $(STDLIBDIR) && find . -type d -exec chmod $(EXECMODE) {} \; )
+	-(cd $(STDLIBDIR) && find . ! -type d -exec chmod $(DATAMODE) {} \; )
+	-(cd $(STDLIBDIR) && find . -name '*~' -exec 'rm' -f {} \; )
 
 uninstall:
 	@echo "*** ---------------------------------------------------------"

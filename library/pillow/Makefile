@@ -7,7 +7,8 @@ include ../../SETTINGS
 include ../../SHARED
 
 pillow: icon_address.pl
-	$(SETLOCALCIAO) $(CIAOC) -x Make_aux.pl ; rm -f Make_au*[^l]
+	$(SETLOCALCIAO) $(CIAOC) -x Make_aux.pl && \
+        rm -f Make_aux.itf Make_aux.po Make_aux
 
 icon_address.pl: ../../SETTINGS
 	echo "icon_base_address('$(WEB_IMAGES_URL)')." > icon_address.pl

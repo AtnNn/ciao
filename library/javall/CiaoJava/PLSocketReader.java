@@ -46,6 +46,7 @@ class PLSocketReader extends Thread {
      * @param in Stream on which this reader receives messages.
      */
     public PLSocketReader(BufferedReader in, PLSocketWriter writer) {
+	//	super("PLSocketReader");
 	this.in = in;
 	this.writer = writer;
 	msgQueue = new Vector(STARTING_CAPACITY,INCREMENT);

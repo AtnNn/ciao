@@ -155,7 +155,7 @@ davinci_put(Term):-
 	  atom2term(Atom,Answer),
 	  ( ready(Answer)
 	  -> true
-	   ; error(Answer)
+	   ; davinci:error(Answer)
 	  -> throw(Answer)
 	   ; assertz_fact(answer(Answer)),
 	     ( return(Answer)

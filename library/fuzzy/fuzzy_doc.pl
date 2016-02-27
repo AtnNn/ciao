@@ -59,9 +59,10 @@ distribution.
 
 :- include(library('fuzzy/ops')).
 
-:- true pred :#(Name, Decl) : predname * fuzzydecl
+:- true pred ':#'(Name, Decl) => predname * fuzzydecl
         # "Defines fuzzy predicate @var{Name} from the declaration
           @var{Decl}.".
+
 :- impl_defined((:#)/2).
 
 :- comment(hide,fuzzydecl/1).
@@ -115,7 +116,7 @@ notp_f(X,Y,M) :-
 ".
 :- impl_defined(fnot/1).
 
-:- true pred (Head :~ Body) : callable * fuzzybody
+:- true pred :~(Head, Body) : callable * fuzzybody
         # "Defines a fuzzy clause for a fuzzy predicate. The clause contains
            calls to either fuzzy or crisp predicates. Calls to crisp
            predicates are automatically fuzzified. The last argument of
@@ -176,6 +177,11 @@ myaggr(X,Y,Z):- Z .=. X*Y.
 %% ----------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../../version/')).
+
+:- comment(version(1*7+199,2002/04/18,18:05*46+'CEST'), "Commented out
+    fuzzy_ops inclusion due to clash of # operator with already existing
+    LpDoc operator; fuzzy_ops is really not needed in this file now.
+    (MCL)").
 
 :- comment(version(1*7+192,2002/03/15,10:55*23+'CET'), "Fixed Aggregations
    predefined and defined by users (Sergio Guadarrama)").

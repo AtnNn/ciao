@@ -9,11 +9,11 @@ a simple goal (append(X,Y,[a,b])), and prints them to a simple window.
 
 To start this example, type:
 
-$ java -cp ../../:./ example1 ./plserver
+$ java -cp ../../:./ example1 ../../plserver
 
 or, if you are using Windows:
 
-  java -cp ..\..\;.\ example1 <home>\Win32\bin\ciaoengine -C -b plserver.cpx 
+  java -cp ..\..\;.\ example1 <home>\Win32\bin\ciaoengine -C -b ..\..\plserver.cpx 
 
 where java must be on version 1.2 or higher, and <home> represents the
 Ciao home directory.
@@ -33,11 +33,11 @@ request the rest of solutions of the n-queens problem.
 
 To start this example, just type the following:
 
-$ java -cp ../../:./ queens ./plserver
+$ java -cp ../../:./ queens ../../plserver
 
 or, if you are using Windows:
 
-  java -cp ..\..\;.\ queens <home>\Win32\bin\ciaoengine -C -b plserver.cpx
+  java -cp ..\..\;.\ queens <home>\Win32\bin\ciaoengine -C -b ..\..\plserver.cpx
 
 where java must be on version 1.2 or higher, and <home> represents the
 Ciao home directory.

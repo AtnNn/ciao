@@ -1,37 +1,37 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 April 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 6 May 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - dictionary (library)</TITLE>
+<TITLE>The Ciao Prolog System               - boundary (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_186.html">previous</A>, <A HREF="ciao_188.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_186.html">previous</A>, <A HREF="ciao_188.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC694" HREF="ciao_toc.html#TOC694">dictionary (library)</A></H1>
+<H1><A NAME="SEC733" HREF="ciao_toc.html#TOC733">boundary (library)</A></H1>
 <P>
-<A NAME="IDX6923"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 0.1 (1998/12/7, 15:57:36 MET)
+<A NAME="IDX7189"></A>
 
 
 <P>
-This module contains the fixed dictionary. All the nodes in VRML with their associated fields.
+<STRONG>Version:</STRONG> 0.1#1 (1998/12/14, 19:22:27 MET)
+
+
+<P>
+This module offers predicate to check values according to their boundaries and offers lists of possible node ascendents.
 
 
 
 <UL>
-<LI><A HREF="ciao_187.html#SEC695">Usage and interface (dictionary)</A>
-<LI><A HREF="ciao_187.html#SEC696">Documentation on exports (dictionary)</A>
+<LI><A HREF="ciao_187.html#SEC734">Usage and interface (boundary)</A>
+<LI><A HREF="ciao_187.html#SEC735">Documentation on exports (boundary)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC695" HREF="ciao_toc.html#TOC695">Usage and interface (<CODE>dictionary</CODE>)</A></H2>
+<H2><A NAME="SEC734" HREF="ciao_toc.html#TOC734">Usage and interface (<CODE>boundary</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -39,7 +39,7 @@ This module contains the fixed dictionary. All the nodes in VRML with their asso
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(dictionary)).</CODE>
+<CODE>:- use_module(library(boundary)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -48,8 +48,16 @@ This module contains the fixed dictionary. All the nodes in VRML with their asso
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6924"></A>
-<CODE>dictionary/6</CODE>.
+<A NAME="IDX7190"></A>
+<CODE>boundary_check/3</CODE>, 
+<A NAME="IDX7191"></A>
+<CODE>boundary_rotation_first/2</CODE>, 
+<A NAME="IDX7192"></A>
+<CODE>boundary_rotation_last/2</CODE>, 
+<A NAME="IDX7193"></A>
+<CODE>reserved_words/1</CODE>, 
+<A NAME="IDX7194"></A>
+<CODE>children_nodes/1</CODE>.
 
 </UL>
 
@@ -60,26 +68,26 @@ This module contains the fixed dictionary. All the nodes in VRML with their asso
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX6925"></A>
+<A NAME="IDX7195"></A>
 <CODE>aggregates</CODE>, 
-<A NAME="IDX6926"></A>
+<A NAME="IDX7196"></A>
 <CODE>dynamic</CODE>, 
-<A NAME="IDX6927"></A>
+<A NAME="IDX7197"></A>
 <CODE>iso_misc</CODE>, 
-<A NAME="IDX6928"></A>
+<A NAME="IDX7198"></A>
 <CODE>iso_byte_char</CODE>, 
-<A NAME="IDX6929"></A>
+<A NAME="IDX7199"></A>
 <CODE>iso_incomplete</CODE>, 
-<A NAME="IDX6930"></A>
+<A NAME="IDX7200"></A>
 <CODE>operators</CODE>, 
-<A NAME="IDX6931"></A>
+<A NAME="IDX7201"></A>
 <CODE>read</CODE>, 
-<A NAME="IDX6932"></A>
+<A NAME="IDX7202"></A>
 <CODE>write</CODE>, 
-<A NAME="IDX6933"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX6934"></A>
-<CODE>provrml/internal_types</CODE>.
+<A NAME="IDX7203"></A>
+<CODE>provrml/internal_types</CODE>, 
+<A NAME="IDX7204"></A>
+<CODE>provrml/error</CODE>.
 
 </UL>
 
@@ -89,72 +97,130 @@ This module contains the fixed dictionary. All the nodes in VRML with their asso
 
 
 
-<H2><A NAME="SEC696" HREF="ciao_toc.html#TOC696">Documentation on exports (<CODE>dictionary</CODE>)</A></H2>
+<H2><A NAME="SEC735" HREF="ciao_toc.html#TOC735">Documentation on exports (<CODE>boundary</CODE>)</A></H2>
 <P>
-<A NAME="IDX6935"></A>
-<A NAME="IDX6936"></A>
+<A NAME="IDX7205"></A>
+<A NAME="IDX7206"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>dictionary/6:</B>
-<DD><A NAME="IDX6937"></A>
+<DT><span class="define">PREDICATE:</span> <B>boundary_check/3:</B>
+<DD><A NAME="IDX7207"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>dictionary(?NodeTypeId,?AccessType,?FieldTypeId,?FieldId,-Init_value,-Boundary)</CODE>
+<STRONG>Usage:</STRONG> <CODE>boundary_check(+Value_to_check,+Init_value,+Bound)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> To lookup information about the nodes, getting their properties. Note that the type returned for the bound can be of two different types bound or bound_double. The rotation type have one bound for the directions and one for the degree of rotation.
+<LI><EM>Description:</EM> This predicate check the boundaries of the given value according to the boudary values. If the value is wrong according to the boundaries, the value is checked according to the initial value given. If the value continues to be wrong, an error will be raised accordingly.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>?NodeTypeId</CODE> is an atom.
+<CODE>+Value_to_check</CODE> is an atom.
  (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>?AccessType</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>?FieldTypeId</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>?FieldId</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>-Init_value</CODE> is a list of <CODE>atm</CODE>s.
+<CODE>+Init_value</CODE> is a list of <CODE>atm</CODE>s.
  (<CODE>basic_props:list/2</CODE>)
 
-<CODE>-Boundary</CODE> is a variable interval.
+<CODE>+Bound</CODE> is a variable interval.
  (<CODE>internal_types:bound/1</CODE>)
 </UL>
 
+</DL>
+
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>dictionary(?NodeTypeId,?AccessType,?FieldTypeId,?FieldId,-Init_value,-Boundary)</CODE>
+<A NAME="IDX7208"></A>
+<A NAME="IDX7209"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>boundary_rotation_first/2:</B>
+<DD><A NAME="IDX7210"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>boundary_rotation_first(+Bound_double,-Bound)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> To lookup information about the nodes, getting their properties. Note that the type returned for the bound can be of two different types bound or bound_double. The rotation type have one bound for the directions and one for the degree of rotation.
+<LI><EM>Description:</EM> The predicate will extract the first bounds from a double bound.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>?NodeTypeId</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>?AccessType</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>?FieldTypeId</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>?FieldId</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>-Init_value</CODE> is a list of <CODE>atm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>-Boundary</CODE> is a variable interval.
+<CODE>+Bound_double</CODE> is a variable interval.
  (<CODE>internal_types:bound_double/1</CODE>)
+
+<CODE>-Bound</CODE> is a variable interval.
+ (<CODE>internal_types:bound/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7211"></A>
+<A NAME="IDX7212"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>boundary_rotation_last/2:</B>
+<DD><A NAME="IDX7213"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>boundary_rotation_last(+Bound_double,-Bound)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate will extract the last bounds from a double bound.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Bound_double</CODE> is a variable interval.
+ (<CODE>internal_types:bound_double/1</CODE>)
+
+<CODE>-Bound</CODE> is a variable interval.
+ (<CODE>internal_types:bound/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7214"></A>
+<A NAME="IDX7215"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>reserved_words/1:</B>
+<DD><A NAME="IDX7216"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>reserved_words(-List)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Returns a list with the reserved words, words prohibited to use in cases not appropiated.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-List</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7217"></A>
+<A NAME="IDX7218"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>children_nodes/1:</B>
+<DD><A NAME="IDX7219"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>children_nodes(-List)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Returns a list of all nodes possible as children nodes.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-List</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_186.html">previous</A>, <A HREF="ciao_188.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_186.html">previous</A>, <A HREF="ciao_188.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

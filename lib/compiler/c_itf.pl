@@ -288,6 +288,10 @@ comp_defines(_).
         multifile/4,
         defines/3.
 
+:- pred redefining(Module, F, A).
+
+:- data redefining/3.
+
 % Deleted after reading file
 
 :- pred exports_pred(Base, F, A). % Translates to direct_export/5
@@ -320,10 +324,6 @@ comp_defines(_).
 :- pred imports_expl(Base, ImpFile, F, A). % Translates to imports_pred_1
 
 :- data imports_expl/4.
-
-:- pred redefining(Base, F, A).
-
-:- data redefining/3.
 
 %% Hook
 
@@ -586,8 +586,7 @@ delete_itf_data(Base) :-
 % These are deleted when computing imports_pred_1/7
 delete_aux_data(Base) :-
         retractall_fact(imports_expl(Base, _, _, _)),
-        retractall_fact(expansion_check(Base, _)),
-        retractall_fact(redefining(Base, _, _)).
+        retractall_fact(expansion_check(Base, _)).
 
 delete_file_data(Base) :-
         retractall_fact(clause_of(Base,_,_,_,_,_,_)),
@@ -1109,7 +1108,8 @@ do_discontiguous(L, Base, Ln0, Ln1) :-
 do_discontiguous(_, _, _, _).
 
 do_redefining(F/A, Base, _, _) :- !,
-        asserta_fact(redefining(Base, F, A)).
+        defines_module(Base, M),
+        asserta_fact(redefining(M, F, A)).
 do_redefining(Bad,_Base, Ln0, Ln1) :-
         error_in_lns(Ln0, Ln1, error,
                      ['bad predicate indicator pattern ',~~(Bad)]).
@@ -1142,20 +1142,28 @@ do_op(P, F, O, Base) :-
 ensure_op_undone(Prec, F, Ops, Base) :-
         integer(Prec), 0=<Prec, Prec=<1200,
         nonvar(F),
-        operator_specifier(F),
+        op_type(F, T),
         atom_or_atom_list(Ops), !,
-        ensure_ops_undone(Ops, F, Prec, Base).
+        ensure_ops_undone(Ops, F, T, Prec, Base).
 ensure_op_undone(_, _, _, _). % do not fail to give errors
 
-ensure_ops_undone([Op|Ops], F, Prec, Base) :- !,
-        ensure_ops_undone(Op, F, Prec, Base),
-        ensure_ops_undone(Ops, F, Prec, Base).
-ensure_ops_undone([], _, _, _) :- !.
-ensure_ops_undone(Op, F, Prec, Base) :-
-        ( current_op(CPrec, F, Op) ->
-          asserta_fact(undo_decl(Base,op(Prec,F,Op),op(CPrec,F,Op)))
+ensure_ops_undone([Op|Ops], F, T, Prec, Base) :- !,
+        ensure_ops_undone(Op, F, T, Prec, Base),
+        ensure_ops_undone(Ops, F, T, Prec, Base).
+ensure_ops_undone([], _, _, _, _) :- !.
+ensure_ops_undone(Op, F, T, Prec, Base) :-
+        ( current_op(CPrec, CF, Op), op_type(CF, T) ->
+          asserta_fact(undo_decl(Base,op(Prec,F,Op),op(CPrec,CF,Op)))
         ; asserta_fact(undo_decl(Base,op(Prec,F,Op),op(0,F,Op)))
         ).
+
+op_type(fy, pre).
+op_type(fx, pre).
+op_type(yfx, in).
+op_type(xfy, in).
+op_type(xfx, in).
+op_type(yf, post).
+op_type(xf, post).
 
 atom_or_atom_list(A) :- atom(A), !.
 atom_or_atom_list([A|L]) :-
@@ -1308,23 +1316,17 @@ check_itf_data(Base, _) :-
         message(['(Compilation aborted)']),
         fail.
 
-:- data imports_builtin_pred/4.
-
-gen_imports(Base) :-
-        uses_builtins(Base),
-        builtin_module(M),
-          BF = engine(M),
-          \+ base_name_0(BF, Base),
-          builtin_export(M, F, A, _),
-            asserta_fact(imports_builtin_pred(Base, BF, F, A)),
-        fail.
 gen_imports(Base) :-
         ( imports_all_1(Base, File) ; reexports_all(Base, File) ),
           base_name(File, BFile),
           ( direct_export(BFile, F, A, DefType, Meta),
-              check_insert_import(Base, File, F, A, DefType, Meta, '.')
+              asserta_fact(
+                imports_pred_1(Base, File, F, A, DefType, Meta, '.')
+              )
           ; indirect_export(BFile, F, A, DefType, Meta, EndFile),
-              check_insert_import(Base, File, F, A, DefType, Meta, EndFile)
+              asserta_fact(
+                imports_pred_1(Base, File, F, A, DefType, Meta, EndFile)
+              )
           ),
         fail.
 gen_imports(Base) :-
@@ -1332,14 +1334,14 @@ gen_imports(Base) :-
         ; reexports(Base, File, F, A) ),
           base_name_or_user(File, BFile),
           ( exports_thru(BFile, F, A, DefType, Meta, EndFile) ->
-              check_insert_import(Base, File, F, A, DefType, Meta, EndFile)
+              asserta_fact(
+                imports_pred_1(Base, File, F, A, DefType, Meta, EndFile)
+              )
           ; defines_module(BFile, IM),
             interface_error(not_exported(IM,F/A))
           ),
         fail.
-gen_imports(Base) :-
-        retractall_fact(imports_builtin_pred(Base,_,_,_)),
-        retractall_fact(redefining(Base, _, _)).
+gen_imports(_).
 
 base_name_or_user(user, Base) :- !, Base = user.
 base_name_or_user(File, Base) :- base_name(File, Base).
@@ -1363,29 +1365,6 @@ reexports_pred(Base, File, F, A) :-
         reexports(Base, File, F, A).
 reexports_pred(Base, File,_F,_A) :-
         reexports_all(Base, File).
-
-check_insert_import(Base, File, F, A, DefType, Meta, EndFile) :-
-        check_name_clashes(Base, File, F, A),
-        asserta_fact(imports_pred_1(Base, File, F, A, DefType, Meta, EndFile)).
-
-check_name_clashes(Base, _, F, A) :-
-        current_fact(redefining(Base, F, A)), !. % Do not check
-check_name_clashes(Base, File, F, A) :-
-        defines_pred(Base, F, A), !,
-        base_name(File, BFile), defines_module(BFile, IM),
-        error_in_lns(_,_,warning, ['local ',~~(F/A),' is also imported from ',
-                     IM,' -- calls to imported predicate must be qualified']).
-check_name_clashes(Base, File, F, A) :-
-        ( imports_pred_1(Base, OtherFile, F, A, _, _, _)
-        ; imports_builtin_pred(Base, OtherFile, F, A)
-        ),
-        OtherFile \== File, !,
-        file_defines_module(File, IM),
-        file_defines_module(OtherFile, IM0),
-        error_in_lns(_,_,warning,
-                     ['predicate ',~~(F/A),' re-imported from ',IM,
-                      ' -- calls to ',~~(IM0:(F/A)),' must be qualified']).
-check_name_clashes(_, _, _, _).
 
 check_exports(Base) :-
         direct_export(Base, F, A, _, Meta),
@@ -1573,7 +1552,8 @@ delete_module_data :-
         retractall_fact(defines(_,_,_)),
         retractall_fact(multifile(_,_,_,_)),
         retractall_fact(meta_args(_,_)),
-        retractall_fact(imports(_,_,_,_,_)).
+        retractall_fact(imports(_,_,_,_,_)),
+        retractall_fact(redefining(_, _, _)).
 
 % Deftype not checked because is not exact in builtin modules
 changed_dependences(Base, _) :-
@@ -2121,6 +2101,14 @@ module_warning_mess(not_defined(F, N,_M), warning,
 module_warning_mess(not_imported(F, N,_M, QM), error,
         ['Module qualification of ',~~(F/N),
          ' ignored, predicate not imported from module ',QM]).
+module_warning_mess(imported_needs_qual(F, N, M), warning,
+        ['Unqualified predicate call to ',~~(F/N),
+         ' assumed to local version, calls to predicate imported from ',M,
+         ' must be qualified']).
+module_warning_mess(imported_needs_qual(F, N, M0, M), warning,
+        ['Unqualified predicate call to ',~~(F/N),
+         ' assumed to module ',M,', calls to predicate imported from ',M0,
+         ' must be qualified']).
 module_warning_mess(bad_pred_abs(PA), error,
         ['Bad predicate abstraction ',~~(PA),
          ' : head functor should be ''''']).
@@ -2310,6 +2298,9 @@ generate_multifile_data(_,_).
 :- data delayed_dynlink/3.
 :- data dynlink_error/0.
 
+/****************************************************************** 
+ BUG: (???) THIS CODE DOESN'T WORK, the retract_fact makes weird things...
+
 make_delayed_dynlinks :-
         retract_fact(delayed_dynlink(Base, Module, Decls)),
           get_so_name(Base, SoName),
@@ -2323,6 +2314,29 @@ make_delayed_dynlinks :-
         fail.
 make_delayed_dynlinks :-
         \+ retract_fact(dynlink_error).
+****************************************************/
+
+make_delayed_dynlinks :-
+        retractall_fact(dynlink_error),
+	findall(delayed_dynlink(Base, Module, Decls), delayed_dynlink(Base, Module, Decls), Xs),
+	retractall_fact(delayed_dynlink(_, _, _)),
+	make_delayed_dynlinks_2(Xs),
+        \+ retract_fact(dynlink_error).
+
+make_delayed_dynlinks_2([delayed_dynlink(Base, Module, Decls)|Xs]) :- !,
+	make_delayed_dynlink(Base, Module, Decls),
+	make_delayed_dynlinks_2(Xs).
+make_delayed_dynlinks_2([]) :- !.
+
+make_delayed_dynlink(Base, Module, Decls) :-
+        get_so_name(Base, SoName),
+        ( build_foreign_interface_explicit_decls(Base, Decls) -> true ; fail ),
+	file_exists(SoName), 
+	check_dynlink(SoName, Module),
+	!.
+make_delayed_dynlink(_, Module, _) :-
+        abolish_module(Module),
+        set_fact(dynlink_error).
 
 discard_delayed_dynlinks :-
 	retractall_fact(delayed_dynlink(_, _, _)).
@@ -2644,6 +2658,15 @@ retract_clause(Head, Body) :-
 % ----------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*7+202,2002/04/19,19:34*03+'CEST'), "Fixed bug
+   happening when a file redefined an operator name with a different
+   type but same class (prefix, infix or postfix). (Daniel Cabeza
+   Gras)").
+
+:- comment(version(1*7+200,2002/04/18,19:23*04+'CEST'), "Redefinition
+   warnings changed, so that only when an unqualified call is seen a
+   warning is issued. (Daniel Cabeza Gras)").
 
 :- comment(version(1*7+175,2002/01/14,17:24*34+'CET'), "Exported
    static_module/1. (Daniel Cabeza Gras)").

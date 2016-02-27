@@ -1,4 +1,5 @@
-:- include(library(persdb)).
+:- use_package(iso).
+:- use_package(persdb).
 
 %% Declare the directory associated to the key "db" where the
 %% persistence sets of the persistent predicates are stored:

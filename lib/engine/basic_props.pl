@@ -12,7 +12,7 @@
 %% Commented out to avoid including hiord_rt in all executables, put declarations instead
 %% :- use_package(hiord).
 :- set_prolog_flag(read_hiord, on).
-:- impl_defined([call/2]).
+:- import(hiord_rt, [call/2]).
 
 :- comment(title,"Basic data types and properties").
 
@@ -292,6 +292,9 @@ compat(T, P) :- \+ \+ P(T).
 
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*7+204,2002/04/22,18:42*18+'CEST'), "Fixed a bug
+   introduced in patch 190. (Daniel Cabeza Gras)").
 
 :- comment(version(1*7+190,2002/03/06,18:39*52+'CET'), "Taken out
    package hiord to avoid including hiord_rt in all executables (Daniel

@@ -2,10 +2,13 @@ include ../../SETTINGS
 include ../../SHARED
 include $(SYSDEP_FILES)/mkf-$(CIAOARCH)
 
-PROLOGSOURCES=javasock.pl javart.pl jtopl.pl
+PROLOGSOURCES=javasock.pl javart.pl jtopl.pl plserver.pl
+PROLOGSERVER=plserver.pl
 
 all: 
 	$(SETLOCALCIAO) $(CIAOC) -c $(PROLOGSOURCES)
+	$(SETLOCALCIAO) $(CIAOC) -s $(PROLOGSERVER)
+	-chmod  $(EXECMODE) $(PROLOGSERVER)
 	cd CiaoJava && $(MAKE) all
 	cd examples/java2pl && $(MAKE) all
 	cd examples/pl2java && $(MAKE) all

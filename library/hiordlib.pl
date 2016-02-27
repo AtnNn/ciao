@@ -1,8 +1,10 @@
-:- module(hiordlib, [map/3,foldl/4], [assertions,functions,hiord]).
+:- module(hiordlib, [map/3,foldl/4,minimum/3], 
+                    [assertions,basicmodes,functions,hiord]).
 
-:- comment(title,"Some higher-order predicates").
+:- comment(title,"Higher-order predicates").
 
 :- comment(author,"Daniel Cabeza").
+:- comment(author,"Manuel Carro").
 
 :- comment(module,"This library implements a few basic higher-order
    predicates. These add functionality to the basic 
@@ -48,8 +50,29 @@ R = \"daniel cabeza gras \" ?
 foldl([], Seed, _Op) := Seed.
 foldl([X|Xs], Seed, Op) := ~Op(X,~foldl(Xs,Seed,Op)).
 
+:- meta_predicate minimum(_, pred(2), _).
+
+:- pred minimum(?List, +SmallerThan, ?Minimum) : list * callable * term
+# "@var{Minimum} is the smaller in the nonempty list @var{List}
+according to the relation @var{SmallerThan}: @pred{SmallerThan(X, Y)}
+succeeds iff X is smaller than Y.".
+
+minimum([X|Xs], Pred, Min):- minimum_carry(Xs, Pred, X, Min).
+minimum_carry([], _Pred, M, M).
+minimum_carry([X|Xs], Pred, MinSoFar, Min):-
+        (
+            Pred(MinSoFar, X) ->
+            minimum_carry(Xs, Pred, MinSoFar, Min)
+        ; 
+            minimum_carry(Xs, Pred, X, Min)
+        ).
+        
+
 % ---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*7+208,2002/04/23,19:09*14+'CEST'), "Added
+   minimum/3, which I needed for a programming pearl.  (MCL)").
 
 :- comment(version(1*5+65,2000/03/15,22:09*28+'CET'), "Added some
    minimal documentation to @lib{hiordlib} library.  (Manuel Hermenegildo)").

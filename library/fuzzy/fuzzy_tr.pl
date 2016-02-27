@@ -15,7 +15,7 @@
 :- data fnegclause/3.
 %:- data fagrclause/5.
 
-:- data faggr/1.
+:- data faggr/4.
 
 :- include(library('fuzzy/ops')).
 :- include(library('clpr/ops')).
@@ -218,7 +218,7 @@ fuzzy_pred((H :~  ),[],_):-
 fuzzy_pred((H :~ B0),[],_):-
 	nonvar(B0),
 	functor(B0,Aggr,1),
-	faggr(Aggr), !,
+	faggr(Aggr,_,_,_), !,
 	arg(1,B0,B),
 	functor(H,F,A),
 	(
@@ -228,8 +228,26 @@ fuzzy_pred((H :~ B0),[],_):-
 	),
 	assertz_fact(frule(H,B,Aggr)).
 
+fuzzy_pred((:- aggr A <# I ## M #> F ),(:- op(1190,fx,A)),_):-
+	assertz_fact(faggr(A,I,M,F)), !.
+
+fuzzy_pred((:- aggr A ## M #> F ),(:- op(1190,fx,A)),_):-
+	assertz_fact(faggr(A,id,M,F)), !.
+
+fuzzy_pred((:- aggr A <# I ## M ),(:- op(1190,fx,A)),_):-
+	assertz_fact(faggr(A,I,M,id)), !.
+
+fuzzy_pred((:- aggr A <# I ),(:- op(1190,fx,A)),_):-
+	assertz_fact(faggr(A,I,A,id)), !.
+
+fuzzy_pred((:- aggr A #> F ),(:- op(1190,fx,A)),_):-
+	assertz_fact(faggr(A,id,A,F)), !.
+
+fuzzy_pred((:- aggr A ## M ),(:- op(1190,fx,A)),_):-
+	assertz_fact(faggr(A,id,M,id)), !.
+
 fuzzy_pred((:- aggr A),(:- op(1190,fx,A)),_):-
-	asserta_fact(faggr(A)), !.
+	assertz_fact(faggr(A,id,A,id)), !.
 
 
 % default
@@ -328,13 +346,10 @@ add_contr(H,B,Any,(B,AB),M):-
  	functor(H,_,Ar),
  	arg(Ar,H,Mu),
  	memfunct(B,ListVar,[],M),
-	atom_concat(Any,'_initial',IAny),
-	functor(Initial,IAny,2),
-	atom_concat(Any,'_final',FAny),
-	functor(Final,FAny,3),
-	AB = (preinject(ListVar,Initial,TempVar),
-	inject(TempVar,Any,MuTemp),
-	postinject(TempVar,MuTemp,Final,Mu),
+	faggr(Any,IAny,MAny,FAny),
+	AB = (preinject(ListVar,IAny,TempVar),
+	inject(TempVar,MAny,MuTemp),
+	postinject(TempVar,MuTemp,FAny,Mu),
 	Mu .>=.0,Mu .=<.1).
  
 add_neg(N,O,A,(NewPred :- '$add_neg'(O,A),OldPred,Mu .=. 1 - MuO)):-

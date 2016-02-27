@@ -220,7 +220,8 @@ goal_checking(Var:Method,_,_) :-
 	var(Var),
 	functor(Method,F,A),
 	module(Module),
-	used_class(Module,Class),
+	( Class=Module % might be a self-call
+	; used_class(Module,Class) ),
 	accessible(Class,F,A),
 	!,
 	fail.

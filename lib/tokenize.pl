@@ -1,4 +1,4 @@
-/*  Copyright (C) 1996 UPM-CLIP */
+/*  Copyright (C) 1996-2002 UPM-CLIP */
 
 % Tokeniser for CIAO Prolog.
 

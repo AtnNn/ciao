@@ -174,9 +174,11 @@ set by adding a package declaration in the module, as follows:
 
 @noindent and recompiling the application.
 
-In order to debug, or trace, correctly the complete code these declarations
-@em{must} be the last ones. Also it is possible to add the package in the
-module declaration using the predicate @pred{module/3}.
+In order to debug, or trace, correctly the complete code these
+declarations @em{must} appear the last ones of all @decl{use_package}
+declarations used. Also it is possible, as usual, to add the debugging
+package(s) in the module declaration using the predicate
+@pred{module/3} (and they should also be the last ones).
 
 The embedded debugger has limitations over the interpreted debugger. The
 most important is that the ``retry'' option is not available. But it is
@@ -190,11 +192,21 @@ the debugger (i.e., use debug mode, and in a clause add the predicate
 The nodebug mode allows keeping the spy-points and breakpoints in the code
 instead of removing them from the code.
 
-Note that in order to use the @concept{embedded debugger} the buffer
-where the program will run must be in the Ciao inferior mode
-(@key{M-x} @tt{ciao-inferior-mode}).
+Note that there is a particularly interesting way of using the
+@concept{embedded debugger}: if an @em{application} is run in a shell
+buffer which has been set with Ciao inferior mode (@key{M-x}
+@tt{ciao-inferior-mode}) and this application starts emitting output
+from the embedded debugger (i.e., which contains the embedded debugger
+and is debugging its code) then the Ciao emacs mode will be able to
+follow these messages, for example tracking execution in the source
+level code. This also works if the application is written in a
+combination of languages, provided the parts written in Ciao are
+compiled with the embedded debugger package and is thus a covenient
+way of debugging multi-language applications. The only thing needed is
+to make sure that the output messages appear in a shell buffer that is
+in Ciao inferior mode.
 
-See the following example:
+See the following as a general example of use of the embedded debugger:
 @begin{verbatim}
 :- module( foo,[main/1],[assertions, debug]).
 
@@ -600,7 +612,7 @@ displays the table of options given above.
 @section{Calling predicates that are not exported by a module}
 
 The Ciao module system does not allow calling predicates which are not
-exported during debugging. However, as an aid during debuggig, this is
+exported during debugging. However, as an aid during debugging, this is
 allowed (only from the top-level and for modules which are in debug mode or
 source-level debug mode) using the @pred{call_in_module/2} predicate.
 

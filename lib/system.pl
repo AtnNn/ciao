@@ -6,6 +6,7 @@
             datime/9,
             datime_struct/1,
             getenvstr/2,
+            setenvstr/2,
             extract_paths/2,
             get_pid/1,
             current_host/1,
@@ -62,7 +63,7 @@
 
 :- impl_defined([
         working_directory/2, directory_files/2, pause/1, time/1, datime/9,
-        current_host/1, getenvstr/2, get_pid/1, 
+        current_host/1, getenvstr/2, setenvstr/2, get_pid/1, 
         current_executable/1,
         shell/0, shell/2, system/2, mktemp/2, file_exists/2,
         file_properties/6, chmod/2, umask/2, 
@@ -126,6 +127,12 @@ datime_struct(datime(Year,Month,Day,Hour,Min,Sec)) :-
     has @var{Value}.  Fails if variable @var{Name} is not defined.").
 
 :- true pred getenvstr(+atm, ?string).
+
+:- comment(setenvstr(Name, Value), "The environment variable @var{Name}
+    is assigned @var{Value}.").
+
+:- true pred setenvstr(+atm, +string).
+
 
 :- comment(extract_paths(String, Paths), "Interpret @var{String} as the
    value of a UNIX environment variable holding a list of paths and
@@ -610,6 +617,9 @@ do_swapslash([C|D],[C|ND]) :-
 
 
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*7+211,2002/04/30,20:40*19+'CEST'), "setenvstr/2
+        added (Jesus needed it).  (MCL)").
 
 :- comment(version(1*7+181,2002/01/25,20:14*06+'Hora estándar
    romance'), "cyg2win/3 moved here.  ()").

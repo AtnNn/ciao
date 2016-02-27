@@ -18,7 +18,7 @@
 :- comment(author, "Universidad Polit@'{e}cnica de Madrid").
 
 :- comment(copyright,"
-Copyright @copyright{} 1996-2000 Jes@'{u}s Correas Fern@'{a}ndez/The CLIP Group.
+Copyright @copyright{} 1996-2002 Jes@'{u}s Correas Fern@'{a}ndez/The CLIP Group.
 
 @include{Copyright.Manuals}
 ").

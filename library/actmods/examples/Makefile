@@ -4,8 +4,7 @@ build: simple_server.pl simple_client_with_main.pl
 	ciaoc simple_client_with_main
 
 webbased:
-	ciaoc -a actmods/webserver_publish webbased_server
-	webbased_server &
+	cd webbased_server; gmake
 	ciaoc -a actmods/webbased_publish simple_server
 
 distclean:

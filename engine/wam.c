@@ -1,4 +1,4 @@
-/* Copyright (C) 1996,1997,1998, UPM-CLIP */
+/* Copyright (C) 1996,1997,1998,1999,2000,2001,2002 UPM-CLIP */
 
 int start_of_savedump = 0;                    /* Must be the first symbol */
 
@@ -685,7 +685,7 @@ int wam(Arg, worker)
          i+=sizeof(struct sw_on_key_node), t1=(t1+i) & Htab->mask){
       SetHtabNode(&Htab->tab.aschar[t1]);
       if (HtabNode->key==t2 || !HtabNode->key)
-        TRYEACH_R(HtabNode->value.try);
+        TRYEACH_R(HtabNode->value.try_chain);
     }
     
   case ENTER_COMPACTCODE:

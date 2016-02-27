@@ -19,6 +19,7 @@ BOOL prolog_unix_mkdir(Argdecl);
 BOOL prolog_unix_rmdir(Argdecl);
 BOOL prolog_current_host(Argdecl);
 BOOL prolog_getenvstr(Argdecl);
+BOOL prolog_setenvstr(Argdecl);
 BOOL prolog_pause(Argdecl);
 BOOL prolog_getpid(Argdecl);
 BOOL prolog_find_file(Argdecl);

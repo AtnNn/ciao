@@ -73,14 +73,14 @@ public class PLJavaServer {
 		PLConnection pl = new PLConnection(ss);
 		pl.join();
 	    }
-	    ss.close();
-	    System.exit(0);
+ 	    ss.close();
 	} catch (Exception e) {
 	    System.err.println("Problems starting java server: " + e);
 	    System.exit(1);
 	}
 	if (PLConnection.debugging)
 	    System.err.println("Terminating PLJavaServer");
+	System.exit(0);
     }
 
     private static void usage() {

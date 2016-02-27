@@ -65,6 +65,7 @@ class PLMultithreadSocketReader extends Thread {
      */
     public PLMultithreadSocketReader(BufferedReader in, 
 				     PLSocketWriter writer) {
+	//	super("PLMultithreadSocketReader");
 	this.in = in;
 	this.writer = writer;
 	msgTable = new Hashtable(STARTING_CAPACITY, FACTOR);

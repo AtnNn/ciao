@@ -148,14 +148,9 @@ try reinstalling the system.
     ?- make_exec(hw,_).
 @end{verbatim}
 
-      @noindent which should produce an executable. Double-clicking on
-      this executable should execute it.
-
-      Another way of creating Ciao executables from source files is by
-      right-clicking on @tt{.pl} files and choosing ``make
-      executable''. This uses the standalone compiler (this has the
-      disadvantage, however, that it is sometimes difficult to see the
-      error messages).
+      @noindent which should produce an executable. Typing @tt{hw} in
+      a shell (or double-clicking on the icon from a graphical window)
+      should execute it.
 
       For more information see @ref{The interactive top-level shell}
       and @ref{The stand-alone command-line compiler}.

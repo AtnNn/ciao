@@ -25,22 +25,23 @@ main.
 % ---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
 
+:- comment(version(1*7+207,2002/04/23,18:58*09+'CEST'), "Makefiles
+   changed to be more resilient to errors.  (MCL)").
+
 :- comment(version(1*7+193,2002/03/25,11:51*37+'CET'), "Generalized
-the cache for "last_inserted_clause" (look for
-CACHE_INCREMENTAL_CLAUSE_INSERTION); just small improvements.  Could
-not make the same thing with the try_node chain in incore_insert.
-(MCL)").
+   the cache for "last_inserted_clause" (look for
+   CACHE_INCREMENTAL_CLAUSE_INSERTION); just small improvements.
+   Could not make the same thing with the try_node chain in
+   incore_insert.  (MCL)").
 
 :- comment(version(1*7+161,2001/11/27,12:53*26+'CET'), "Removed some
    warnings.  (MCL)").
 
-:- comment(version(1*7+151,2001/11/23,15:08*49+'CET'), "Added
--fno-strict-aliasing to the C command line options in order to work
-around (wrong?) optimizations and inconvenient ANSI casting
-conventions.  The Ciao engine now seems to compile correctly with the
-later gcc suite.
-
-    (MCL)").
+:- comment(version(1*7+151,2001/11/23,15:08*49+'CET'), "Added new
+   option -fno-strict-aliasing to the C command line options in order
+   to work around (wrong?) optimizations and inconvenient ANSI casting
+   conventions.  The Ciao engine now seems to compile correctly with
+   the later gcc suite. (MCL)").
 
 :- comment(version(1*7+150,2001/11/23,14:57*54+'CET'), "Added patch
    for Mac Os X developer tools 10.1 (thanks to @index{Kris Gybels})

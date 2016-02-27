@@ -1,4 +1,4 @@
-/* Copyright (C) 1996,1997,1998, UPM-CLIP */
+/* Copyright (C) 1996,1997,1998, 1999, 2000, 2001, 2002 UPM-CLIP */
 
 /* Bignum arithmetics by Torbjorn Granlund, Johan Andersson, and Mats Carlsson
    Ref: Knuth vol. 2 sec. 4.3.1

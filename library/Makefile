@@ -42,11 +42,31 @@ clpr_libs:
 	cd clpq && $(MAKE) all
 
 ciao_special_libs:
+# The user might not have (a decent) java 
+ifeq ($(WITH_JAVA_INTERFACE),yes)
 	cd javall && $(MAKE) all
+endif
 #	cd distribution; $(MAKE)      # Check it out!
 	cd pillow && $(MAKE)
 
+MYSQL_DIRECTORY=persdb_mysql
+
 autolibs:
+# This is so that if someone does not need the MySQL library, or has
+# it installed in some weird place, the compilation still goes
+# smoothly.
+ifeq ($(WITH_MYSQL),yes)
+	-@rm -f $(MYSQL_DIRECTORY)/NOCOMPILE
+	../etc/substitute_string \
+		where_mysql_client_lives \
+		$(MYSQL_CLIENT_DIRECTORY) \
+		$(MYSQL_DIRECTORY)/linker_option_template.pl \
+		$(MYSQL_DIRECTORY)/linker_opts.pl
+	$(SETLOCALCIAO) $(CIAOC) -x $(SRCLIB)/library/$(MYSQL_DIRECTORY)/mysql_use_client
+	@rm -f $(SRCLIB)/library/$(MYSQL_DIRECTORY)/mysql_use_client
+else
+	@touch $(MYSQL_DIRECTORY)/NOCOMPILE
+endif
 	'rm' -f all_modules all_module_messages
 # This is so that if installation is aborted, the permissions are left 
 # set properly and *another user* can reinstall
@@ -71,10 +91,10 @@ install:
 	-chmod $(EXECMODE) $(STDLIBDIR)
 #	-cp -pR $(ALLFILES) $(STDLIBDIR) # R gives problems in Darwin
 	-cp -pr $(ALLFILES) $(STDLIBDIR)
-	cd pillow && $(MAKE) install
-	(cd $(STDLIBDIR) && find . -type d -exec chmod $(EXECMODE) {} \; )
-	(cd $(STDLIBDIR) && find . ! -type d -exec chmod $(DATAMODE) {} \; )
-	(cd $(STDLIBDIR) && find . -name '*~' -exec 'rm' -f {} \; )
+	-cd pillow && $(MAKE) install
+	-(cd $(STDLIBDIR) && find . -type d -exec chmod $(EXECMODE) {} \; )
+	-(cd $(STDLIBDIR) && find . ! -type d -exec chmod $(DATAMODE) {} \; )
+	-(cd $(STDLIBDIR) && find . -name '*~' -exec 'rm' -f {} \; )
 
 uninstall:
 	@echo "*** ---------------------------------------------------------"

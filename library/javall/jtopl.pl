@@ -169,7 +169,7 @@ answer(prolog_exception(X,Y)) :- int(X), nonvar(Y).
 prolog_server :-
 	current_host(Node),
 	get_port(user_input,Port),
-	start_socket_interface(Node:Port),
+	start_socket_interface(Node:Port,_),
 	join_socket_interface,
 	eng_killothers.
 
@@ -186,7 +186,7 @@ prolog_server :-
 %----------------------------------------------------------------------------
 prolog_server(Port) :-
 	current_host(Node),
-	start_socket_interface(Node:Port),
+	start_socket_interface(Node:Port,_),
 	join_socket_interface,
 	eng_killothers.
 

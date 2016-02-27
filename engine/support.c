@@ -1,4 +1,4 @@
-/* Copyright (C) 1996,1997,1998, UPM-CLIP */
+/* Copyright (C) 1996,1997,1998, 1999, 2000, 2001, 2002  UPM-CLIP */
 
 #include <unistd.h>
 #include <string.h>
@@ -626,7 +626,7 @@ void expand_sw_on_key(psw,otherwise,deletep)
       newsw->count++;
       h2 = incore_gethash(newsw,h1->key);
       h2->key = h1->key;
-      h2->value.try = h1->value.try;
+      h2->value.try_chain = h1->value.try_chain;
     }
   }
 

@@ -7,6 +7,9 @@
 
 :- comment(title, "Defining operators").
 
+:- comment(author, "Adapted from SICStus 0.6 code; modifications and
+documentation by Daniel Cabeza and Manuel Carro").
+
 :- comment(module, "Operators allow writting terms in a more clear way
    than the standard functional notation.  Standard operators in Ciao
    are defined by this predicate (but note that the compiler itself
@@ -83,11 +86,24 @@ current_op(Prec, Ass, Op) :-
 	current_fact(current_op(Op,Left,Prec,Right,Type)),
 	op_ass(Ass, Left, Prec, Right, Type).
 
+
+:- comment(current_prefixop(Op, Less, Precedence), "Similar to
+@pred{current_op/3}, but it concerns only the prefix operators.  It
+returns @bf{only one solution}.  Not a predicate for general use.").
+
 current_prefixop(Op, Less, Prec) :-
 	current_fact(current_op(Op,0,Less,Prec,pre)), !.
 
+:- comment(current_infixop(Op, LeftLess, Prec, RightLess), "Similar to
+@pred{current_op/3}, but it concerns only infix operators.  It returns
+@bf{only one solution}.  Not a predicate for general use.").
+
 current_infixop(Op, Left, Prec, Right) :-
 	current_fact(current_op(Op,Left,Prec,Right,in)), !.
+
+:- comment(current_postfixop(Op, Less, Precedence), "Similar to
+@pred{current_op/3}, but it concerns only the postfix operators.  It
+returns @bf{only one solution}.  Not a predicate for general use.").
 
 current_postfixop(Op, Prec, Less) :-
 	current_fact(current_op(Op,Prec,Less,0,post)), !.
@@ -124,6 +140,9 @@ standard_ops :-
 :- initialization(standard_ops).
 
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*7+198,2002/04/17,20:13*07+'CEST'), "Added more
+        comments.  (MCL)").
 
 :- comment(version(1*7+106,2001/05/28,20:06*27+'CEST'), "Parallelism
    operators are not longer predefined. (Daniel Cabeza Gras)").

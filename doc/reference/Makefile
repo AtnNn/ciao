@@ -759,6 +759,11 @@ ifdef HTMLSTYLE
 	-@chmod $(DATAMODE) $(DOCDIR)/lpdoc.css
 else
 endif
+ifdef EXTRAFILES
+	-@cp $(EXTRAFILES) $(DOCDIR)
+	-@cd $(DOCDIR) && chmod $(DATAMODE) $(EXTRAFILES)
+else
+endif
 	$(MAKE) updatehtmlindex
 # In this case the figures must be in $(DOCDIR)!
 	-@cp auto*.jpg $(DOCDIR)
@@ -781,6 +786,10 @@ uninstallhtmlindex:
 	-@rm -f $(DOCDIR)/$(BASEMAIN).htmlbullet
 	-@rm -f $(DOCDIR)/$(BASEMAIN).htmlindex
 	-@rm -f $(DOCDIR)/auto*.jpg
+ifdef EXTRAFILES
+	-@cd $(DOCDIR) && rm -f $(EXTRAFILES)
+else
+endif
 	$(MAKE) updatehtmlindex
 	$(MAKE) uninstallreadmeanddir
 

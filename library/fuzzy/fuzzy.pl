@@ -12,6 +12,8 @@
 :- aggr dluka.
 :- aggr dprod.
 
+
+
 :- new_declaration(is_fuzzy/3,on).
 
 

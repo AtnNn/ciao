@@ -211,6 +211,7 @@ nf_coeffs([],     []).
 nf_coeffs([_|Xs], [0|Cs]) :-
   nf_coeffs(Xs, Cs).
 
+
 delete_ordered(Vid, [Car|Cdr], RCdr) :-
   compare(Rel, Car, Vid),
   ( Rel= =,

@@ -1,4 +1,4 @@
-/* Copyright (C) 1996 UPM-CLIP */
+/* Copyright (C) 1996-2002 UPM-CLIP */
 
 :- module(dict,[ dictionary/1, dictionary/5, dic_node/2,
 		 dic_lookup/3, dic_lookup/4,

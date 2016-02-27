@@ -19,11 +19,11 @@ install:
 	mkdir -p $(EXAMPLESDIR)
 	-chmod $(EXECMODE) $(EXAMPLESDIR)
 	-cp -pR $(ALLFILES) $(EXAMPLESDIR)
-	(cd $(EXAMPLESDIR) && find . -type d -exec chmod $(EXECMODE) {} \; )
-	(cd $(EXAMPLESDIR) && find . ! -type d -exec chmod $(DATAMODE) {} \; )
-	(cd $(EXAMPLESDIR) && find . -name '*~' -exec 'rm' -f {} \; )
-	(cd $(EXAMPLESDIR) && find . -name '*.po' -exec 'rm' -f {} \; )
-	(cd $(EXAMPLESDIR) && find . -name '*.itf' -exec 'rm' -f {} \; )
+	-@(cd $(EXAMPLESDIR) && find . -type d -exec chmod $(EXECMODE) {} \; )
+	-@(cd $(EXAMPLESDIR) && find . ! -type d -exec chmod $(DATAMODE) {} \; )
+	-@(cd $(EXAMPLESDIR) && find . -name '*~' -exec 'rm' -f {} \; )
+	-@(cd $(EXAMPLESDIR) && find . -name '*.po' -exec 'rm' -f {} \; )
+	-@(cd $(EXAMPLESDIR) && find . -name '*.itf' -exec 'rm' -f {} \; )
 
 uninstall:
 	@echo "*** ---------------------------------------------------------"

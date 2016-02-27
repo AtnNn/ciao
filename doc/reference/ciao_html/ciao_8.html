@@ -1,12 +1,12 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 April 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 6 May 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - The interactive debugger</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_7.html">previous</A>, <A HREF="ciao_9.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_7.html">previous</A>, <A HREF="ciao_9.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
@@ -22,39 +22,39 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_7.html">previous</A>, <
 
 <P>
 The Ciao program development environment includes a number of advanced 
-<A NAME="IDX620"></A>
-debugging tools, such as a 
 <A NAME="IDX621"></A>
-source-level debugger, the 
+debugging tools, such as a 
 <A NAME="IDX622"></A>
-<CODE>ciaopp</CODE> preprocessor, and some 
+source-level debugger, the 
 <A NAME="IDX623"></A>
-execution visualizers. Herein we discuss the interactive debugger available in the standard 
+<CODE>ciaopp</CODE> preprocessor, and some 
 <A NAME="IDX624"></A>
-top-level, which allows tracing the control flow of programs, in a similar way to other popular Prolog systems. This is a classical Byrd <EM>box-type</EM> 
+execution visualizers. Herein we discuss the interactive debugger available in the standard 
 <A NAME="IDX625"></A>
+top-level, which allows tracing the control flow of programs, in a similar way to other popular Prolog systems. This is a classical Byrd <EM>box-type</EM> 
 <A NAME="IDX626"></A>
-<EM>debugger</EM> 
 <A NAME="IDX627"></A>
+<EM>debugger</EM> 
 <A NAME="IDX628"></A>
-[Byr80,BBP81], with some enhancements, most notably being able to track the execution on the source program. We also discuss the 
 <A NAME="IDX629"></A>
+[Byr80,BBP81], with some enhancements, most notably being able to track the execution on the source program. We also discuss the 
+<A NAME="IDX630"></A>
 embedded debugger, which is a version of the debugger which can be embedded into executables so that an interactive debugging session can be triggered at any time while running that executable without needing the top-level shell. 
 
 
 <P>
 Byrd's 
-<A NAME="IDX630"></A>
-Procedure Box model of debugging execution provides a simple way of visualising control flow, including backtracking. Control flow is in principle viewed at the predicate level, rather than at the level of individual clauses. The Ciao debugger has the ability to mark selected modules and/or files for debugging (traditional and source debugging), rather than having to exhaustively trace your program. It also allows to selectively set 
 <A NAME="IDX631"></A>
-spy-points and 
+Procedure Box model of debugging execution provides a simple way of visualising control flow, including backtracking. Control flow is in principle viewed at the predicate level, rather than at the level of individual clauses. The Ciao debugger has the ability to mark selected modules and/or files for debugging (traditional and source debugging), rather than having to exhaustively trace your program. It also allows to selectively set 
 <A NAME="IDX632"></A>
+spy-points and 
+<A NAME="IDX633"></A>
 breakpoints. Spy-points allow the programmer to nominate interesting predicates at which program execution is to pause so that the programmer can interact with the debugger. Breakpoints are similar to spy-points, but allow pausing at a specific line in the code, corresponding to a particular literal. There is a wide choice of control and information options available during debugging interaction. 
 
 
 <P>
 <STRONG>Note:</STRONG> While the debugger described herein can be used in a standalone way (i.e., from a operating system shell or terminal window) in the same way as other Prolog debuggers, the most convenient way of debugging Ciao programs is by using the emacs mode (see section <A HREF="ciao_12.html#SEC93">Using Ciao inside GNU emacs</A>), i.e., debugging from within the 
-<A NAME="IDX633"></A>
+<A NAME="IDX634"></A>
 <CODE>emacs</CODE> editor / programming environment. 
 
 
@@ -76,11 +76,11 @@ breakpoints. Spy-points allow the programmer to nominate interesting predicates 
 
 <P>
 Usually, when a program is not working properly, the programmer has a feeling of which are the modules where the fault may be. Since full-fledged debugging is only available on <EM>interpreted</EM> (called 
-<A NAME="IDX634"></A>
 <A NAME="IDX635"></A>
-<EM>interpreted mode</EM> in traditional Prolog systems) modules, which are executed much slower than compiled modules, there is the posibility of telling the top level which particular modules are to be loaded in 
 <A NAME="IDX636"></A>
+<EM>interpreted mode</EM> in traditional Prolog systems) modules, which are executed much slower than compiled modules, there is the posibility of telling the top level which particular modules are to be loaded in 
 <A NAME="IDX637"></A>
+<A NAME="IDX638"></A>
 <EM>interpreted mode</EM>, with the aim of debugging them. The simplest way of achieving this is by executing in the Ciao shell prompt, for each suspicious module <CODE>Module</CODE> in the program, a command like this: 
 
 
@@ -100,52 +100,52 @@ An alternative way of loading a module in interpreted mode exists which will ins
 
 <P>
 This is most useful when running the top-level inside the 
-<A NAME="IDX638"></A>
-<CODE>emacs</CODE> editor since in that case the Ciao 
 <A NAME="IDX639"></A>
-emacs mode allows performing full 
+<CODE>emacs</CODE> editor since in that case the Ciao 
 <A NAME="IDX640"></A>
+emacs mode allows performing full 
+<A NAME="IDX641"></A>
 source-level debugging in each module marked as above, i.e., the source lines being executed will be highlighted dynamically during debugging in a window showing the source code of the module. 
 
 
 <P>
-<A NAME="IDX641"></A>
 <A NAME="IDX642"></A>
+<A NAME="IDX643"></A>
 Note that all files with no module declaration belong to the pseudo-module <CODE>user</CODE>, so the command to be issued for debugging a user file, say <CODE>foo.pl</CODE>, would be <CODE>debug_module(user)</CODE> or <CODE>debug_module_source(user)</CODE>, and not <CODE>debug_module(foo)</CODE>. 
 
 
 <P>
 The two ways of performing 
-<A NAME="IDX643"></A>
-source-level debugging are fully compatible between them, i.e., Ciao allows having some modules loaded with 
 <A NAME="IDX644"></A>
-<CODE>debug_module/1</CODE> and others with 
+source-level debugging are fully compatible between them, i.e., Ciao allows having some modules loaded with 
 <A NAME="IDX645"></A>
+<CODE>debug_module/1</CODE> and others with 
+<A NAME="IDX646"></A>
 <CODE>debug_module_source/1</CODE>. To change from one interpreted mode to the other mode it suffices to select the module with the new interpreted mode (debugger mode), using the appropiate command, and reload the module. 
 
 
 <P>
 The commands above perform in fact two related actions: first, they let the compiler know that if a file containing a module with this name is loaded, it should be loaded in interpreted mode (source or traditional). In addition, they instruct the debugger to actually prepare for debugging the code belonging to that module. After that, the modules which are to be debugged have to be (re)loaded so that they are compiled or loaded for interpretation in the appropriate way. The nice thing is that, due to the modular behaviour of the compiler/top-level, if the modules are part of a bigger application, it suffices to load the main module of the application, since this will automatically force the dependent modules which have changed to be loaded in the appropriate way, including those whose 
-<A NAME="IDX646"></A>
 <A NAME="IDX647"></A>
+<A NAME="IDX648"></A>
 <EM>loading mode</EM> has changed (i.e., changing the loading mode has the effect of forcing the required re-loading of the module at the appropriate time). 
 
 
 <P>
 Later in the debugging process, as the bug location is isolated, typically one will want to restrict more and more the modules where debugging takes place. To this end, and without the need for reloading, one can tell the debugger to not consider a module for debugging issuing a 
-<A NAME="IDX648"></A>
-<CODE>nodebug_module/1</CODE> command, which counteracts a 
 <A NAME="IDX649"></A>
-<CODE>debug_module/1</CODE> or 
+<CODE>nodebug_module/1</CODE> command, which counteracts a 
 <A NAME="IDX650"></A>
+<CODE>debug_module/1</CODE> or 
+<A NAME="IDX651"></A>
 <CODE>debug_module_source/1</CODE> command with the same module name, and reloading it (or the main file). 
 
 
 <P>
 There are also two top-level commands 
-<A NAME="IDX651"></A>
-<CODE>set_debug_mode/1</CODE> and 
 <A NAME="IDX652"></A>
+<CODE>set_debug_mode/1</CODE> and 
+<A NAME="IDX653"></A>
 <CODE>set_nodebug_mode/1</CODE>, which accept as argument a file spec (i.e., <CODE>library(foo)</CODE> or <CODE>foo</CODE>, even if it is a user file) to be able to load a file in interpreted mode without changing the set of modules that the debugger will try to spy. 
 
 
@@ -155,7 +155,7 @@ There are also two top-level commands
 
 <P>
 Once modules or user files are marked for debugging and reloaded, the traditional debugging shell commands can be used (the documentation of the 
-<A NAME="IDX653"></A>
+<A NAME="IDX654"></A>
 <CODE>debugger</CODE> library following this chapter contains all the commands and their description), with the same meaning as in other classical Prolog systems. The differences in their behavior are: 
 
 
@@ -166,35 +166,35 @@ Once modules or user files are marked for debugging and reloaded, the traditiona
 
 <LI>
 
-<A NAME="IDX654"></A>
-<CODE>nospy/1</CODE> and 
 <A NAME="IDX655"></A>
+<CODE>nospy/1</CODE> and 
+<A NAME="IDX656"></A>
 <CODE>spy/1</CODE> accept sequences of predicate specs, and they will search for those predicates only in the modules marked for debugging (traditional or source-level debugging). 
 
 <LI>
 
-<A NAME="IDX656"></A>
-<CODE>breakpt/6</CODE> and 
 <A NAME="IDX657"></A>
-<CODE>nobreakpt/6</CODE> allow setting breakpoints at selected clause literals and will search for those literals only in the modules marked for 
+<CODE>breakpt/6</CODE> and 
 <A NAME="IDX658"></A>
-source-level debugging (modules marked with 
+<CODE>nobreakpt/6</CODE> allow setting breakpoints at selected clause literals and will search for those literals only in the modules marked for 
 <A NAME="IDX659"></A>
+source-level debugging (modules marked with 
+<A NAME="IDX660"></A>
 <CODE>debug_module_source/1</CODE>). 
 
 </UL>
 
 <P>
 In particular, the system is initially in 
-<A NAME="IDX660"></A>
-nodebug mode, in which no tracing is performed. The system can be put in 
 <A NAME="IDX661"></A>
-debug mode by a call to 
+nodebug mode, in which no tracing is performed. The system can be put in 
 <A NAME="IDX662"></A>
-<CODE>debug/0</CODE> in which execution of queries will proceed until the first <EM>spy-point</EM> or <EM>breakpoint</EM>. Alternatively, the system can be put in 
+debug mode by a call to 
 <A NAME="IDX663"></A>
-trace mode by a call to 
+<CODE>debug/0</CODE> in which execution of queries will proceed until the first <EM>spy-point</EM> or <EM>breakpoint</EM>. Alternatively, the system can be put in 
 <A NAME="IDX664"></A>
+trace mode by a call to 
+<A NAME="IDX665"></A>
 <CODE>trace/0</CODE> in which all predicates will be trace. 
 
 
@@ -218,26 +218,28 @@ and recompiling the application.
 
 
 <P>
-In order to debug, or trace, correctly the complete code these declarations <EM>must</EM> be the last ones. Also it is possible to add the package in the module declaration using the predicate 
-<A NAME="IDX665"></A>
-<CODE>module/3</CODE>. 
+In order to debug, or trace, correctly the complete code these declarations <EM>must</EM> appear the last ones of all 
+<A NAME="IDX666"></A>
+<CODE>use_package</CODE> declarations used. Also it is possible, as usual, to add the debugging package(s) in the module declaration using the predicate 
+<A NAME="IDX667"></A>
+<CODE>module/3</CODE> (and they should also be the last ones). 
 
 
 <P>
 The embedded debugger has limitations over the interpreted debugger. The most important is that the "retry" option is not available. But it is possible to add, and remove, 
-<A NAME="IDX666"></A>
-spy-points and 
-<A NAME="IDX667"></A>
-breakpoins using the predicates 
 <A NAME="IDX668"></A>
-<CODE>spy/1</CODE>, 
+spy-points and 
 <A NAME="IDX669"></A>
-<CODE>nospy/1</CODE>, 
+breakpoins using the predicates 
 <A NAME="IDX670"></A>
-<CODE>breakpt/6</CODE> and 
+<CODE>spy/1</CODE>, 
 <A NAME="IDX671"></A>
-<CODE>nobreakpt/6</CODE>, etc. These can be used in a clause declaration or as declarations. Also it is possible to add in the code predicates for issuing the debugger (i.e., use debug mode, and in a clause add the predicate 
+<CODE>nospy/1</CODE>, 
 <A NAME="IDX672"></A>
+<CODE>breakpt/6</CODE> and 
+<A NAME="IDX673"></A>
+<CODE>nobreakpt/6</CODE>, etc. These can be used in a clause declaration or as declarations. Also it is possible to add in the code predicates for issuing the debugger (i.e., use debug mode, and in a clause add the predicate 
+<A NAME="IDX674"></A>
 <CODE>trace/1</CODE>). 
 
 
@@ -246,13 +248,13 @@ The nodebug mode allows keeping the spy-points and breakpoints in the code inste
 
 
 <P>
-Note that in order to use the 
-<A NAME="IDX673"></A>
-embedded debugger the buffer where the program will run must be in the Ciao inferior mode (<KBD>M-x</KBD> <CODE>ciao-inferior-mode</CODE>). 
+Note that there is a particularly interesting way of using the 
+<A NAME="IDX675"></A>
+embedded debugger: if an <EM>application</EM> is run in a shell buffer which has been set with Ciao inferior mode (<KBD>M-x</KBD> <CODE>ciao-inferior-mode</CODE>) and this application starts emitting output from the embedded debugger (i.e., which contains the embedded debugger and is debugging its code) then the Ciao emacs mode will be able to follow these messages, for example tracking execution in the source level code. This also works if the application is written in a combination of languages, provided the parts written in Ciao are compiled with the embedded debugger package and is thus a covenient way of debugging multi-language applications. The only thing needed is to make sure that the output messages appear in a shell buffer that is in Ciao inferior mode. 
 
 
 <P>
-See the following example: 
+See the following as a general example of use of the embedded debugger: 
 
 <PRE>
 :- module( foo,[main/1],[assertions, debug]).
@@ -282,9 +284,9 @@ bar(X) :-
 
 <P>
 During debugging the interpreter prints out a sequence of goals in various states of instantiation in order to show the state that the program has reached in its execution. However, in order to understand what is occurring it is necessary to understand when and why the interpreter prints out goals. As in other programming languages, key points of interest are procedure entry and return, but in Prolog there is the additional complexity of backtracking. One of the major confusions that novice Prolog programmers have to face is the question of what actually happens when a goal fails and the system suddenly starts backtracking. The Procedure Box model of Prolog execution views program control flow in terms of movement about the program text. This model provides a basis for the debugging mechanism in the interpreter, and enables the user to view the behaviour of the program in a consistent way. It also provides the basis for the visualization performed on the source level program when source level program when 
-<A NAME="IDX674"></A>
+<A NAME="IDX676"></A>
 source-level debugging is activated within 
-<A NAME="IDX675"></A>
+<A NAME="IDX677"></A>
 <CODE>emacs</CODE>. 
  
 Let us look at an example Prolog procedure: 
@@ -320,7 +322,7 @@ This arrow represents a failure of the initial goal, which might occur if no cla
 
 <P>
 In terms of this model, the information we get about the procedure box is only the control flow through these four ports. This means that at this level we are not concerned with which clause matches, and how any subgoals are satisfied, but rather we only wish to know the initial goal and the final outcome. However, it can be seen that whenever we are trying to satisfy subgoals, what we are actually doing is passing through the ports of <EM>their</EM> respective boxes. If we were following this (e.g., activating 
-<A NAME="IDX676"></A>
+<A NAME="IDX678"></A>
 source-level debugging), then we would have complete information about the control flow inside the procedure box. 
 
 
@@ -338,7 +340,7 @@ Note that not all procedure calls are traced; there are a few basic predicates w
 
 <P>
 This section explains the two formats of the message output by the debugger at a port. All trace messages are output to the terminal regardless of where the current output stream is directed (which allows tracing programs while they are performing file I/O). The basic format, which will be shown in traditional debug and in source-level debugging within Ciao 
-<A NAME="IDX677"></A>
+<A NAME="IDX679"></A>
 <CODE>emacs</CODE> mode, is as follows: 
 
 
@@ -365,7 +367,7 @@ The number following this is the <EM>current depth</EM>; i.e., the number of dir
 
 <P>
 The second format, quite similar to the format explained above, is shown when using source-level debugging outside the Ciao 
-<A NAME="IDX678"></A>
+<A NAME="IDX680"></A>
 <CODE>emacs</CODE> mode, and it is as follows: 
 
 
@@ -377,13 +379,13 @@ S  13  7  Call: T user:descendant(dani,_123) ?
 
 <P>
 This format is identical to the format above except for the first line, which contains the information for location of the point in the source program text where execution is currently at. The first line contains the name of the source file, the start and end lines where the literal can be found, the substring to search for between those lines and the number of substrings to locate. This information for locating the point on the source file is not shown when executing the source-level debugger from the Ciao 
-<A NAME="IDX679"></A>
+<A NAME="IDX681"></A>
 <CODE>emacs</CODE> mode. 
 
 
 <P>
 Ports can be "unleashed" by calling the 
-<A NAME="IDX680"></A>
+<A NAME="IDX682"></A>
 <CODE>leash/1</CODE> predicate omiting that port in the argument. This means that the debugger will stop but user interaction is not possible for an unleashed port. Obviously, the <CODE>?</CODE> prompt will not be shown in such messages, since the user has specified that no interaction is desired at this point. 
 
 
@@ -391,8 +393,8 @@ Ports can be "unleashed" by calling the
 
 <H2><A NAME="SEC78" HREF="ciao_toc.html#TOC78">Options available during debugging</A></H2>
 <P>
-<A NAME="IDX681"></A>
-<A NAME="IDX682"></A>
+<A NAME="IDX683"></A>
+<A NAME="IDX684"></A>
 
 
 <P>
@@ -426,32 +428,32 @@ The only option which really needs to be remembered is '<CODE>h</CODE>' (followe
 
 <LI><CODE>c</CODE> (
 
-<A NAME="IDX683"></A>
-<A NAME="IDX684"></A>
+<A NAME="IDX685"></A>
+<A NAME="IDX686"></A>
 <EM>creep</EM>) 
 
 causes the debugger to single-step to the very next port and print a message. Then if the port is leashed the user is prompted for further interaction. Otherwise it continues creeping. If leashing is off, creep is the same as leap (see below) except that a complete trace is printed on the terminal. 
 
 <LI><CODE>l</CODE> (
 
-<A NAME="IDX685"></A>
-<A NAME="IDX686"></A>
+<A NAME="IDX687"></A>
+<A NAME="IDX688"></A>
 <EM>leap</EM>) 
 
 causes the interpreter to resume running the program, only stopping when a spy-point or breakpoint is reached (or when the program terminates). Leaping can thus be used to follow the execution at a higher level than exhaustive tracing. All that is needed to do is to set spy-points and breakpoints on an evenly spread set of pertinent predicates or lines, and then follow the control flow through these by leaping from one to the other. 
 
 <LI><CODE>s</CODE> (
 
-<A NAME="IDX687"></A>
-<A NAME="IDX688"></A>
+<A NAME="IDX689"></A>
+<A NAME="IDX690"></A>
 <EM>skip</EM>) 
 
 is only valid for Call and Redo ports, if it is issued in Exit or Fail ports it is equivalent to creep. It skips over the entire execution of the predicate. That is, no message will be seen until control comes back to this predicate (at either the Exit port or the Fail port). Skip is particularly useful while creeping since it guarantees that control will be returned after the (possibly complex) execution within the box. With skip then no message at all will appear until control returns to the Exit port or Fail port corresponding to this Call port or Redo port. This includes calls to predicates with spy-points and breakpoints set: they will be masked out during the skip. There is a way of overriding this: the <CODE>t</CODE> option after a <KBD>^C</KBD> interrupt will disable the masking. Normally, however, this masking is just what is required! 
 
 <LI><CODE>r</CODE> (
 
-<A NAME="IDX689"></A>
-<A NAME="IDX690"></A>
+<A NAME="IDX691"></A>
+<A NAME="IDX692"></A>
 <EM>retry</EM>) 
 
 can be used at any of the four ports (although at the Call port it has no effect). It transfers control back to the Call port of the box. This allows restarting an invocation when, for example, it has left the programmer with some weird result. The state of execution is exactly the same as in the original call (unless the invocation has performed side effects, which will not be undone). When a retry is performed the invocation counter is reset so that counting will continue from the current invocation number regardless of what happened before the retry. This is in accord with the fact that execution has, in operational terms, returned to the state before anything else was called. 
@@ -460,120 +462,120 @@ If an integer is supplied after the retry command, then this is taken as specify
 
 <LI><CODE>f</CODE> (
 
-<A NAME="IDX691"></A>
-<A NAME="IDX692"></A>
+<A NAME="IDX693"></A>
+<A NAME="IDX694"></A>
 <EM>fail</EM>) 
 
 can be used at any of the four ports (although at the Fail port it has no effect). It transfers control to the Fail port of the box, forcing the invocation to fail prematurely. If an integer is supplied after the command, then this is taken as specifying an invocation number and the system tries to get to the Fail port of the invocation box specified. It does this by continuously failing until it reaches the right place. Unfortunately, as before, this process cannot be guaranteed. 
 
 <LI><CODE>d</CODE> (
 
-<A NAME="IDX693"></A>
-<A NAME="IDX694"></A>
+<A NAME="IDX695"></A>
+<A NAME="IDX696"></A>
 <EM>display</EM>) 
 
 displays the current goal using <CODE>display/1</CODE>. See <CODE>w</CODE> below. 
 
 <LI><CODE>p</CODE> (
 
-<A NAME="IDX695"></A>
-<A NAME="IDX696"></A>
+<A NAME="IDX697"></A>
+<A NAME="IDX698"></A>
 <EM>print</EM>) 
 
 re-prints the current goal using <CODE>print/1</CODE>. Nested structures will be printed to the specified <EM>printdepth</EM> (see below). 
 
 <LI><CODE>w</CODE> (
 
-<A NAME="IDX697"></A>
-<A NAME="IDX698"></A>
+<A NAME="IDX699"></A>
+<A NAME="IDX700"></A>
 <EM>write</EM>) 
 
 writes the current goal on the terminal using <CODE>write/1</CODE>. 
 
 <LI><CODE>g</CODE> (
 
-<A NAME="IDX699"></A>
-<A NAME="IDX700"></A>
+<A NAME="IDX701"></A>
+<A NAME="IDX702"></A>
 <EM>ancestors</EM>) 
 
 provides a list of ancestors to the current goal, i.e., all goals that are hierarchically above the current goal in the calling sequence. It is always possible to jump to any goal in the ancestor list (by using retry, etc.). If an integer <CODE>n</CODE> is supplied, then only <CODE>n</CODE> ancestors will be printed. That is to say, the last <CODE>n</CODE> ancestors will be printed counting back from the current goal. Each entry in the list is preceded by the invocation number followed by the depth number (as would be given in a trace message). 
 
 <LI><CODE>n</CODE> (
 
-<A NAME="IDX701"></A>
-<A NAME="IDX702"></A>
+<A NAME="IDX703"></A>
+<A NAME="IDX704"></A>
 <EM>nodebug</EM>) 
 
 switches the debugger off. Note that this is the correct way to switch debugging off at a trace point. The <CODE>@</CODE> option cannot be used because it always returns to the debugger. 
 
 <LI><CODE>=</CODE> (
 
-<A NAME="IDX703"></A>
-<A NAME="IDX704"></A>
+<A NAME="IDX705"></A>
+<A NAME="IDX706"></A>
 <EM>debugging</EM>) 
 
 outputs information concerning the status of the current debugging session. 
 
 <LI><CODE>+</CODE>
 
-<A NAME="IDX705"></A>
-<A NAME="IDX706"></A>
+<A NAME="IDX707"></A>
+<A NAME="IDX708"></A>
 <EM>spy</EM> 
 
 sets a spy-point on the current goal. 
 
 <LI><CODE>-</CODE> (
 
-<A NAME="IDX707"></A>
-<A NAME="IDX708"></A>
+<A NAME="IDX709"></A>
+<A NAME="IDX710"></A>
 <EM>nospy</EM>) 
 
 removes the spy-point from the current goal. 
 
 <LI><CODE>a</CODE> (
 
-<A NAME="IDX709"></A>
-<A NAME="IDX710"></A>
+<A NAME="IDX711"></A>
+<A NAME="IDX712"></A>
 <EM>abort</EM>) 
 
 causes an abort of the current execution. All the execution states built so far are destroyed and the system is put right back at the top-level of the interpreter. (This is the same as the built-in predicate <CODE>abort/0</CODE>.) 
 
 <LI><CODE>@</CODE> (
 
-<A NAME="IDX711"></A>
-<A NAME="IDX712"></A>
+<A NAME="IDX713"></A>
+<A NAME="IDX714"></A>
 <EM>command</EM>) 
 
 allows calling arbitrary goals. The initial message <CODE>| ?- </CODE> will be output on the terminal, and a command is then read from the terminal and executed as if it was at top-level. 
 
 <LI><CODE>u</CODE> (
 
-<A NAME="IDX713"></A>
-<A NAME="IDX714"></A>
+<A NAME="IDX715"></A>
+<A NAME="IDX716"></A>
 <EM>unify</EM>() 
 
 is available at the Call port and gives the option of providing a solution to the goal from the terminal rather than executing the goal. This is convenient, e.g., for providing a "stub" for a predicate that has not yet been written. A prompt <CODE>|: </CODE> will be output on the terminal, and the solution is then read from the terminal and unified with the goal. 
 
 <LI><CODE>&#60;</CODE> (
 
-<A NAME="IDX715"></A>
-<A NAME="IDX716"></A>
+<A NAME="IDX717"></A>
+<A NAME="IDX718"></A>
 <EM>printdepth</EM>) 
 
 sets a limit for the subterm nesting level that is printed in messages. While in the debugger, a printdepth is in effect for limiting the subterm nesting level when printing the current goal. When displaying or writing the current goal, all nesting levels are shown. The limit is initially 10. This command, without arguments, resets the limit to 10. With an argument of <CODE>n</CODE> the limit is set to <CODE>n</CODE>. 
 
 <LI><CODE>^</CODE> (
 
-<A NAME="IDX717"></A>
-<A NAME="IDX718"></A>
+<A NAME="IDX719"></A>
+<A NAME="IDX720"></A>
 <EM>subterm</EM>) 
 
 sets the subterm to be printed in messages. While at a particular port, a current subterm of the current goal is maintained. It is the current subterm which is displayed, printed, or written when prompting for a debugger command. Used in combination with the printdepth, this provides a means for navigating in the current goal for focusing on the part which is of interest. The current subterm is set to the current goal when arriving at a new port. This command, without arguments, resets the current subterm to the current goal. With an argument of <CODE>n</CODE> (greater than 0 and less or equal to the number of subterms of the current subterm), the current subterm is replaced by its <CODE>n</CODE>'th subterm. With an argument of <CODE>0</CODE>, the current subterm is replaced by its parent term. 
 
 <LI><CODE>?</CODE> or <CODE>h</CODE> (
 
-<A NAME="IDX719"></A>
-<A NAME="IDX720"></A>
+<A NAME="IDX721"></A>
+<A NAME="IDX722"></A>
 <EM>help</EM>) 
 
 displays the table of options given above. 
@@ -585,8 +587,8 @@ displays the table of options given above.
 <H2><A NAME="SEC79" HREF="ciao_toc.html#TOC79">Calling predicates that are not exported by a module</A></H2>
 
 <P>
-The Ciao module system does not allow calling predicates which are not exported during debugging. However, as an aid during debuggig, this is allowed (only from the top-level and for modules which are in debug mode or source-level debug mode) using the 
-<A NAME="IDX721"></A>
+The Ciao module system does not allow calling predicates which are not exported during debugging. However, as an aid during debugging, this is allowed (only from the top-level and for modules which are in debug mode or source-level debug mode) using the 
+<A NAME="IDX723"></A>
 <CODE>call_in_module/2</CODE> predicate. 
 
 
@@ -600,17 +602,17 @@ Note that this does not affect analysis or optimization issues, since it only wo
 
 <P>
 Originally written by Andrzej Ciepielewski. Minor modifications by Mats Carlsson. Later modifications (17 Dec 87) by Takashi Chikayama (making tracer to use 
-<A NAME="IDX722"></A>
-<CODE>print/1</CODE> rather than 
-<A NAME="IDX723"></A>
-<CODE>write/1</CODE>, temporarily switching debugging flag off while writing trace message and within "break" level). Additional modifications by Kish Shen (May 88): subterm navigation, handle unbound args in 
 <A NAME="IDX724"></A>
-<CODE>spy/1</CODE> and 
+<CODE>print/1</CODE> rather than 
 <A NAME="IDX725"></A>
+<CODE>write/1</CODE>, temporarily switching debugging flag off while writing trace message and within "break" level). Additional modifications by Kish Shen (May 88): subterm navigation, handle unbound args in 
+<A NAME="IDX726"></A>
+<CODE>spy/1</CODE> and 
+<A NAME="IDX727"></A>
 <CODE>nospy/1</CODE>, trapping arithmetics errors in debug mode. Adapted then to &#38;-Prolog and Ciao by D. Cabeza and included in the Ciao version control system. Extended for source-level debugging by Manuel C. Rodr&iacute;guez. (See changelog if included in the document for more detailed documentation of the later changes.) 
 
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_7.html">previous</A>, <A HREF="ciao_9.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_7.html">previous</A>, <A HREF="ciao_9.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

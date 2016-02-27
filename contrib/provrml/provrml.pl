@@ -29,7 +29,7 @@
 :- comment(author, "Universidad Polit@'{e}cnica de Madrid").
 
 :- comment(copyright,"
-Copyright @copyright{} 1998-2001 The Clip Group.
+Copyright @copyright{} 1998-2002 The Clip Group.
 
 @include{Copyright.Manuals}
 ").

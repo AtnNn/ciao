@@ -17,8 +17,9 @@
 
 :- comment(title,"Term output").  
 
-:- comment(author,"Adapted from shared code written by Richard A. O'Keefe.
-Changes by Mats Carlsson, Daniel Cabeza, and Manuel Hermenegildo.").
+:- comment(author,"Adapted from shared code written by Richard
+A. O'Keefe.  Changes by Mats Carlsson, Daniel Cabeza, Manuel
+Hermenegildo, and Manuel Carro.").
 
 :- comment(module,"This library provides different predicates for term
            output, additional to the kernel predicates
@@ -293,6 +294,9 @@ sticky_contexts(other, other).
 sticky_contexts(alpha, quote).
 sticky_contexts(quote, alpha).
 */
+
+:- pred printable_char(+Char) => number # 
+"@var{Char} is the code of a character which can be printed.".
 
 printable_char(V) :- var(V), !, fail.
 printable_char(9).  % TAB
@@ -756,6 +760,9 @@ numbervars1_(A0, A, X, N0, N) :-
 
 
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*7+197,2002/04/17,20:02*28+'CEST'), "More comments
+(MCL)").
 
 :- comment(version(1*5+158,2000/05/30,13:08*10+'CEST'), "Added
 documentation for portray_attribute.  (MCL)").

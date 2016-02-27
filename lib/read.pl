@@ -1,6 +1,6 @@
 /*  Adapted from shared code written by D.H.D.Warren + Richard O'Keefe; */
 /*  all changes                                                         */
-/*  Copyright (C) 1997 1998 UPM-CLIP. */
+/*  Copyright (C) 1997-2002 UPM-CLIP. */
 
 :- module(read,[read/1, read/2, read_term/2, read_term/3,
                 read_top_level/3, second_prompt/2],[assertions,isomodes]).
@@ -13,7 +13,18 @@
 
 :- comment(title,"Term input").  
 
+:- comment(summary,"This module provides falicities to read terms in
+Prolog syntax.  This is very convenient in many cases (and not only if you are
+writing a Prolog compiler), because Prolog terms are easy to write and
+        can convey a lot of information in a human-readable
+ fashion.").
+
+:- comment(author, "First versions from SICStus 0.6 code; additional
+        changes and documentation by Daniel Cabeza and Manuel Carro").
+
 :- set_prolog_flag(multi_arity_warnings, off).
+
+
 
 :- comment(define_flag/3,"Defines flags as follows:
 	@includedef{define_flag/3}
@@ -30,7 +41,17 @@
 
 define_flag(read_hiord, [on,off], off).
 
-:- pred read(+Stream,?Term) + iso
+:- comment(read(Term), "Like @tt{read(Stream,Term)} with @var{Stream}
+        associated to the current input stream.").
+
+:- pred read(?Term) + iso.
+
+read(X) :-
+        current_input(Stream),
+        read_internal(X, Stream, Stream, _, _, _, read/1).
+
+
+:- pred read(+Stream,?Term) => stream * term + iso
 # "The next term, delimited by a full-stop (i.e., a @tt{.} followed by
    either a space or a control character), is read from @var{Stream}
    and is unified with @var{Term}. The syntax of the term must agree
@@ -44,21 +65,18 @@ read(Stream, X) :-
         current_input(CurIn),
         read_internal(X, Stream, CurIn, _, _, _, read/2).
 
-:- comment(read(Term), "Like @tt{read(Stream,Term)} with @var{Stream}
-        associated to the current input stream.").
 
-:- pred read(?Term) + iso.
 
-read(X) :-
-        current_input(Stream),
-        read_internal(X, Stream, Stream, _, _, _, read/1).
-
-:- pred read_term(+Stream,?Term,+Options) + iso.
+:- pred read_term(+Stream,?Term,+Options) => 
+        stream * term * list(read_option) + iso # 
+"Reads a @var{Term} from @var{Stream} with the ISO-Prolog
+@var{Options}.  These options can control the behavior of read term (see @pred{read_option/1}).".
 
 read_term(Stream, X, Options) :-
         read_term_aux(Options, Stream, 3, X).
 
-:- pred read_term(?Term,+Options) + iso.
+:- pred read_term(?Term,+Options) => term * list(read_option) + iso 
+# "Like @pred{read_term/3}, but reading from the @concept{current input}".
 
 read_term(X, Options) :-
         current_input(Stream),
@@ -83,6 +101,22 @@ option_list([O|Os], Vs, Ns, Ss, Ls, Dict, Arg) :- !,
         option_list(Os, Vs, Ns, Ss, Ls, Dict, Arg).
 option_list(Os, _, _, _, _, _, Arg) :-
         throw(error(type_error(list,Os),read_term/Arg-Arg)).
+
+
+:- comment(doinclude, read_option/1).
+
+:- prop read_option(?Option) => atom + regtype # "@var{Option} is an
+allowed @pred{read_term/[2,3]} option. These options are:
+@includedef{read_option/1}
+They can be used to return the singleton
+variables in the term, a list of variables, etc.".
+
+
+read_option(variables(_V)).
+read_option(variable_names(_N)).
+read_option(singletons(_S)).
+read_option(lines(_StartLine, _EndLine)).
+read_option(dictionary(_Dict)).
 
 option(V, _, _, _, _, _, Arg) :- var(V), !,
         throw(error(instantiation_error,read_term/Arg-Arg)).
@@ -389,6 +423,11 @@ token_item(X,          X).
 
 :- data second_prompt/1.
 
+:- pred second_prompt(?Old, ?New) => atom * atom # "Changes the prompt
+        (the @em{second prompt}, as oposed to the first one, used by
+        the toplevel) used by @pred{read/2} and friends to @var{New},
+        and returns the current one in @var{Old}.".
+
 second_prompt('   ').
 
 second_prompt(Old, New) :-
@@ -400,6 +439,9 @@ second_prompt(Old, New) :-
         ), !.
 
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*7+196,2002/04/17,20:00*32+'CEST'), "Added more
+comments.  (MCL)").
 
 :- comment(version(1*7+43,2001/01/15,17:34*58+'CET'), "Changes to not
    require a layout char ending in prolog files.  (Daniel Cabeza

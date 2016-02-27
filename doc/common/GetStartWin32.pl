@@ -163,15 +163,14 @@ obviously skip them if you have done them already at that time):
 @cindex{.ciaorc}
 @cindex{initialization file} 
 
-      The Ciao toplevel can be made to
-      execute upon startup a number of commands (such as, e.g.,
-      loading certain files or setting certain Prolog flags) contained
-      in an initialization file.  This file should be called
-      @file{.ciaorc} and placed in your @em{home} folder (e.g., the
-      same in which the @file{.emacs} file is put). You may need to
-      set the environment variable @tt{HOME} to the path of this
-      folder for the Ciao toplevel shell to be able to locate this
-      file on startup.
+      The Ciao toplevel can be made to execute upon startup a number
+      of commands (such as, e.g., loading certain files or setting
+      certain Prolog flags) contained in an initialization file.  This
+      file should be called @file{.ciaorc} and placed in your
+      @em{home} folder (e.g., the same in which the @file{.emacs} file
+      is put). You may need to set the environment variable @tt{HOME}
+      to the path of this folder for the Ciao toplevel shell to be
+      able to locate this file on startup.
 
 @subsection{Printing manuals (Win32)} 
 

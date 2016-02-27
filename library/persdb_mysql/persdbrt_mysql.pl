@@ -151,7 +151,7 @@ persLocation(db(Name, User, Password, Machine:Port)) :-
 
 %% The Free Software Foundation.
 :- comment(copyright,"
-Copyright @copyright{} 1996-98 The CLIP Group
+Copyright @copyright{} 1996-2002 The CLIP Group
 
 @include{/home/clip/Systems/ciao/doc/common/Copyright.Manuals}
 ").

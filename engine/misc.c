@@ -1,4 +1,4 @@
-/* Copyright (C) 1996,1997,1998, UPM-CLIP */
+/* Copyright (C) 1996,1997,1998, 1999, 2000, 2001, 2002  UPM-CLIP */
 
 #include "threads.h"
 #include "locks.h"
@@ -316,6 +316,7 @@ BOOL prolog_internal_call(Arg)
   Arg->next_insn = internal_calling;
   wam(Arg, NULL);
   Arg->next_insn = next_insn;
+  return TRUE;
 }
 #endif
 

@@ -94,6 +94,7 @@ dostateng:
 	 $(MAKE) $(MFLAGS) $(ENGINENAME) ADDOBJ='$(STATOBJ)' \
 	CURRLIBS='$(LIBS) $(STAT_LIBS)')
 	cp $(OBJDIR)/$(ENGINENAME) $(OBJDIR)/$(ENGINENAME).sta
+	@-chmod $(EXECMODE) $(OBJDIR)/$(ENGINENAME).sta
 
 
 commoneng:
@@ -164,13 +165,13 @@ bin/$(CIAOARCH)$(CIAODEBUG):
 	   rm -f configure.h
 
 createsrcdir:
-	if test ! -d $(SRC)/bin ; then \
+	-if test ! -d $(SRC)/bin ; then \
 	  mkdir $(SRC)/bin ; \
 	  touch $(SRC)/bin/NODISTRIBUTE ; \
 	  chmod $(EXECMODE) $(SRC)/bin ; \
 	  chmod $(DATAMODE) $(SRC)/bin/NODISTRIBUTE ; \
         fi
-	if test ! -d $(OBJDIR) ; then \
+	-if test ! -d $(OBJDIR) ; then \
 	  mkdir $(OBJDIR) ; chmod $(EXECMODE) $(OBJDIR) ; fi
 
 createincludedir:

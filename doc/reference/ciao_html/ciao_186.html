@@ -1,37 +1,51 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 April 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 6 May 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - boundary (library)</TITLE>
+<TITLE>The Ciao Prolog System               - ProVRML - a Prolog interface for VRML</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_185.html">previous</A>, <A HREF="ciao_187.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_185.html">previous</A>, <A HREF="ciao_187.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC691" HREF="ciao_toc.html#TOC691">boundary (library)</A></H1>
+<H1><A NAME="SEC729" HREF="ciao_toc.html#TOC729">ProVRML - a Prolog interface for VRML</A></H1>
 <P>
-<A NAME="IDX6892"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 0.1#1 (1998/12/14, 19:22:27 MET)
+<A NAME="IDX7134"></A>
 
 
 <P>
-This module offers predicate to check values according to their boundaries and offers lists of possible node ascendents.
+<STRONG>Author(s):</STRONG> G&ouml;ran Smedb&auml;ck, (Some changes by MCL), <CODE>clip@dia.fi.upm.es</CODE>, <CODE>http://www.clip.dia.fi.upm.es/</CODE>, The CLIP Group, Facultad de Inform&aacute;tica, Universidad Polit&eacute;cnica de Madrid.
+
+
+<P>
+<STRONG>Version:</STRONG> 0.1#1 (1998/12/10, 16:19:45 MET)
+
+
+<P>
+<A NAME="IDX7135"></A>
+<CODE>ProVRML</CODE> is Prolog library to handle VRML code. The library consists of modules to handle the tokenising, that is breaking the VRML code into smaller parts that can be analysed further. The further analysis will be the parsing. This is a complex part of the library and consists of several modules to handle errors and value check. When the parsing is done we have the Prolog terms of the VRML code. The terms are quite similar to the origin VRML code and can easily be read if you recognise that syntax. 
+
+
+<P>
+This Prolog terms of the VRML code is then possible to use for analysis, reconstruction, reverse enginering, building blocks for automatic generation of VRML code. There are several possibilities and these are only some of them. 
+
+
+<P>
+When you are done with the Prolog terms for the code, you would probably want to reverse the action and return to VRML code. This is done with the code generation modules. These are built up in more or less the same manner as the parser modules. 
 
 
 
 <UL>
-<LI><A HREF="ciao_186.html#SEC692">Usage and interface (boundary)</A>
-<LI><A HREF="ciao_186.html#SEC693">Documentation on exports (boundary)</A>
+<LI><A HREF="ciao_186.html#SEC730">Usage and interface (provrml)</A>
+<LI><A HREF="ciao_186.html#SEC731">Documentation on exports (provrml)</A>
+<LI><A HREF="ciao_186.html#SEC732">Documentation on internals (provrml)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC692" HREF="ciao_toc.html#TOC692">Usage and interface (<CODE>boundary</CODE>)</A></H2>
+<H2><A NAME="SEC730" HREF="ciao_toc.html#TOC730">Usage and interface (<CODE>provrml</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -39,7 +53,7 @@ This module offers predicate to check values according to their boundaries and o
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(boundary)).</CODE>
+<CODE>:- use_module(library(provrml)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -48,16 +62,28 @@ This module offers predicate to check values according to their boundaries and o
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6893"></A>
-<CODE>boundary_check/3</CODE>, 
-<A NAME="IDX6894"></A>
-<CODE>boundary_rotation_first/2</CODE>, 
-<A NAME="IDX6895"></A>
-<CODE>boundary_rotation_last/2</CODE>, 
-<A NAME="IDX6896"></A>
-<CODE>reserved_words/1</CODE>, 
-<A NAME="IDX6897"></A>
-<CODE>children_nodes/1</CODE>.
+<A NAME="IDX7136"></A>
+<CODE>vrml_web_to_terms/2</CODE>, 
+<A NAME="IDX7137"></A>
+<CODE>vrml_file_to_terms/2</CODE>, 
+<A NAME="IDX7138"></A>
+<CODE>vrml_web_to_terms_file/2</CODE>, 
+<A NAME="IDX7139"></A>
+<CODE>vrml_file_to_terms_file/2</CODE>, 
+<A NAME="IDX7140"></A>
+<CODE>terms_file_to_vrml/2</CODE>, 
+<A NAME="IDX7141"></A>
+<CODE>terms_file_to_vrml_file/2</CODE>, 
+<A NAME="IDX7142"></A>
+<CODE>terms_to_vrml_file/2</CODE>, 
+<A NAME="IDX7143"></A>
+<CODE>terms_to_vrml/2</CODE>, 
+<A NAME="IDX7144"></A>
+<CODE>vrml_to_terms/2</CODE>, 
+<A NAME="IDX7145"></A>
+<CODE>vrml_in_out/2</CODE>, 
+<A NAME="IDX7146"></A>
+<CODE>vrml_http_access/2</CODE>.
 
 </UL>
 
@@ -68,26 +94,18 @@ This module offers predicate to check values according to their boundaries and o
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX6898"></A>
-<CODE>aggregates</CODE>, 
-<A NAME="IDX6899"></A>
-<CODE>dynamic</CODE>, 
-<A NAME="IDX6900"></A>
-<CODE>iso_misc</CODE>, 
-<A NAME="IDX6901"></A>
-<CODE>iso_byte_char</CODE>, 
-<A NAME="IDX6902"></A>
-<CODE>iso_incomplete</CODE>, 
-<A NAME="IDX6903"></A>
-<CODE>operators</CODE>, 
-<A NAME="IDX6904"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX6905"></A>
-<CODE>write</CODE>, 
-<A NAME="IDX6906"></A>
-<CODE>provrml/internal_types</CODE>, 
-<A NAME="IDX6907"></A>
-<CODE>provrml/error</CODE>.
+<A NAME="IDX7147"></A>
+<CODE>pillow/http</CODE>, 
+<A NAME="IDX7148"></A>
+<CODE>pillow/html</CODE>, 
+<A NAME="IDX7149"></A>
+<CODE>provrml/io</CODE>, 
+<A NAME="IDX7150"></A>
+<CODE>provrml/parser</CODE>, 
+<A NAME="IDX7151"></A>
+<CODE>provrml/generator</CODE>, 
+<A NAME="IDX7152"></A>
+<CODE>lists</CODE>.
 
 </UL>
 
@@ -97,130 +115,315 @@ This module offers predicate to check values according to their boundaries and o
 
 
 
-<H2><A NAME="SEC693" HREF="ciao_toc.html#TOC693">Documentation on exports (<CODE>boundary</CODE>)</A></H2>
+<H2><A NAME="SEC731" HREF="ciao_toc.html#TOC731">Documentation on exports (<CODE>provrml</CODE>)</A></H2>
 <P>
-<A NAME="IDX6908"></A>
-<A NAME="IDX6909"></A>
+<A NAME="IDX7153"></A>
+<A NAME="IDX7154"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>boundary_check/3:</B>
-<DD><A NAME="IDX6910"></A>
+<DT><span class="define">PREDICATE:</span> <B>vrml_web_to_terms/2:</B>
+<DD><A NAME="IDX7155"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>boundary_check(+Value_to_check,+Init_value,+Bound)</CODE>
+<STRONG>Usage:</STRONG> <CODE>vrml_web_to_terms(+WEBAddress,-Terms)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> This predicate check the boundaries of the given value according to the boudary values. If the value is wrong according to the boundaries, the value is checked according to the initial value given. If the value continues to be wrong, an error will be raised accordingly.
+<LI><EM>Description:</EM> Given a address to a VRML-document on the Internet, the predicate will return the prolog-terms.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Value_to_check</CODE> is an atom.
+<CODE>+WEBAddress</CODE> is an atom.
  (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>+Init_value</CODE> is a list of <CODE>atm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>+Bound</CODE> is a variable interval.
- (<CODE>internal_types:bound/1</CODE>)
+<CODE>-Terms</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6911"></A>
-<A NAME="IDX6912"></A>
+<A NAME="IDX7156"></A>
+<A NAME="IDX7157"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>boundary_rotation_first/2:</B>
-<DD><A NAME="IDX6913"></A>
+<DT><span class="define">PREDICATE:</span> <B>vrml_file_to_terms/2:</B>
+<DD><A NAME="IDX7158"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>boundary_rotation_first(+Bound_double,-Bound)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>vrml_file_to_terms(+FileName,-Term)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> The predicate will extract the first bounds from a double bound.
+<LI><EM>Description:</EM> Given a filename containing a VRML-file the predicate returns the prolog terms corresponding.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Bound_double</CODE> is a variable interval.
- (<CODE>internal_types:bound_double/1</CODE>)
+<CODE>+FileName</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>-Bound</CODE> is a variable interval.
- (<CODE>internal_types:bound/1</CODE>)
+<CODE>-Term</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>vrml_file_to_terms(+FileName,+Terms)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Given a filename containing a VRML-file and a filename, the predicate write the prolog terms corresponding to the filename.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+FileName</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+Terms</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6914"></A>
-<A NAME="IDX6915"></A>
+<A NAME="IDX7159"></A>
+<A NAME="IDX7160"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>boundary_rotation_last/2:</B>
-<DD><A NAME="IDX6916"></A>
+<DT><span class="define">PREDICATE:</span> <B>vrml_web_to_terms_file/2:</B>
+<DD><A NAME="IDX7161"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>boundary_rotation_last(+Bound_double,-Bound)</CODE>
+<STRONG>Usage:</STRONG> <CODE>vrml_web_to_terms_file(+WEBAddress,+FileName)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> The predicate will extract the last bounds from a double bound.
+<LI><EM>Description:</EM> Given a address to a VRML-document on the Internet and a filename, the predicate will write the prolog_terms to the file.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Bound_double</CODE> is a variable interval.
- (<CODE>internal_types:bound_double/1</CODE>)
+<CODE>+WEBAddress</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>-Bound</CODE> is a variable interval.
- (<CODE>internal_types:bound/1</CODE>)
+<CODE>+FileName</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6917"></A>
-<A NAME="IDX6918"></A>
+<A NAME="IDX7162"></A>
+<A NAME="IDX7163"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>reserved_words/1:</B>
-<DD><A NAME="IDX6919"></A>
+<DT><span class="define">PREDICATE:</span> <B>vrml_file_to_terms_file/2:</B>
+<DD><A NAME="IDX7164"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>reserved_words(-List)</CODE>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7165"></A>
+<A NAME="IDX7166"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>terms_file_to_vrml/2:</B>
+<DD><A NAME="IDX7167"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>terms_file_to_vrml(+FileName,-List)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Returns a list with the reserved words, words prohibited to use in cases not appropiated.
+<LI><EM>Description:</EM> From a given filename with prologterms on the special format, the predicate returns the corresponding VRML-code.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>-List</CODE> is a list of <CODE>atm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+<CODE>+FileName</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>-List</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6920"></A>
-<A NAME="IDX6921"></A>
+<A NAME="IDX7168"></A>
+<A NAME="IDX7169"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>children_nodes/1:</B>
-<DD><A NAME="IDX6922"></A>
+<DT><span class="define">PREDICATE:</span> <B>terms_file_to_vrml_file/2:</B>
+<DD><A NAME="IDX7170"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>children_nodes(-List)</CODE>
+<STRONG>Usage:</STRONG> <CODE>terms_file_to_vrml_file(+Atom,+Atom)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Returns a list of all nodes possible as children nodes.
+<LI><EM>Description:</EM> From a given filename with prologterms on the special format, the predicate writes the corresponding VRML-code to second filename.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>-List</CODE> is a list of <CODE>atm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+<CODE>+Atom</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+Atom</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7171"></A>
+<A NAME="IDX7172"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>terms_to_vrml_file/2:</B>
+<DD><A NAME="IDX7173"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>terms_to_vrml_file(+Term,+FileName)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Given prolog-terms the predicate writes the corresponding VRML-code to the given file.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Term</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+FileName</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7174"></A>
+<A NAME="IDX7175"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>terms_to_vrml/2:</B>
+<DD><A NAME="IDX7176"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>terms_to_vrml(+Term,-VRMLCode)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Given prolog-terms the predicate returns a list with the corresponding VRML-code.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Term</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>-VRMLCode</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7177"></A>
+<A NAME="IDX7178"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>vrml_to_terms/2:</B>
+<DD><A NAME="IDX7179"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>vrml_to_terms(+VRMLCode,-Terms)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Given a list with VRML-code the predicate will return the corresponding prolog-terms.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+VRMLCode</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+
+<CODE>-Terms</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7180"></A>
+<A NAME="IDX7181"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>vrml_in_out/2:</B>
+<DD><A NAME="IDX7182"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>vrml_in_out(+FileName,+FileName)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> This is a controll-predicate that given a filename to a VRML-file and a filename, the predicate will read the VRML-code. Transform it to prolog-terms and then transform it back to VRRML-code and write it to the latter file.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+FileName</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+FileName</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7183"></A>
+<A NAME="IDX7184"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>vrml_http_access/2:</B>
+<DD><A NAME="IDX7185"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>vrml_http_access(+ReadFilename,+BaseFilename)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Given a web-address to a VRML-file the predicate will load the code, write it first to the second argument with extension '_first.wrl'. Then it transform the code to prolog terms and write it with the extension '.term'. Transform it back to VRML-code and write it to the filename with '.wrl. A good test-predicate.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+ReadFilename</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+BaseFilename</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC732" HREF="ciao_toc.html#TOC732">Documentation on internals (<CODE>provrml</CODE>)</A></H2>
+<P>
+<A NAME="IDX7186"></A>
+<A NAME="IDX7187"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>read_page/2:</B>
+<DD><A NAME="IDX7188"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>read_page(+WEBAddress,-Data)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> This routine reads a page on the web using pillow routines.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+WEBAddress</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>-Data</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_185.html">previous</A>, <A HREF="ciao_187.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_185.html">previous</A>, <A HREF="ciao_187.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

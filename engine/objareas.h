@@ -212,7 +212,7 @@ struct try_node {
 struct sw_on_key_node {
   TAGGED key;
   union {
-    struct try_node *try;               /* try-retry-trust as linked list */
+    struct try_node *try_chain;     /* try-retry-trust as linked list */
     struct instance *instp;             /* int. clauses or recorded terms */
     struct sw_on_key_node *node;
     struct definition *def;                       /* predicate definition */

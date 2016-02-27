@@ -1,4 +1,6 @@
-:- include(library(persdb)).
+:- use_package(iso).
+:- use_package(persdb).
+
 
 main([X]):-
 %%   Declare the directory associated to the key "db" 

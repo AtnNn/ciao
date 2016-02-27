@@ -26,6 +26,7 @@ class PLJavaObjServer extends Thread {
      *           communication to Prolog.
      */
     public PLJavaObjServer(PLConnection pl) {
+	//	super("PLJavaObjServer");
 	this.pl = pl;
 	this.start();
     }

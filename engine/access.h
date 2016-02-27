@@ -1,4 +1,4 @@
-/* Copyright (C) 1996,1997,1998, UPM-CLIP */
+/* Copyright (C) 1996,1997,1998, 1999, 2000, 2001, 2002 UPM-CLIP */
 
 /* This file contains access macros for the various WAM areas.
    The point is to hide the memory model (SRI/vanilla) as well as

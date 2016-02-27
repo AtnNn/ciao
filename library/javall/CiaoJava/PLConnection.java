@@ -139,7 +139,7 @@ public class PLConnection {
 	int port = ss.getLocalPort();
 	out.println(port + ".");
 	out.flush();
-
+// 	out.close();
 
 	createSockets(out);
     }
@@ -169,6 +169,7 @@ public class PLConnection {
 	int port = ss.getLocalPort();
 	out.println(port + ".");
 	out.flush();
+	out.close();
 
 	createSockets(out);
     }
@@ -188,6 +189,7 @@ public class PLConnection {
 	int port = ss.getLocalPort();
 	System.out.println(port + ".");
 	System.out.flush();
+// 	System.out.close();
 	createSockets(System.out);
     }
 
@@ -371,11 +373,8 @@ public class PLConnection {
 
 	toPrologJP(ID_INTERFACE,PLTerm.terminate);
 	toPrologPJ(ID_INTERFACE,PLTerm.terminate);
-	join();
-	// We don't need to wait for jServer's death.
+	join(); // this method also closes socket streams.
 
-	Thread.sleep(1000,0);
-	closeSocketStreams();
     }
 
     /**
@@ -398,10 +397,13 @@ public class PLConnection {
     /**
      * Waits until all the internal threads terminate.
      */
-    public void join() throws InterruptedException {
+    public void join() throws InterruptedException, IOException {
 
 	joinSocketHandlers();
 	jServer.join();
+	//       	Thread.sleep(1000,0);
+	closeSocketStreams();
+
     }
 
     /**

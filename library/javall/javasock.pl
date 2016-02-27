@@ -1,12 +1,12 @@
 :- module(javasock, [
-	start_socket_interface/1,
+	start_socket_interface/2,
 	stop_socket_interface/0,
 	join_socket_interface/0,
 	java_query/2,
 	java_response/2,
 	prolog_query/2,
 	prolog_response/2,
-	java_stream/3,
+	java_stream/4,
 	java_debug/1
 	],
 	[assertions,regtypes,isomodes]).
@@ -37,13 +37,14 @@ or @lib{jtopl} (Java to Prolog interface) libraries instead.
 :- regtype machine_name(?Name) # "@var{Name} is a valid host name.".
 machine_name(X) :- atm(X).
 
-:- pred java_stream(pjStream, jpStream, Address)
-	:: struct * struct * machine_name # "Stores the identifiers
+:- pred java_stream(pjStream, jpStream, Address,Stream)
+	:: struct * struct * machine_name * stream # "Stores the identifiers
         of the streams used. A fact is asserted when the connection 
         to the Java process is established. It Contains 
         prolog-to-java and java-to-prolog streams,
-	and the network	address where the Java process is running.".
-:- data java_stream/3.
+	and the network	address where the Java process is running.
+        Last argument represents the Java process standard input stream.".
+:- data java_stream/4.
 
 :- pred java_threads(pjIn,pjOut,jpIn,jpOut,plServer)
 	:: int * int * int * int * int # "Stores the threads used to
@@ -87,15 +88,15 @@ machine_name(X) :- atm(X).
 :- concurrent prolog_response/2.
 
 %% -----------------------------------------------------------------------
-:- pred start_socket_interface(+Address) 
-	:: term
+:- pred start_socket_interface(+Address,+Stream) 
+	:: term * stream
         # "Given an address in format 'node:port', creates the sockets
         to connect to the java process, and starts the threads needed
         to handle the connection.". 
 %% -----------------------------------------------------------------------
 
-start_socket_interface(Node:SocketId):-
-        java_client(Node:SocketId),
+start_socket_interface(Node:SocketId,Stream):-
+        java_client(Node:SocketId,Stream),
 	!,
 	eng_call(pj_socket_reader, create, create, PjIn),
 	eng_call(pj_socket_writer, create, create, PjOut),
@@ -119,13 +120,18 @@ stop_socket_interface :-
 	eng_release(JpIn),
 	eng_release(JpOut),
 	eng_release(PlServer),
-        retract_fact(java_stream(DataStream,EventStream,_)),
+        retract_fact(java_stream(DataStream,EventStream,_,StdStream)),
         close(DataStream),
         close(EventStream),
 	retractall_fact(java_query(_,_)),
 	retractall_fact(java_response(_,_)),
 	retractall_fact(prolog_query(_,_)),
 	retractall_fact(prolog_response(_,_)),
+	(var(StdStream) ->
+	 true
+	;
+	 close(StdStream)
+	),
 	!.
 
 %% -----------------------------------------------------------------------
@@ -224,14 +230,14 @@ termination_check(0,'$terminate').
 termination_check(0,'$disconnect').
 
 %% -----------------------------------------------------------------------
-:- pred java_client(+Address) 
-	:: term # "Opens a connection at an address, and asserts the
+:- pred java_client(+Address,+Stream) 
+	:: term * stream # "Opens a connection at an address, and asserts the 
         @tt{java_stream} corresponding fact.".
 %% -----------------------------------------------------------------------
 
-java_client(Address) :-
+java_client(Address,Stream) :-
         open_client(Address,DataStream,EventStream),
-	set_fact(java_stream(DataStream,EventStream,Address)).
+	set_fact(java_stream(DataStream,EventStream,Address,Stream)).
 
 %% -----------------------------------------------------------------------
 :- pred open_client(+Address, -Stream, -Stream)
@@ -263,12 +269,12 @@ open_jp(Host, Port, JPStream) :-
         The second argument is the term to be sent to the Java side.".
 %% -----------------------------------------------------------------------
 java_fast_write(pj,T) :-
-        current_fact(java_stream(PJStream,_,_)),
+        current_fact(java_stream(PJStream,_,_,_)),
         java_fast_write0(PJStream,T),
         !.  %% Avoid choicepoints (none should have been pushed---just in case)
 
 java_fast_write(jp,T) :-
-        current_fact(java_stream(_,JPStream,_)),
+        current_fact(java_stream(_,JPStream,_,_)),
         java_fast_write0(JPStream,T),
         !.  %% Avoid choicepoints (none should have been pushed---just in case)
 
@@ -295,12 +301,12 @@ java_fast_write0(Stream,T) :-
 %% -----------------------------------------------------------------------
 
 java_fast_read(pj, T) :-
-        current_fact(java_stream(PJStream,_,_)),
+        current_fact(java_stream(PJStream,_,_,_)),
         java_fast_read0(PJStream,T),
         !.  %% Avoid choicepoints (none should have been pushed---just in case)
 
 java_fast_read(jp, T) :-
-        current_fact(java_stream(_,JPStream,_)),
+        current_fact(java_stream(_,JPStream,_,_)),
         java_fast_read0(JPStream,T),
         !.  %% Avoid choicepoints (none should have been pushed---just in case)
 
@@ -322,7 +328,7 @@ java_fast_read0(Stream,T) :-
 
 :- data debugging/0.
 % Comment/uncomment next line to set debugging off/on.
-debugging.
+% debugging.
 
 java_debug(T) :-
 	debugging,

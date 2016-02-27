@@ -9,7 +9,7 @@ HEADER=header
 
 exe_header:
 	$(SRC)/etc/substitute_string $(TO_CHANGE) $(INSTALLEDENGINE) $(HEADER_SKEL) $(HEADER)
-	chmod $(DATAMODE) $(HEADER)
+	-@chmod $(DATAMODE) $(HEADER)
 
 distclean:
 	/bin/rm -f *.itf *.po *.asr

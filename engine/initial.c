@@ -1,4 +1,4 @@
-/* Copyright (C) 1996,1997,1998, UPM-CLIP */
+/* Copyright (C) 1996,1997,1998, 1999, 2000, 2001, 2002  UPM-CLIP */
 
 
 #include <stdio.h>
@@ -233,6 +233,7 @@ extern BOOL prolog_unix_rename PROTO((struct worker *w));
 extern BOOL prolog_unix_mkdir PROTO((struct worker *w));
 extern BOOL prolog_current_host PROTO((struct worker *w));
 extern BOOL prolog_getenvstr PROTO((struct worker *w));
+extern BOOL prolog_setenvstr PROTO((struct worker *w));
 /* extern BOOL prolog_pause PROTO((struct worker *w)); */
 /* extern BOOL prolog_getpid PROTO((struct worker *w)); */
 
@@ -1042,6 +1043,7 @@ static void initialize_intrinsics()
   define_c_mod_predicate("system","delete_directory",prolog_unix_rmdir,1);
   define_c_mod_predicate("system","current_host",prolog_current_host,1);
   define_c_mod_predicate("system","getenvstr",prolog_getenvstr, 2);
+  define_c_mod_predicate("system","setenvstr",prolog_setenvstr, 2);
   define_c_mod_predicate("system","get_pid", prolog_getpid, 1);
   define_c_predicate("get_arch", prolog_getarch, 1);
   define_c_predicate("get_os", prolog_getos, 1);

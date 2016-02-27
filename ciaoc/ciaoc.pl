@@ -10,7 +10,7 @@
 :- comment(author, "Daniel Cabeza and the CLIP Group").
 
 :- comment(copyright,"
-Copyright @copyright{} 1996-99 Daniel Cabeza/The CLIP Group.
+Copyright @copyright{} 1996-2002 Daniel Cabeza/The CLIP Group.
 
 @include{Copyright.Manuals}
 ").

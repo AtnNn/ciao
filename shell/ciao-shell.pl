@@ -5,7 +5,7 @@
 :- comment(author, "Manuel Hermenegildo").
 
 :- comment(copyright,"
-Copyright @copyright{} 1996-99 The CLIP Group.
+Copyright @copyright{} 1996-2002 The CLIP Group.
 
 @include{Copyright.Manuals}
 ").
@@ -40,16 +40,16 @@ Copyright @copyright{} 1996-99 The CLIP Group.
   top-level, which starts by loading the file given to it as the first
   argument and then starts execution at @pred{main/1} (the argument is
   instantiated to a list containing the command line options, in the
-  usual way). However, while doing this, @tt{ciao-shell} changes the
-  @concept{prolog flag} @tt{quiet} so that no informational or warning
-  messages are printed (error messages will be reported to
+  usual way).  Note that the Prolog script cannot have a @tt{module}
+  declaration for this to work.  While loading the file, @tt{ciao-shell}
+  changes the @concept{prolog flag} @tt{quiet} so that no informational
+  or warning messages are printed (error messages will be reported to
   @tt{user_error}, however).  The operation of @tt{ciao-shell} in
   Unix-like systems is based in a special compiler feature: when the
   first character of a file is '@tt{#}', the compiler skips the first
   lines until an empty line is found.  In Windows, its use is as easy as
   naming the file with a @tt{.pls} extension, which will launch
-  @tt{ciao-shell} appropriately (the name of the module has to include
-  that extension, as in @tt{:- module('test.pls',[main/1])}).
+  @tt{ciao-shell} appropriately.
 
   For example, in a Linux/Unix system, assume a file called
   @file{hello} contains the following program:

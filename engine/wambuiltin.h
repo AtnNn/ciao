@@ -1,4 +1,4 @@
-/* Copyright (C) 1996,1997,1998, UPM-CLIP */
+/* Copyright (C) 1996,1997,1998,1999,2000,2001,2002 UPM-CLIP */
 
 extern BOOL bu1_atom PROTO((Argdecl,TAGGED x0));
 extern BOOL bu1_atomic PROTO((Argdecl,TAGGED x0));

@@ -154,6 +154,9 @@ main.
 
 :- comment(version_maintenance,dir('../../version')).
 
+:- comment(version(1*7+203,2002/04/20,13:38*54+'CEST'), "Minor changes
+   to Ciao description.  (Manuel Hermenegildo)").
+
 :- comment(version(1*7+155,2001/11/24,11:53*36+'CET'), "Minor changes
    to installation scripts to make sure permissions are left correctly
    if installation is aborted.  (Manuel Hermenegildo)").

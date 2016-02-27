@@ -1,4 +1,4 @@
-/* Copyright (C) 1996, 1997, 1998, 1999, 2000 CLIP */
+/* Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2002 CLIP */
 
 int buffered_input(FILE *stream);
 BOOL pop_qlinfo(Argdecl);
