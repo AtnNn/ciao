@@ -104,6 +104,9 @@ optimizing_compiler <- :-
 % Note: This part should be revised: need more integration with common
 % installation process - EMM
 
+% Environment is required by runwin32.bat:
+environment <- [emacs_support, make_header_if_win32] :- true.
+
 make_header_if_win32 <- [] :- make_header_if_win32.
 
 make_header_if_win32 :-
@@ -139,8 +142,9 @@ windows_engine := ~flatten(["""", ~atom_codes(~winpath(~component_src(ciaode))),
 windows_bats(Engine) :-
 	bold_message("Building .bat files for the top-level and compiler", []),
 	( % (failure-driven loop)
-	  win_cmd_and_opts(BatCmd, EOpts, Opts, OrigCmd),
-	    bat_file(BatCmd, OrigCmd, EOpts, Opts, BatFile, Tail),
+	    win_cmd_and_opts(BatCmd, EOpts, Opts, OrigCmd),
+	    bat_name(BatCmd, BatFile),
+	    bat_tail(OrigCmd, EOpts, Opts, Tail),
 	    %
 	    open_output(BatFile, Out),
 	    display_string("@"|| Engine),
@@ -162,9 +166,11 @@ win_cmd_and_opts(ciaosh, '', '-i', ciaosh).
 win_cmd_and_opts(ciaoc, '', '', ciaoc).
 win_cmd_and_opts(ciao, ~codes_atom(~ciao_extra_commands), '-i', ciaosh).
 
-bat_file(BatCmd, OrigCmd, EOpts, Opts, BatFile, Tail) :-
+bat_name(BatCmd, BatFile) :-
 	cmdfile(BatCmd, BatFile0),
-	atom_concat(BatFile0, '.bat', BatFile),
+	atom_concat(BatFile0, '.bat', BatFile).
+
+bat_tail(OrigCmd, EOpts, Opts, Tail) :-
 	cmdfile(OrigCmd, OrigFile),
 	( EOpts = '' -> EOptsS = '' ; EOptsS = ' ' ),
 	( Opts = '' -> OptsS = '' ; OptsS = ' ' ),

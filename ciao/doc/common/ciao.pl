@@ -163,10 +163,10 @@
 
 :- doc(version_maintenance,dir('../../version')).
 
-% For 1.16:
-%   - Ported Tom Schrijvers' Hindley-Milner types
-%     (r10264-unstable) (Jose Morales)
-%   - Check comments in ~clip/Systems/CiaoDE-logs/1.14
+:- doc(version(1*14+1,2011/08/10,18:17*10+'CEST'), "
+   Merging r13583 through r13586 (trunk) into 1.14. This fixes
+   problems in the Windows version of Ciao (Edison Mera, Jose
+   Morales)").
 
 :- doc(version(1*14+0,2011/07/08,10:51*55+'CEST'), "
    It has been a long while since declaring the last major version

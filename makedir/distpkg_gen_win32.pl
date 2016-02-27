@@ -82,6 +82,7 @@ installer_win32_(FileIss) :-
 ciaode_iss(FileName, FileListName, OutputBaseFileName) :-
 	atom_codes(~component_version_patch(~component_wholesystem), ComponentVersion),
 	ciaode_revision_string(S),
+	component_version(ciao, CiaoVersion),
 	flatten([ComponentVersion, " (r" || S, ")"], Version),
 	replace_strings_in_file([
 		["<MyAppName>", "Ciao Development Environment"],
@@ -91,7 +92,8 @@ ciaode_iss(FileName, FileListName, OutputBaseFileName) :-
 		["<MyAppPublisher>",     "The CLIP Laboratory"],
 		["<LicenseFile>",        ~license_file],
 		["<MyAppExeName>", ~atom_codes(~atom_concat(['ciaosh-',
-				~component_version(ciao), ~get_ciao_ext]))],
+				CiaoVersion, ~get_ciao_ext]))],
+		["<CiaoVersion>",      ~atom_codes(CiaoVersion)], 
 		["<SourceDir>",        ~source_dir],
 		["<OutputDir>",        ~output_dir],
 		["<ManualIcons>",      ~get_manual_icons],
