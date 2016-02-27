@@ -1158,12 +1158,18 @@ process_decl(new_declaration(S), Base,_M,_VNs, Ln0, Ln1) :- !,
 process_decl(new_declaration(S, ITF), Base,_M,_VNs, Ln0, Ln1) :- !,
 	do_new_decl(S, ITF, Base, Ln0, Ln1).
 process_decl(add_sentence_trans(P, Prior), Base, M,_VNs, Ln0, Ln1) :- !,
+	check_qualified_hook(P, add_sentence_trans, 2, Ln0, Ln1),
 	do_add_sentence_trans(M, P, Prior, Base, Ln0, Ln1).
 process_decl(add_term_trans(P, Prior), Base, M,_VNs, Ln0, Ln1) :- !,
+	check_qualified_hook(P, add_term_trans, 2, Ln0, Ln1),
 	do_add_term_trans(M, P, Prior, Base, Ln0, Ln1).
 % These four processed from clause_of
-process_decl(add_clause_trans(_, _),_Base,_M,_VNs,_Ln0,_Ln1) :- !.
-process_decl(add_goal_trans(_, _),_Base,_M,_VNs,_Ln0,_Ln1) :- !.
+process_decl(add_clause_trans(P, _),_Base,_M,_VNs,Ln0,Ln1) :- !,
+	% Just check that the hook is module qualified
+	check_qualified_hook(P, add_clause_trans, 2, Ln0, Ln1).
+process_decl(add_goal_trans(P, _),_Base,_M,_VNs,Ln0,Ln1) :- !,
+	% Just check that the hook is module qualified
+	check_qualified_hook(P, add_goal_trans, 2, Ln0, Ln1).
 process_decl(initialization(_),_Base,_M,_VNs,_Ln0,_Ln1) :- !.
 process_decl(on_abort(_),_Base,_M,_VNs,_Ln0,_Ln1) :- !.
 %
@@ -1464,6 +1470,15 @@ do_load_compilation_module(_, File, Base) :-
 	this_module(M),
 	use_mod(File, all, M),
 	redo_decls(Base).
+
+% Translation hooks without module qualification is ambiguous.
+% (there is no explicit connection with load_compilaion_module)
+check_qualified_hook(P, DeclF, DeclA, Ln0, Ln1) :-
+	( nonvar(P), P = (_:_) -> true
+	; error_in_lns(Ln0, Ln1, error,
+	               ['Refusing to process ',~~(DeclF/DeclA),
+			', missing module qualification in ', ~~(P)])
+        ).
 
 :- data in_mode/1.
 in_mode(in).
