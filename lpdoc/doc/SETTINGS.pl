@@ -24,17 +24,9 @@
 datamode(_) :- fail.
 execmode(_) :- fail.
 
-% ---------------------------------------------------------------------------
-% Distpkg (distribution package) definitions
-
 % the component that contains this manual
+% TODO: This could be inferred (looking for a makedir/CONFIG.pl in a parent dir)
 parent_component := 'lpdoc'.
-
-% TODO: move to lpdoc, put version numbers automatically, and symlinks
-parent_component_version_nice := ~distpkg_obtain_version_nice(~atom_concat(~component_src(~parent_component), '/')).
-:- use_module(library(distutils(distpkg_versions))).
-
-% ----------------------------------------------------------------------------
 
 filepath := ~atom_concat([~component_src(lpdoc), '/src']).
 filepath := ~atom_concat([~component_src(lpdoc), '/readmes']).
@@ -56,8 +48,7 @@ ciao_path := '/lib'|
 
 pathsfile(_) :- fail. 
 
-manual_name := 'lpdoc'.
-output_name := ~atom_concat([~manual_name, '-', ~parent_component_version_nice]).
+output_name := 'lpdoc'.
 
 doc_structure := 
         'lpdoc'-[

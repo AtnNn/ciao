@@ -128,12 +128,16 @@ file_format_provided_by_backend(htmlmeta, html, fr).
 
 % ---------------------------------------------------------------------------
 
+:- data computed_output_name/2. % name of main output
 :- data computed_output_dir/2. % directory for output
 :- data computed_cache_dir/2. % directory cached temporal results
 
 :- export(clean_fs_db/0).
-:- pred clean_fs_db # "Clean the internal state of the module.".
+:- pred clean_fs_db # "Clean the cached information for the
+   filesystem mapping of the documentaton generation.".
+
 clean_fs_db :-
+	retractall_fact(computed_output_name(_, _)),
 	retractall_fact(computed_output_dir(_, _)),
 	retractall_fact(computed_cache_dir(_, _)).
 
@@ -151,7 +155,7 @@ get_output_dir(Backend, Dir) :-
 	),
 	( output_packed_in_dir(Backend) ->
 	    % Use a directory inside 'htmldir'
-	    main_output_name(OutBase),
+	    main_output_name(Backend, OutBase),
 	    atom_concat([Dir1, OutBase, '.', Backend, '/'], Dir)
 	; % Store in 'htmldir' directly
 	  Dir = Dir1
@@ -168,7 +172,7 @@ get_cache_dir(Backend, Dir) :-
 	computed_cache_dir(Backend, Dir0), !, Dir = Dir0.
 get_cache_dir(Backend, Dir) :-
 	% TODO: missing some root dir
-	main_output_name(OutBase),
+	main_output_name(Backend, OutBase),
 	atom_concat([OutBase, '.tmp-', Backend, '/'], Dir),
 	assertz_fact(computed_cache_dir(Backend, Dir)).
 
@@ -225,7 +229,7 @@ absfile_for_subtarget(Mod, Backend, Subtarget, File) :-
 subtarget_name(Backend, Subtarget, Mod, NameExt) :-
 	( get_mainmod(Mod),
 	  subtarget_uses_output_name(Subtarget, Backend) ->
-	    main_output_name(Base)
+	    main_output_name(Backend, Base)
 	; Base = Mod
 	),
 	( Subtarget = fr_aux('') ->
@@ -255,16 +259,46 @@ concat_dir(Dir, FinalBase, FinalAbsBase) :-
 
 % ---------------------------------------------------------------------------
 
-:- export(main_output_name/1).
-main_output_name(OutputBase) :-
+:- use_module(library(component_registry), [component_src/2]).
+:- use_module(lpdocsrc(src(component_versions))).
+
+% Note: I cannot obtain the version from version_maintenance at this
+%       point, since main_output_name needs to be calculated before
+%       the mainfile is read.
+% TODO: Generate documentation symlinks automatically?
+% TODO: Reuse this for binaries in component installation (this code
+%       and the links)
+
+:- export(main_output_name/2).
+% The output name of the generated manual. The version number will be
+% concatenated if available.
+% TODO: Make sure that this behaviour and the lpdoc documentation are
+%       consistent.
+main_output_name(Backend, NV) :-
+	computed_output_name(Backend, NV0), !, NV = NV0.
+main_output_name(Backend, NV) :-
 	( ( setting_value(output_name, OutputBase0) ->
-	      OutputBase = OutputBase0
+	      OutputBase1 = OutputBase0
 	  ; get_mainmod(InBase),
-	    modname_nodoc(InBase, OutputBase)
+	    modname_nodoc(InBase, OutputBase1)
 	  )
-	).
+	),
+	% Include the version (if required)
+	( setting_value(parent_component, Component),
+	  component_src(Component, Dir),
+	  \+ setting_value(doc_mainopts, '--no-versioned-output') ->
+	    % Use the component version for the output name
+	    atom_concat(Dir, '/', Dir1),
+	    component_obtain_version(Dir1, V),
+	    atom_concat([OutputBase1, '-', V], NV)
+	; % Do not use the version for the output name
+	  NV = OutputBase1
+	),
+	assertz_fact(computed_output_name(Backend, NV)).
 
 % the physical (on-disk) module name without the '_doc' suffix (if present)
+% TODO: Do something similar for packages whose documentation is stored in 
+%       _doc files?
 modname_nodoc(Base0, Base) :-
 	( atom_concat(Base1, '_doc', Base0) -> Base = Base1
 	; Base = Base0

@@ -9,18 +9,12 @@
 :- use_module(library(component_registry), [component_src/2]).
 :- use_module(ciaodesrc(makedir('ConfigValues'))).
 
-% TODO: component version exported from here
 :- reexport(ciaosrc(doc(common('LPDOCCOMMON')))).
 libtexinfo(_) :- fail.
 datamode(_) :- fail.
 execmode(_) :- fail.
 
-% TODO: move to lpdoc, put version numbers automatically, and symlinks
-parent_component_version_nice := ~distpkg_obtain_version_nice(~atom_concat(~component_src(~parent_component), '/')).
-:- use_module(library(distutils(distpkg_versions))).
-
-manual_name := 'ciao'. % TODO: use it to obtain the version-less name (e.g., for symlinks)
-output_name := ~atom_concat([~manual_name, '-', ~parent_component_version_nice]).
+output_name := 'ciao'.
 
 % TODO: use parent_component to share those defs
 filepath := ~atom_concat(~component_src(ciao), ~ciaofilepathref)|~emacs_mode_path.

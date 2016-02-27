@@ -7,7 +7,8 @@
 
 :- reexport(ciaodesrc(makedir('DOCCOMMON'))).
 
-% the component that contains this manual
+% the component that contains this manual 
+% TODO: This could be inferred (looking for a makedir/CONFIG.pl in a parent dir)
 :- export(parent_component/1).
 parent_component := 'ciao'.
 

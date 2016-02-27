@@ -57,11 +57,13 @@
 
 	# "@tt{Option} is a supported documentation option.".
 
+% TODO: Duplicated in lpdoc/lib/SETTINGS_schema.pl
 supported_option('-v').
 supported_option('-nobugs').
 supported_option('-noauthors').
 supported_option('-nostability').
 supported_option('-noversion').
+supported_option('--no-versioned-output').
 supported_option('-nochangelog').
 supported_option('-nopatches').
 supported_option('-modes').
@@ -98,6 +100,8 @@ option_comment('-nobugs',      "Do not include information on bugs.         ").
 option_comment('-noauthors',   "Do not include author names.                ").
 option_comment('-nostability', "Do not include stability comment.           ").
 option_comment('-noversion',   "Do not include version information.         ").
+option_comment('--no-versioned-output',
+                               "Do not include version in the output name.  ").
 option_comment('-nochangelog', "Do not include change log.                  ").
 option_comment('-nopatches',   "Do not include comments for patches.        ").
 %% -modes and -headprops are used by normalizer!

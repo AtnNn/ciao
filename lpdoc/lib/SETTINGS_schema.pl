@@ -77,7 +77,12 @@ filename(P) :- atm(P).
 :- pred output_name(Base) => sourcename
    # "Defines the base file name used to be part of the output name of
      the generated files. By default it is equal to the root file of
-     the document structure @pred{doc_structure/1}.".
+     the document structure @pred{doc_structure/1}.
+
+     If @pred{parent_component/1} is defined and
+     @tt{--no-versioned-output} is not specified in
+     @pred{doc_mainopts/1}, the component version number is appended
+     to the output name".
 
 % ----------------------------------------------------------------------------
 % The document structure
@@ -113,10 +118,12 @@ filename(P) :- atm(P).
 	(on the other hand, @tt{'-v'} selects verbose output from
 	ciaoc when processing the file).").
 
+% TODO: Duplicated in lpdoc/src/autodoc_state.pl
 supported_option := '-v'.
 supported_option := '-nobugs'.
 supported_option := '-noauthors'.
 supported_option := '-noversion'.
+supported_option := '--no-versioned-output'.
 supported_option := '-nochangelog'.
 supported_option := '-nopatches'.
 supported_option := '-modes'.

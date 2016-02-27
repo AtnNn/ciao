@@ -364,7 +364,8 @@ add_author_defs([A|As], DocSt, [B|Bs]) :-
 fmt_infodir_entry(DocSt, Version, Mod) :-
 	% TODO: Do not generate if not necessary (e.g. readme files...)
 	verbose_message("{Generating info index", []),
-	main_output_name(InfoBase),
+	docst_backend(DocSt, Backend),
+	main_output_name(Backend, InfoBase),
 	( docst_opt('-noversion', DocSt) ->
 	    docst_modname(DocSt, NDName),
 	    InfodirName = NDName
@@ -412,8 +413,9 @@ infodir_version(Version, VersionR) :-
 % ---------------------------------------------------------------------------
 
 :- doc(subsection, "Version Extraction").
-% TODO: This could be extended to extract version info from a CVS
-%       (such as SVN, GIT, Hg)
+% TODO: Merge with component_versions.pl
+% TODO: This could be extended to extract version info other revision
+%       control system (such as SVN, GIT, Hg)
 
 get_last_version(Version, GlobalVers, DocSt) :-
 	( docst_opt('-noversion', DocSt) ->
@@ -426,6 +428,9 @@ get_last_version(Version, GlobalVers, DocSt) :-
 	).
 
 get_last_version_(Version, GlobalVers, Dir, DocSt) :-
+	% TODO: Indeed, directory in 'version_maintenance' could be
+	% avoided if automatic makedir/CONFIG.pl detection is
+	% implemented
 	get_doc_field(version_maintenance, dir(VDir), Loc),
 	!,
 	%% version maintained in dir (computed relative to .pl file Dir!)
