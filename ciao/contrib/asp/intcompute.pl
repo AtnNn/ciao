@@ -1,0 +1,98 @@
+:- module(intcompute, [buildCompute/1]).
+
+buildCompute(S) :-
+
+write(S,':- data aspCompute/1.\n\n'),
+
+write(S,'compute(No, L) :- var(L),var(No), !,\n'),
+write(S,'	retractall_fact(aspCompute(_)),\n'),
+write(S,'	aspFileName(ASPFile),\n'),
+write(S,'	open(ASPFile, read, ASPRead),\n'),
+write(S,'	read_file(ASPRead, LineTerm,_V),\n'),
+%write(S,'   display(''LineTerm=''),display(LineTerm),nl,\n'),
+write(S,'	(LineTerm=compute(#(^(L)))->No=0;\n'),
+write(S,'	    (LineTerm=compute(#(^(No,L)))->true;fail)),\n'),
+write(S,'	     close(ASPRead),!.\n'),
+
+write(S,'compute(No, L) :- \n'),
+write(S,'	retractall_fact(aspCompute(_)),\n'),
+write(S,'	aspFileName(ASPFile),\n'),
+write(S,'	open(ASPFile, read, ASPRead),\n'),
+write(S,'	atom_concat(ASPFile, ''1'', ASPTmp),\n'),
+write(S,'	open(ASPTmp, write, Tmp),\n'),
+write(S,'	read_file(ASPRead, LineTerm,V),\n'),
+%write(S,'   display(LineTerm),nl,\n'),
+
+%write(S,'	(LineTerm=end_of_file->true;\n'),
+%write(S,'	(LineTerm=compute(_)-> assertz_fact(aspCompute(LineTerm));\n'),%write(S,'	write2ASPFile(Tmp, LineTerm,V))),\n'),
+
+write(S,'	A=compute(_),\n'),
+write(S,'	matchCompute(LineTerm, A, Tmp,V),\n'),
+%write(S,'	(aspCompute(C)->true;C=_C)\n'),
+write(S,'	getAspCompute(C),\n'),
+%write(S,'    display(''C=''),display(C),nl,read(_),\n'),
+write(S,'       getCompute(C,No,L),\n'),
+write(S,'	\\+write2ASPFile(Tmp,compute(No,L),[]),\n'),
+write(S,'	close(Tmp),\n'),
+write(S,'	close(ASPRead),\n'),
+write(S,'	copy_file(ASPTmp, ASPFile),\n\n'),
+	write(S,'       this_module(TT),'), nl(S),
+	write(S,'	module_concat(TT, bkcomp(C), M), '), nl(S),
+	write(S,'        und(M),'), nl(S),
+write(S,'	self(ModuleName),\n'),
+write(S,'	atoms_concat([ModuleName,'':'',setStateChanged], G),\n'),
+write(S,'	''$meta_call''(G),\n'),
+%write(S,'	setStateChanged,\n'),
+write(S,'	incState.\n'),
+
+write(S,'getCompute(_,No,L) :-\n'),
+write(S,'	ground(No),ground(L),!.\n'),
+write(S,'getCompute(CParm,No,L) :-\n'),
+write(S,'	var(CParm),\n'),
+write(S,'	(var(No) -> No=0;true),\n'),
+write(S,'	 (var(L) -> L=[];true),!.\n'),
+write(S,'getCompute(compute(#(@(No1, L1))),No,L) :-\n'),
+write(S,'	(var(No) -> No=No1;true),\n'),
+write(S,'	 (var(L) -> L=L1;true),!.\n\n'),
+
+write(S,'matchCompute(end_of_file, _, _, _V) :- !.\n'),
+write(S,'matchCompute(end,_,_, _V) :- !.\n'),
+write(S,'matchCompute(LineTerm, H, _, _V) :-\n'),
+%write(S,'   display(H), nl, display(LineTerm),nl,\n'),
+write(S,'	LineTerm=H, assertz_fact(aspCompute(LineTerm)), !, fail.\n\n'),
+write(S,'matchCompute(LineTerm,_,TS,V) :- !,\n'),
+write(S,'	write2ASPFile(TS, LineTerm,V),\n'),
+write(S,'	!,fail.\n'), nl(S),
+
+write(S,'getAspCompute(C) :- aspCompute(C).\n'),
+write(S,'getAspCompute(_).\n\n'),
+
+%write(S,'compareCompute(A,LineTerm) :- A=LineTerm.\n').
+
+
+write(S,'bkcomp(L) :- var(L),!.\n'),
+write(S,'bkcomp(L) :- \n'),
+write(S,'	retractall_fact(aspCompute(_)),\n'),
+write(S,'	aspFileName(ASPFile),\n'),
+write(S,'	open(ASPFile, read, ASPRead),\n'),
+write(S,'	atom_concat(ASPFile, ''1'', ASPTmp),\n'),
+write(S,'	open(ASPTmp, write, Tmp),\n'),
+write(S,'	read_file(ASPRead, LineTerm,V),\n'),
+%write(S,'   display(LineTerm),nl,\n'),
+
+%write(S,'	(LineTerm=end_of_file->true;\n'),
+%write(S,'	(LineTerm=compute(_)-> assertz_fact(aspCompute(LineTerm));\n'),%write(S,'	write2ASPFile(Tmp, LineTerm,V))),\n'),
+
+write(S,'	A=compute(_),\n'),
+write(S,'	matchCompute(LineTerm, A, Tmp,V),\n'),
+write(S,'	getAspCompute(C),\n'),
+%write(S,'    display(''C=''),display(C),nl,read(_),\n'),
+write(S,'       getCompute(C,No,L),\n'),
+write(S,'	\\+write2ASPFile(Tmp,compute(No,L),[]),\n'),
+write(S,'	close(Tmp),\n'),
+write(S,'	close(ASPRead),\n'),
+write(S,'	copy_file(ASPTmp, ASPFile),\n\n'),
+write(S,'	self(ModuleName),\n'),
+write(S,'	atoms_concat([ModuleName,'':'',setStateChanged], G),\n'),
+write(S,'	''$meta_call''(G),\n'),
+write(S,'	decState.\n').

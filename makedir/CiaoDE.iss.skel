@@ -1,0 +1,180 @@
+#define MyAppName "<MyAppName>"
+#define MyAppVerName "<MyAppVerName>"
+#define MyAppPublisher "<MyAppPublisher>"
+#define MyAppURL "http://www.cliplab.org/Software/Ciao/"
+#define MyAppExeName "<MyAppExeName>"
+#define MyAppUrlName "ciao.url"
+
+[Setup]
+AppName={#MyAppName}
+AppVerName={#MyAppVerName}
+AppPublisher={#MyAppPublisher}
+AppPublisherURL={#MyAppURL}
+AppSupportURL={#MyAppURL}
+AppUpdatesURL={#MyAppURL}
+DefaultDirName={pf}\<DefaultDirName>
+DefaultGroupName={#MyAppName}
+LicenseFile="<LicenseFile>"
+OutputBaseFilename=<OutputBaseFileName>
+Compression=lzma/ultra
+SolidCompression=yes
+SourceDir=<SourceDir>
+ChangesAssociations=true
+UninstallDisplayIcon={app}\ciao\Win32\ciaoexe.ico
+VersionInfoVersion=0.9
+OutputDir=<OutputDir>
+InternalCompressLevel=ultra
+
+[Tasks]
+Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked
+Name: quicklaunchicon; Description: {cm:CreateQuickLaunchIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked
+Name: emacsint; Description: Configure an icon for use of Ciao with Emacs; Check: CheckEmacsInstalled; GroupDescription: Development environment:
+
+[Files]
+
+#include <<FileListName>>
+
+[INI]
+Filename: {app}\{#MyAppUrlName}; Section: InternetShortcut; Key: URL; String: {#MyAppURL}
+
+[Icons]
+Name: {group}\Graphical {#MyAppName}; Filename: {code:PEmacsPath}; Parameters: {code:EmacsCiaoDEParameters}; WorkingDir: {userdocs}; IconFileName:{app}\ciao\Win32\ciaoexe.ico; Tasks: emacsint;
+Name: {group}\Non GUI {#MyAppName}; Filename: {app}\build\bin\{#MyAppExeName}; WorkingDir: {app}\build\bin
+Name: {group}\{cm:ProgramOnTheWeb,{#MyAppName}}; Filename: {app}\{#MyAppUrlName}; IconFileName:{sys}\shell32.dll; IconIndex: 13
+Name: {userdesktop}\{#MyAppName}; Filename: {app}\build\bin\{#MyAppExeName}; Tasks: desktopicon; WorkingDir: {app}\build\bin
+Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}; Filename: {app}\build\bin\{#MyAppExeName}; Tasks: quicklaunchicon
+<ManualIcons>
+Name: {group}\{cm:UninstallProgram,{#MyAppName}}; Filename: {uninstallexe}
+
+
+[Run]
+Filename: {app}\makedir\runwin32.bat; Parameters: {code:PMakeCiaoDEEnvironment}; WorkingDir: {app}
+Filename: {code:PEmacsPath}; Parameters: {code:EmacsCiaoDEParameters}; WorkingDir: {app}\build\bin; Description: {cm:LaunchProgram,Graphical {#MyAppName}}; Flags: postinstall skipifsilent shellexec; Tasks: emacsint
+Filename: {app}\build\bin\{#MyAppExeName}; WorkingDir: {app}\build\bin; Description: {cm:LaunchProgram, Non GUI {#MyAppName}}; Flags: postinstall skipifsilent shellexec
+
+[UninstallDelete]
+Type: files; Name: {app}\{#MyAppUrlName}
+Name: {app}\emacs-mode\ciao-mode-init.el; Type: files
+Name: {app}\emacs-mode\ciao.el; Type: files
+Name: {app}\emacs-mode\ciao.elc; Type: files
+Name: {app}\emacs-mode\word-help.elc; Type: files
+Name: {app}\ForEmacs.txt; Type: files
+Name: {app}\doc\dir; Type: files
+Name: {app}\ciao\lib\compiler\header; Type: files
+Name: {app}\environment_ciao.log; Type: files
+Name: {app}\emacs-mode\emacs_mode.log; Type: files
+Name: {app}\emacs-mode\emacs_mode.err; Type: files
+Name: {app}\ciao\lib\component_registry\components; Type: filesandordirs
+Name: {app}\build\bin\ciao-<CiaoVersion>.bat; Type: files
+Name: {app}\build\objs\tmp; Type: filesandordirs
+
+[Registry]
+Root: HKCR; Subkey: .cpx; ValueType: string; ValueData: ciaoexefile; Flags: uninsdeletekeyifempty uninsdeletevalue
+Root: HKCR; Subkey: ciaoexefile; ValueType: string; ValueData: Ciao executable; Flags: uninsdeletekey
+Root: HKCR; Subkey: ciaoexefile\DefaultIcon; ValueType: string; ValueData: {app}\ciao\Win32\ciaoexe.ico,0; Flags: uninsdeletekey
+Root: HKCR; Subkey: ciaoexefile\shell; Flags: uninsdeletekey
+Root: HKCR; Subkey: ciaoexefile\shell\open; ValueType: binary; ValueData: 01 00 00 00; Flags: uninsdeletekey; ValueName: EditFlags
+Root: HKCR; Subkey: ciaoexefile\shell\open\command; ValueType: string; ValueData: "{app}\<CiaoEngineBinDir>\ciaoengine.exe %2 %3 %4 %5 %6 %7 %8 %9 -C -b ""%1"""; Flags: uninsdeletekey
+Root: HKCR; Subkey: .pl; ValueType: string; ValueData: ciaofile; Flags: uninsdeletekeyifempty uninsdeletevalue
+Root: HKCR; Subkey: ciaofile; ValueType: string; ValueData: Ciao Prolog source; Flags: uninsdeletekey
+Root: HKCR; Subkey: ciaofile; ValueType: binary; ValueName: EditFlags; ValueData: 00; Flags: uninsdeletekey
+Root: HKCR; Subkey: ciaofile\DefaultIcon; ValueType: string; ValueData: {app}\ciao\Win32\ciaopl.ico,0; Flags: uninsdeletekey
+Root: HKCR; Subkey: ciaofile\shell\open\command; Flags: uninsdeletekey
+Root: HKCR; Subkey: ciaofile\shell\load_file; ValueType: string; ValueData: Load into Toplevel shell; Flags: uninsdeletekey
+Root: HKCR; Subkey: ciaofile\shell\load_file\command; ValueType: string; ValueData: "{app}\<CiaoEngineBinDir>\ciaoengine.exe -u ""%1"" -C -i -b $\shell\ciaosh"; Flags: uninsdeletekey
+Root: HKCR; Subkey: ciaofile\shell\make_executable; ValueType: string; ValueData: Make executable; Flags: uninsdeletekey
+Root: HKCR; Subkey: ciaofile\shell\make_executable\command; ValueType: string; ValueData: "{app}\<CiaoEngineBinDir>\ciaoengine.exe ""%1"" -C -b $\ciaoc\ciaoc"; Flags: uninsdeletekey
+Root: HKCR; Subkey: .pls; ValueType: string; ValueData: ciaoplsfile; Flags: uninsdeletekeyifempty uninsdeletevalue
+Root: HKCR; Subkey: ciaoplsfile; ValueType: string; ValueData: Ciao Prolog script; Flags: uninsdeletekey
+Root: HKCR; Subkey: ciaoplsfile; ValueType: binary; ValueName: EditFlags; ValueData: 00; Flags: uninsdeletekey
+Root: HKCR; Subkey: ciaoplsfile\DefaultIcon; ValueType: string; ValueData: {app}\ciao\Win32\ciaoscrt.ico,0; Flags: uninsdeletekey
+Root: HKCR; Subkey: ciaoplsfile\shell; ValueType: none; Flags: uninsdeletekey
+Root: HKCR; Subkey: ciaoplsfile\shell\open; ValueType: binary; ValueName: EditFlags; ValueData: 01 00 00 00; Flags: uninsdeletekey
+Root: HKCR; Subkey: ciaoplsfile\shell\open\command; ValueType: string; ValueData: "{app}\<CiaoEngineBinDir>\ciaoengine.exe ""%1"" %2 %3 %4 %5 %6 %7 %8 %9 -C -b $\bin\ciao-shell"; Flags: uninsdeletekey
+Root: HKCR; Subkey: .itf; ValueType: string; ValueData: ciaoitffile; Flags: uninsdeletekeyifempty uninsdeletevalue
+Root: HKCR; Subkey: ciaoitffile; ValueType: string; ValueData: Ciao interface file; Flags: uninsdeletekey
+Root: HKCR; Subkey: ciaoitffile; ValueType: binary; ValueName: EditFlags; ValueData: 00; Flags: uninsdeletekey
+Root: HKCR; Subkey: ciaoitffile\DefaultIcon; ValueType: string; ValueData: {app}\ciao\Win32\ciaoitf.ico,0; Flags: uninsdeletekey
+Root: HKCR; Subkey: ciaoitffile\shell; Flags: uninsdeletekey; ValueType: string
+Root: HKCR; Subkey: .po; ValueType: string; ValueData: ciaopofile; Flags: uninsdeletekeyifempty uninsdeletevalue
+Root: HKCR; Subkey: ciaopofile; ValueType: string; ValueData: Ciao object file; Flags: uninsdeletekey
+Root: HKCR; Subkey: ciaopofile; ValueType: binary; ValueName: EditFlags; ValueData: 00; Flags: uninsdeletekey
+Root: HKCR; Subkey: ciaopofile\DefaultIcon; ValueType: string; ValueData: {app}\ciao\Win32\ciaopo.ico,0; Flags: uninsdeletekey
+Root: HKCR; Subkey: ciaopofile\shell; ValueType: string; Flags: uninsdeletekey
+Root: HKCR; Subkey: .asr; ValueType: string; ValueData: ciaoasrfile; Flags: uninsdeletekeyifempty uninsdeletevalue
+Root: HKCR; Subkey: ciaoasrfile; ValueType: string; ValueData: Ciao assertions file; Flags: uninsdeletekey
+Root: HKCR; Subkey: ciaoasrfile; ValueType: binary; ValueName: EditFlags; ValueData: 00; Flags: uninsdeletekey
+Root: HKCR; Subkey: ciaoasrfile\shell; ValueType: string; Flags: uninsdeletekey
+Root: HKLM; Subkey: SOFTWARE\Ciao Prolog; ValueType: string; ValueName: ciao_dir; ValueData: {app}\ciao; Flags: uninsdeletekey
+Root: HKLM; Subkey: SYSTEM\CurrentControlSet\Services\W3SVC\Parameters\Script Map; ValueType: string; ValueName: .cpx; ValueData: {app}\<CiaoEngineBinDir>\ciaoengine.exe -C -b %s %s; Flags: uninsdeletevalue
+
+[Code]
+
+// Check if Emacs is installed by testing the Windows registry.
+// This function is called when the component dialog is displayed
+// and, if it evaluates to true, it shows the "Emacs integration"
+// option.
+
+function EmacsDir(): String;
+begin
+	RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\GNU\Emacs',
+	    'emacs_dir', Result);
+	Result := Result + '\bin';
+end;
+
+function EmacsPath(): String;
+begin
+	Result := EmacsDir + '\runemacs.exe';
+end;
+
+function EmacsInstalled(): Boolean;
+var
+	EmacsIntegration: Boolean;
+begin
+	EmacsIntegration := RegValueExists(HKEY_LOCAL_MACHINE,
+	    'SOFTWARE\GNU\Emacs', 'emacs_dir');
+	if EmacsIntegration then
+	begin
+		EmacsIntegration := FileExists(EmacsPath);
+	end;
+	Result := EmacsIntegration;
+end;
+
+function CheckEmacsInstalled(): Boolean;
+var
+	URLDownloadEmacs, URLInfoEmacs: String;
+	ErrorCode: Integer;
+begin
+	Result := EmacsInstalled;
+	if not EmacsInstalled then
+	begin
+	    URLDownloadEmacs := 'http://www.ourcomments.org/Emacs/DL/EmacsW32/EmacsCVS/ptch/Emacs-22-CvsP070523-EmacsW32-1.54.exe';
+	    URLInfoEmacs := 'http://www.ourcomments.org/cgi-bin/emacsw32-dl-latest.pl';
+	    MsgBox('Emacs is not installed.'#13 +
+		   'Is strongly recommended that you stop the installation'#13 +
+		   'and install EmacsW32+Emacs patched version 1.54 first.'#13 +
+		   'After you close this dialog, a browser will be started'#13 +
+		   'to let you download and install it.'#13#13 +
+		   'Additional instructions are available at: '#13 + URLInfoEmacs,
+		    mbInformation, MB_OK);
+	    ShellExec('open', URLDownloadEmacs, '', '', SW_SHOW, ewNoWait, ErrorCode);
+	    ShellExec('open', URLInfoEmacs,     '', '', SW_SHOW, ewNoWait, ErrorCode);
+	end;
+end;
+
+function PEmacsPath(Param: String): String;
+begin
+	Result := EmacsPath;
+end;
+
+function EmacsCiaoDEParameters(Param: String): String;
+begin
+	Result := ' -l "' + ExpandConstant('{app}') +
+	    '\emacs-mode\ciao-mode-init.el" -f ciao';
+end;
+
+function PMakeCiaoDEEnvironment(Param: String): String;
+begin
+	Result := '"'+ ExpandConstant('{app}') + '\<CiaoEngineBinDir>\ciaoengine.exe" "'
+	    + EmacsDir + '" "' + ExpandConstant('{app}') + '"';
+end;

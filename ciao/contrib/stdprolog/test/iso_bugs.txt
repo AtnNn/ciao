@@ -1,0 +1,349 @@
+*** 4.1.3.5 line 3
+
+<<Axiom: if X > 0 then V~x is the positive>>  ===> 
+<<Axiom: if X >= 0 then V~x is the non-negative>>
+
+*** 6.5
+
+<<It shall be implementation defined for each extended character whether it
+is a graphic char, or an alphanumeric char, or a solo char, >>...
+
+This classification is incomplete in the following sense:
+
+- It is not enough to classify an extended character as an <<alphanumeric
+  char>>, one has to also tell if it is a <<small letter char>>, <<capital
+  letter char>> (e.g. NOTE 2 of 6.5 speaks of <<extended small letter char>>).
+
+- The notion of <<solo char>> is unfortunate: it contains characters that
+  form a <<name token>> alone (! and ;), and punctuation characters, which
+  cannot be part of an unquoted <<name token>>. Classifying an extended
+  character as a <<solo char>> does not make this character usable as a
+  token alone, because there is no syntactic rule for this (! and ; are
+  included explicitly in <<name token>>).
+
+Along the lines of the Quintus/SICStus Prolog syntax, I suggest that the
+category of <<solo char>> is changed to mean only <<cut char>> and <<semicolon
+char>>, and a new category <<punctuation char>> is introduced to contain all
+other characters presently classified as solo. I propose to have a
+non-terminal <<solo token>>, replacing <<semicolon token>> and <<cut token>> in
+<<name token>>, which is defined as:
+
+     solo token = solo char ;
+
+I suggest that the standard lets the user to classify an extended character
+by placing it in exactly one of the following character categories:
+
+	graphic char
+	small letter char
+	capital letter char
+	solo char
+	layout char
+
+In addition to these, the notion of <<char>> covers the categories <<decimal
+digit char>>, <<underline char>>, <<punctuation char>> and <<meta char>> --- I
+do not think it makes sense to allow the user to classify extended
+characters into one of these categories. Perhaps it may be useful to have a
+category <<other char>>, initially empty; any extended character classified
+as such would only be allowed in (double, back) quoted tokens.
+
+I have recently made a wide character extension to SICStus Prolog which
+allows the user to plug in arbitrary character sets and define, through C
+hook functions, the character-type mapping. This is a function taking a
+character code, and returning a constant denoting one of the above
+character categories. This extension is part of the forthcoming SICStus
+Prolog 3.8 release (a plain text description can be found in
+ftp://ftp.sics.se/archive/sicstus3/wcx_doc.txt). 
+
+I hope the term <<implementation defined>> in the Prolog standard does allow
+such delegation of definitions to the user through hook functions.
+
+*** 6.5 and 7.1.4.1
+
+I found the distinction between PCS (Processor character set) and C (the
+set of characters) quite confusing at first reading. I now realise that it
+does make sense, as e.g. in SICStus Prolog there is a member of PCS with
+character_code 0, which is not a character (not a member of C) --- as there
+cannot be a one-char atom representing a "character" with code 0.
+
+Giving an example of this kind can help the uninitiated reader. Also
+replacing the name <<character>> by a qualified form, e.g. <<Prolog character>>
+would help. This is because currently the <<processor character set>> has
+members which are <<character>>s, and other members which are not --- how
+would you call the letter "things"?  For example in the previous para I had
+to refer to the "character" with code 0 in some quite cumbersome way,
+because formally the thing with code 0 is not a character.
+
+*** 7.2.2, 7.2.3 and 7.2.5
+
+I think the use of the built-in predicates '<'/2 and '=='/2 in defining the
+term order is not very elegant. I suggest using the mathematical relation
+<, and the notion of <<identical terms>> instead.
+
+
+*** 7.2.5 c) 2)
+
+<<2) if XN is the ...>> ===> <<2) XN is the ...>>
+
+*** 7.4.2
+
+A reference to the definition of <<predicate indicator sequence>> and
+<<predicate indicator list>> in 7.1.6 would be quite helpful here. Also
+perhaps these notions should be included in chapter 3.
+
+*** 7.6 
+
+Perhaps it would make sense to explicitly mention that an implementation
+may add other conversion steps, as an extension. The goal_expansion
+mechanism of SICStus Prolog is an example of such extensions.
+
+*** 7.7.12 a)
+
+I could not find the definition and purpose of the <<callable term
+representing the built-in predicate BP>>. Also the <<MGU>> produced here is
+never used.
+
+*** Table 17
+
+Why is the cut-parent of true shown to be equal to N-2?
+
+*** 7.8.3.3 c)
+
+I think it would benefit the user if the Culprit in the error term here
+could be more precise than the whole argument of call/1. So I would suggest 
+that call((...,1)) raising type_error(callable, 1) should be allowed by the
+standard.
+
+*** 7.8.3.4 example no. 6
+
+Should not output '3'.
+
+*** Table 25, Table 26
+
+The cut-parent of the first subgoal of the execution state with index CP is
+shown as CP --- this should be some CP>>.
+
+*** 7.8.5.4 line 2
+
+<<','(First, second)>> ===> <<','(First, Second)>>
+
+*** 7.8.8.1 o)
+
+I do not like the "artificial" introduction of a local cut in front of the
+Else part.
+
+*** Table 35 line 2
+
+<<(else(W), CP)>> ===> <<(Else, CP)>>
+
+*** 7.8.8.4 last example
+
+<<';'('->'(!,fail), true), true).>> ===> <<';'(('->'(!,fail), true), true).>>
+(addeded an open parenthesis)-----------------^
+
+*** 7.8.10 c)
+
+This says that a throw without an applicable catch causes a system error. I
+think this error condition is different from other errors, because in this
+situation it does not make sense to apply the rules concerning the effect
+of an error (7.12.1 says that the current goal should be replaced by the
+goal throw(error(system_error,Imp_def))). I think it should be left
+implementation defined what should happen with uncaught exceptions.
+
+*** 7.8.10.1 e)
+
+Does not seem right to me to replace CP by the cut-parent of *each*
+execution state.
+
+*** 7.8.10.1 g)
+
+<<R>> is used without definition.
+
+*** 7.9.2
+
+Errors type_error(integer, Culprit) and type_error(float, Culprit) should
+be added (e.g.  9.1.7 example no. 35).
+
+*** 7.10.4 NOTE
+
+<<The current operators do not affect output when there is a write option
+numbervars(true).>> ---  this seems to be garbled. 
+
+*** 7.10.5 d)
+
+Some implementations, e.g. SICStus, write <<.>> as <<'.'>> when
+quoted(true) is in force, to avoid confusion with end token. I think it
+would be good if the standard allowed this.
+
+*** 7.12.2 i)
+
+I would spell imp_dep_atom as Imp_dep_atom here.
+
+*** 7.12.2 NOTE 4 (b)
+
+See the remark to 7.8.10 c)
+
+*** 8.1.3
+
+<<A list of the error conditions and associated error terms for the
+built-in predicate>>
+
+Is the order of this list relevant? I don't think it should be. If two or
+more error conditions apply, any of them could be raised by a
+standard-conforming processor. Perhaps this issue is worth clarifying.
+
+*** 8.1.5 
+
+<<The error conditions and examples for a bootstrapped built-in predicate
+are included in the appropriate clauses of the general built-in
+predicate.>> I find this quite cumbersome, especially that error conditions
+use the argument names which appear only later, and only as part of the
+Prolog definitions. I would suggest to list the heads of the bootstrapped
+predicates earlier, so that the argument naming becomes more visible.
+
+An example of this: 8.12.1.3.j) mentions the name <<Code>> which only
+appears buried in Prolog code on the next page in 8.12.1.5.
+
+*** 8.8.1.1 d) 
+<<Chooses the first element of the list L>> ===> <<Chooses the first
+element of the list L, unifies it with the term clause(Head,Body)>>
+Similarly for f).
+
+*** 8.9.3.1 c)
+
+I suggest to replace 2) and 3) with
+
+2) (H:-B) unifies with (Head:-Body).
+
+*** 8.10.2.4 examples no. 5, 10 and 12
+
+Should mention that the order of solutions is undefined.
+
+*** 8.10.3.4 example no. 20
+
+<<[a,b,f(b),f(a)]>> ===> <<[a,b,f(a),f(b)]>>
+
+*** 8.10.3.4 examples no. 22, 23 and 24 (last three)
+
+Replacing <<Xs>> by <<Ys>> would make these examples easier to understand,
+I think.
+
+*** 8.12.1.5
+
+I would prefer get_code/1 to be defined in terms of get_code/2, just as it
+is done for get_char:
+
+     get_code(Code) :-
+	     current_input(S), get_code(S, Code).
+
+*** 8.12.3.3 d) and j)
+
+I don't think error condition j) makes sense, given error condition d).
+
+*** 8.13.3.4 examples no. 1 and 2
+
+<<116>> ===> <<84>>
+
+*** 8.13.3.4 example no. 4
+
+The example is not fortunate, as I think the error
+permission_error(output, text_stream, user_output) would be also a valid
+outcome (see also the remark to 8.1.3).
+
+*** 8.14.1.4  examples no. 2 and 3
+
+<<st_o>> ===> <<st_i>>
+
+*** 8.14.1.4  example no.  6 (last)
+
+<<The current input stream is left with position past-end-of_stream.>>
+===> <<The current input stream is left in an undefined state.>>
+
+(Cf. 8.14.1.1 NOTE 2)
+
+*** 8.14.4.1 d)
+
+<<Chooses a member of Set_Op and the goal succeeds>> ===>
+<<Chooses a member of Set_Op, unifies it with
+(Priority,Op_specifier,Operator), and the goal succeeds>> 
+
+*** 8.14.4.3 
+
+I suggest to add an error condition, so that current_op(_, 0, _) raises the
+error type_error(atom, 0).
+
+*** 8.16.5.3
+
+I think an error condition has to be added so that if atom_codes is called,
+e.g. as atom_codes(X, [foo]), it should raise a type_error(integer, foo).
+
+*** 8.16.4 -- 8.16.8
+
+The error conditions of atom_codes and number_codes seem not to be in
+sync, and similarly for ..._chars. Example:
+
+    | ?- catch(atom_codes(f, [foo]), error(E,_), true).
+
+    no
+    | ?- catch(number_codes(1, [foo]), error(E,_), true).
+
+    E = type_error(integer,foo) ? 
+
+    yes
+
+*** 9.1.4.1
+
+Please add a note pointing to the definition of F* (7.1.3.1).
+
+*** 9.1.4.3
+
+I do not understand the last sentence before the NOTE: The
+approximate-addition function should satisfy ...
+
+*** 9.1.6.1 last but one line
+
+<<round_R->Z(x) = entier(x+1/2)>>
+
+Is it not the case that the IEEE FP standard does allow other forms of
+rounding, e.g. rounding an integer+0.5 to the nearest *even* integer?
+If so, could this be allowed in standard Prolog?
+
+*** 9.1.7 examples no. 5 10 15 20 28 34 45 50 55
+
+These should raise the type_error(evaluable, foo/0) error, according to
+7.9.2 c).
+
+*** 9.1.7 example no. 21
+
+<<'/'(7, 35)>> ===> <<'//'(7, 35)>> (I guess)
+
+*** 9.1.7 example no. 23
+
+<<'/'(140, 3+11)>> ===> <<'//'(140, 3+11)>> (I guess)
+
+*** 9.1.7 example no. 24
+
+<<14.200>> ===> <<1.4200>>
+
+*** 9.1.7 examples no. 25 and 26
+
+<<'/'(7, -3)>> ===> <<'//'(7, -3)>> 
+<<'/'(-7, 3)>> ===> <<'//'(-7, 3)>> 
+
+Perhaps it is worth adding extending the text <<Evaluates to an implementation dependent
+value>> with <<which is either -2 or -3>>.
+
+*** 9.1.7 example no. 48
+
+<<X is float(5/3)>> ===> <<X is float(5//3)>> (I guess)
+
+*** 9.3.5.4 example no. 2
+*** 9.3.6.4 example no. 2
+
+<<2.7818>> ===> <<2.71828>>
+
+*** 9.4.1.4 example no. 5
+*** 9.4.2.4 example no. 5
+*** 9.4.3.4 example no. 6
+*** 9.4.4.4 example no. 6
+
+<<type(integer,foo)>> ===> <<type_error(evaluable,foo/0)>> 

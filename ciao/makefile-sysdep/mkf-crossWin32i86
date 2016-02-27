@@ -1,0 +1,75 @@
+# -*- mode: Makefile; -*-
+# No profiling in Win32; let us do profile in other OSs
+LD_PROFILE_FLAGS=-
+
+# Optimizations for x86
+
+ifeq ($(OPTIM_LEVEL),optimized)
+    OPTIM_FLAGS=-O2 -fomit-frame-pointer -malign-loops=2 -malign-jumps=2 -malign-functions=2
+endif
+
+# Threads and locks in Win32: no threads, no locks so far.
+LD_THREAD_LIB=
+LD_LOCK_LIB=
+THREAD_FLAG=
+
+#ifeq ($(USE_THREADS),yes)
+#    LD_THREAD_LIB=-lpthread
+#    LD_LOCK_LIB=
+#ifeq ($(USE_POSIX_LOCKS),yes)
+#    THREAD_FLAG=-D_REENTRANT -DTHREADS
+#else
+#    THREAD_FLAG=-D_REENTRANT -DTHREADS
+#endif
+#else
+#    LD_THREAD_LIB=
+#    THREAD_FLAG=
+#endif
+
+
+
+FOREIGN_FILES_FLAG=
+ENGINENAME:=$(ENGINENAME).exe
+
+#  Local C compiler
+LCC=$(CC)
+
+# C compiler
+CC=i386-mingw32-gcc
+
+# Linker
+LD=i386-mingw32-gcc
+
+# C compiler options for generating shared libraries code
+CCSHARED=
+
+# Linker specific options
+# "-rdynamic" allows the dynamic libraries symbols to be resolved against
+# those defined in ciaoengine
+LINK_FLAGS=-static
+
+# Linker options for shared objects (Just to avoid compiler complaints)
+LDSHARED=-c
+
+# Extension of shared libraries
+SOSUFFIX=.so
+
+
+# Standard libraries
+LIBS=
+
+ARCHNAME=i86
+
+# Operating system version
+OSNAME=crossWin32
+
+# How to install an make directories
+MKDIR="mkdir -p"
+INSTALL=install
+
+# Making etags
+ETAGS=
+
+CFLAGS:=$(CFLAGS) -DSTATICENG -DcrossWin32i86 \
+ -I/usr/i386-mingw32/include 
+DEFAULTYPE=stat

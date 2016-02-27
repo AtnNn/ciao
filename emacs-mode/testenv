@@ -1,0 +1,58 @@
+#!/bin/sh
+
+# Or, by hand: 
+# gmake compile; gmake install; emacs /tmp/foo.pl
+# 
+# gmake compile; gmake install; xemacs /tmp/foo.pl
+# 
+# xemacs -l ciao-xemacs-simpler-toolbar.el -f ciao-xemacs-setup-toolbar &
+# 
+# emacs -l ciao-xemacs-simpler-toolbar.el -f ciao-setup-toolbar
+
+make
+
+TMPNAME=`mktemp /tmp/ciaomodepathsXXXXXX`
+echo "(setq load-path (cons \"/home/herme/MySVN/Systems/CiaoDE/emacs-mode/\" load-path))" \
+    > $TMPNAME
+echo "(setq load-path (cons \"/home/herme/MySVN/Systems/CiaoDE/emacs-mode/icons\" load-path))" \
+    >> $TMPNAME
+
+# case $1 in
+#     fsf ) emacs -geometry -0+0 -q \
+# 	  -l $TMPNAME -l ciao-mode-init.el.skel -l ciao.el.body $2 ;;
+#     x   ) xemacs -geometry -0+0-q \
+#           -l $TMPNAME -l ciao-mode-init.el.skel -l ciao.el.body $2 ;;
+#     *   ) echo "Usage: $0 <fsf|x> <file>"
+#           exit 0  ;;
+# esac
+
+case $1 in
+    fsf21 ) /usr/bin/emacs-21.4 -geometry -0+0 -q \
+          -l ciao-mode-init.el $2 ;; # This is what .emacs includes
+# works.. -l ciao-test.el $2 ;; 
+# works!  -l word-help.el -l ciao-test.el $2 ;; 
+# works!  -l word-help.el -l ciao-mode-init.el -l ciao.el $2 ;; 
+# works!  -l word-help.el -l ciao.el $2 ;; 
+# works   -l ciao-mode-init.el -l ciao.el $2 ;; 
+# no      -l ciao-mode-init.el $2 ;; # This is what .emacs includes
+# works   -l ciao-mode-init.el -l ciao.el $2 ;; 
+# no      -l ~/.emacs $2 ;;
+# no      -l $TMPNAME -l ~/.emacs $2 ;;
+# no      -l $TMPNAME -l ciao-mode-init.el.skel -l ~/.emacs $2 ;;
+# works   -l $TMPNAME -l ciao-mode-init.el.skel -l ciao.el -l ~/.emacs $2 ;;
+# std,wks -l $TMPNAME -l ciao-mode-init.el.skel -l ciao.el $2 ;;
+    fsf22 ) /usr/local/bin/emacs-22.1.50 -geometry -0+0 -q \
+	  -l $TMPNAME -l ciao-mode-init.el.skel -l ciao.el $2 ;;
+    x   ) xemacs -geometry -0+0-q \
+          -l $TMPNAME -l ciao-mode-init.el.skel -l ciao.el $2 ;;
+    a   ) xterm -geometry 84x48-100+0 -fn 10x20 -ie +sb -e emacs -nw \
+          -l $TMPNAME -l ciao-mode-init.el.skel -l ciao.el $2 ;;
+    *   ) echo "Usage: $0 <fsf21|fsf22|x|a> <file>"
+          exit 0  ;;
+esac
+
+rm -f $TMPNAME
+
+
+
+

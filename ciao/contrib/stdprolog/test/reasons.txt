@@ -1,0 +1,249 @@
+by pts@fazekas.hu at Sun Feb 26 23:18:19 CET 2006
+
+!! important question: is the std OK?
+!! testing, but no `ok' or `not ok': half skipped..? why?
+!! doc: std: what on multi-error conds?
+!! doc: predicate_property missing from the standard
+!! doc: call:6 call((write(3), 1))
+!! test for: X= <
+!! what is B-Prolog?
+!! multiple possible errors: implementation dependent (7.12)
+!!! doc: catch:4 system_error
+!!! doc: bagof:9 example assumes ^/2 undefined
+!!! doc: strprop:5 `...' {...}-unordered, [...]-ordered test, variant(...), pre(...) framework technology example
+!!! doc: Errors a)b)c) in order
+!!! doc: write:2 are we allowed to write '.' here? -- or just a dot w/o apostrophe?   what is ``context''?
+!!! doc: should test halt/_ functionality as a per-process dangerous test
+!!! should we have (;) in write(X=(; / 2)) ?
+!!! term reading test cases for problems reading test_cases.pl
+
+SICStus:
+
+-- all OK
+
+aprolog:
+
+-- stream_property: output, file_name etc.
+   Expected substitution(1): `[A <-- '$stream'(34881350),B <-- @@]', got `not_found_in_solution_set([[bar,'$stream'(34884870)]])'.
+   Expected more_solutions: `[[A <-- '$stream'(771642856)],...]', got `[]'.
+   Expected substitution(3): `[A <-- eof_action(reset)]', got `not_found_in_solution_set([[type(text),'$stream'(771642944)],[reposition(false),'$stream'(771642944)],[eof_action(eof_code),'$stream'(771642944)],[mode(read),'$stream'(771642944)],[end_of_stream(not),'$stream'(771642944)]])'.
+   Expected substitution(3): `[A <-- eof_action(reset)]', got `not_found_in_solution_set([[type(text),'$stream'(771642856)],[reposition(true),'$stream'(771642856)],[eof_action(eof_code),'$stream'(771642856)],[mode(append),'$stream'(771642856)],[end_of_stream(not),'$stream'(771642856)],[position('$stream_position'(17262)),'$stream'(771642856)]])'.
+   Expected substitution(5): `[A <-- reposition(false)]', got `not_found_in_solution_set([[type(text),'$stream'(771642856)],[reposition(true),'$stream'(771642856)],[eof_action(eof_code),'$stream'(771642856)],[end_of_stream(not),'$stream'(771642856)],[position('$stream_position'(17262)),'$stream'(771642856)]])'.
+-- charcnv:4 Expected sol(1)-variant_except([]): `[(a,a),'AAA','a,a']', got `[(a,a),'AAA','A&A']'.
+-- charcnv:10 Expected run: `to_complete_without_error', got `error(syntax_error('End of file in expression'),read/1)'.
+-- eval:59 Goal: current_prolog_flag(max_integer,A),B is A*2, Vars: [B,A]
+   Expected exception: `error(evaluation_error(int_overflow),C)', got `[[-2,1073741823]]'.
+
+yap:
+
+-- Expected rest_input: `''', got `{past}'.
+-- different exception args: error(syntax_error(...))
+-- current_prolog_flag(double_quotes)
+-- atom_chars vs atom_codes
+-- !! call:8
+-- type_error etc. predicate name with module qual.
+-- nothing written to tmp.out
+-- type_error(callable) vs failure
+-- catch:6 syntax_error vs representation_error(character_code) !!! in the std!
+-- two solutions for: `(true -> A=1 ; A=2 ).', `(X=X -> A=1 ; A=2 ).'
+-- catch:8 other problems with catch
+-- functor:17 Expected exception: `error(representation_error(max_arity),D)', got `error(type_error(evaluable,unbounded),['atom unbounded for arithmetic expression'|local_sp(142726948,[],[])])'.
+-- arg:13 Expected exception: `error(representation_error(max_arity),D)', got `error(type_error(evaluable,unbounded),['atom unbounded for arithmetic expression'|local_sp(142726948,[],[])])'.
+-- univ:16 Expected exception: `error(type_error(atomic,f(a)),B)', got `error(type_error(atom,f(a)),['(=..)/2'|local_sp(142646968,[],[])])'.
+-- univ:18 representation_error(max_arity) not triggered
+-- clause:9 procedure name module qualified in exception
+   Expected exception: `error(permission_error(access,private_procedure,C:elk/1),D)', got `error(permission_error(access,private_procedure,elk/1),[clause(iso_test:elk(E),F,G)|local_sp(clause(iso_test:elk(E),F,G),[],[])])'.
+-- clause:12 Expected exception: `error(type_error(callable,5),B)', got `failure'.
+-- cur_prd:8 Expected exception: `error(type_error(predicate_indicator,A:0/dog),B)', got `failure'.
+-- asserta:5 Expected exception: `error(type_error(callable,4),A)', got `error(type_error(callable,4/0),[(dynamic iso_test:4/0)|local_sp((dynamic iso_test:4/0),[],[])])'.
+-- retract:6 Expected dynamic_predicates: `[foo/1,insect/1,legs/2]', got `[foo/1,insect/1]'.
+-- abolish:9 can abolish static procedure
+-- abolish:12 cannot abolish with arity=N
+-- abolish:14 Expected exception: `error(type_error(predicate_indicator,A:insect),B)', got `error(type_error(integer,insect(C)),['functor/3'|local_sp(143189968,[],[])])'.
+-- findall:9 list culprit Expected exception: `error(type_error(list,[B|1]),C)', got `error(type_error(list,1),[findall(D,iso_test:(D=1),[E|1])|local_sp(findall(D,iso_test:(D=1),[E|1]),[],[])])'.
+-- !! bagof:9, setof:11
+-- currinp:4 Expected exception: `error(domain_error(stream,'$stream'(60)),A)', got `failure'.
+-- set_in:3 Expected exception: `error(domain_error(stream_or_alias,foo),A)', got `error(existence_error(stream,foo),['set_input/1'|local_sp(143005756,[],[])])'.
+-- set_in:4 Expected exception: `error(existence_error(stream,'$stream'(60)),A)', got `error(existence_error(stream,60),['set_input/1'|local_sp(143005756,[],[])])'.
+-- open:1 cannot input from binary stream
+-- close:1 !! strange, cannot validate etc.
+-- close:8 Expected exception: `error(domain_error(stream_or_alias,foo),A)', got `[[]]'.
+-- strprop:_ various
+-- strprop:7 no binary streams by default
+-- getcode:24 Expected exception: `error(type_error(integer,p),A)', got `error(type_error(in_character_code,p),[get_code(p)|local_sp(get_code(p),[],[])])'.
+-- getcode:26 Expected exception: `error(representation_error(in_character_code),A)', got `error(type_error(in_character_code,-2),[get_code(-2)|local_sp(get_code(-2),[],[])])'.
+-- write:16 culprit Expected exception: `error(type_error(list,[quoted(true)|foo]),A)', got `error(type_error(list,foo),[write_term(1,[quoted(true)|foo])|local_sp(write_term(1,[quoted(true)|foo]),[],[])])'.
+-- currop:4 !!(sicsbad?) Expected exception: `error(type_error(atom,0),C)', got `error(domain_error(operator_specifier,0),['current_op/3'|local_sp(142730608,[],[])])'.
+-- atomcat:8 Expected exception: `error(type_error(atom,f(a)),B)', got `error(type_error(atom,[f(a),iso]),['atom_concat/2'|local_sp(142900716,[],[])])'.
+-- subatom:2 Expected run: `to_complete_without_error', got `error(domain_error(not_less_than_zero,0),[sub_atom(abracadabra,C,5,0,D)|local_sp(sub_atom(abracadabra,C,5,0,D),[],[])])'.
+-- subatom:11 Expected exception: `error(type_error(integer,a),C)', got `error(type_error(evaluable,a),['atom a for arithmetic expression'|local_sp(142909504,[],[])])'.
+-- subatom:14 Expected exception: `error(domain_error(not_less_than_zero,-2),B)', got `failure'.
+-- subatom:29 Expected exception: `error(type_error(atom,1+2),A)', got `failure'.
+-- !! framework error: warning: ******* Expected run: `to_complete_without_error', got `error(system_error,[new stream not available for open/3|local_sp(142992820,[],[])])', in test "charcde:4".
+-- charcde:8 Expected exception: `error(type_error(integer,x),A)', got `failure'.
+-- setpflg:4 Expected exception: `error(domain_error(prolog_flag,date),A)', got `failure'.
+-- curpflg:2 current_prolog_flag(unknown, error) missing
+-- curpflg:4 Expected postcondition: `current_prolog_flag(unknown,warning)', got `failure'.
+-- curpflg:7 Expected exception: `error(domain_error(prolog_flag,warning),B)', got `failure'.
+-- eval:29 3/0 Expected exception: `error(evaluation_error(zero_divisor),B)', got `[[+inf]]'.
+-- eval:32 X is 7 mod -2  Expected sol(1)-variant_except([]): `[-1]', got `[1]'.
+-- eval:34 Expected exception: `error(type_error(evaluable,foo/0),B)', got `error(type_error(evaluable,foo),['atom foo for arithmetic expression'|local_sp(142726948,[],[])])'.
+-- eval:37 floor(7.4) should be 7 (ISO!), is 7.0 etc.
+-- log:4 X is log(0) Expected exception: `error(evaluation_error(undefined),B)', got `[[-inf]]'.
+-- sqrt:5 X is sqrt(-1) Expected exception: `error(evaluation_error(undefined),B)', got `error(domain_error(out_of_range,-1.0),['acos(-1.000000)'|local_sp(142726948,[],[])])'.
+-- atomcat:15 segfaults
+-- !!! 	( fail, nonvar(MFunc), MFunc=A:B -> A:current_predicate(B) % !! yap (remove fail to make it work)
+
+gprolog:
+
+-- !!! unquoted á in: X = á.
+-- is:3 syntax error parsing: 'is'(3, 3)
+-- Expected rest_input: `''', got `{past}'.
+-- cur_prd:8 Expected exception: `error(type_error(predicate_indicator,0/dog),A)', got `error(type_error(atom,0),current_predicate/1)'.
+-- currinp:4, currout:4 Expected exception: `error(domain_error(stream,'$stream'(2)),A)', got `failure'.
+-- set_in:4, set_out:3 + many Expected exception: `error(domain_error(stream_or_alias,foo),A)', got `error(existence_error(stream,foo),set_input/1)'.
+-- strprop:1 got user_input, user_output, shouldn't
+-- strprop:5,6 various stream properties missing
+-- setstrp:2 set_stream_position !! error precedence
+   Expected exception: `error(instantiation_error,B)', got `error(permission_error(reposition,stream,'$stream'(0)),set_stream_position/2)'.
+-- getchar:19 ... Expected exception: `error(permission_error(input,binary_stream,'$stream'(2)),B)', got `error(permission_error(input,binary_stream,current_input_stream),get_char/1)'.
+-- peekchr:17 Expected exception: `error(domain_error(stream_or_alias,foo),B)', got `error(existence_error(stream,foo),peek_char/2)'.
+-- read:3 spaces... after read/1 Expected rest_input: `' term2. ...'', got `'term2. ...''.
+-- read:21 Expected exception: `error(representation_error(max_arity),B)', got `error(syntax_error('tmp.in:1 (char:514) too big compound term (exceeds max_arity)'),read_term/2)'.
+-- currop:4 Expected exception: `error(type_error(atom,0),C)', got `error(domain_error(operator_specifier,0),current_op/3)'.
+-- charcnv:1,2 read failed; charcnv not implemented
+-- eval:56 etc. Expected exception: `error(evaluation_error(int_overflow),C)', got `[[-268435456,268435455]]'.
+-- log:4, sqrt:5         Expected exception: `error(evaluation_error(undefined),B)', got `[[-inf]]'. or [[nan]]
+
+swipl:
+
+-- testing obstacle: segfaults with gc
+-- term_sx:*, ops:* lot of syntax_error
+-- catch:8 !!unique
+-- parsing write(0'\').
+-- functor:17 Expected exception: `error(representation_error(max_arity), D)', got `error(type_error(evaluable, unbounded/0), E)'.
+-- arg:8 unique Expected exception: `error(instantiation_error, B)', got `[[1]]'.
+-- univ:16 Expected exception: `error(type_error(atomic, f(a)), B)', got `[[f(a)]]'.
+-- univ:17 typo Expected exception: `error(domain_error(non_empty_list, []), B)', got `error(domain_error(not_empty_list, []), C)'.
+-- univ:18 Expected exception: `error(representation_error(max_arity), B)', got `[[f(1, ..., 1]]]'.
+-- clause:4 different module qualification in call(...)
+-- clause:10 +many Expected exception: `error(permission_error(access, private_procedure, C:atom/1), D)', got `error(permission_error(access, private_procedure, atom/1), E)'.
+-- clause:12 Expected exception: `error(type_error(callable, 5), B)', got `failure'.
+-- cur_prd:5 current_predicate returns too many solutions, including builtins
+-- retract:3 unique Expected solutions: `[[B<--bird(A)]]', got `failure'.
+-- abolish:7 !!unique Expected run: `to_complete_without_error', got `error(permission_error(modify, static_procedure, iso_test:insect/1), B)'.
+-- abolish:11 !!unique Expected exception: `error(domain_error(not_less_than_zero, -1), A)', got `error(signal(segv, 11), context(abolish/1, B))'.
+-- abolish:12 !!unique warning: ******* Expected run: `to_complete_without_error', got `error(type_error(evaluable, unbounded/0), A1)', in test "abolish:12".
+-- findall:9 Expected exception: `error(type_error(list, [B|1]), C)', got `failure'.
+-- bagof:9, setof:11 !!different -- maybe in std.?
+-- currinp:4 etc. Expected exception: `error(domain_error(stream, '$stream'(92312)), A)', got `failure'.
+-- set_in:3 Expected exception: `error(domain_error(stream_or_alias, foo), A)', got `error(existence_error(stream, foo), B)'.
+-- set_out:5 Expected exception: `error(permission_error(output, stream, '$stream'(235028715)), A)', got `[['$stream'(235028715)]]'.
+-- open:11 Expected exception: `error(type_error(variable, bar), A)', got `failure'.
+-- open:17 Expected oneof: `perm(open, source_sink, reposition(true));exist(source_sink, B)', got `success+[['$stream'(92312)]]'.
+-- close:8 Expected exception: `error(domain_error(stream_or_alias, foo), A)', got `error(existence_error(stream, foo), B)'.
+-- strprop:5,6 a lot !! std.: default properties, terminal etc.
+-- strprop:7 Expected run: `to_fail', got `sols:[['$stream'(235028696)], ['$stream'(235028715)], ['$stream'(235028734)]]'.
+-- getchar:9 Expected rest_input: `{past}', got `'''.
+-- getchar:14 Expected exception: `error(type_error(in_character, 1), A)', got `failure'.
+-- always prints `|:' when reading from user_input
+-- getchar:19 Expected exception: `error(permission_error(input, binary_stream, '$stream'(92312)), B)', got `[[end_of_file]]'.
+-- getchar:22 Expected exception: `error(representation_error(character), B)', got `[['$stream'(92312), '\000\']]'.
+-- getcode:24 Expected exception: `error(type_error(integer, p), A)', got `failure'.
+-- getcode:26 Expected exception: `error(representation_error(in_character_code), A)', got `error(type_error(character, -2), B)'.
+-- getcode:31 Expected exception: `error(permission_error(input, past_end_of_stream, '$stream'(239075620)), B)', got `[[-1]]'.
+-- peekchr:18 !!std Expected exception: `error(existence_error(stream, '$stream'(239075620)), B)', got `error(existence_error(stream, 239075620), C)'.
+-- putcode:10 Expected exception: `error(type_error(integer, ty), A)', got `error(type_error(character, ty), B)'.
+-- putchar:17 !!unique Expected file('tmp.out')-containing: `[]', got `[97]'.
+-- getbyte:7 Expected exception: `error(type_error(in_byte, p), A)', got `failure'.
+-- getbyte:8 Expected exception: `error(type_error(in_byte, -2), A)', got `error(type_error(character, -2), B)'.
+-- getbyte:13 Expected exception: `error(permission_error(input, past_end_of_stream, '$stream'(239080750)), C)', got `[[-1, -1]]'.
+-- putbyte:4 Expected exception: `error(type_error(byte, ty), A)', got `error(type_error(character, ty), B)'.
+-- read:1 Expected rest_input: `' term2. ...'', got `'term2. ...''.
+-- read:3 Expected sol(1)-variant_except([]): `[foo(E+F, E+G), [E, F, G], ['A'=E, 'Roger'=F], ['Roger'=F]]', got `[foo(H+I, H+J), [H, I, J], ['A'=H, 'Roger'=I, '_'=J], ['Roger'=I]]'.
+-- read:21 Expected exception: `error(representation_error(max_arity), B)', got `[[foo(1, ..., 1]]]'.
+-- read:24 Expected sol(1)-variant_except([]): `[-2147483648]', got `[-2.14748e+09]'.
+-- write:1 !!space? Expected file('tmp.out')-containing: `'[1,2,3]'', got `'[1, 2, 3]''.
+-- write:2 Expected file('tmp.out')-containing: `'\\(\\.\\|\'\\.\'\\)(1,\\1(2,\\1(3,\\[\\])))'', got `'\'.\'(1, \'.\'(2, \'.\'(3, [])))''.
+-- write:5 !!unique? !!$VAR(0) why? Expected file('tmp.out')-containing: `'A'', got `'\'$VAR\'(0)''.
+-- write:16 Expected exception: `error(type_error(list, [quoted(true)|foo]), A)', got `error(type_error(list, foo), B)'.
+-- write:21 Expected exception: `error(permission_error(output, binary_stream, '$stream'(239084854)), A)', got `[[]]'.
+-- op:7 Expected exception: `error(domain_error(operator_specifier, yfy), A)', got `[[]]'.
+-- op:19 Expected exception: `error(permission_error(modify, operator, (',')), A)', got `error(permission_error(modify, operator, [a, (',')]), B)'.
+-- currop:2 Expected exception: `error(domain_error(operator_priority, 1201), C)', got `failure'.
+-- currop:3 etc. Expected exception: `error(domain_error(operator_specifier, yfy), C)', got `failure'.
+-- charcnv:1 Expected postcondition: `read((a, b)), get_char(' '), get_char(&)', got `failure'.
+-- charcnv:2 !!framework warning: ******* Expected run: `to_complete_without_error', got `error(syntax_error(end_of_file_in_string), file(tmp.in, 1, 0, 8))', in test "charcnv:2".
+-- charcnv:6 Expected sol(1)-variant_except([]): `[37+1]', got `[43+1]'.
+-- crchcnv:1 Goal: current_char_conversion('$VAR'(0), a), Vars: ['$VAR'(0)]   Expected no_more_solutions: `[]', got `[[a]]'.
+-- atomlen:2 space after backslash-newline shouldn't be ignored in atom_length/2 ?? -- ignored in swipl
+-- atomlen:8 Expected exception: `error(domain_error(not_less_than_zero, -4), A)', got `failure'.
+-- atomcat:8 Expected exception: `error(type_error(atom, f(a)), B)', got `error(type_error(atomic, f(a)), context(atom_concat/3, C))'.
+-- atomcat:15 Expected exception: `error(representation_error(exceeded_atom_size), B)', got `[[aa...aa]]'.
+-- subatom:10 Expected exception: `error(type_error(atom, 2), B)', got `failure'.
+-- atomchs:9,10,13 !! std Expected exception: `error(instantiation_error, C)', got `error(representation_error(character_code), context(atom_chars/2, D))'.
+-- atomcds:16 Expected oneof: `repr(character_code);type(integer, @@)', got `success+[[abc]]'.
+-- charcde:8 Expected exception: `error(type_error(integer, x), A)', got `failure'.
+-- numbchs:7 Expected run: `to_complete_without_error', got `error(syntax_error(illegal_number), context(number_chars/2, B))'.
+-- numbchs:16 Expected exception: `error(type_error(character, 2), B)', got `error(representation_error(character_code), context(number_chars/2, C))'.
+-- numbchs:19 Expected run: `to_complete_without_error', got `error(syntax_error(illegal_number), context(number_chars/2, B))'.
+-- setpflg:4 Expected exception: `error(domain_error(prolog_flag, date), A)', got `[[]]'.
+-- setpflg:5 Expected exception: `error(domain_error(flag_value, debug+trace), A)', got `error(type_error(bool, trace), B)'.
+-- curpflg:2 missing flags: debug=off char_conversion=on
+-- curpflg:6 debug= Expected sol(1)-variant_except([]): `[off]', got `[false]'.
+-- curpflg:7 Expected exception: `error(domain_error(prolog_flag, warning), B)', got `failure'.
+-- eval:32 Goal: '$VAR'(0)is 7 mod-2, Vars: ['$VAR'(0)]   Expected sol(1)-variant_except([]): `[-1]', got `[1]'.
+-- eval:59 larger than max_integer Expected exception: `error(evaluation_error(int_overflow), C)', got `[[2147483647, 4.29497e+09]]'.
+-- bit_rsh:6 Expected exception: `error(type_error(integer, 1.0), B)', got `[[0]]'.
+-- bit_and:7 Expected exception: `error(type_error(integer, 1.0), B)', got `[[0]]'.
+-- bit_or:7 Expected exception: `error(type_error(integer, 1.0), B)', got `[[3]]'.
+-- !!! strange problem in body of abolish_static
+-- !!! abolish:8... a lot of crashes
+
+ciao:
+
+-- (tons of errors)
+-- term_sx:1 warning: ******* Expected run: `to_complete_without_error', got `error(existence_error(procedure,user:at_end_of_stream/1),user:at_end_of_stream/1)', in test "term_sx:1".
+-- a lot of syntax errors 
+-- testing obstacle: `X is X' fails and prints `{ERROR: illegal arithmetic expression}', but doesn't raise exception
+-- call:13 Expected exception: `error(type_error(callable,(fail,1)),A)', got `failure'.
+-- dbl_qts:1 warning: Exception while evaluating test: dbl_qts:1
+-- call:8 Expected run: `to_complete_without_error', got `error(existence_error(procedure,'user:a'/1),'user:a'/1)'.
+   (doesn't seem to be able do define/consult test predicates)
+-- clause:4 Expected sol(1)-variant_except([]): `[(call(A),call(A)),A]', got `[((rt_module_exp(C,goal,user('/home/guests/pts/eg/dokt/stdprolog/test/tmpfile'),-,true,D),call(D)),rt_module_exp(C,goal,user('/home/guests/pts/eg/dokt/stdprolog/test/tmpfile'),-,true,E),call(E)),C]'.
+-- clause:9 Expected exception: `error(permission_error(access,private_procedure,elk/1),C)', got `error(permision_error(modify,static_procedure,'user:elk'/1),clause/2)'.
+-- asserta:1 Goal: asserta(legs(octopus,8)), Vars: [] Expected dynamic_predicates: `[insect/1,legs/2]', got `[]'.
+-- asserta:4 Expected exception: `error(instantiation_error,B)', got `error(type_error(clause,C),asserta/1-1)'.
+-- asserta:7 typo Expected exception: `error(permission_error(modify,static_procedure,atom/1),B)', got `error(permision_error(modify,static_procedure,atom/1),asserta/1)'.
+-- retract:4 Expected solutions: `[[B<--4,C<--animal(A)],[B<--6,C<--insect(A)],[A<--spider,B<--8,C<--true]]', got `failure'.
+-- abolish:5 Expected exception: `error(permission_error(modify,static_procedure,abolish/1),A)', got `[[]]'.
+-- testing: obstacle: at_end_of_stream/_, stream_property/_ don't exist
+-- abolish:13 Expected exception: `error(type_error(atom,5),A)', got `error(existence_error(procedure,'dynamic:abolish'/1),'dynamic:abolish'/1)'.
+-- bagof:9, setof:11, setof:12 !!std
+-- open:4 Expected exception: `error(instantiation_error,C)', got `error(domain_error(source_sink,D),absolute_file_name/7-1)'.
+-- open:8 Expected exception: `error(instantiation_error,C)', got `error(domain_error(open_option_list,[type(text),D]),open/4-4)'.
+-- (a lot more stream errors)
+-- getchar:3 Expected run: `to_complete_without_error', got `error(domain_error(stream_or_alias,st_i),get_code/2-1)'.
+-- peekchr:18 Expected exception: `error(existence_error(stream,'$stream'(31676306,3)),B)', got `error(domain_error(stream_or_alias,'$stream'(31676306,3)),peek_code/2-1)'.
+-- peekcde:33 Expected exception: `error(representation_error(character),B)', got `[[0,'$stream'(31821149,3)]]'.
+-- putcode:22 Expected exception: `error(permission_error(output,binary_stream,'$stream'(31969679,3)),A)', got `[['$stream'(31969679,3)]]'.
+-- read:5 Expected exception: `error(syntax_error(B),C)', got `error(syntax_error(1,1,['operator expected after expression'],['',foo,'...,'** here **','','',123,' ','.']),read/1)'.
+-- read:21 Expected exception: `error(representation_error(max_arity),B)', got `error(syntax_error(1,1,['maximum arity exceeded'],['',foo,'','(',...,','** here **','','','.']),read_term/2)'.
+-- write:16 Expected exception: `error(type_error(list,[quoted(true)|foo]),A)', got `error(type_error(list,foo),write_term/2-2)'.
+-- op:12 Expected exception: `error(instantiation_error,B)', got `[[[]]]'.
+-- op:18 Expected exception: `error(permission_error(modify,operator,','),A)', got `[[]]'.
+-- charcnv:* lot of problems
+-- subatom:4 Expected solutions: `[[A<--0,B<--9],[A<--7,B<--2]]', got `failure'.
+-- atomcds:10 Expected exception: `error(type_error(list,120),B)', got `error(domain_error(character_code_list,120),atom_codes/2-2)'.
+-- atomcds:16 Expected oneof: `repr(character_code);type(integer,@@)', got `exception(error(domain_error(character_code_list,[a,b,c]),atom_codes/2-2))+failure'.
+-- numchs:8 Expected exception: `error(syntax_error(B),C)', got `failure'.
+-- curpflg:2 Expected substitution(1): `[A<--debug,B<--off]', got `not_found_in_solution_set([[unprofiled,compiling],[on,fileerrors],[on,gc],[500,gc_margin],[off,gc_trace],[error,unknown],[off,quiet],[ciao(1.1,6),version],[[],argv],[false,bounded],[toward_zero,integer_rounding_function],[255,max_arity],[off,prompt_alternatives_no_bindings],[on,single_var_warnings],[on,discontiguous_warnings],[on,multi_arity_warnings],[off,verbose_compilation],[f,itf_format],[no,compress_lib],[off,write_strings],[os_dependent,path_style],[off,read_hiord],[iso,character_escapes],[eagerload,executables],[off,check_libraries],[none,self_contained],[no,compress_exec]])'.
+-- eval:35 Goal: A is 7.5 mod 2, Vars: [A]   Expected exception: `error(type_error(integer,7.5),B)', got `[[1]]'.
+-- log:4 log:6 Goal: A is log(0) ; sqrt(-1.0)   Expected exception: `error(evaluation_error(undefined),B)', got `[[-0.Inf]]'.
+-- bit_rsh:6, bit_lsh:6, bit_and:7, bit_or:7, bit_neg:6 Expected exception: `error(type_error(integer,1.0),B)', got `[[0]]'.
+-- !!! eval:36 makes ciao hang: _X is mod(7, 0)
+-- !!! impossible to consult(user).
+-- !!! foo:asserta(bar) asserta(foo:bar) both raise exception
+-- !!! framework: no stream_property/2, cannot detect with current_predicate and predicate_property
+
+__EOF__
