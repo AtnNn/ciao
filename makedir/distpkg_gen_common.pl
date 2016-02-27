@@ -45,10 +45,10 @@ exclude_files(PackageType) := ~findall(File, exclude_file(PackageType, File)).
 
 distpkg_codeitem_kind := tgz|rpm_x86|deb_x86|win|dmg.
 distpkg_docitem_kind := 
-    docpart("Ciao Manual", ciao, [ps, pdf])|
-    docpart("CiaoPP Manual", ciaopp, [ps, pdf])|
-    docpart("LPdoc Manual", lpdoc, [ps, pdf]).
-% TODO: HTML is not included in the distpkg, sure?
+    docpart("Ciao Manual", ciao, [html, pdf])|
+    docpart("CiaoPP Manual", ciaopp, [html, pdf])|
+    docpart("LPdoc Manual", lpdoc, [html, pdf]).
+% TODO: Missing some internal manuals, add them.
 
 % ===========================================================================
 

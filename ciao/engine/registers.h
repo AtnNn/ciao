@@ -40,6 +40,11 @@ Register assignments (for registers 1 to 3) have been made for i386.
 #  define CIAO_REG_2(Type, Var) register Type Var asm("ebx")
 #  define CIAO_REG_3(Type, Var) register Type Var asm("edi")
 #  define CIAO_REG_4(Type, Var) CIAO_REG_Z(Type, Var)
+# elif defined(DARWIN)
+#  define CIAO_REG_1(Type, Var) register Type Var asm("esi")
+#  define CIAO_REG_2(Type, Var) register Type Var asm("edi")
+#  define CIAO_REG_3(Type, Var) CIAO_REG_Z(Type, Var)
+#  define CIAO_REG_4(Type, Var) CIAO_REG_Z(Type, Var)
 # elif defined(Sparc) && defined(Solaris)
 /* Add here register definitions for Solaris in Sparc */
 #  define CIAO_REG_1(Type, Var) CIAO_REG_Z(Type, Var)

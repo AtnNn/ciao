@@ -163,6 +163,10 @@
 
 :- doc(version_maintenance,dir('../../version')).
 
+:- doc(version(1*14+2,2011/08/12,18:14*31+'CEST'), "
+   Merging r13606 (trunk) into 1.14.
+   This backports an optimization for DARWIN platforms (Jose Morales)").
+
 :- doc(version(1*14+1,2011/08/10,18:17*10+'CEST'), "
    Merging r13583 through r13586 (trunk) into 1.14. This fixes
    problems in the Windows version of Ciao (Edison Mera, Jose
