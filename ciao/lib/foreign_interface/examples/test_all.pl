@@ -116,8 +116,7 @@ test(foreign_low) :-
         fail.
 test(foreign_low):- nl, nl, nl.
 
-
-:- include(library(foreign_interface)).
+:- use_package(foreign_interface).
 
 :- use_module(library(foreign_interface(examples(addresses(objects))))).
 :- use_module(library(foreign_interface(examples(any_term)))).
@@ -129,7 +128,6 @@ test(foreign_low):- nl, nl, nl.
 :- use_module(library(foreign_interface(examples(math)))).
 :- use_module(library(foreign_interface(examples(foreign_low(random))))).
 :- use_module(library(foreign_interface(examples(strings_and_atoms)))).
-
 
  %% rebuild_all :-
  %% 	member(X,[addresses,byte_lists,math,strings_and_atoms]),
