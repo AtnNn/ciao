@@ -305,19 +305,19 @@ is called. The function will in such case be marked as interactive.
 
 You may specify an argument list ARGS which will be passed on."
   (list 'eval-when-compile (if load-file (autoload 'function load-file "Not loaded yet." t)))
-  (` (progn
-       (if (, load-file)
-	   (autoload (quote (, function)) (, load-file) "Not loaded yet." t))
-       (defun
-	 (, (make-symbol (concat "word-help-wrapt-" (symbol-name function))))
-	 (, args)
-	 (, (concat "Wrapper for " (symbol-name function) " returning t."))
-	 (interactive)
-	 (let ((prefix-arg current-prefix-arg))
-	   (if (interactive-p)
-	       (call-interactively '(, function))
-	     ((, function) (,@ args))
-	     t))))))
+  `(progn
+     (if ,load-file
+	 (autoload (quote ,function) ,load-file "Not loaded yet." t))
+     (defun
+       ,(make-symbol (concat "word-help-wrapt-" (symbol-name function)))
+       ,args
+       ,(concat "Wrapper for " (symbol-name function) " returning t.")
+       (interactive)
+       (let ((prefix-arg current-prefix-arg))
+	 (if (interactive-p)
+	     (call-interactively ',function)
+	   (,function ,@args)
+	   t)))))
 
 (word-help-t-wrapper lisp-complete-symbol)
 (word-help-t-wrapper makefile-complete "make-mode")
@@ -336,17 +336,16 @@ You may specify an argument list ARGS which will be passed on."
 (defmacro word-help-lookup (index &optional default)
   "Lookup macro for `word-help-mode-alist'.
 INDEX is list element, DEFAULT is obvious."
-  (`
-   (cond
-    ((nth (, index) (assoc help-mode word-help-mode-alist)))
-    (t (, default)))))
+  `(cond
+    ((nth ,index (assoc help-mode word-help-mode-alist)))
+    (t ,default)))
 
 (defmacro word-help-lookup-sym (index &optional default)
   "Lookup macro for `word-help-mode-alist'.
 INDEX is list element, DEFAULT is obvious. Returns (result)
 if result is a symbol."
-  (` (let ((result (word-help-lookup (, index) (, default))))
-       (if (symbolp result) (list result) result))))
+  `(let ((result (word-help-lookup ,index ,default)))
+     (if (symbolp result) (list result) result)))
  
 
 (defsubst word-help-info-files (help-mode)
