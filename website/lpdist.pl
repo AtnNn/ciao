@@ -68,7 +68,7 @@ start(['fetch', Branch, Rev]) :- !,
 	pbundle_fetch(Branch, Rev).
 %
 start(['fetch-latest']) :- !,
-	Branch = 'master', % TODO: branch is hardwired by this moment
+	Branch = 'master', % TODO: branch is hardwired at this moment
 	query_latest_rev(Rev),
 	pbundle_fetch(Branch, Rev).
 start(['query-latest']) :- !,
@@ -93,6 +93,7 @@ start(_) :-
 
 %% ----------------------------------------------------------------------------
 
+:- use_module(ciaobot(ciaobot), [showlpv/1]).
 :- use_module(library(system_extra), [do_str_without_nl/3]).
 
 % TODO: Rewrite ciaobot in Prolog (at least the interface). 
@@ -105,7 +106,7 @@ query_latest_rev(Latest) :-
 	% Querying latest pbundle revision
 	format(user_error, "Connecting to the Ciao Bot...~n", []),
 	% TODO: fix directory
-	do_str_without_nl(['../ciaobot/ciaobot showlpv'], fail, String),
+	ciaobot:showlpv(String),
 	format(user_error, "Latest pbundle revision is '~s'~n", [String]),
 	atom_codes(Latest, String).
 

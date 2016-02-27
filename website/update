@@ -1,6 +1,7 @@
 #!/usr/bin/env ciao-shell
 % -*- mode: ciao; -*-
 
+:- use_package(ciaopaths).
 :- use_package(assertions).
 :- use_package(fsyntax).
 
@@ -127,9 +128,12 @@ update_local_pbundle_storage :-
 	update_local_pbundle_storage_,
 	working_directory(_, Old).
 
+:- use_module(library(compiler(exemaker)), [make_exec/2]).
+
 update_local_pbundle_storage_ :-
 	% Compile lpdist
-	invoke_cmd(ciaoc, [~cmd_srcname(lpdist)]),
+%	invoke_cmd(ciaoc, [~cmd_srcname(lpdist)]),
+	make_exec([~cmd_srcname(lpdist)], lpdist),
 	%
 	( get_param(remove_old_packages, yes) ->
 	    Branch = master,
