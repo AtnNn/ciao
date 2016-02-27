@@ -27,7 +27,7 @@
         '$ciao_version'/2,
         '$spypoint'/3, '$debugger_state'/2, '$debugger_mode'/0,
 %        '$prolog_radix'/2,
-        '$constraint_list'/2, '$eq'/2,
+	'$constraint_list'/2, '$eq'/2,
         '$large_data'/3, '$interpreted_clause'/2,
         '$set_global_logical_var'/2, '$get_global_logical_var'/2,
         '$erase_atom'/1,
@@ -80,8 +80,8 @@ provides handles for the module system into the internal definitions.
         '$ferror_flag'/2, '$quiet_flag'/2, '$ciao_version'/2,
         '$spypoint'/3, '$debugger_state'/2,
         '$debugger_mode'/0,
-%       '$prolog_radix'/2,
-        '$constraint_list'/2, '$eq'/2,
+%	'$prolog_radix'/2,
+	'$constraint_list'/2, '$eq'/2,
         '$large_data'/3, '$interpreted_clause'/2, '$unix_popen'/3,
         '$exec'/8, '$unix_argv'/1, '$load_foreign_files'/4,
         '$prepare_foreign_files'/3, '$foreign_base'/1, '$find_file'/8,
@@ -185,11 +185,6 @@ ciaopp_expansion :- fail.
 
 redefining(_,_,_). % Avoid imported_needs_qual warnings
 
-% Called from within mexpand
-dic_get(D, _, _) :-
-	nonvar(D),
-	message(error, ['Dictionary ',D,' appeared in internals']).
-
 module_warning(not_defined(F, N, M)) :- !,
         ( '$unknown'(fail,fail) -> true
         ; message(warning, ['Predicate ',~~(F/N),' undefined in module ',M])
@@ -207,8 +202,6 @@ module_warning(big_pred_abs(PA, N)) :- !,
 module_warning(short_pred_abs(PA, N)) :- !,
         message(error, ['Predicate abstraction ',~~(PA),
                           ' has too few arguments: should be ',N]).
-%%% Not needed, no dictionaries from here
-% module_warning(meta_mismatch(HType, Type)) :- !,
 
 :- pred term_to_meta/2 # "Transforms a normal term to a meta-term.".
 
@@ -227,7 +220,7 @@ rt_module_exp(T, _Type, _M, _QM,  Pr, NT) :-
         ( Pr = true -> NT = Tx ; NT = T).
 rt_module_exp(QM:T, Type, M,_QM, Pr, NT) :- !,
         ( var(QM) ->
-            meta_expansion_type(Type, T, M, _, _, Pr, NT, no, no)
+            meta_expansion_type(Type, T, M, _, Pr, NT, no, no)
         ; rt_module_exp(T, Type, M, QM, Pr, NT)
         ).
 rt_module_exp(T, Type, M, QM, Pr, NT) :-
@@ -250,7 +243,7 @@ do_module_exp(QM, T, M, Primitive, Type, NT) :-
         '$meta_call'(GEXP),
         term_to_meta_or_primitive(Primitive, XT, NT).
 do_module_exp(QM, T, M, Primitive, Type, NT) :-
-        meta_expansion_type(Type, T, M, QM, _, Primitive, NT, no, no).
+         meta_expansion_type(Type, T, M, QM, Primitive, NT, no, no).
 
 :- include(builtin_modules).
 

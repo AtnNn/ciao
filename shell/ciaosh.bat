@@ -1,0 +1,1 @@
+@"/home/clip/Systems/ciao-1.10/bin/Win32i86/ciaoengine.exe" %* -C -i -b "$/shell/ciaosh"

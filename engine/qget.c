@@ -139,7 +139,6 @@ char *getstring(Arg, f)
   return ws;
 }
 
-#define USE_STR2NUM_IN_GET_BYTECODE 1
 
 void getbytecode(Arg,f,insn_p,length)
      Argdecl;
@@ -152,42 +151,6 @@ void getbytecode(Arg,f,insn_p,length)
   while ((c=GETC(f))) {
     switch (c) {
     case 'G': {
-#if defined(USE_STR2NUM_IN_GET_BYTECODE)
-      BOOL string_to_number(Argdecl, unsigned char *AtBuf, int base, TAGGED *strnum);
-      void explicit_heap_overflow(Argdecl, int pad, int arity);
-      REGISTER int i = 0;
-      REGISTER char *ws = Atom_Buffer;
-      TAGGED t, *h;
-      
-      while ((c = ws[i++] = GETC(f))) {
-        if (i == Atom_Buffer_Length) {
-            EXPAND_ATOM_BUFFER(Atom_Buffer_Length*2);
-            ws = Atom_Buffer;
-        }
-      }
-
-      /* todo: This is can be improved. 
-
-         We ensure that there is at least (length/sizeof(tagged_t)+4)
-	 available words in the heap. We load the number into the
-	 heap, copy it to the bytecode, and then move the heap pointer
-	 back.
-      */
-      {
-	int arity = 2;
-	int cells = (length / sizeof(TAGGED)) + 4 + arity;
-	if (HeapDifference(w->global_top,Heap_End)<cells) {
-	  explicit_heap_overflow(Arg,cells,5);
-	}
-      }
-      h = w->global_top;
-      if (!string_to_number(w, (unsigned char *)Atom_Buffer, 10, &t)) {
-	SERIOUS_FAULT("$qread: wrong number!");
-      }
-      insn_p += compile_large(t, insn_p);
-      w->global_top = h;
-      break;
-#else
       REGISTER int i = 0;
       REGISTER char *ws = Atom_Buffer;
       BOOL floatp = FALSE;
@@ -199,7 +162,7 @@ void getbytecode(Arg,f,insn_p,length)
             EXPAND_ATOM_BUFFER(Atom_Buffer_Length*2);
             ws = Atom_Buffer;
         }
-      }
+    }
 
       if (floatp) {
         ENG_FLT f = atof(ws);
@@ -214,7 +177,6 @@ void getbytecode(Arg,f,insn_p,length)
         insn_p += LargeArity(*wp)<<1;
       }
       break;
-#endif
     }
       
     case '+': {

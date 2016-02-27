@@ -38,7 +38,7 @@ typedef void *(*THREAD_START)(void *);
 
 #define Thread_Create_GoalId(Process, Arg, Id, Handle) { \
     pthread_create(&(Id), &joinable_thread, Process, Arg); \
-    Handle = (THREAD_T)Id;                                 \
+    Handle = Id; \
 }
 
 #define Thread_Join(Id)     pthread_join(Id, NULL)

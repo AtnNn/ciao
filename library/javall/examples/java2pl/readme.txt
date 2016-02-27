@@ -14,18 +14,17 @@ $ java -cp ../../:./ example1 ../../plserver
 
 or, if you are using Windows:
 
-  java -cp ..\..\;.\ example1 <ciao-home>\Win32\bin\ciaoengine -C -b ..\..\plserver.cpx 
+  java -cp ..\..\;.\ example1 <home>\Win32\bin\ciaoengine -C -b ..\..\plserver.cpx 
 
-where java must be on version 1.2 or higher, and <ciao-home>
-represents the Ciao home directory.
+where java must be on version 1.2 or higher, and <home> represents the
+Ciao home directory.
 
-Important: be sure <ciao-home>\library\javall\plserver.pl is compiled
-using the following command:
+Important: be sure plserver.pl is compiled using the following
+command:
 
   ciaoc plserver.pl
 
-and that the Java source files in ..\..\CiaoJava are also compiled
-using your installed JDK.
+
 
 * example1.java
 
@@ -50,17 +49,15 @@ $ java -cp ../../:./ queens ../../plserver
 
 or, if you are using Windows:
 
-  java -cp ..\..\;.\ queens <ciao-home>\Win32\bin\ciaoengine -C -b ..\..\plserver.cpx
+  java -cp ..\..\;.\ queens <home>\Win32\bin\ciaoengine -C -b ..\..\plserver.cpx
 
-where java must be on version 1.2 or higher, and <ciao-home>
-represents the Ciao home directory.
+where java must be on version 1.2 or higher, and <home> represents the
+Ciao home directory.
 
-Important: be sure <ciao-home>\library\javall\plserver.pl is compiled
-using the following command:
+Important: be sure plserver.pl is compiled using the following
+command:
 
   ciaoc plserver.pl
 
-and that the Java source files in ..\..\CiaoJava are also compiled
-using your installed JDK.
 
 

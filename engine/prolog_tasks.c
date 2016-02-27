@@ -337,7 +337,7 @@ BOOL prolog_eng_backtrack(Arg)
     Thread_Create_GoalId(make_backtracking,
 			 goal,
 			 goal->thread_id,
-			 goal->thread_handle);
+			 (THREAD_T)goal->thread_handle);
     exec_result = TRUE;	   /* thread-delegated backtracking always suceeds */
   } else {
     goal->action &= ~NEEDS_FREEING;

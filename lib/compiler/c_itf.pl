@@ -29,8 +29,6 @@
 :- use_module(library('compiler/srcdbg'),[srcdbg_expand/5]).
 :- use_module(library(fastrw)).
 
-:- use_module(library(dict)).
-
 :- use_module(engine(internals), [
         '$open'/3, builtin_module/1, initialize_module/1, initialized/1, u/2,
         '$define_predicate'/2, '$set_property'/2,
@@ -1876,27 +1874,7 @@ module_expansion(H, B, Module, Dict, Mode, H0, B0, H2, B2) :-
         ; H1 = H0, B1 = B0
         ),
         head_expansion(H1, Module, H2),
-	meta_args_dict(H1, Module, MetaDict),
-        body_expansion(B1, Module, -, MetaDict, B2).
-
-meta_args_dict(H, Module, Dict) :-
-	functor(H, F, N),
-	functor(HM, F, N),
-	( meta_args(Module, HM) ->
-	    collect_meta_args(N, HM, H, Dict)
-	; true % var(Dict)
-	).
-
-collect_meta_args(0, _, _, _) :- !.
-collect_meta_args(N, HM, H, Dict) :-
-	arg(N, HM, Type),
-	( Type = ? ->  true
-	; Type = addmodule -> true
-	; arg(N, H, V),
-	  dic_lookup(Dict, V, Type)
-	),
-	N1 is N-1,
-	collect_meta_args(N1, HM, H, Dict).
+        body_expansion(B1, Module, -, B2).
 
 compile_goal_decl(DN, Base, Module, Mode) :-
         functor(Decl, DN, 1),
@@ -1916,7 +1894,7 @@ compile_goal_decls_([], _, _, _).
 compile_goal_decls_([loc(Decl,Src,Ln0,Ln1)|_], DeclM, Module, Mode) :-
         asserta_fact(location(Src,Ln0,Ln1), Ref),
         arg(1, Decl, Goal),
-        body_expansion(Goal, Module, -, _VoidDic, Goal1),
+        body_expansion(Goal, Module, -, Goal1),
         compile_clause(Mode, DeclM, Goal1, Module),
         erase(Ref),
         fail.
@@ -2166,9 +2144,6 @@ module_warning_mess(big_pred_abs(PA,N), error,
 module_warning_mess(short_pred_abs(PA,N), error,
         ['Predicate abstraction ',~~(PA),
          ' has too few arguments: should be ',N]).
-module_warning_mess(meta_mismatch(HType, Type), error,
-	['A head argument is defined as ',HType,
-	 ' but appears in a body call as ',Type]).
 
 :- data compiling_src/1, last_error_in_src/1.
 
@@ -2220,7 +2195,7 @@ head_expansion(H, M, NH) :-
         meta_expansion_keep_arity(F, N, H1, M, NH).
 
 meta_expansion_keep_arity(F, N, H, M, NH) :-
-        possibly_meta_expansion(F, N, H, M, M, _, NH, no, no),
+        possibly_meta_expansion(F, N, H, M, M, NH, no, no),
         functor(NH, _, N), % addmodule meta expansion not applied 
         !.
 meta_expansion_keep_arity(_, _, H, _, H).

@@ -1378,7 +1378,7 @@ ciao_term ciao_ref(ciao_state state, TAGGED x) {
   int next, chunks;
 
   w = state->worker_registers;
-  SetE(w->frame);
+  E = w->frame;
 
   next = GetSmall(Y(0));
   {
@@ -1443,7 +1443,7 @@ TAGGED ciao_unref(ciao_state state, ciao_term term) {
   TAGGED x;
 
   w = state->worker_registers;
-  SetE(w->frame);
+  E = w->frame;
 
   x = *TagToArg(Y(2), term);
   return x;
